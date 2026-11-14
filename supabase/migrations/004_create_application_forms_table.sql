@@ -41,3 +41,4 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_application_forms_name ON public.application_forms(applicant_name);
 CREATE INDEX IF NOT EXISTS idx_application_forms_date ON public.application_forms(sign_date);
+
