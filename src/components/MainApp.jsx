@@ -328,6 +328,113 @@ export default function MainApp({
 
   const [shifts, setShifts] = useState(["9:30~10:30", "10:30~11:30", "11:30~12:30"]);
 
+  // 신청서, 사전설문지, 사후설문지 작성 완료 여부 추적 상태
+  const [submittedForms, setSubmittedForms] = useState({
+    apps: new Set(),
+    preSurveys: new Set(),
+    postSurveys: new Set()
+  });
+
+  const checkFormSubmitted = useCallback((set, name) => {
+    if (!name || !set || set.size === 0) return false;
+    const clean = String(name).trim();
+    if (!clean) return false;
+    if (set.has(clean)) return true;
+    const baseName = clean.split('(')[0].trim();
+    if (baseName && set.has(baseName)) return true;
+    return false;
+  }, []);
+
+  const fetchFormSubmissionStatus = useCallback(async () => {
+    try {
+      const appSet = new Set();
+      const preSet = new Set();
+      const postSet = new Set();
+
+      const addNameToSet = (set, rawName) => {
+        if (!rawName) return;
+        const clean = String(rawName).trim();
+        if (clean) {
+          set.add(clean);
+          const base = clean.split('(')[0].trim();
+          if (base) set.add(base);
+        }
+      };
+
+      // 1. LocalStorage 백업 데이터 확인
+      try {
+        const localApps = JSON.parse(localStorage.getItem('application_forms_backup') || '[]');
+        localApps.forEach(item => {
+          addNameToSet(appSet, item.applicant_name || item.applicantName || item.name);
+        });
+
+        const localPres = JSON.parse(localStorage.getItem('digital_surveys_backup') || '[]');
+        localPres.forEach(item => {
+          addNameToSet(preSet, item.participant_name || item.participantName);
+        });
+
+        const localPosts = JSON.parse(localStorage.getItem('digital_surveys_post_backup') || '[]');
+        localPosts.forEach(item => {
+          addNameToSet(postSet, item.participant_name || item.participantName);
+        });
+      } catch (e) {
+        console.warn('LocalStorage form status parse error:', e);
+      }
+
+      // 2. Supabase DB 조회
+      if (supabaseClient) {
+        try {
+          const [appRes, preRes, postRes] = await Promise.all([
+            supabaseClient.from('application_forms').select('applicant_name'),
+            supabaseClient.from('pre_surveys').select('participant_name'),
+            supabaseClient.from('post_surveys').select('participant_name')
+          ]);
+
+          if (appRes.data) {
+            appRes.data.forEach(r => addNameToSet(appSet, r.applicant_name));
+          }
+          if (preRes.data) {
+            preRes.data.forEach(r => addNameToSet(preSet, r.participant_name));
+          }
+          if (postRes.data) {
+            postRes.data.forEach(r => addNameToSet(postSet, r.participant_name));
+          }
+        } catch (err) {
+          console.warn('Supabase form status fetch error:', err);
+        }
+      }
+
+      setSubmittedForms({
+        apps: appSet,
+        preSurveys: preSet,
+        postSurveys: postSet
+      });
+    } catch (err) {
+      console.error('Error fetching form submission status:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFormSubmissionStatus();
+
+    const handleFocus = () => {
+      fetchFormSubmissionStatus();
+    };
+    const handleStorage = (e) => {
+      if (!e.key || e.key.includes('form') || e.key.includes('survey')) {
+        fetchFormSubmissionStatus();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, [fetchFormSubmissionStatus]);
+
   const [weatherData, setWeatherData] = useState(null);
 
   // 서버의 최신 버전을 저장할 상태 (초기 접속 시 기록)
@@ -3649,6 +3756,10 @@ export default function MainApp({
                                         <div className="flex items-center gap-1.5 flex-wrap">
                                           {validStudents.map((sName, sIdx) => {
                                             const clean = sName.trim();
+                                            const isAppSubmitted = checkFormSubmitted(submittedForms.apps, clean);
+                                            const isPreSubmitted = checkFormSubmitted(submittedForms.preSurveys, clean);
+                                            const isPostSubmitted = checkFormSubmitted(submittedForms.postSurveys, clean);
+
                                             return (
                                               <React.Fragment key={sIdx}>
                                                 <button
@@ -3657,10 +3768,13 @@ export default function MainApp({
                                                     const url = `/application_form.html${clean ? `?name=${encodeURIComponent(clean)}` : ''}`;
                                                     window.open(url, '_blank');
                                                   }}
-                                                  title={`${sName} 님의 2027년 프로그램 참여 신청서 열기`}
-                                                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                                  title={`${sName} 님의 2027년 프로그램 참여 신청서 열기${isAppSubmitted ? ' (작성완료)' : ''}`}
+                                                  className={`${isAppSubmitted
+                                                    ? 'bg-blue-600 hover:bg-blue-700 text-white ring-1 ring-inset ring-blue-700'
+                                                    : 'bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200'
+                                                  } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
-                                                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                  <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isAppSubmitted ? 'text-white' : 'text-blue-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                                     <polyline points="14 2 14 8 20 8" />
                                                     <line x1="16" y1="13" x2="8" y2="13" />
@@ -3675,10 +3789,13 @@ export default function MainApp({
                                                     const url = `/survey_form.html?type=pre${clean ? `&name=${encodeURIComponent(clean)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
                                                     window.open(url, '_blank');
                                                   }}
-                                                  title={`${sName} 님의 2027년 1:1 디지털 교육 사전설문지 열기`}
-                                                  className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                                  title={`${sName} 님의 2027년 1:1 디지털 교육 사전설문지 열기${isPreSubmitted ? ' (작성완료)' : ''}`}
+                                                  className={`${isPreSubmitted
+                                                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-1 ring-inset ring-indigo-700'
+                                                    : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200'
+                                                  } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
-                                                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                  <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPreSubmitted ? 'text-white' : 'text-indigo-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
                                                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
                                                     <path d="m9 14 2 2 4-4" />
@@ -3692,10 +3809,13 @@ export default function MainApp({
                                                     const url = `/survey_form.html?type=post${clean ? `&name=${encodeURIComponent(clean)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
                                                     window.open(url, '_blank');
                                                   }}
-                                                  title={`${sName} 님의 2027년 1:1 디지털 교육 사후설문지 열기`}
-                                                  className="bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                                  title={`${sName} 님의 2027년 1:1 디지털 교육 사후설문지 열기${isPostSubmitted ? ' (작성완료)' : ''}`}
+                                                  className={`${isPostSubmitted
+                                                    ? 'bg-purple-600 hover:bg-purple-700 text-white ring-1 ring-inset ring-purple-700'
+                                                    : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
+                                                  } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
-                                                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                  <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPostSubmitted ? 'text-white' : 'text-purple-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
                                                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
                                                     <path d="m9 14 2 2 4-4" />
@@ -3714,6 +3834,10 @@ export default function MainApp({
                                       return null;
                                     }
 
+                                    const isAppSubmitted = checkFormSubmitted(submittedForms.apps, singleStudent);
+                                    const isPreSubmitted = checkFormSubmitted(submittedForms.preSurveys, singleStudent);
+                                    const isPostSubmitted = checkFormSubmitted(submittedForms.postSurveys, singleStudent);
+
                                     return (
                                       <div className="flex items-center gap-1.5 flex-wrap">
                                         <button
@@ -3722,10 +3846,13 @@ export default function MainApp({
                                             const url = `/application_form.html${singleStudent ? `?name=${encodeURIComponent(singleStudent)}` : ''}`;
                                             window.open(url, '_blank');
                                           }}
-                                          title="2027년 프로그램 참여 신청서 열기"
-                                          className="bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                          title={`2027년 프로그램 참여 신청서 열기${isAppSubmitted ? ' (작성완료)' : ''}`}
+                                          className={`${isAppSubmitted
+                                            ? 'bg-blue-600 hover:bg-blue-700 text-white ring-1 ring-inset ring-blue-700'
+                                            : 'bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200'
+                                          } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >
-                                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                          <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isAppSubmitted ? 'text-white' : 'text-blue-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                             <polyline points="14 2 14 8 20 8" />
                                             <line x1="16" y1="13" x2="8" y2="13" />
@@ -3740,10 +3867,13 @@ export default function MainApp({
                                             const url = `/survey_form.html?type=pre${singleStudent ? `&name=${encodeURIComponent(singleStudent)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
                                             window.open(url, '_blank');
                                           }}
-                                          title="2027년 1:1 디지털 교육 사전설문지 열기"
-                                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                          title={`2027년 1:1 디지털 교육 사전설문지 열기${isPreSubmitted ? ' (작성완료)' : ''}`}
+                                          className={`${isPreSubmitted
+                                            ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-1 ring-inset ring-indigo-700'
+                                            : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200'
+                                          } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >
-                                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                          <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPreSubmitted ? 'text-white' : 'text-indigo-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
                                             <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
                                             <path d="m9 14 2 2 4-4" />
@@ -3757,11 +3887,14 @@ export default function MainApp({
                                             const url = `/survey_form.html?type=post${singleStudent ? `&name=${encodeURIComponent(singleStudent)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
                                             window.open(url, '_blank');
                                           }}
-                                          title="2027년 1:1 디지털 교육 사후설문지 열기"
-                                          className="bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                          title={`2027년 1:1 디지털 교육 사후설문지 열기${isPostSubmitted ? ' (작성완료)' : ''}`}
+                                          className={`${isPostSubmitted
+                                            ? 'bg-purple-600 hover:bg-purple-700 text-white ring-1 ring-inset ring-purple-700'
+                                            : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
+                                          } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >
-                                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                          <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPostSubmitted ? 'text-white' : 'text-purple-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2h2" />
                                             <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
                                             <path d="m9 14 2 2 4-4" />
                                           </svg>
