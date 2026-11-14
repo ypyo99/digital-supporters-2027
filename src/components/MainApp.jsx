@@ -3591,16 +3591,16 @@ export default function MainApp({
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(c)}
-                                                className={`${sessionColorClass} border px-2 sm:px-2.5 py-0.5 rounded-full text-[13px] sm:text-[15px] md:text-base tracking-tight whitespace-nowrap shrink-0 transition-all cursor-pointer hover:brightness-95 active:scale-95`}
+                                                className={`${sessionColorClass} border px-1.5 py-0.5 rounded-full text-[12px] sm:text-[13px] leading-tight tracking-tight whitespace-nowrap shrink-0 transition-all cursor-pointer hover:brightness-95 active:scale-95 min-w-[22px] text-center`}
                                               >
-                                                {c.count}회차
+                                                {c.count}
                                               </button>
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentHistory(c)}
-                                                className="ml-1 bg-white text-emerald-700 border-emerald-300 border px-2 sm:px-2.5 py-0.5 rounded-full text-[13px] sm:text-[15px] md:text-base tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:bg-emerald-50 active:scale-95 font-bold"
+                                                className="ml-1 bg-white text-emerald-700 border-emerald-300 border px-1.5 py-0.5 rounded-full text-[12px] sm:text-[13px] leading-tight tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:bg-emerald-50 active:scale-95 font-bold"
                                               >
-                                                이전교육
+                                                이전
                                               </button>
                                             </div>
                                           );
