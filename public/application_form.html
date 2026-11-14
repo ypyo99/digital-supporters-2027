@@ -1293,6 +1293,19 @@
                     console.warn('로컬 스토리지 백업 실패:', e);
                 }
 
+                // BroadcastChannel 알림
+                try {
+                    if (typeof BroadcastChannel !== 'undefined') {
+                        const ch = new BroadcastChannel('form_status_channel');
+                        ch.postMessage({
+                            type: 'form_saved',
+                            surveyType: 'app',
+                            name: applicantName
+                        });
+                        ch.close();
+                    }
+                } catch (e) {}
+
                 if (!supabaseClient) {
                     throw new Error('Supabase 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
                 }

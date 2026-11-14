@@ -384,20 +384,20 @@ export default function MainApp({
       // 2. Supabase DB 조회
       if (supabaseClient) {
         try {
-          const [appRes, preRes, postRes] = await Promise.all([
+          const [appRes, preRes, postRes] = await Promise.allSettled([
             supabaseClient.from('application_forms').select('applicant_name'),
             supabaseClient.from('pre_surveys').select('participant_name'),
             supabaseClient.from('post_surveys').select('participant_name')
           ]);
 
-          if (appRes.data) {
-            appRes.data.forEach(r => addNameToSet(appSet, r.applicant_name));
+          if (appRes.status === 'fulfilled' && appRes.value?.data) {
+            appRes.value.data.forEach(r => addNameToSet(appSet, r.applicant_name));
           }
-          if (preRes.data) {
-            preRes.data.forEach(r => addNameToSet(preSet, r.participant_name));
+          if (preRes.status === 'fulfilled' && preRes.value?.data) {
+            preRes.value.data.forEach(r => addNameToSet(preSet, r.participant_name));
           }
-          if (postRes.data) {
-            postRes.data.forEach(r => addNameToSet(postSet, r.participant_name));
+          if (postRes.status === 'fulfilled' && postRes.value?.data) {
+            postRes.value.data.forEach(r => addNameToSet(postSet, r.participant_name));
           }
         } catch (err) {
           console.warn('Supabase form status fetch error:', err);
@@ -426,14 +426,49 @@ export default function MainApp({
       }
     };
 
+    let channel = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        channel = new BroadcastChannel('form_status_channel');
+        channel.onmessage = (msg) => {
+          if (msg?.data?.name) {
+            setSubmittedForms(prev => {
+              const next = {
+                apps: new Set(prev.apps),
+                preSurveys: new Set(prev.preSurveys),
+                postSurveys: new Set(prev.postSurveys)
+              };
+              const target = msg.data.surveyType === 'app'
+                ? next.apps
+                : (msg.data.surveyType === 'post' ? next.postSurveys : next.preSurveys);
+              const clean = String(msg.data.name).trim();
+              if (clean) {
+                target.add(clean);
+                const base = clean.split('(')[0].trim();
+                if (base) target.add(base);
+              }
+              return next;
+            });
+          }
+          fetchFormSubmissionStatus();
+        };
+      }
+    } catch (e) {}
+
     window.addEventListener('focus', handleFocus);
     window.addEventListener('storage', handleStorage);
 
+    const pollInterval = setInterval(() => {
+      fetchFormSubmissionStatus();
+    }, 10000);
+
     return () => {
+      if (channel) channel.close();
+      clearInterval(pollInterval);
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('storage', handleStorage);
     };
-  }, [fetchFormSubmissionStatus]);
+  }, [date, refreshTrigger, fetchFormSubmissionStatus]);
 
   const [weatherData, setWeatherData] = useState(null);
 
@@ -3811,7 +3846,7 @@ export default function MainApp({
                                                   }}
                                                   title={`${sName} 님의 2027년 1:1 디지털 교육 사후설문지 열기${isPostSubmitted ? ' (작성완료)' : ''}`}
                                                   className={`${isPostSubmitted
-                                                    ? 'bg-purple-600 hover:bg-purple-700 text-white ring-1 ring-inset ring-purple-700'
+                                                    ? 'bg-purple-700 hover:bg-purple-800 text-white ring-1 ring-inset ring-purple-800'
                                                     : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
                                                   } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
@@ -3889,7 +3924,7 @@ export default function MainApp({
                                           }}
                                           title={`2027년 1:1 디지털 교육 사후설문지 열기${isPostSubmitted ? ' (작성완료)' : ''}`}
                                           className={`${isPostSubmitted
-                                            ? 'bg-purple-600 hover:bg-purple-700 text-white ring-1 ring-inset ring-purple-700'
+                                            ? 'bg-purple-700 hover:bg-purple-800 text-white ring-1 ring-inset ring-purple-800'
                                             : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
                                           } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >

@@ -2073,6 +2073,21 @@
       };
       saveSurveyLocally(localItem);
 
+      // 3. Broadcast to other open tabs (e.g. MainApp schedule view)
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ch = new BroadcastChannel('form_status_channel');
+          ch.postMessage({
+            type: 'survey_saved',
+            surveyType: isPostSurvey ? 'post' : 'pre',
+            name: participantName
+          });
+          ch.close();
+        }
+      } catch (e) {
+        console.warn('BroadcastChannel error:', e);
+      }
+
       if (btnSaveFloating) {
         btnSaveFloating.disabled = false;
         if (saveBtnText) saveBtnText.innerText = '저장';
