@@ -290,6 +290,14 @@
       margin-bottom: 0.75rem;
     }
 
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
     .print-section-header {
       display: flex;
       align-items: center;
@@ -297,25 +305,30 @@
       padding: 0.4rem 0.75rem;
       border-radius: 0.5rem 0.5rem 0 0;
       color: #ffffff;
+      white-space: nowrap !important;
     }
 
     .print-section-title-wrap {
       display: flex;
       align-items: baseline;
       gap: 0.35rem;
-      flex-wrap: wrap;
+      flex-wrap: nowrap !important;
+      white-space: nowrap !important;
     }
 
     .print-section-title {
       font-size: 0.85rem;
       font-weight: 700;
       color: #ffffff;
+      white-space: nowrap !important;
+      flex-shrink: 0;
     }
 
     .print-section-desc {
       font-size: 0.75rem;
       font-weight: 400;
       opacity: 0.85;
+      white-space: nowrap !important;
     }
 
     .print-section-badge {
@@ -323,7 +336,8 @@
       font-weight: 600;
       padding: 0.15rem 0.5rem;
       border-radius: 9999px;
-      white-space: nowrap;
+      white-space: nowrap !important;
+      flex-shrink: 0;
     }
 
     /* Section Theme Colors */
@@ -1205,12 +1219,12 @@
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="awareness">
             <div
-              class="bg-slate-800 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
-              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
-                ■ 디지털 인식
-                <span class="text-xs sm:text-sm font-normal text-slate-300">(핵심변화: 디지털에 대한 두려움 감소 및 자신감 향상)</span>
+              class="bg-slate-800 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-t-xl flex items-center justify-between gap-1.5 sm:gap-2 whitespace-nowrap overflow-x-auto sm:overflow-x-visible no-scrollbar">
+              <h3 class="text-xs sm:text-sm md:text-base font-bold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0">
+                <span class="whitespace-nowrap shrink-0">■ 디지털 인식</span>
+                <span class="text-[11px] sm:text-xs md:text-sm font-normal text-slate-300 whitespace-nowrap">(핵심변화: 디지털에 대한 두려움 감소 및 자신감 향상)</span>
               </h3>
-              <span class="text-xs bg-slate-700 text-slate-200 px-2.5 py-0.5 rounded-full font-medium">1번 ~ 3번 문항</span>
+              <span class="text-[10px] sm:text-xs bg-slate-700 text-slate-200 px-2 sm:px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap shrink-0">1번 ~ 3번 문항</span>
             </div>
 
             <!-- Questions Container -->
@@ -1260,12 +1274,12 @@
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="usage">
             <div
-              class="bg-blue-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
-              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
-                ■ 디지털 이용
-                <span class="text-xs sm:text-sm font-normal text-blue-200">(핵심변화: 생활 속 디지털 활용 능력 향상)</span>
+              class="bg-blue-900 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-t-xl flex items-center justify-between gap-1.5 sm:gap-2 whitespace-nowrap overflow-x-auto sm:overflow-x-visible no-scrollbar">
+              <h3 class="text-xs sm:text-sm md:text-base font-bold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0">
+                <span class="whitespace-nowrap shrink-0">■ 디지털 이용</span>
+                <span class="text-[11px] sm:text-xs md:text-sm font-normal text-blue-200 whitespace-nowrap">(핵심변화: 생활 속 디지털 활용 능력 향상)</span>
               </h3>
-              <span class="text-xs bg-blue-800 text-blue-100 px-2.5 py-0.5 rounded-full font-medium">4번 ~ 9번 문항</span>
+              <span class="text-[10px] sm:text-xs bg-blue-800 text-blue-100 px-2 sm:px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap shrink-0">4번 ~ 9번 문항</span>
             </div>
 
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
@@ -1350,13 +1364,12 @@
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="communication">
             <div
-              class="bg-indigo-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
-              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
-                ■ 디지털 소통
-                <span class="text-xs sm:text-sm font-normal text-indigo-200">(핵심변화: 가족·사회와의 소통 확대)</span>
+              class="bg-indigo-900 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-t-xl flex items-center justify-between gap-1.5 sm:gap-2 whitespace-nowrap overflow-x-auto sm:overflow-x-visible no-scrollbar">
+              <h3 class="text-xs sm:text-sm md:text-base font-bold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0">
+                <span class="whitespace-nowrap shrink-0">■ 디지털 소통</span>
+                <span class="text-[11px] sm:text-xs md:text-sm font-normal text-indigo-200 whitespace-nowrap">(핵심변화: 가족·사회와의 소통 확대)</span>
               </h3>
-              <span class="text-xs bg-indigo-800 text-indigo-100 px-2.5 py-0.5 rounded-full font-medium">10번 ~ 12번
-                문항</span>
+              <span class="text-[10px] sm:text-xs bg-indigo-800 text-indigo-100 px-2 sm:px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap shrink-0">10번 ~ 12번 문항</span>
             </div>
 
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
@@ -1405,12 +1418,12 @@
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="citizenship">
             <div
-              class="bg-teal-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
-              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
-                ■ 디지털 시민성
-                <span class="text-xs sm:text-sm font-normal text-teal-200">(핵심변화: 안전한 디지털 사용 습관 형성)</span>
+              class="bg-teal-900 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-t-xl flex items-center justify-between gap-1.5 sm:gap-2 whitespace-nowrap overflow-x-auto sm:overflow-x-visible no-scrollbar">
+              <h3 class="text-xs sm:text-sm md:text-base font-bold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shrink-0">
+                <span class="whitespace-nowrap shrink-0">■ 디지털 시민성</span>
+                <span class="text-[11px] sm:text-xs md:text-sm font-normal text-teal-200 whitespace-nowrap">(핵심변화: 안전한 디지털 사용 습관 형성)</span>
               </h3>
-              <span class="text-xs bg-teal-800 text-teal-100 px-2.5 py-0.5 rounded-full font-medium">13번 ~ 15번 문항</span>
+              <span class="text-[10px] sm:text-xs bg-teal-800 text-teal-100 px-2 sm:px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap shrink-0">13번 ~ 15번 문항</span>
             </div>
 
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
