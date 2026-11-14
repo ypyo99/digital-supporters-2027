@@ -2141,13 +2141,18 @@
     }
 
     // Reset Form State
-    function handleResetForm(askConfirm = true) {
-      if (askConfirm && !confirm('작성 중인 설문 내용을 초기화하시겠습니까?\n(학생 이름과 조사자 이름은 유지됩니다)')) {
+    async function handleResetForm(askConfirm = true) {
+      const confirmMsg = isPostSurvey
+        ? '사후 설문지를 초기화하고 사전 설문지 데이터를 다시 불러오시겠습니까?\n(학생 이름과 조사자 이름은 유지됩니다)'
+        : '작성 중인 설문 내용을 초기화하시겠습니까?\n(학생 이름과 조사자 이름은 유지됩니다)';
+
+      if (askConfirm && !confirm(confirmMsg)) {
         return;
       }
 
       currentSurveyId = null;
       state.answers = {};
+      state.feedback = '';
       const feedbackInput = document.getElementById('feedback');
 
       // 학생이름(참여자 성명), 조사자 이름은 초기화하지 않고 유지
@@ -2157,12 +2162,75 @@
       document.querySelectorAll('.scale-btn').forEach(btn => btn.classList.remove('selected'));
       document.querySelectorAll('.question-item').forEach(item => item.classList.remove('has-error'));
 
-      const statusBanner = document.getElementById('statusBanner');
-      if (statusBanner) statusBanner.classList.add('hidden');
+      const participantInput = document.getElementById('participantName');
+      const cleanName = participantInput?.value?.trim() || '';
+
+      if (isPostSurvey) {
+        let preData = loadedPreSurvey;
+        // If loadedPreSurvey doesn't match current participant, fetch it
+        if (!preData || (cleanName && preData.participant_name !== cleanName && preData.participantName !== cleanName)) {
+          if (cleanName) {
+            if (supabaseClient) {
+              try {
+                const { data, error } = await supabaseClient
+                  .from('pre_surveys')
+                  .select('*')
+                  .eq('participant_name', cleanName)
+                  .order('created_at', { ascending: false })
+                  .limit(1);
+
+                if (!error && data && data.length > 0) {
+                  preData = data[0];
+                }
+              } catch (e) {
+                console.warn('Supabase fetch pre_surveys error on reset:', e);
+              }
+            }
+            if (!preData) {
+              const localPreList = getLocalSurveys('pre');
+              preData = localPreList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
+            }
+          }
+        }
+
+        loadedPreSurvey = preData;
+
+        if (preData) {
+          const answers = preData.answers || {};
+          for (let i = 1; i <= 15; i++) {
+            const val = Number(answers[`q${i}`]);
+            if (val) {
+              selectOption(i, val);
+            }
+          }
+
+          const surveyorInput = document.getElementById('surveyorName');
+          if (surveyorInput && !surveyorInput.value && (preData.surveyor_name || preData.surveyorName)) {
+            surveyorInput.value = preData.surveyor_name || preData.surveyorName;
+          }
+
+          const preDateDisplay = preData.survey_date || preData.surveyDate || '';
+          showStatusBanner('info', `
+            <div>[<strong>${escapeHtml(cleanName || '대상자')}</strong>] 님의 <strong>사전설문지 응답 결과</strong>를 불러왔습니다.</div>
+            <div class="text-xs sm:text-sm text-blue-800 font-medium mt-1">1:1 교육 후 변화된 항목의 점수를 수정한 후 저장해 주세요. ${preDateDisplay ? `(사전조사일: ${preDateDisplay})` : ''}</div>
+          `);
+          showToast('사전설문지 데이터를 바탕으로 사후설문지를 초기화했습니다.');
+        } else {
+          showStatusBanner('info', cleanName
+            ? `[<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지 기록이 없습니다. 새로운 사후설문을 입력해 주세요.`
+            : '사전설문지 기록이 없습니다. 새로운 사후설문을 입력해 주세요.');
+          showToast('사전설문지 기록이 없어 빈 설문지로 초기화되었습니다.');
+        }
+
+        renderPrePostAnalysis();
+      } else {
+        const statusBanner = document.getElementById('statusBanner');
+        if (statusBanner) statusBanner.classList.add('hidden');
+        showToast('설문지가 초기화되었습니다. (학생 및 조사자 이름 유지)');
+      }
 
       updateProgress();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      showToast('설문지가 초기화되었습니다. (학생 및 조사자 이름 유지)');
     }
 
     // Metric Calculation
