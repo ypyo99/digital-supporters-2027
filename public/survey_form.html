@@ -852,7 +852,7 @@
       <!-- Title & Progress -->
       <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between gap-2 mb-1">
-          <span class="text-xs sm:text-sm font-bold text-slate-800 truncate">
+          <span id="topBarTitle" class="text-xs sm:text-sm font-bold text-slate-800 truncate">
             📋 2027년 1:1 디지털 교육 사전 설문지
           </span>
           <span id="mobileProgressText" class="text-xs font-bold text-blue-700 whitespace-nowrap">
@@ -908,9 +908,9 @@
             </span>
           </div>
           <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
-            2027년 역량활용사업 1:1 디지털 교육 설문조사지<span class="text-blue-700">(사전)</span>
+            2027년 역량활용사업 1:1 디지털 교육 설문조사지<span id="surveyTypeBadge" class="text-blue-700">(사전)</span>
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 mt-2">
+          <p id="surveyTypeDesc" class="text-xs sm:text-sm text-slate-600 mt-2">
             본 설문은 참여 어르신의 디지털 기기 활용 수준을 사전에 파악하여 맞춤형 1:1 교육 계획을 수립하기 위한 기초 자료로 활용됩니다.
           </p>
         </div>
@@ -1348,8 +1348,14 @@
     }
 
     // -------------------------------------------------------------
-    // State Management
+    // Survey Type & State Management
     // -------------------------------------------------------------
+    const urlParams = new URLSearchParams(window.location.search);
+    const surveyType = (urlParams.get('type') || 'pre').toLowerCase() === 'post' ? 'post' : 'pre';
+    const isPostSurvey = surveyType === 'post';
+    const typeLabel = isPostSurvey ? '사후' : '사전';
+    const tableName = isPostSurvey ? 'post_surveys' : 'pre_surveys';
+
     let currentSurveyId = null; // Supabase record ID if editing existing
     const state = {
       currentFontSize: 'normal',
@@ -1443,13 +1449,13 @@
     // App Initialization
     // -------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', async () => {
+      initSurveyTypeUI();
       initTodayDate();
       renderScaleButtons();
       setupEventListeners();
       loadSavedFontSize();
       
       // Read URL Query Parameters (?name=...&surveyor=...)
-      const urlParams = new URLSearchParams(window.location.search);
       const nameParam = (urlParams.get('name') || '').trim();
       const surveyorParam = (urlParams.get('surveyor') || '').trim();
 
@@ -1464,6 +1470,26 @@
         await loadExistingSurvey(nameParam);
       }
     });
+
+    function initSurveyTypeUI() {
+      document.title = `2027년 역량활용사업 1:1 디지털 교육 설문조사지(${typeLabel}) - 시립성동노인종합복지관`;
+      
+      const topBarTitle = document.getElementById('topBarTitle');
+      if (topBarTitle) {
+        topBarTitle.textContent = `📋 2027년 1:1 디지털 교육 ${typeLabel} 설문지`;
+      }
+
+      const badge = document.getElementById('surveyTypeBadge');
+      if (badge) {
+        badge.textContent = `(${typeLabel})`;
+        badge.className = isPostSurvey ? 'text-purple-700' : 'text-blue-700';
+      }
+
+      const desc = document.getElementById('surveyTypeDesc');
+      if (desc && isPostSurvey) {
+        desc.textContent = '본 설문은 1:1 디지털 교육 후 어르신의 디지털 기기 활용 역량 및 인식 변화를 파악하여 교육 효과성을 평가하기 위한 자료로 활용됩니다.';
+      }
+    }
 
     // 1. Set Today's Date
     function initTodayDate() {
@@ -1586,44 +1612,141 @@
       if (!name) return;
       const cleanName = name.trim();
 
-      let surveyData = null;
+      if (isPostSurvey) {
+        // [사후설문지 모드]
+        let postData = null;
 
-      // 1. Try Supabase
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient
-            .from('pre_surveys')
-            .select('*')
-            .eq('participant_name', cleanName)
-            .order('created_at', { ascending: false })
-            .limit(1);
+        // 1. 기존 저장된 사후설문지가 이미 존재하는지 확인 (Supabase)
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('post_surveys')
+              .select('*')
+              .eq('participant_name', cleanName)
+              .order('created_at', { ascending: false })
+              .limit(1);
 
-          if (!error && data && data.length > 0) {
-            surveyData = data[0];
+            if (!error && data && data.length > 0) {
+              postData = data[0];
+            }
+          } catch (e) {
+            console.warn('Supabase fetch existing post_surveys error:', e);
           }
-        } catch (e) {
-          console.warn('Supabase fetch existing survey error:', e);
         }
-      }
 
-      // 2. Fallback to localStorage
-      if (!surveyData) {
-        const localList = getLocalSurveys();
-        surveyData = localList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
-      }
+        // 2. 로컬 백업에서 사후설문지 확인
+        if (!postData) {
+          const localPostList = getLocalSurveys('post');
+          postData = localPostList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
+        }
 
-      if (surveyData) {
-        currentSurveyId = surveyData.id;
-        populateSurveyForm(surveyData);
-        
-        const dateDisplay = surveyData.survey_date || surveyData.surveyDate || (surveyData.created_at ? surveyData.created_at.slice(0, 10) : '');
-        const msg = dateDisplay
-          ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
-          : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지를 성공적으로 불러왔습니다.</div>`;
-        showStatusBanner('success', msg);
+        // 3. 이미 작성된 사후설문지가 있는 경우 -> 해당 사후설문지 내용 로드
+        if (postData) {
+          currentSurveyId = postData.id;
+          populateSurveyForm(postData);
+
+          const dateDisplay = postData.survey_date || postData.surveyDate || (postData.created_at ? postData.created_at.slice(0, 10) : '');
+          const msg = dateDisplay
+            ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
+            : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div>`;
+          showStatusBanner('success', msg);
+          return;
+        }
+
+        // 4. 사후설문지가 없는 경우 -> 기본적으로 "사전설문지"로부터 값을 읽어옴!
+        let preData = null;
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('pre_surveys')
+              .select('*')
+              .eq('participant_name', cleanName)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (!error && data && data.length > 0) {
+              preData = data[0];
+            }
+          } catch (e) {
+            console.warn('Supabase fetch pre_surveys for post default error:', e);
+          }
+        }
+
+        if (!preData) {
+          const localPreList = getLocalSurveys('pre');
+          preData = localPreList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
+        }
+
+        if (preData) {
+          currentSurveyId = null; // 신규 사후 설문 작성이므로 ID는 null
+
+          // 사전설문지의 점수들을 기본값으로 설정
+          const answers = preData.answers || {};
+          state.answers = {};
+          for (let i = 1; i <= 15; i++) {
+            const val = Number(answers[`q${i}`]);
+            if (val) {
+              selectOption(i, val);
+            }
+          }
+
+          // 조사자 이름이 현재 폼에 비어있다면 사전설문지의 조사자 이름 채우기
+          const surveyorInput = document.getElementById('surveyorName');
+          if (surveyorInput && !surveyorInput.value && (preData.surveyor_name || preData.surveyorName)) {
+            surveyorInput.value = preData.surveyor_name || preData.surveyorName;
+          }
+
+          const preDateDisplay = preData.survey_date || preData.surveyDate || '';
+          showStatusBanner('info', `
+            <div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지 응답 결과</strong>를 기본값으로 불러왔습니다.</div>
+            <div class="text-xs sm:text-sm text-blue-800 font-medium mt-1">1:1 교육 후 변화된 항목의 점수를 수정하신 뒤 저장해 주세요. ${preDateDisplay ? `(사전조사일: ${preDateDisplay})` : ''}</div>
+          `);
+        } else {
+          currentSurveyId = null;
+          showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지 기록이 없습니다. 새로운 사후설문을 입력해 주세요.`);
+        }
+
       } else {
-        currentSurveyId = null;
-        showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 기존 저장된 설문지가 없습니다. 새 설문을 입력해주세요.`);
+        // [사전설문지 모드]
+        let surveyData = null;
+
+        // 1. Try Supabase
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('pre_surveys')
+              .select('*')
+              .eq('participant_name', cleanName)
+              .order('created_at', { ascending: false })
+              .limit(1);
+
+            if (!error && data && data.length > 0) {
+              surveyData = data[0];
+            }
+          } catch (e) {
+            console.warn('Supabase fetch existing survey error:', e);
+          }
+        }
+
+        // 2. Fallback to localStorage
+        if (!surveyData) {
+          const localList = getLocalSurveys('pre');
+          surveyData = localList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
+        }
+
+        if (surveyData) {
+          currentSurveyId = surveyData.id;
+          populateSurveyForm(surveyData);
+          
+          const dateDisplay = surveyData.survey_date || surveyData.surveyDate || (surveyData.created_at ? surveyData.created_at.slice(0, 10) : '');
+          const msg = dateDisplay
+            ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
+            : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 성공적으로 불러왔습니다.</div>`;
+          showStatusBanner('success', msg);
+        } else {
+          currentSurveyId = null;
+          showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 기존 저장된 사전설문지가 없습니다. 새 설문을 입력해주세요.`);
+        }
       }
     }
 
@@ -1708,9 +1831,17 @@
         window.print();
       });
 
+      // Name input change handler to auto-load survey
+      document.getElementById('participantName')?.addEventListener('blur', (e) => {
+        const val = e.target.value?.trim();
+        if (val) {
+          loadExistingSurvey(val);
+        }
+      });
+
       // Browser Ctrl+P handler to sync print modal content
       window.addEventListener('beforeprint', () => {
-        const participantName = document.getElementById('participantName')?.value?.trim() || '사전설문지';
+        const participantName = document.getElementById('participantName')?.value?.trim() || `${typeLabel}설문지`;
         const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
         const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
         const feedback = document.getElementById('feedback')?.value?.trim() || '';
@@ -1842,7 +1973,7 @@
           if (currentSurveyId) {
             // Update existing
             const { data, error } = await supabaseClient
-              .from('pre_surveys')
+              .from(tableName)
               .update({
                 ...payload,
                 updated_at: new Date().toISOString()
@@ -1853,12 +1984,12 @@
             if (!error && data && data.length > 0) {
               savedRecord = data[0];
             } else if (error) {
-              console.error('Supabase update error:', error);
+              console.error(`Supabase ${tableName} update error:`, error);
             }
           } else {
             // Insert new
             const { data, error } = await supabaseClient
-              .from('pre_surveys')
+              .from(tableName)
               .insert([payload])
               .select();
 
@@ -1866,17 +1997,18 @@
               savedRecord = data[0];
               currentSurveyId = savedRecord.id;
             } else if (error) {
-              console.error('Supabase insert error:', error);
+              console.error(`Supabase ${tableName} insert error:`, error);
             }
           }
         } catch (e) {
-          console.error('Supabase save exception:', e);
+          console.error(`Supabase ${tableName} save exception:`, e);
         }
       }
 
       // 2. Backup to localStorage
       const localItem = {
-        id: savedRecord ? savedRecord.id : (currentSurveyId || 'srv_' + Date.now()),
+        id: savedRecord ? savedRecord.id : (currentSurveyId || 'srv_' + (isPostSurvey ? 'post_' : 'pre_') + Date.now()),
+        survey_type: surveyType,
         ...payload,
         metrics,
         createdAt: new Date().toISOString()
@@ -1889,17 +2021,21 @@
         btnSaveFloating.classList.remove('opacity-75', 'cursor-not-allowed');
       }
 
-      showToast(`'${participantName}' 님의 설문이 성공적으로 저장되었습니다!`, '🎉');
-      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 사전설문지가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`);
+      showToast(`'${participantName}' 님의 ${typeLabel}설문이 성공적으로 저장되었습니다!`, '🎉');
+      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 <strong>${typeLabel}설문지</strong>가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`);
 
       setTimeout(() => {
-        alert(`[${participantName}] 님의 사전설문지가 Supabase에 성공적으로 저장되었습니다!`);
+        if (savedRecord) {
+          alert(`[${participantName}] 님의 ${typeLabel}설문지가 Supabase에 성공적으로 저장되었습니다!`);
+        } else {
+          alert(`[${participantName}] 님의 ${typeLabel}설문지가 로컬에 안전하게 저장되었습니다.\n(데이터베이스 테이블 연동 전이거나 오프라인일 때 로컬에 안전하게 보관됩니다)`);
+        }
       }, 150);
     }
 
     // Print Survey
     function handlePrintSurvey() {
-      const participantName = document.getElementById('participantName')?.value?.trim() || '사전설문지';
+      const participantName = document.getElementById('participantName')?.value?.trim() || `${typeLabel}설문지`;
       const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
       const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
       const feedback = document.getElementById('feedback')?.value?.trim() || '';
@@ -1997,24 +2133,32 @@
     }
 
     // LocalStorage management
+    function getLocalBackupKey(targetType = null) {
+      const type = targetType || surveyType;
+      return type === 'post' ? 'digital_surveys_post_backup' : 'digital_surveys_backup';
+    }
+
     function saveSurveyLocally(surveyItem) {
       try {
-        const list = getLocalSurveys();
+        const itemType = surveyItem.survey_type || surveyType;
+        const key = getLocalBackupKey(itemType);
+        const list = getLocalSurveys(itemType);
         const existingIndex = list.findIndex(s => String(s.id) === String(surveyItem.id));
         if (existingIndex >= 0) {
           list[existingIndex] = surveyItem;
         } else {
           list.unshift(surveyItem);
         }
-        localStorage.setItem('digital_surveys_backup', JSON.stringify(list));
+        localStorage.setItem(key, JSON.stringify(list));
       } catch (e) {
         console.error('LocalStorage write error:', e);
       }
     }
 
-    function getLocalSurveys() {
+    function getLocalSurveys(targetType = null) {
       try {
-        const raw = localStorage.getItem('digital_surveys_backup');
+        const key = getLocalBackupKey(targetType);
+        const raw = localStorage.getItem(key);
         return raw ? JSON.parse(raw) : [];
       } catch (e) {
         return [];
@@ -2075,7 +2219,7 @@
             <!-- Header Title -->
             <div class="print-header">
               <h2>
-                2027년 역량활용사업 1:1 디지털 교육 설문조사지(사전)
+                2027년 역량활용사업 1:1 디지털 교육 설문조사지(${typeLabel})
               </h2>
               <div class="print-subtitle">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
             </div>

@@ -3652,7 +3652,7 @@ export default function MainApp({
                                                   type="button"
                                                   onClick={() => {
                                                     const surveyor = currentUser || "";
-                                                    const url = `/survey_form.html${clean ? `?name=${encodeURIComponent(clean)}` : ''}${surveyor ? `${clean ? '&' : '?'}surveyor=${encodeURIComponent(surveyor)}` : ''}`;
+                                                    const url = `/survey_form.html?type=pre${clean ? `&name=${encodeURIComponent(clean)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
                                                     window.open(url, '_blank');
                                                   }}
                                                   title={`${sName} 님의 2027년 1:1 디지털 교육 사전설문지 열기`}
@@ -3664,6 +3664,23 @@ export default function MainApp({
                                                     <path d="m9 14 2 2 4-4" />
                                                   </svg>
                                                   <span>사전설문지 ({sName})</span>
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    const surveyor = currentUser || "";
+                                                    const url = `/survey_form.html?type=post${clean ? `&name=${encodeURIComponent(clean)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
+                                                    window.open(url, '_blank');
+                                                  }}
+                                                  title={`${sName} 님의 2027년 1:1 디지털 교육 사후설문지 열기`}
+                                                  className="bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                                >
+                                                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                                                    <path d="m9 14 2 2 4-4" />
+                                                  </svg>
+                                                  <span>사후설문지 ({sName})</span>
                                                 </button>
                                               </React.Fragment>
                                             );
@@ -3700,7 +3717,7 @@ export default function MainApp({
                                           type="button"
                                           onClick={() => {
                                             const surveyor = currentUser || "";
-                                            const url = `/survey_form.html${singleStudent ? `?name=${encodeURIComponent(singleStudent)}` : ''}${surveyor ? `${singleStudent ? '&' : '?'}surveyor=${encodeURIComponent(surveyor)}` : ''}`;
+                                            const url = `/survey_form.html?type=pre${singleStudent ? `&name=${encodeURIComponent(singleStudent)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
                                             window.open(url, '_blank');
                                           }}
                                           title="2027년 1:1 디지털 교육 사전설문지 열기"
@@ -3712,6 +3729,23 @@ export default function MainApp({
                                             <path d="m9 14 2 2 4-4" />
                                           </svg>
                                           <span>사전설문지</span>
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const surveyor = currentUser || "";
+                                            const url = `/survey_form.html?type=post${singleStudent ? `&name=${encodeURIComponent(singleStudent)}` : ''}${surveyor ? `&surveyor=${encodeURIComponent(surveyor)}` : ''}`;
+                                            window.open(url, '_blank');
+                                          }}
+                                          title="2027년 1:1 디지털 교육 사후설문지 열기"
+                                          className="bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                        >
+                                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                                            <path d="m9 14 2 2 4-4" />
+                                          </svg>
+                                          <span>사후설문지</span>
                                         </button>
                                       </div>
                                     );
