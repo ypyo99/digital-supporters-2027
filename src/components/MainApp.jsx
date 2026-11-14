@@ -3097,43 +3097,43 @@ export default function MainApp({
               onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }}
               icon={<CalendarClockIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="팀별 오늘 일정"
-              tone="indigo"
+              tone="blue"
             />
             <MenuCard
               onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }}
               icon={<CalendarDaysIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="전체 일정 보기/엑셀 다운로드"
-              tone="emerald"
+              tone="blue"
             />
             <MenuCard
               href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>}
               label="수업 희망자 및 기타 참여자 관리"
-              tone="amber"
+              tone="blue"
             />
             <MenuCard
               onClick={onNavigateToStudentSearch}
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><path d="M11 8a3 3 0 0 0-3 3" /></svg>}
               label="대상자 검색"
-              tone="teal"
+              tone="blue"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToClassroom(); }}
               icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="평생교육실2 사용 현황"
-              tone="sky"
+              tone="blue"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
               icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="낭만스튜디오 사용 현황"
-              tone="pink"
+              tone="blue"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToNoticeManagement(); }}
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>}
               label="공지사항"
-              tone="violet"
+              tone="blue"
             />
 
             <div className="section-label mt-5 sm:mt-6 mb-0.5">관리자 메뉴</div>
@@ -3141,13 +3141,13 @@ export default function MainApp({
               onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
               icon={<UsersIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="선생님 명단 관리"
-              tone="rose"
+              tone="red"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
               label="공휴일/휴무일 관리"
-              tone="orange"
+              tone="red"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
