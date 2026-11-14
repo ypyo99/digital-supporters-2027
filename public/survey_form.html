@@ -1910,7 +1910,10 @@
 
       // Browser Ctrl+P handler to sync print modal content
       window.addEventListener('beforeprint', () => {
-        const participantName = document.getElementById('participantName')?.value?.trim() || `${typeLabel}설문지`;
+        document.title = getSurveyPdfFileName();
+
+        const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
+        const participantName = document.getElementById('participantName')?.value?.trim() || formKind;
         const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
         const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
         const feedback = document.getElementById('feedback')?.value?.trim() || '';
@@ -2117,18 +2120,26 @@
       }, 150);
     }
 
+    function getSurveyPdfFileName() {
+      const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
+      const participantName = document.getElementById('participantName')?.value?.trim() || formKind;
+      const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
+      const cleanDate = surveyDate.replace(/-/g, '');
+      return `2027년_${formKind}_${participantName}_${cleanDate}`;
+    }
+
     // Print / PDF Survey
     function handlePrintSurvey() {
-      const participantName = document.getElementById('participantName')?.value?.trim() || `${typeLabel}설문지`;
+      const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
+      const participantName = document.getElementById('participantName')?.value?.trim() || formKind;
       const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
       const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
       const feedback = document.getElementById('feedback')?.value?.trim() || '';
       const metrics = computeClientMetrics(state.answers);
 
-      // PDF 저장 시 파일 이름 지정 (스마트폰 및 PC에서 기본 저장 파일명으로 사용)
-      const cleanDate = surveyDate.replace(/-/g, '');
+      // PDF 저장 시 파일 이름 지정 (사전설문지: 2027년_사전설문지_학생이름_날짜.pdf, 사후설문지: 2027년_사후설문지_학생이름_날짜.pdf)
       const originalTitle = document.title;
-      document.title = `2027년_1대1_디지털교육_설문조사지(${typeLabel})_${participantName}_${cleanDate}`;
+      document.title = getSurveyPdfFileName();
 
       const fakeSurvey = {
         id: currentSurveyId || 'temp',
