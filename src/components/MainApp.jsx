@@ -2022,13 +2022,13 @@ export default function MainApp({
   const getTagClass = (index, sIdx, tag) => {
     const isActive = logs[index]?.selectedTags && logs[index].selectedTags[sIdx] && logs[index].selectedTags[sIdx].includes(tag);
     if (!isActive) {
-      return 'bg-white text-gray-700 font-bold border-[1.5px] border-gray-300 shadow-[0_2px_0_#9ca3af] active:shadow-[0_0px_0_#9ca3af] active:translate-y-[2px]';
+      return 'bg-white text-gray-600 font-bold border-[1.5px] border-gray-200 shadow-sm hover:border-gray-300 hover:bg-gray-50 active:scale-95';
     }
-    const baseActiveStyle = 'text-white font-bold border-[1.5px] translate-y-[2px] shadow-[inset_0_3px_5px_rgba(0,0,0,0.5)]';
-    if (tag === '결석') return `bg-red-400 border-red-500 ${baseActiveStyle}`;
-    if (tag === '종료') return `bg-orange-350 border-orange-500 ${baseActiveStyle}`;
-    if (tag === '선생님휴가') return `bg-gray-500 border-gray-600 ${baseActiveStyle}`;
-    return `bg-blue-500 border-blue-700 ${baseActiveStyle}`;
+    const baseActiveStyle = 'text-white font-extrabold border-[1.5px] shadow-md active:scale-95';
+    if (tag === '결석') return `bg-rose-500 border-rose-500 shadow-rose-500/30 ${baseActiveStyle}`;
+    if (tag === '종료') return `bg-orange-400 border-orange-400 shadow-orange-400/30 ${baseActiveStyle}`;
+    if (tag === '선생님휴가') return `bg-gray-500 border-gray-500 shadow-gray-500/30 ${baseActiveStyle}`;
+    return `bg-blue-600 border-blue-600 shadow-blue-600/30 ${baseActiveStyle}`;
   };
 
   const handleRepeatSchedule = async () => {
@@ -3276,17 +3276,15 @@ export default function MainApp({
 
   return (
     <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
-      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-20 relative flex justify-between items-center shrink-0 min-h-[70px]">
-        <div className="flex items-center">
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
-            </div>
-            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
-            <div className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <User className="w-4 h-4 mr-1" /> [{selectedTeam}] {currentUser.replace(/\n/g, ' ')} 선생님
-            </div>
+      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-20 relative flex justify-between items-center gap-3 shrink-0 min-h-[70px]">
+        <div className="flex items-center gap-3 min-w-0">
+          <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-9 w-9 hdr-logo object-contain shrink-0" onError={(e) => e.target.style.display = 'none'} />
+          <div className="flex flex-col min-w-0">
+            <p className="text-[13px] sm:text-sm font-semibold text-blue-100 tracking-tight truncate">성동노인종합복지관 · 디지털교육 서포터즈</p>
+            <h1 className="flex items-center gap-2 mt-0.5 min-w-0">
+              <span className="shrink-0 px-2 py-0.5 rounded-md bg-white/20 ring-1 ring-inset ring-white/30 text-[13px] sm:text-sm font-bold">{selectedTeam}</span>
+              <span className="font-extrabold text-[20px] sm:text-[22px] leading-tight tracking-tight truncate">{currentUser.replace(/\n/g, ' ')} <span className="font-semibold text-blue-100 text-[16px] sm:text-[18px]">선생님</span></span>
+            </h1>
           </div>
         </div>
 
@@ -3310,10 +3308,10 @@ export default function MainApp({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <section className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 flex flex-col h-auto animate-fadeIn">
-          <div className="bg-white px-5 pt-3 pb-2 relative rounded-t-2xl">
-            <h2 className="text-xl font-bold text-gray-800 mb-1 border-b pb-2 flex items-center justify-between">
-              <span className="flex items-center"><MainCalendarIcon className="w-5 h-5 mr-2 text-blue-500" /> 근무기록 입력</span>
+        <section className="flex flex-col h-auto">
+          <div className="contents">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 pt-2 pb-1 px-1 flex items-center justify-between tracking-tight">
+              <span className="flex items-center"><MainCalendarIcon className="w-5 h-5 mr-2 text-blue-600" /> 근무기록 입력</span>
 
               <div className="flex items-center">
                 {(isDataLoading) ? (
@@ -3326,7 +3324,7 @@ export default function MainApp({
                   <button
                     type="button"
                     onClick={handleRepeatSchedule}
-                    className="text-[15px] sm:text-[16px] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-bold flex items-center whitespace-nowrap transition-all bg-orange-600 hover:bg-orange-700 text-white shadow-sm active:scale-95 touch-manipulation"
+                    className="text-[15px] sm:text-[16px] px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-bold flex items-center whitespace-nowrap transition-all bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 active:scale-95 touch-manipulation"
                     title="현재의 학생이름과 장소를 이후의 동일 요일들에 복제합니다."
                   >
                     <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5" /> 일정 복제
@@ -3334,13 +3332,14 @@ export default function MainApp({
                 ))}
               </div>
             </h2>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md sm:max-w-xl mx-auto mb-1">
-                <button type="button" onClick={handlePrevDay} disabled={isDataLoading} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-700 shrink-0 transition-all">
+            <div className="contents">
+              <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
+              <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md sm:max-w-xl mx-auto">
+                <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
                 </button>
 
-                <div className={`flex-1 h-10 sm:h-12 relative flex items-center justify-center border-[1.5px] border-blue-400 bg-[#f0f7ff] rounded-xl text-center shadow-sm overflow-hidden transition-all`}>
+                <div className={`flex-1 h-11 sm:h-12 relative flex items-center justify-center ring-1 ring-blue-200 bg-white rounded-xl text-center shadow-sm overflow-hidden transition-all hover:ring-blue-300`}>
                   <input
                     type="date"
                     value={date}
@@ -3368,17 +3367,18 @@ export default function MainApp({
                   </div>
                 </div>
 
-                <button type="button" onClick={handleTodayClick} disabled={isDataLoading} className="text-[13px] sm:text-[15px] px-3 sm:px-4 h-10 sm:h-12 border border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation whitespace-nowrap shrink-0 transition-all">오늘</button>
-                <button type="button" onClick={handleNextDay} disabled={isDataLoading} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-700 shrink-0 transition-all">
+                <button type="button" onClick={handleTodayClick} disabled={isDataLoading} className={`text-[14px] sm:text-[15px] px-3 sm:px-4 h-11 sm:h-12 rounded-xl font-bold flex items-center justify-center active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation whitespace-nowrap shrink-0 transition-all ${date === getLocalDateString(new Date()) ? 'bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200' : 'bg-blue-600 text-white shadow-sm shadow-blue-600/30 hover:bg-blue-700'}`}>오늘</button>
+                <button type="button" onClick={handleNextDay} disabled={isDataLoading} aria-label="다음 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
                 </button>
+              </div>
               </div>
               {errorMessage && <div className="text-red-600 font-bold text-base text-center pb-2">{errorMessage}</div>}
 
 
               {isMissingHeadcount && !isDataLoading && (
                 <div className="mt-2 animate-fadeIn">
-                  <div className="bg-red-50 border-2 border-red-300 rounded-xl p-3 sm:p-4 text-red-800 shadow-sm flex items-center justify-center">
+                  <div className="bg-rose-50 ring-1 ring-rose-200 rounded-2xl p-3 sm:p-4 text-rose-800 shadow-sm flex items-center justify-center">
                     <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
@@ -3391,16 +3391,17 @@ export default function MainApp({
 
               {specialAlerts.length > 0 && (
                 <div className="mt-2 animate-fadeIn">
-                  <div className="bg-orange-100 border-2 border-orange-300 rounded-xl px-2 sm:px-4 py-3 sm:py-4 text-gray-800 shadow-sm overflow-hidden">
-                    <div className="flex items-start gap-1.5 sm:gap-3 w-full">
-                      <div className="bg-orange-300 p-1 sm:p-1.5 rounded-lg shrink-0">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  <div className="bg-white ring-1 ring-amber-200 rounded-2xl px-3 sm:px-4 py-3 sm:py-3.5 text-gray-800 shadow-sm overflow-hidden relative">
+                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-amber-400" aria-hidden="true" />
+                    <div className="flex items-start gap-2.5 sm:gap-3 w-full">
+                      <div className="bg-amber-100 text-amber-600 p-1.5 rounded-lg shrink-0">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <rect x="3" y="4.5" width="18" height="16.5" rx="2" strokeWidth="2.2" /><path strokeLinecap="round" strokeWidth="2.2" d="M8 2.5v4M16 2.5v4M3 9.5h18" />
                         </svg>
                       </div>
                       <div className="flex flex-col gap-0.5 sm:gap-1 w-full min-w-0">
-                        <h4 className="font-bold text-[16px] min-[360px]:text-[17px] sm:text-[20px] leading-tight flex items-center gap-1 sm:gap-2">
-                          📅 주요 일정 안내
+                        <h4 className="font-bold text-[16px] min-[360px]:text-[17px] sm:text-[19px] leading-tight text-gray-900 tracking-tight">
+                          주요 일정 안내
                         </h4>
                         <div className="space-y-1 sm:space-y-1.5 mt-0.5 sm:mt-1">
                           {specialAlerts.map((alert, idx) => {
@@ -3437,14 +3438,14 @@ export default function MainApp({
 
               {!isDataLoading && isCurrentUser20DaysFalse && (
                 <div className="mt-2 animate-fadeIn">
-                  <div className="bg-orange-100 border-2 border-orange-300 rounded-xl p-4 text-orange-800 shadow-sm">
+                  <div className="bg-sky-50 ring-1 ring-sky-200 rounded-2xl p-3.5 sm:p-4 text-sky-900 shadow-sm">
                     <div className="flex items-start gap-3">
-                      <div className="bg-orange-300 p-1.5 rounded-lg shrink-0">
-                        <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-sky-100 p-1.5 rounded-lg shrink-0">
+                        <svg className="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <p className="font-bold text-[15px] sm:text-[17px] leading-snug break-keep text-orange-900">
+                      <p className="font-semibold text-[15px] sm:text-[17px] leading-snug break-keep text-sky-900">
                         대체근무인 경우, 대상자 이름과 장소를 입력하고 화면 하단의 <span className="text-blue-700 font-extrabold">'데이터베이스에 저장하기'</span> 버튼을 누르면 수업을 추가할 수 있습니다.
                       </p>
                     </div>
@@ -3454,11 +3455,11 @@ export default function MainApp({
             </div>
           </div>
 
-          <div className="px-5 pb-5 pt-3">
+          <div className="pb-5 pt-3">
             <form onSubmit={handleSubmit} className="space-y-6">
               {(() => {
                 const holidayBanner = currentSelectedHoliday ? (
-                  <div className={`bg-red-50 border-2 border-red-300 rounded-2xl text-center shadow-lg animate-fadeIn ${currentSelectedHoliday.vacation_available ? 'p-4 sm:p-5 mb-6' : 'p-6 sm:p-8 my-4'}`}>
+                  <div className={`bg-gradient-to-b from-rose-50 to-white ring-1 ring-rose-200 rounded-2xl text-center shadow-md animate-fadeIn ${currentSelectedHoliday.vacation_available ? 'p-4 sm:p-5 mb-6' : 'p-6 sm:p-8 my-4'}`}>
                     <div className={`flex justify-center ${currentSelectedHoliday.vacation_available ? 'mb-2 sm:mb-4' : 'mb-4'}`}>
                       <div className={`bg-red-100 rounded-full ${currentSelectedHoliday.vacation_available ? 'p-2 sm:p-3' : 'p-3'}`}>
                         <span className={`${currentSelectedHoliday.vacation_available ? 'text-3xl sm:text-5xl' : 'text-4xl sm:text-5xl'}`}>
@@ -3498,7 +3499,7 @@ export default function MainApp({
                         <button
                           type="button"
                           onClick={() => setShowDetailedSchedule(!showDetailedSchedule)}
-                          className="bg-red-200 border-2 border-red-300 text-red-900 font-bold px-4 py-2 rounded-xl shadow-sm active:scale-95 transition-all text-[15px] sm:text-lg hover:bg-red-300"
+                          className="bg-white ring-1 ring-rose-300 text-rose-700 font-bold px-4 py-2 rounded-xl shadow-sm active:scale-95 transition-all text-[15px] sm:text-lg hover:bg-rose-50"
                         >
                           {showDetailedSchedule ? '상세 일정 감추기' : '상세 일정 보기'}
                         </button>
@@ -3516,7 +3517,7 @@ export default function MainApp({
                     {holidayBanner}
                     {(!currentSelectedHoliday || !currentSelectedHoliday.vacation_available || showDetailedSchedule) && (
                       <>
-                        <div className="space-y-7">
+                        <div className="space-y-4 sm:space-y-5">
                           {shifts.map((shift, index) => {
                             const isInfoMissing = logs[index] ? (!logs[index].student || !logs[index].student.trim() || (selectedTeam !== '취업팀' && (!logs[index].location || !logs[index].location.trim()))) : true;
                             const locLen = logs[index] && logs[index].location ? logs[index].location.length : 0;
@@ -3532,7 +3533,7 @@ export default function MainApp({
                             const isKyungrodang = combinedText.includes("경로당");
                             const isShowHeadcount = logs[index] ? ((logs[index].student || "").includes("보조강사") || isKyungrodang) : false;
                             const isSpecialDay = logs[index] ? ((logs[index].student || "").includes("공휴일") || (logs[index].location || "").includes("공휴일") || (logs[index].student || "").includes("간담회") || (logs[index].location || "").includes("간담회")) : false;
-                            const cardColorClass = isSpecialDay ? 'bg-red-200 border-red-400' : isKyungrodang ? 'bg-orange-100 border-orange-400' : isMultipleStudents ? 'bg-green-100 border-green-400' : 'bg-blue-50/30 border-blue-300';
+                            const cardColorClass = isSpecialDay ? 'bg-rose-50 ring-rose-200 log-accent-rose' : isKyungrodang ? 'bg-orange-50 ring-orange-200 log-accent-orange' : isMultipleStudents ? 'bg-emerald-50 ring-emerald-200 log-accent-emerald' : 'bg-white ring-gray-200 log-accent-blue';
 
                             const isFutureOrToday = date >= getLocalDateString(new Date());
                             const hasAttendance = logs[index].selectedTags && logs[index].selectedTags.some(tArray => tArray && tArray.length > 0);
@@ -3551,10 +3552,10 @@ export default function MainApp({
                             }
 
                             return (
-                              <div key={index} id={`log-card-${index}`} className={`p-4 sm:p-5 md:p-6 border rounded-xl shadow-md ${cardColorClass}`}>
-                                <div className={`flex justify-between items-center w-full mb-2 sm:mb-3 transition-opacity ${(isDataLoading) ? 'opacity-50' : ''}`}>
-                                  <div className="flex items-center text-blue-700 font-bold text-lg sm:text-xl flex-wrap gap-y-1">
-                                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 shrink-0" />
+                              <div key={index} id={`log-card-${index}`} className={`log-card p-4 sm:p-5 md:p-6 ring-1 rounded-2xl ${cardColorClass}`}>
+                                <div className={`flex justify-between items-center w-full mb-3 transition-opacity ${(isDataLoading) ? 'opacity-50' : ''}`}>
+                                  <div className="flex items-center text-gray-900 font-extrabold text-[18px] sm:text-xl tracking-tight flex-wrap gap-y-1.5">
+                                    <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-2 shrink-0"><Clock className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /></span>
                                     <span className="shrink-0">
                                       {(() => {
                                         const d = new Date(date);
@@ -3570,24 +3571,24 @@ export default function MainApp({
                                     {counts && counts.length > 0 && (!currentSelectedHoliday || currentSelectedHoliday.vacation_available) && !logs[index].student?.includes("간담회") && !logs[index].student?.includes("안전교육") && !logs[index].student?.includes("직무교육") ? (
                                       <div className="flex items-center overflow-hidden ml-2 sm:ml-3 gap-1.5 sm:gap-2 flex-wrap">
                                         {counts.map((c, cIdx) => {
-                                          let sessionColorClass = "bg-gray-300 text-black border-gray-400 font-bold";
-                                          if (c.count >= 15) sessionColorClass = "bg-orange-600 text-white border-orange-700 font-black shadow-inner";
-                                          else if (c.count >= 10) sessionColorClass = "bg-purple-900 text-white border-purple-950 font-black shadow-inner";
-                                          else if (c.count >= 7) sessionColorClass = "bg-purple-500 text-white border-purple-600 font-extrabold";
+                                          let sessionColorClass = "bg-gray-100 text-gray-700 border-gray-200 font-bold";
+                                          if (c.count >= 15) sessionColorClass = "bg-orange-500 text-white border-orange-500 font-extrabold";
+                                          else if (c.count >= 10) sessionColorClass = "bg-purple-800 text-white border-purple-800 font-extrabold";
+                                          else if (c.count >= 7) sessionColorClass = "bg-purple-500 text-white border-purple-500 font-bold";
 
                                           return (
                                             <div key={cIdx} className="flex items-center">
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(c)}
-                                                className={`${sessionColorClass} border px-1.5 sm:px-2 py-0.5 rounded shadow-sm text-sm sm:text-base md:text-lg tracking-tighter whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:brightness-95 active:scale-95`}
+                                                className={`${sessionColorClass} border px-2 sm:px-2.5 py-0.5 rounded-full text-[13px] sm:text-[15px] md:text-base tracking-tight whitespace-nowrap shrink-0 transition-all cursor-pointer hover:brightness-95 active:scale-95`}
                                               >
                                                 {c.count}회차
                                               </button>
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentHistory(c)}
-                                                className="ml-1 bg-green-100 text-green-800 border-green-500 border px-1.5 sm:px-2 py-0.5 rounded shadow-sm text-sm sm:text-base md:text-lg tracking-tighter whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:bg-green-200 active:scale-95 font-bold"
+                                                className="ml-1 bg-white text-emerald-700 border-emerald-300 border px-2 sm:px-2.5 py-0.5 rounded-full text-[13px] sm:text-[15px] md:text-base tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:bg-emerald-50 active:scale-95 font-bold"
                                               >
                                                 이전교육
                                               </button>
@@ -3602,7 +3603,7 @@ export default function MainApp({
                                     <button
                                       type="button"
                                       onClick={() => handleRepeatScheduleForShift(index)}
-                                      className="ml-auto bg-orange-500 hover:bg-orange-600 text-white border border-orange-600 px-2 py-0.5 rounded shadow-sm text-sm sm:text-base md:text-lg tracking-tighter whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold"
+                                      className="ml-auto bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 px-2.5 py-1 rounded-lg text-[14px] sm:text-[15px] md:text-base tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold"
                                     >
                                       복제
                                     </button>
@@ -3631,7 +3632,7 @@ export default function MainApp({
                                       }}
                                       onBlur={handleInputBlur}
                                       disabled={isDataLoading}
-                                      className={`flex-[1.5] min-w-0 py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-3 md:px-4 border-2 rounded-lg outline-none font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] min-[360px]:text-[20px] sm:text-xl md:text-2xl landscape:text-[22px] md:landscape:text-[26px] leading-tight ${!logs[index].student || (logs[index].student || '').includes('보조강사') ? 'caret-black' : 'caret-white'} ${!logs[index].student ? 'bg-gray-200 text-gray-800 placeholder-gray-500 border-gray-400' : (logs[index].location === '공휴일' || logs[index].location === '휴무일' ? 'bg-red-400 text-white placeholder-red-200 border-transparent' : (logs[index].student || '').includes('보조강사') ? 'bg-amber-200 text-black placeholder-gray-500 border-orange-400' : 'bg-blue-600 text-white placeholder-blue-200 border-transparent')}`}
+                                      className={`flex-[1.5] min-w-0 h-12 sm:h-[52px] md:h-14 px-3 md:px-4 border-[1.5px] rounded-xl outline-none font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] min-[360px]:text-[20px] sm:text-xl md:text-2xl landscape:text-[22px] md:landscape:text-[26px] leading-tight tracking-tight caret-blue-600 focus:ring-4 focus:ring-blue-500/15 ${!logs[index].student ? 'bg-gray-50 text-gray-800 placeholder-gray-400 border-dashed border-gray-300 focus:border-blue-400' : (logs[index].location === '공휴일' || logs[index].location === '휴무일' ? 'bg-rose-100 text-rose-800 placeholder-rose-300 border-rose-200 focus:border-rose-400' : (logs[index].student || '').includes('보조강사') ? 'bg-amber-200 text-amber-950 placeholder-gray-500 border-amber-300 focus:border-amber-500' : 'bg-blue-50 text-blue-900 placeholder-blue-300 border-blue-200 focus:border-blue-500')}`}
 
                                     />
                                     <input
@@ -3641,7 +3642,7 @@ export default function MainApp({
                                       onChange={(e) => handleLogChange(index, 'location', e.target.value)}
                                       onBlur={handleInputBlur}
                                       disabled={isDataLoading}
-                                      className={`flex-1 min-w-0 py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-3 md:px-4 border rounded-lg outline-none font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all ${locTextSize} leading-tight ${!logs[index].location ? 'caret-black' : 'caret-white'} ${!logs[index].location ? 'bg-gray-200 text-gray-800 placeholder-gray-500 border-gray-400' : (logs[index].location === '공휴일' || logs[index].location === '휴무일' ? 'bg-red-400 text-white placeholder-red-200 border-transparent' : 'bg-blue-600 text-white placeholder-blue-200 border-transparent')}`}
+                                      className={`flex-1 min-w-0 h-12 sm:h-[52px] md:h-14 px-3 md:px-4 border-[1.5px] rounded-xl outline-none font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-all ${locTextSize} leading-tight tracking-tight caret-blue-600 focus:ring-4 focus:ring-blue-500/15 ${!logs[index].location ? 'bg-gray-50 text-gray-800 placeholder-gray-400 border-dashed border-gray-300 focus:border-blue-400' : (logs[index].location === '공휴일' || logs[index].location === '휴무일' ? 'bg-rose-100 text-rose-800 placeholder-rose-300 border-rose-200 focus:border-rose-400' : 'bg-blue-50 text-blue-900 placeholder-blue-300 border-blue-200 focus:border-blue-500')}`}
                                     />
                                   </div>
 
@@ -3651,7 +3652,7 @@ export default function MainApp({
                                   <div className="space-y-1.5 !mt-3">
                                     {Array.from({ length: displayRowsCount }).map((_, sIdx) => {
                                       return (
-                                        <div key={sIdx} className={`flex flex-col w-full ${sIdx > 0 ? 'mt-1.5 pt-1.5 border-t border-dashed border-blue-200' : ''}`}>
+                                        <div key={sIdx} className={`flex flex-col w-full ${sIdx > 0 ? 'mt-2 pt-2 border-t border-dashed border-gray-200' : ''}`}>
                                           <div className={`flex w-full justify-between gap-0.5 min-[350px]:gap-1 min-[380px]:gap-1.5 sm:gap-2 md:gap-3 ${sIdx === displayRowsCount - 1 ? 'pb-0' : 'pb-1'}`}>
                                             {RENDER_TAGS.map(tag => {
                                               const fontSizeClass = 'text-[13px] min-[340px]:text-[14px] min-[360px]:text-[15px] min-[380px]:text-[17px] sm:text-[18px] md:text-[20px] lg:text-[21px]';
@@ -3668,11 +3669,11 @@ export default function MainApp({
                                                   onClick={() => toggleTag(index, sIdx, tag)}
                                                   disabled={isDataLoading || isInfoMissing || isBlurTarget}
                                                   className={
-                                                    "flex-1 flex flex-col items-center justify-center px-0 sm:px-2 py-0.5 sm:py-1 md:py-1.5 rounded-xl " +
+                                                    "flex-1 flex flex-col items-center justify-center px-0 sm:px-2 min-h-[40px] sm:min-h-[44px] rounded-xl " +
                                                     fontSizeClass +
                                                     " leading-[1.15] tracking-tighter sm:tracking-normal transition-all touch-manipulation break-keep whitespace-nowrap " +
                                                     (isBlurTarget
-                                                      ? "bg-gray-100 text-gray-500 border-[1.5px] border-gray-300 blur-[1px] opacity-90 cursor-not-allowed"
+                                                      ? "bg-gray-100 text-gray-400 border-[1.5px] border-gray-200 blur-[1px] opacity-90 cursor-not-allowed"
                                                       : "disabled:opacity-50 disabled:cursor-not-allowed " + getTagClass(index, sIdx, tag))
                                                   }
                                                 >
@@ -3709,17 +3710,17 @@ export default function MainApp({
                                           }}
                                           onBlur={handleInputBlur}
                                           disabled={isDataLoading || isInfoMissing}
-                                          className={`w-12 md:w-14 px-0.5 text-center border border-sky-400 rounded-xl outline-none font-bold text-gray-900 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] md:text-[22px] leading-tight shrink-0 caret-black ${isSparkling ? 'animate-sparkle border-red-500 shadow-md' : 'bg-sky-200 shadow-sm'}`}
+                                          className={`w-12 md:w-14 px-0.5 text-center border-[1.5px] border-sky-300 rounded-xl outline-none font-bold text-sky-900 placeholder-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] md:text-[22px] leading-tight shrink-0 caret-blue-600 focus:ring-4 focus:ring-sky-500/15 ${isSparkling ? 'animate-sparkle border-red-500 shadow-md' : 'bg-sky-50'}`}
                                         />
                                       );
                                     })()}
-                                    <div className="relative flex-1 min-w-0 flex flex-col">
+                                    <div className="relative flex-1 min-w-0 flex flex-col group">
                                       <div
-                                        className={`absolute inset-0 py-2 sm:py-2.5 md:py-3 px-3 md:px-4 border border-gray-400 rounded-xl bg-pink-50 font-bold ${memoTextColorClass} shadow-sm transition-all text-[18px] md:text-[22px] leading-tight whitespace-pre-wrap overflow-y-auto break-words z-0 pointer-events-none ${(isDataLoading || isInfoMissing) ? 'opacity-50' : ''}`}
+                                        className={`absolute inset-0 py-2 sm:py-2.5 md:py-3 px-3 md:px-4 border-[1.5px] border-gray-200 rounded-xl bg-gray-50 font-semibold ${memoTextColorClass} transition-all group-focus-within:bg-white group-focus-within:border-blue-400 group-focus-within:ring-4 group-focus-within:ring-blue-500/15 text-[18px] md:text-[22px] leading-tight whitespace-pre-wrap overflow-y-auto break-words z-0 pointer-events-none ${(isDataLoading || isInfoMissing) ? 'opacity-50' : ''}`}
                                         aria-hidden="true"
                                       >
                                         {!logs[index]?.memo ? (
-                                          <span className={(hasGrayTag || hasRedTag) ? "text-gray-500" : "text-gray-500"}>메모</span>
+                                          <span className="text-gray-400 font-medium">메모</span>
                                         ) : (
                                           logs[index].memo.split(/(\d+회차)/g).map((part, i) =>
                                             /^\d+회차$/.test(part) ? <span key={i} className="text-[#3366ff]">{part}</span> : part
@@ -3738,7 +3739,7 @@ export default function MainApp({
                                           }
                                         }}
                                         disabled={isDataLoading || isInfoMissing}
-                                        className={`block flex-1 w-full py-2 sm:py-2.5 md:py-3 px-3 md:px-4 border border-transparent rounded-xl bg-transparent outline-none font-bold text-transparent placeholder-transparent shadow-none disabled:cursor-not-allowed transition-all text-[18px] md:text-[22px] leading-tight resize-none caret-black z-10 relative m-0`}
+                                        className={`block flex-1 w-full py-2 sm:py-2.5 md:py-3 px-3 md:px-4 border-[1.5px] border-transparent rounded-xl bg-transparent outline-none font-semibold text-transparent placeholder-transparent shadow-none disabled:cursor-not-allowed transition-all text-[18px] md:text-[22px] leading-tight resize-none caret-black z-10 relative m-0`}
                                         spellCheck="false"
                                       />
                                     </div>
@@ -3748,14 +3749,16 @@ export default function MainApp({
                             );
                           })}
                         </div>
-                        <button
-                          type="submit"
-                          disabled={isDataLoading || !hasChanges}
-                          onMouseDown={(e) => e.preventDefault()}
-                          className={`w-full py-4 md:py-5 mt-4 md:mt-6 mb-8 sm:mb-2 font-bold rounded-xl text-2xl md:text-3xl text-white shadow-lg transition-transform duration-150 active:scale-[0.98] flex items-center justify-center touch-manipulation ${(isDataLoading || !hasChanges) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#3366ff] hover:bg-[#1e3a8a]'}`}
-                        >
-                          {isSubmitting ? <><Clock className="w-6 h-6 mr-2 animate-spin" />저장 중...</> : <><SaveIcon className="w-6 h-6 mr-2" />데이터베이스에 저장</>}
-                        </button>
+                        <div className="save-bar sticky bottom-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 pt-6 mt-2 mb-8 sm:mb-2">
+                          <button
+                            type="submit"
+                            disabled={isDataLoading || !hasChanges}
+                            onMouseDown={(e) => e.preventDefault()}
+                            className={`w-full h-14 md:h-16 font-bold rounded-2xl text-[21px] md:text-[26px] tracking-tight transition-all duration-150 active:scale-[0.98] flex items-center justify-center touch-manipulation ${(isDataLoading || !hasChanges) ? 'bg-gray-200 text-gray-400 ring-1 ring-inset ring-gray-300/60 cursor-not-allowed' : 'text-white bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 ring-1 ring-inset ring-blue-700/20 shadow-lg shadow-blue-600/30'}`}
+                          >
+                            {isSubmitting ? <><Clock className="w-6 h-6 mr-2 animate-spin" />저장 중...</> : <><SaveIcon className="w-6 h-6 mr-2" />{hasChanges || isDataLoading ? '데이터베이스에 저장' : '저장할 변경 사항 없음'}</>}
+                          </button>
+                        </div>
                       </>
                     )}
                   </>
