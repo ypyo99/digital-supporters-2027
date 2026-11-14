@@ -3533,7 +3533,7 @@ export default function MainApp({
                             const isKyungrodang = combinedText.includes("경로당");
                             const isShowHeadcount = logs[index] ? ((logs[index].student || "").includes("보조강사") || isKyungrodang) : false;
                             const isSpecialDay = logs[index] ? ((logs[index].student || "").includes("공휴일") || (logs[index].location || "").includes("공휴일") || (logs[index].student || "").includes("간담회") || (logs[index].location || "").includes("간담회")) : false;
-                            const cardColorClass = isSpecialDay ? 'bg-rose-50 ring-rose-200 log-accent-rose' : isKyungrodang ? 'bg-orange-50 ring-orange-200 log-accent-orange' : isMultipleStudents ? 'bg-emerald-50 ring-emerald-200 log-accent-emerald' : 'bg-white ring-gray-200 log-accent-blue';
+                            const cardColorClass = isSpecialDay ? 'bg-rose-50 border-rose-300 log-accent-rose' : isKyungrodang ? 'bg-orange-50 border-orange-300 log-accent-orange' : isMultipleStudents ? 'bg-emerald-50 border-emerald-300 log-accent-emerald' : 'bg-white border-blue-300 log-accent-blue';
 
                             const isFutureOrToday = date >= getLocalDateString(new Date());
                             const hasAttendance = logs[index].selectedTags && logs[index].selectedTags.some(tArray => tArray && tArray.length > 0);
@@ -3552,7 +3552,7 @@ export default function MainApp({
                             }
 
                             return (
-                              <div key={index} id={`log-card-${index}`} className={`log-card p-4 sm:p-5 md:p-6 ring-1 rounded-2xl ${cardColorClass}`}>
+                              <div key={index} id={`log-card-${index}`} className={`log-card p-4 sm:p-5 md:p-6 border-[1.5px] rounded-2xl ${cardColorClass}`}>
                                 <div className={`flex justify-between items-center w-full mb-3 transition-opacity ${(isDataLoading) ? 'opacity-50' : ''}`}>
                                   <div className="flex items-center text-gray-900 font-extrabold text-[18px] sm:text-xl tracking-tight flex-wrap gap-y-1.5">
                                     <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-2 shrink-0"><Clock className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /></span>
