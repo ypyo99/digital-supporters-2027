@@ -860,13 +860,13 @@
         if (monthInput) monthInput.value = today.getMonth() + 1;
         if (dayInput) dayInput.value = today.getDate();
 
-        // PDF 저장 / 인쇄 시 파일 이름 동적 생성: 학생이름_참여신청서
+        // PDF 저장 / 인쇄 시 파일 이름 동적 생성: 학생이름_1)참여신청서
         function updatePrintTitle() {
             const name = (document.getElementById('applicantName')?.value || document.getElementById('signerName')?.value || '').trim();
             if (name) {
-                document.title = `${name}_참여신청서`;
+                document.title = `${name}_1)참여신청서`;
             } else {
-                document.title = '참여신청서';
+                document.title = '1)참여신청서';
             }
         }
 

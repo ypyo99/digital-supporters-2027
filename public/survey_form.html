@@ -1912,8 +1912,7 @@
       window.addEventListener('beforeprint', () => {
         document.title = getSurveyPdfFileName();
 
-        const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
-        const participantName = document.getElementById('participantName')?.value?.trim() || formKind;
+        const participantName = document.getElementById('participantName')?.value?.trim() || '';
         const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
         const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
         const feedback = document.getElementById('feedback')?.value?.trim() || '';
@@ -2121,7 +2120,7 @@
     }
 
     function getSurveyPdfFileName() {
-      const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
+      const formKind = isPostSurvey ? '3)사후설문지' : '2)사전설문지';
       const participantName = document.getElementById('participantName')?.value?.trim();
       if (participantName) {
         return `${participantName}_${formKind}`;
@@ -2131,14 +2130,13 @@
 
     // Print / PDF Survey
     function handlePrintSurvey() {
-      const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
-      const participantName = document.getElementById('participantName')?.value?.trim() || formKind;
+      const participantName = document.getElementById('participantName')?.value?.trim() || '';
       const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
       const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
       const feedback = document.getElementById('feedback')?.value?.trim() || '';
       const metrics = computeClientMetrics(state.answers);
 
-      // PDF 저장 시 파일 이름 지정 (사전설문지: 2027년_사전설문지_학생이름_날짜.pdf, 사후설문지: 2027년_사후설문지_학생이름_날짜.pdf)
+      // PDF 저장 시 파일 이름 지정 (사전설문지: 학생이름_2)사전설문지.pdf, 사후설문지: 학생이름_3)사후설문지.pdf)
       const originalTitle = document.title;
       document.title = getSurveyPdfFileName();
 
