@@ -3705,10 +3705,10 @@ export default function MainApp({
 
                             return (
                               <div key={index} id={`log-card-${index}`} className={`log-card p-4 sm:p-5 md:p-6 border-[1.5px] rounded-2xl ${cardColorClass}`}>
-                                <div className={`flex justify-between items-center w-full mb-3 transition-opacity ${(isDataLoading) ? 'opacity-50' : ''}`}>
-                                  <div className="flex items-center text-gray-900 font-extrabold text-base sm:text-lg tracking-tight flex-wrap gap-y-1.5">
-                                    <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-2 shrink-0"><Clock className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /></span>
-                                    <span className="shrink-0">
+                                <div className={`flex justify-between items-center w-full mb-3 transition-opacity flex-nowrap gap-2 ${(isDataLoading) ? 'opacity-50' : ''}`}>
+                                  <div className="flex items-center text-gray-900 font-extrabold text-base sm:text-lg tracking-tight flex-nowrap min-w-0">
+                                    <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-1.5 sm:mr-2 shrink-0"><Clock className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /></span>
+                                    <span className="shrink-0 whitespace-nowrap">
                                       {(() => {
                                         const d = new Date(date);
                                         const day = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
@@ -3721,7 +3721,7 @@ export default function MainApp({
                                     </span>
 
                                     {counts && counts.length > 0 && (!currentSelectedHoliday || currentSelectedHoliday.vacation_available) && !logs[index].student?.includes("간담회") && !logs[index].student?.includes("안전교육") && !logs[index].student?.includes("직무교육") ? (
-                                      <div className="flex items-center overflow-hidden ml-2 sm:ml-3 gap-1.5 sm:gap-2 flex-wrap">
+                                      <div className="flex items-center ml-1.5 sm:ml-2.5 gap-1 sm:gap-1.5 flex-nowrap shrink-0 overflow-x-auto scrollbar-none">
                                         {counts.map((c, cIdx) => {
                                           let sessionColorClass = "bg-slate-50 hover:bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200 font-bold";
                                           let sessionIconColor = "text-slate-600";
@@ -3737,12 +3737,12 @@ export default function MainApp({
                                           }
 
                                           return (
-                                            <div key={cIdx} className="flex items-center gap-1">
+                                            <div key={cIdx} className="flex items-center gap-1 shrink-0 flex-nowrap">
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(c)}
                                                 title={`${c.student ? `${c.student} 님의 ` : ''}수업 진행 날짜 목록 열기`}
-                                                className={`${sessionColorClass} px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-sm`}
+                                                className={`${sessionColorClass} px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-sm shrink-0`}
                                               >
                                                 <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${sessionIconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -3756,7 +3756,7 @@ export default function MainApp({
                                                 type="button"
                                                 onClick={() => setSelectedStudentHistory(c)}
                                                 title={`${c.student ? `${c.student} 님의 ` : ''}이전 교육 기록 보기`}
-                                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm shrink-0"
                                               >
                                                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                   <circle cx="12" cy="12" r="10" />
@@ -3775,7 +3775,7 @@ export default function MainApp({
                                     <button
                                       type="button"
                                       onClick={() => handleRepeatScheduleForShift(index)}
-                                      className="ml-auto bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold"
+                                      className="ml-auto bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold shadow-sm"
                                     >
                                       복제
                                     </button>
