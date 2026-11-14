@@ -46,9 +46,9 @@ const NangmanStudioApp = lazyWithRetry(() => import('./components/NangmanStudioA
 const NoticeManagementApp = lazyWithRetry(() => import('./components/NoticeManagementApp'));
 
 const LoadingFallback = () => (
-  <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-gray-50">
-    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-    <p className="mt-4 text-lg font-bold text-gray-600 animate-pulse">화면을 불러오는 중...</p>
+  <div className="min-h-[100dvh] flex flex-col items-center justify-center">
+    <div className="w-12 h-12 border-[3px] border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+    <p className="mt-4 text-base font-semibold text-gray-500 animate-pulse">화면을 불러오는 중...</p>
   </div>
 );
 

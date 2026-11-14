@@ -106,8 +106,7 @@ import {
   CalendarDaysIcon,
   UsersIcon,
   PresentationIcon,
-  LucideCalendar,
-  VintageDivider
+  LucideCalendar
 } from './Icons';
 
 // 주어진 문자열을 쉼표(,)나 슬래시(/) 단위로 쪼갠 뒤,
@@ -120,6 +119,22 @@ const hasIndependentKeyword = (str, keywords) => {
   return tokens.some(token => keywords.includes(token));
 };
 
+// 메인 화면 메뉴 카드 (아이콘 칩 + 라벨 + 화살표)
+const MenuCard = ({ icon, label, onClick, href, variant, disabled }) => {
+  const className = `menu-card${variant === 'admin' ? ' is-admin' : ''}${disabled ? ' is-disabled' : ''}`;
+  const content = (
+    <>
+      <span className="menu-chip">{icon}</span>
+      <span className="menu-label">{label}</span>
+      <svg className="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+    </>
+  );
+  if (href) {
+    return <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{content}</a>;
+  }
+  return <button type="button" onClick={onClick} className={className} aria-disabled={disabled || undefined}>{content}</button>;
+};
+
 const AnimatedRefreshButton = ({ onClick, isFetching }) => {
   const [toggle, setToggle] = useState(false);
   useEffect(() => {
@@ -130,11 +145,11 @@ const AnimatedRefreshButton = ({ onClick, isFetching }) => {
     <button
       onClick={onClick}
       disabled={isFetching}
-      className="w-[80px] sm:w-[88px] md:w-[98px] h-[48px] sm:h-[56px] md:h-[64px] shrink-0 bg-white border-2 border-sky-300 hover:bg-sky-50 text-sky-700 font-bold rounded-xl shadow-md flex flex-col items-center justify-center transition-all disabled:opacity-50 active:scale-95 px-1 touch-manipulation"
+      className="w-[80px] sm:w-[88px] md:w-[96px] h-[52px] sm:h-[58px] md:h-[62px] shrink-0 bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50/60 text-blue-600 font-semibold rounded-2xl shadow-sm flex flex-col items-center justify-center transition-all disabled:opacity-50 active:scale-95 px-1 touch-manipulation"
       title="선생님 목록 다시 읽어오기"
     >
       <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 mb-0.5 ${isFetching ? 'animate-spin' : ''}`} />
-      <span className="text-[16px] sm:text-[18px] md:text-[20px] tracking-tight whitespace-nowrap">{toggle ? '선생님목록' : '다시읽기'}</span>
+      <span className="text-[14px] sm:text-[16px] md:text-[17px] tracking-tight whitespace-nowrap">{toggle ? '선생님목록' : '다시읽기'}</span>
     </button>
   );
 };
@@ -2865,22 +2880,22 @@ export default function MainApp({
         </div>
 
         <div
-          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] bg-white px-5 pb-8 pt-safe-4 sm:px-8 sm:pb-10 sm:pt-safe-5 sm:rounded-2xl sm:shadow-xl sm:border sm:border-gray-100 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
+          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] bg-white/95 sm:bg-white/90 sm:backdrop-blur-xl px-5 pb-8 pt-safe-4 sm:px-9 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
           style={{
             transform: `translateY(${pullDistance * 0.1}px)`,
             transition: pullDistance === 0 ? 'transform 0.3s ease-out' : 'none'
           }}
         >
-          <div className="text-center mb-2 sm:mb-3.5 shrink-0 mt-0">
-            <div className="flex justify-center mb-2 sm:mb-4">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-[42px] sm:h-[52px] object-contain" onError={(e) => e.target.style.display = 'none'} />
+          <div className="text-center mb-4 sm:mb-6 shrink-0 mt-2 sm:mt-1">
+            <div className="flex justify-center mb-3 sm:mb-4">
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-[38px] sm:h-[46px] object-contain mix-blend-multiply" onError={(e) => e.target.style.display = 'none'} />
             </div>
-            <div className="flex items-center justify-center mb-1 sm:mb-2">
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-blue-600">성동노인종합복지관</h1>
+            <div className="flex items-center justify-center mb-2 sm:mb-3">
+              <h1 className="text-[28px] sm:text-[40px] md:text-[44px] leading-tight font-extrabold tracking-[-0.035em] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 bg-clip-text text-transparent">성동노인종합복지관</h1>
             </div>
-            <h2 className="text-[clamp(14px,4.5vw,18px)] sm:text-2xl md:text-3xl font-bold text-red-600 whitespace-nowrap tracking-tighter flex items-center justify-center gap-2">
+            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-gray-50 ring-1 ring-gray-200/80 pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-semibold text-gray-600 whitespace-nowrap tracking-tight">
               <svg
-                className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 drop-shadow-[0_2px_8px_rgba(240,71,107,0.3)] transition-transform duration-300 hover:scale-110"
+                className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-transform duration-300 hover:scale-110"
                 viewBox="0 0 128 128"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -2899,7 +2914,7 @@ export default function MainApp({
                 <circle cx="64" cy="69" r="5" fill="#fff" />
                 <path d="M108 10 C109.3 18 111 19.7 119 21 C111 22.3 109.3 24 108 32 C106.7 24 105 22.3 97 21 C105 19.7 106.7 18 108 10 Z" fill="#F7B733" />
               </svg>
-              2027 디지털교육 서포터즈 <span className="text-indigo-700">업무일지 시스템</span>
+              <span className="font-bold text-gray-800">2027 디지털교육 서포터즈</span> <span className="text-gray-300">·</span> <span>업무일지</span>
             </h2>
           </div>
 
@@ -2944,19 +2959,19 @@ export default function MainApp({
             `}</style>
             {todayNotices.length > 0 && (
               <div className="animate-fadeIn w-full">
-                <div className="bg-red-50 border-2 border-red-300 rounded-xl px-3 sm:px-5 py-3 sm:py-4 shadow-sm overflow-hidden text-left hover:bg-red-200 transition-colors touch-pan-y touch-pinch-zoom">
+                <div className="bg-gradient-to-br from-rose-50 to-white ring-1 ring-rose-200/70 rounded-2xl px-3.5 sm:px-5 py-3 sm:py-4 shadow-sm overflow-hidden text-left hover:ring-rose-300 transition-all touch-pan-y touch-pinch-zoom">
                   <div className="flex flex-col gap-1.5 sm:gap-2 w-full min-w-0">
                     <div
                       className="flex items-center gap-2 sm:gap-3 w-full cursor-pointer hover:opacity-90 transition-opacity active:scale-[0.98]"
                       onClick={() => onNavigateToNoticeManagement()}
                     >
-                      <div className="bg-red-300 p-1 sm:p-1.5 rounded-lg shrink-0">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-rose-500 p-1.5 rounded-lg shrink-0 shadow-sm shadow-rose-500/30">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
                         </svg>
                       </div>
                       <div className="flex items-center justify-between flex-1 w-full gap-2">
-                        <h4 className="font-bold text-[16px] min-[360px]:text-[17px] sm:text-[20px] leading-tight text-red-800 m-0 shrink-0">
+                        <h4 className="font-bold text-[16px] min-[360px]:text-[17px] sm:text-[20px] leading-tight text-gray-900 m-0 shrink-0 tracking-tight">
                           공지사항
                         </h4>
                         {!weatherData ? (
@@ -2969,7 +2984,7 @@ export default function MainApp({
                           </span>
                         ) : (
                           <div
-                            className="flex items-center gap-1.5 ml-auto cursor-pointer hover:opacity-80 active:scale-95 transition-all bg-white/50 px-2 py-0.5 rounded-lg border border-red-200/50"
+                            className="flex items-center gap-1.5 ml-auto cursor-pointer hover:opacity-80 active:scale-95 transition-all bg-white px-2.5 py-1 rounded-full ring-1 ring-gray-200 shadow-sm"
                             onClick={(e) => {
                               e.stopPropagation();
                               window.open('https://weather.naver.com', '_blank');
@@ -3019,8 +3034,8 @@ export default function MainApp({
               </div>
             )}
             <div className="w-full">
-              <label className="block text-gray-700 font-semibold mb-1 sm:mb-2 text-lg sm:text-xl md:text-2xl">1. 팀 선택</label>
-              <select className={`w-full h-[48px] sm:h-[56px] md:h-[64px] px-3 sm:px-4 border border-gray-300 rounded-xl text-xl sm:text-2xl md:text-3xl ${selectedTeam ? 'bg-blue-100' : 'bg-[#ebebeb]'} text-gray-800 outline-none font-bold shadow-md focus:ring-2 focus:ring-gray-400`} value={selectedTeam} onChange={(e) => {
+              <label className="flex items-center gap-2 text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight"><span className="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-600 text-white text-[13px] sm:text-sm font-bold">1</span>팀 선택</label>
+              <select className={`w-full select-refined h-[52px] sm:h-[58px] md:h-[62px] px-4 border rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/70 border-blue-300 text-gray-900' : 'bg-white border-gray-200 text-gray-500'} outline-none font-bold shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
                 setSelectedTeam(e.target.value);
                 setCurrentUser("");
               }}>
@@ -3030,12 +3045,12 @@ export default function MainApp({
             </div>
             {selectedTeam && (
               <div>
-                <label className="block text-gray-700 font-semibold mb-1 sm:mb-2 text-lg sm:text-xl md:text-2xl flex justify-between items-end">
-                  <span>2. 선생님 선택</span>
+                <label className="text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight flex justify-between items-end">
+                  <span className="flex items-center gap-2"><span className="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-600 text-white text-[13px] sm:text-sm font-bold">2</span>선생님 선택</span>
                   {isFetchingTeachers && <span className="text-base sm:text-lg md:text-xl text-red-600 font-bold flex items-center mb-1 animate-pulse"><Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-1 animate-spin" />로딩 중...</span>}
                 </label>
                 <div className="flex gap-2">
-                  <select className={`flex-1 h-[48px] sm:h-[56px] md:h-[64px] px-3 sm:px-4 border border-gray-300 rounded-xl text-xl sm:text-2xl md:text-3xl ${currentUser ? 'bg-blue-100' : 'bg-[#ebebeb]'} text-gray-800 outline-none font-bold shadow-md focus:ring-2 focus:ring-gray-400`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
+                  <select className={`flex-1 select-refined min-w-0 h-[52px] sm:h-[58px] md:h-[62px] px-4 border rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/70 border-blue-300 text-gray-900' : 'bg-white border-gray-200 text-gray-500'} outline-none font-bold shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
                     <option value="">선생님을 선택하세요</option>
                     {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
                   </select>
@@ -3050,23 +3065,21 @@ export default function MainApp({
 
             <div className="pt-1 sm:pt-2 flex">
               {!isLoginReady ? (
-                <div className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(17px,4.5vw,24px)] md:text-[22px] lg:text-[24px] tracking-tight font-extrabold text-white bg-gray-400 border-2 border-gray-400 cursor-not-allowed shadow-md opacity-90 select-none min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
+                <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,22px)] tracking-tight font-bold text-gray-400 bg-gray-100 ring-1 ring-inset ring-gray-200 cursor-not-allowed select-none min-h-[56px] sm:min-h-[62px]">
                   {isFetchingSchedule ? <><Clock className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2 animate-spin" /> 데이터 확인 중...</> : <><EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기</>}
                 </div>
               ) : (
-                <button onClick={handleLogin} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(17px,4.5vw,24px)] md:text-[22px] lg:text-[24px] tracking-tight font-extrabold text-white bg-blue-600 border-2 border-blue-600 hover:bg-blue-700 active:scale-95 transition-all shadow-md touch-manipulation min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
+                <button onClick={handleLogin} className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,22px)] tracking-tight font-bold text-white bg-gradient-to-b from-blue-500 to-blue-600 ring-1 ring-inset ring-blue-700/20 hover:from-blue-600 hover:to-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/25 touch-manipulation min-h-[56px] sm:min-h-[62px]">
                   <EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성
                 </button>
               )}
             </div>
           </div>
 
-          <div className="py-3 sm:py-4 flex justify-center items-center shrink-0 mt-1">
-            <VintageDivider className="w-4/5 h-6 sm:h-8 text-gray-500 opacity-60" />
-          </div>
-
-          <div className="flex-1 flex flex-col gap-4 sm:gap-6 min-h-[180px]">
-            <button
+          <div className="flex-1 flex flex-col gap-2.5 sm:gap-3 min-h-[180px] mt-7 sm:mt-9">
+            <div className="section-label mb-0.5">일정 · 바로가기</div>
+            <MenuCard
+              disabled={!selectedTeam || !currentUser}
               onClick={() => {
                 if (!selectedTeam || !currentUser) {
                   setErrorMessage("팀과 선생님을 먼저 선택해주세요.");
@@ -3075,58 +3088,68 @@ export default function MainApp({
                 }
                 onNavigateToMyWeeklySchedule();
               }}
-              className={`flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(17px,4.5vw,24px)] md:text-[22px] lg:text-[24px] tracking-tight font-black shadow-md transition-all active:scale-95 touch-manipulation min-h-[54px] sm:min-h-[58px] md:min-h-[64px] ${(!selectedTeam || !currentUser) ? 'text-gray-400 bg-gray-100 border-2 border-gray-200 cursor-not-allowed' : 'text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200'}`}
-            >
-              <CalendarIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1.5 sm:mr-2" /> 나의 주간 일정
-            </button>
+              icon={<CalendarIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="나의 주간 일정"
+            />
+            {errorMessage && <div className="text-rose-600 font-semibold text-center text-sm md:text-base">{errorMessage}</div>}
+            <MenuCard
+              onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }}
+              icon={<CalendarClockIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="팀별 오늘 일정"
+            />
+            <MenuCard
+              onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }}
+              icon={<CalendarDaysIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="전체 일정 보기/엑셀 다운로드"
+            />
+            <MenuCard
+              href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
+              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>}
+              label="수업 희망자 및 기타 참여자 관리"
+            />
+            <MenuCard
+              onClick={onNavigateToStudentSearch}
+              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><path d="M11 8a3 3 0 0 0-3 3" /></svg>}
+              label="대상자 검색"
+            />
+            <MenuCard
+              onClick={() => { handleLogout(); onNavigateToClassroom(); }}
+              icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="평생교육실2 사용 현황"
+            />
+            <MenuCard
+              onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
+              icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="낭만스튜디오 사용 현황"
+            />
+            <MenuCard
+              onClick={() => { handleLogout(); onNavigateToNoticeManagement(); }}
+              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>}
+              label="공지사항"
+            />
 
-            <button onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(17px,4.5vw,24px)] md:text-[22px] lg:text-[24px] tracking-tight font-extrabold shadow-md text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 transition-all active:scale-95 touch-manipulation min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <CalendarClockIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1.5 sm:mr-2" /> 팀별 오늘 일정
-            </button>
-
-            <button onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(17px,4.5vw,24px)] md:text-[22px] lg:text-[24px] tracking-tight font-extrabold shadow-md text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 transition-all active:scale-95 touch-manipulation min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <CalendarDaysIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1.5 sm:mr-2" /> 전체 일정 보기/엑셀 다운로드
-            </button>
-            {errorMessage && <div className="text-red-600 font-bold text-center text-sm md:text-base -mt-2 -mb-2">{errorMessage}</div>}
-
-            <a href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842" target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 shadow-md transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <svg className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg> 수업 희망자 및 기타 참여자 관리
-            </a>
-
-            <button onClick={onNavigateToStudentSearch} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <svg className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><path d="M11 8a3 3 0 0 0-3 3" /></svg> 대상자 검색
-            </button>
-
-            <button onClick={() => { handleLogout(); onNavigateToClassroom(); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <PresentationIcon className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" /> 평생교육실2 사용 현황
-            </button>
-
-            <button onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <PresentationIcon className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" /> 낭만스튜디오 사용 현황
-            </button>
-
-            <button onClick={() => { handleLogout(); onNavigateToNoticeManagement(); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-blue-900 bg-blue-100 border-2 border-blue-300 hover:bg-blue-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <svg className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> 공지사항
-            </button>
-
-            <div className="flex justify-center items-center shrink-0 -my-1 sm:-my-1.5">
-              <VintageDivider className="w-4/5 h-6 sm:h-8 text-gray-500 opacity-60" />
-            </div>
-
-            <button onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-red-900 bg-red-100 border-2 border-red-300 hover:bg-red-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <UsersIcon className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" /> 선생님 명단 관리
-            </button>
-
-            <button onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-red-900 bg-red-100 border-2 border-red-300 hover:bg-red-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <svg className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> 공휴일/휴무일 관리
-            </button>
-
-            <button onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }} className="flex-1 flex items-center justify-center w-full rounded-xl text-[clamp(15px,4.5vw,24px)] md:text-[20px] lg:text-[22px] tracking-tighter whitespace-nowrap px-2 font-extrabold text-red-900 bg-red-100 border-2 border-red-300 hover:bg-red-200 shadow-md touch-manipulation transition-all active:scale-95 min-h-[54px] sm:min-h-[58px] md:min-h-[64px]">
-              <LucideCalendar className="w-5 h-5 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-1 sm:mr-2 shrink-0" /> 시간표 작성
-            </button>
+            <div className="section-label mt-5 sm:mt-6 mb-0.5">관리자 메뉴</div>
+            <MenuCard
+              variant="admin"
+              onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
+              icon={<UsersIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="선생님 명단 관리"
+            />
+            <MenuCard
+              variant="admin"
+              onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
+              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+              label="공휴일/휴무일 관리"
+            />
+            <MenuCard
+              variant="admin"
+              onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
+              icon={<LucideCalendar className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
+              label="시간표 작성"
+            />
           </div>
 
-          <div className="mt-6 sm:mt-8 text-center text-[12px] text-gray-400 font-bold tracking-wider">
+          <div className="mt-8 sm:mt-10 text-center text-[11px] text-gray-300 font-medium tracking-wider">
             v260825-holidays
           </div>
         </div>

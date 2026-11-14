@@ -2,8 +2,154 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   min-height: 100vh;
+  color: #1e293b;
+  background-color: #f1f5f9;
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, rgba(59, 130, 246, 0.10), transparent 60%),
+    radial-gradient(800px 500px at 100% 100%, rgba(99, 102, 241, 0.06), transparent 60%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss06";
+  letter-spacing: -0.011em;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.18);
+}
+
+/* 메인 화면용 셀렉트: 브라우저 기본 화살표 대신 깔끔한 쉐브론 */
+.select-refined {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1.25em;
+  padding-right: 2.75rem !important;
+}
+
+/* 메인 메뉴 카드 */
+.menu-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.875rem;
+  padding: 0.625rem 1rem 0.625rem 0.625rem;
+  min-height: 60px;
+  border-radius: 1rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  color: #1e293b;
+  text-align: left;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease, background-color .18s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.menu-card:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 8px 20px -8px rgb(37 99 235 / 0.25);
+}
+.menu-card:active {
+  transform: scale(0.985);
+  background: #f8fafc;
+}
+.menu-card .menu-chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 0.75rem;
+  background: #eff6ff;
+  color: #2563eb;
+}
+.menu-card .menu-label {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: clamp(16px, 4.4vw, 21px);
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  word-break: keep-all;
+}
+.menu-card .menu-chevron {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: #cbd5e1;
+  transition: transform .18s ease, color .18s ease;
+}
+.menu-card:hover .menu-chevron {
+  color: #3b82f6;
+  transform: translateX(2px);
+}
+.menu-card.is-admin .menu-chip {
+  background: #fff1f2;
+  color: #e11d48;
+}
+.menu-card.is-admin:hover {
+  border-color: #fecdd3;
+  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 8px 20px -8px rgb(225 29 72 / 0.22);
+}
+.menu-card.is-admin:hover .menu-chevron {
+  color: #e11d48;
+}
+.menu-card.is-disabled {
+  cursor: not-allowed;
+  background: #f8fafc;
+  color: #94a3b8;
+  box-shadow: none;
+}
+.menu-card.is-disabled .menu-chip {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+.menu-card.is-disabled:hover {
+  border-color: #e2e8f0;
+}
+.menu-card.is-disabled:hover .menu-chevron {
+  color: #cbd5e1;
+  transform: none;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+@media (min-width: 640px) {
+  .menu-card {
+    min-height: 68px;
+    padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+  }
+  .menu-card .menu-chip {
+    width: 48px;
+    height: 48px;
+  }
+  .section-label {
+    font-size: 14px;
+  }
 }
 
 @keyframes sparkle {
