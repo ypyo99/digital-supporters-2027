@@ -199,6 +199,37 @@
       }
     }
 
+    /* Print Footer Screen Styles */
+    .print-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding-top: 12px;
+    }
+    .print-footer-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .print-footer-text {
+      text-align: left;
+      line-height: 1.25;
+    }
+    .print-footer-sub {
+      font-size: 11px;
+      font-weight: 500;
+      color: #64748b;
+      letter-spacing: -0.01em;
+    }
+    .print-footer-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
     /* Print Styling (A4 Clean 1-Page Output) */
     @page {
       size: A4 portrait;
@@ -439,20 +470,34 @@
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 6px !important;
+        gap: 12px !important;
         text-align: center !important;
         padding-top: 10px !important;
-        font-size: 12px !important;
-        color: #475569 !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
       .print-footer-logo {
-        width: 22px !important;
-        height: 22px !important;
+        width: 36px !important;
+        height: 36px !important;
         object-fit: contain !important;
+        flex-shrink: 0 !important;
         display: inline-block !important;
-        vertical-align: middle !important;
+      }
+      .print-footer-text {
+        text-align: left !important;
+        line-height: 1.25 !important;
+      }
+      .print-footer-sub {
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        color: #64748b !important;
+        letter-spacing: -0.01em !important;
+      }
+      .print-footer-title {
+        font-size: 17px !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+        letter-spacing: -0.02em !important;
       }
     }
   </style>
@@ -854,9 +899,12 @@
             <p class="text-xs text-slate-500 font-medium">
               ※ 설문지 문항참고: 어르신 맞춤형 디지털 역량 진단도구 개발연구(2022.10. / 길혜자_충북대) ※
             </p>
-            <div class="flex items-center justify-center gap-2 text-slate-700 font-bold text-sm sm:text-base">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-6 h-6 object-contain" onerror="this.style.display='none'">
-              <span>사회복지법인 서울가톨릭사회복지회 <strong class="text-blue-900">시립성동노인종합복지관</strong></span>
+            <div class="flex items-center justify-center gap-3">
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-10 h-10 object-contain flex-shrink-0" onerror="this.style.display='none'">
+              <div class="text-left leading-tight">
+                <div class="text-xs text-slate-500 font-medium tracking-wide">사회복지법인 서울가톨릭사회복지회</div>
+                <div class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">시립성동노인종합복지관</div>
+              </div>
             </div>
           </div>
 
@@ -1674,8 +1722,11 @@
 
             <!-- Footer -->
             <div class="print-footer">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="print-footer-logo">
-              <span>사회복지법인 서울가톨릭사회복지회 <strong>시립성동노인종합복지관</strong></span>
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="print-footer-logo" onerror="this.style.display='none'">
+              <div class="print-footer-text">
+                <div class="print-footer-sub">사회복지법인 서울가톨릭사회복지회</div>
+                <div class="print-footer-title">시립성동노인종합복지관</div>
+              </div>
             </div>
           </div>
         `;
