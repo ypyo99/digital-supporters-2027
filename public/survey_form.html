@@ -230,17 +230,105 @@
       letter-spacing: -0.02em;
     }
 
-    /* Print Scale Buttons */
-    .print-scale-container {
+    /* Print Section & Questions Styling (Matches Screen UI) */
+    .print-section {
+      margin-bottom: 0.75rem;
+    }
+    .print-section-header {
       display: flex;
-      align-items: stretch;
+      align-items: center;
       justify-content: space-between;
-      gap: 4px;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      color: #ffffff;
+    }
+    .print-section-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .print-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .print-section-desc {
+      font-size: 0.75rem;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+    .print-section-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    /* Section Theme Colors */
+    .print-header-awareness { background-color: #1e293b; }
+    .print-badge-awareness { background-color: #334155; color: #f1f5f9; }
+
+    .print-header-usage { background-color: #1e3a8a; }
+    .print-badge-usage { background-color: #1d4ed8; color: #eff6ff; }
+
+    .print-header-communication { background-color: #312e81; }
+    .print-badge-communication { background-color: #3730a3; color: #e0e7ff; }
+
+    .print-header-citizenship { background-color: #134e4a; }
+    .print-badge-citizenship { background-color: #115e59; color: #ccfbf1; }
+
+    /* Section Body & Questions */
+    .print-section-body {
+      border: 1.5px solid #cbd5e1;
+      border-top: none;
+      border-radius: 0 0 0.5rem 0.5rem;
+      background-color: #ffffff;
+    }
+    .print-q-item {
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .print-q-item:last-child {
+      border-bottom: none;
+    }
+    .print-q-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      margin-bottom: 0.35rem;
+    }
+    .print-q-badge {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 9999px;
+      background-color: #dbeafe;
+      color: #1e40af;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .print-q-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.35;
+      margin: 0;
+    }
+    .print-options-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.35rem;
       width: 100%;
     }
+
+    /* Print Scale Buttons */
     .print-scale-btn {
-      flex: 1 1 0;
-      min-width: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -286,6 +374,37 @@
     .print-scale-btn.selected .print-score-label {
       color: #ffffff;
       font-weight: 700;
+    }
+
+    /* Feedback Box (Screen) */
+    .print-feedback-section {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      background-color: #ffffff;
+      margin-top: 0.75rem;
+    }
+    .print-feedback-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.2rem;
+    }
+    .print-feedback-desc {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-bottom: 0.4rem;
+    }
+    .print-feedback-content-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      color: #1e293b;
+      min-height: 50px;
+      line-height: 1.4;
+      white-space: pre-wrap;
     }
 
     /* Print Styling (A4 Clean 1-Page Output) */
@@ -361,7 +480,7 @@
       .print-doc-container {
         display: flex !important;
         flex-direction: column !important;
-        gap: 10px !important;
+        gap: 8px !important;
         color: #0f172a !important;
         width: 100% !important;
         box-sizing: border-box !important;
@@ -370,23 +489,23 @@
       /* 1. Header */
       .print-header {
         text-align: center !important;
-        border-bottom: 2.5px solid #0f172a !important;
-        padding-top: 14px !important;
-        padding-bottom: 8px !important;
+        border-bottom: 2px solid #0f172a !important;
+        padding-top: 6px !important;
+        padding-bottom: 5px !important;
         margin-bottom: 2px !important;
       }
       .print-header h2 {
-        font-size: 22px !important;
+        font-size: 19px !important;
         font-weight: 900 !important;
         letter-spacing: -0.025em !important;
-        line-height: 1.3 !important;
+        line-height: 1.2 !important;
         margin: 0 !important;
         color: #0f172a !important;
       }
       .print-header .print-subtitle {
-        font-size: 11.5px !important;
+        font-size: 10.5px !important;
         color: #475569 !important;
-        margin-top: 5px !important;
+        margin-top: 3px !important;
       }
 
       /* 2. Respondent Table */
@@ -394,26 +513,28 @@
         width: 100% !important;
         border-collapse: collapse !important;
         border: 1.5px solid #0f172a !important;
-        font-size: 12px !important;
+        font-size: 11px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
       .print-respondent-table th, .print-respondent-table td {
         border: 1px solid #0f172a !important;
-        padding: 6.5px 8px !important;
+        padding: 4px 6px !important;
         text-align: center !important;
         vertical-align: middle !important;
       }
       .print-respondent-table th {
         background-color: #f1f5f9 !important;
         font-weight: 700 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       /* 3. Domain Cards */
       .print-domain-grid {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
-        gap: 8px !important;
+        gap: 6px !important;
         text-align: center !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
@@ -421,99 +542,157 @@
       .print-domain-card {
         border: 1px solid #cbd5e1 !important;
         border-radius: 6px !important;
-        padding: 6px 4px !important;
+        padding: 4px 3px !important;
         background-color: #f8fafc !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       .print-domain-title {
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: 700 !important;
       }
       .print-domain-score {
-        font-size: 13.5px !important;
+        font-size: 12px !important;
         font-weight: 800 !important;
-        margin-top: 2px !important;
+        margin-top: 1px !important;
       }
       .print-total-score-bar {
         text-align: right !important;
-        font-size: 12px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
-        margin-top: 4px !important;
+        margin-top: 3px !important;
       }
       .print-total-score-num {
-        font-size: 15px !important;
+        font-size: 13.5px !important;
         font-weight: 900 !important;
         color: #1d4ed8 !important;
       }
 
-      /* 4. 15 Questions Table */
-      .print-questions-table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-        border: 1.5px solid #0f172a !important;
-        font-size: 11.5px !important;
+      /* 4. Section Headers & Questions */
+      .print-section {
+        margin-bottom: 6px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
-      .print-questions-table tr, .print-questions-table th, .print-questions-table td {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-      }
-      .print-questions-table th, .print-questions-table td {
-        border: 1px solid #0f172a !important;
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-        line-height: 1.35 !important;
-        vertical-align: middle !important;
-      }
-      .print-questions-table th {
-        background-color: #f1f5f9 !important;
-        font-weight: 700 !important;
+      .print-page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+        margin-top: 0 !important;
         padding-top: 6px !important;
-        padding-bottom: 6px !important;
       }
-      .print-questions-table th.col-qnum, .print-questions-table td.col-qnum {
-        text-align: center !important;
-        font-weight: 700 !important;
-        width: 34px !important;
-      }
-      .print-questions-table th.col-qtext {
-        text-align: center !important;
-      }
-      .print-questions-table td.col-qtext {
-        padding-left: 8px !important;
-        padding-right: 8px !important;
-        text-align: left !important;
-        font-size: 11px !important;
-        color: #0f172a !important;
-      }
-      .print-questions-table th.col-qoptions {
-        width: 345px !important;
-        text-align: center !important;
-      }
-      .print-questions-table td.col-qoptions {
-        padding: 3px 6px !important;
-        vertical-align: middle !important;
-        width: 345px !important;
-      }
-      .print-scale-container {
+      .print-section-header {
         display: flex !important;
-        align-items: stretch !important;
+        align-items: center !important;
         justify-content: space-between !important;
+        padding: 4px 10px !important;
+        border-radius: 7px 7px 0 0 !important;
+        color: #ffffff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .print-section-title-wrap {
+        display: flex !important;
+        align-items: baseline !important;
+        gap: 5px !important;
+      }
+      .print-section-title {
+        font-size: 11.5px !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+      }
+      .print-section-desc {
+        font-size: 9.5px !important;
+        font-weight: 400 !important;
+        color: rgba(255, 255, 255, 0.85) !important;
+      }
+      .print-section-badge {
+        font-size: 9px !important;
+        font-weight: 600 !important;
+        padding: 1.5px 7px !important;
+        border-radius: 9999px !important;
+        white-space: nowrap !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .print-header-awareness { background-color: #1e293b !important; }
+      .print-badge-awareness { background-color: #334155 !important; color: #f1f5f9 !important; }
+
+      .print-header-usage { background-color: #1e3a8a !important; }
+      .print-badge-usage { background-color: #1d4ed8 !important; color: #eff6ff !important; }
+
+      .print-header-communication { background-color: #312e81 !important; }
+      .print-badge-communication { background-color: #3730a3 !important; color: #e0e7ff !important; }
+
+      .print-header-citizenship { background-color: #134e4a !important; }
+      .print-badge-citizenship { background-color: #115e59 !important; color: #ccfbf1 !important; }
+
+      .print-section-body {
+        border: 1.2px solid #cbd5e1 !important;
+        border-top: none !important;
+        border-radius: 0 0 7px 7px !important;
+        background-color: #ffffff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-q-item {
+        padding: 4px 8px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-q-item:last-child {
+        border-bottom: none !important;
+      }
+      .print-q-head {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 5px !important;
+        margin-bottom: 2px !important;
+      }
+      .print-q-badge {
+        width: 16px !important;
+        height: 16px !important;
+        border-radius: 9999px !important;
+        background-color: #dbeafe !important;
+        color: #1e40af !important;
+        font-size: 9px !important;
+        font-weight: 800 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        margin-top: 1px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .print-q-text {
+        font-size: 10.5px !important;
+        font-weight: 600 !important;
+        color: #0f172a !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+      }
+      .print-options-grid {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
         gap: 4px !important;
         width: 100% !important;
       }
+
+      /* 5. Scale Buttons */
       .print-scale-btn {
-        flex: 1 1 0 !important;
-        min-width: 0 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        border: 1.2px solid #cbd5e1 !important;
+        border: 1.2px solid #e2e8f0 !important;
         border-radius: 6px !important;
         background-color: #ffffff !important;
-        padding: 3px 1px 2px 1px !important;
-        height: 38px !important;
+        padding: 2.5px 2px 2px 2px !important;
+        height: 36px !important;
         box-sizing: border-box !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -523,14 +702,14 @@
         border-color: #1e3a8a !important;
         color: #ffffff !important;
       }
-      .print-score-num {
+      .print-scale-btn .score-num {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        width: 16px !important;
-        height: 16px !important;
+        width: 15px !important;
+        height: 15px !important;
         border-radius: 9999px !important;
-        font-size: 9.5px !important;
+        font-size: 9px !important;
         font-weight: 800 !important;
         color: #1e3a8a !important;
         background-color: #eff6ff !important;
@@ -539,11 +718,11 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .print-scale-btn.selected .print-score-num {
+      .print-scale-btn.selected .score-num {
         background-color: rgba(255, 255, 255, 0.28) !important;
         color: #ffffff !important;
       }
-      .print-score-label {
+      .print-scale-btn .score-label {
         font-size: 7.8px !important;
         font-weight: 600 !important;
         line-height: 1.1 !important;
@@ -551,35 +730,44 @@
         color: #475569 !important;
         word-break: keep-all !important;
       }
-      .print-scale-btn.selected .print-score-label {
+      .print-scale-btn.selected .score-label {
         color: #ffffff !important;
         font-weight: 700 !important;
       }
 
-      /* 5. Feedback Box */
-      .print-feedback-box {
-        border: 1.5px solid #0f172a !important;
-        border-radius: 6px !important;
-        padding: 8px 12px !important;
-        background-color: transparent !important;
-        min-height: 70px !important;
-        display: flex !important;
-        flex-direction: column !important;
+      /* 6. Feedback Box */
+      .print-feedback-section {
+        border: 1.2px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        padding: 8px 10px !important;
+        background-color: #ffffff !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+        margin-top: 6px !important;
       }
       .print-feedback-title {
-        font-size: 11.5px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
         color: #0f172a !important;
+        margin-bottom: 2px !important;
+      }
+      .print-feedback-desc {
+        font-size: 9px !important;
+        color: #64748b !important;
         margin-bottom: 4px !important;
       }
-      .print-feedback-content {
-        font-size: 11px !important;
-        color: #334155 !important;
-        line-height: 1.4 !important;
+      .print-feedback-content-box {
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 10.5px !important;
+        color: #1e293b !important;
+        min-height: 50px !important;
+        line-height: 1.35 !important;
         white-space: pre-wrap !important;
-        flex-grow: 1 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       /* 6. Footer */
@@ -1164,6 +1352,50 @@
       { id: 15, domain: 'citizenship', domainTitle: '디지털 시민성', text: '나는 스팸, 스미싱, 보이스피싱 등 사이버 범죄에 대응하는 방법(신고 등)을 알고 있다.' }
     ];
 
+    // Domain Sections for Print Layout (Page 1: 1~9, Page 2: 10~15)
+    const DOMAIN_SECTIONS = [
+      {
+        key: 'awareness',
+        title: '■ 디지털 인식',
+        desc: '(핵심변화: 디지털에 대한 두려움 감소 및 자신감 향상)',
+        range: '1번 ~ 3번 문항',
+        headerClass: 'print-header-awareness',
+        badgeClass: 'print-badge-awareness',
+        qIds: [1, 2, 3],
+        page: 1
+      },
+      {
+        key: 'usage',
+        title: '■ 디지털 이용',
+        desc: '(핵심변화: 생활 속 디지털 활용 능력 향상)',
+        range: '4번 ~ 9번 문항',
+        headerClass: 'print-header-usage',
+        badgeClass: 'print-badge-usage',
+        qIds: [4, 5, 6, 7, 8, 9],
+        page: 1
+      },
+      {
+        key: 'communication',
+        title: '■ 디지털 소통',
+        desc: '(핵심변화: 가족·사회와의 소통 확대)',
+        range: '10번 ~ 12번 문항',
+        headerClass: 'print-header-communication',
+        badgeClass: 'print-badge-communication',
+        qIds: [10, 11, 12],
+        page: 2
+      },
+      {
+        key: 'citizenship',
+        title: '■ 디지털 시민성',
+        desc: '(핵심변화: 안전한 디지털 사용 습관 형성)',
+        range: '13번 ~ 15번 문항',
+        headerClass: 'print-header-citizenship',
+        badgeClass: 'print-badge-citizenship',
+        qIds: [13, 14, 15],
+        page: 2
+      }
+    ];
+
     // Helper: Format Date to YYYY-MM-DD
     function getTodayString() {
       const d = new Date();
@@ -1451,6 +1683,30 @@
       document.getElementById('btnCloseModal')?.addEventListener('click', closeDetailModal);
       document.getElementById('btnPrintDetail')?.addEventListener('click', () => {
         window.print();
+      });
+
+      // Browser Ctrl+P handler to sync print modal content
+      window.addEventListener('beforeprint', () => {
+        const participantName = document.getElementById('participantName')?.value?.trim() || '사전설문지';
+        const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
+        const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
+        const feedback = document.getElementById('feedback')?.value?.trim() || '';
+        const metrics = computeClientMetrics(state.answers);
+
+        const fakeSurvey = {
+          id: currentSurveyId || 'temp',
+          survey_date: surveyDate,
+          surveyDate,
+          participant_name: participantName,
+          participantName,
+          surveyor_name: surveyorName,
+          surveyorName,
+          answers: state.answers,
+          metrics,
+          feedback
+        };
+
+        renderDetailModalContent(fakeSurvey);
       });
     }
 
@@ -1745,6 +2001,46 @@
       }
     }
 
+    function renderDomainSectionHtml(domainDef, survey) {
+      const isPage2Start = domainDef.key === 'communication';
+      return `
+        <section class="print-section ${isPage2Start ? 'print-page-break' : ''}">
+          <div class="print-section-header ${domainDef.headerClass}">
+            <div class="print-section-title-wrap">
+              <span class="print-section-title">${domainDef.title}</span>
+              <span class="print-section-desc">${domainDef.desc}</span>
+            </div>
+            <span class="print-section-badge ${domainDef.badgeClass}">${domainDef.range}</span>
+          </div>
+          <div class="print-section-body">
+            ${domainDef.qIds.map(qId => {
+              const q = QUESTIONS.find(item => item.id === qId);
+              const val = Number(survey.answers[`q${q.id}`]);
+              return `
+                <div class="print-q-item">
+                  <div class="print-q-head">
+                    <span class="print-q-badge">${q.id}</span>
+                    <p class="print-q-text">${q.text}</p>
+                  </div>
+                  <div class="print-options-grid">
+                    ${SCALE_OPTIONS.map(opt => {
+                      const isSelected = val === opt.value;
+                      return `
+                        <div class="print-scale-btn ${isSelected ? 'selected' : ''}">
+                          <span class="score-num">${opt.value}</span>
+                          <span class="score-label">${opt.displayHtml || opt.label}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
     function renderDetailModalContent(survey) {
       const content = document.getElementById('modalPrintContent');
       const subtitle = document.getElementById('modalSubtitle');
@@ -1801,52 +2097,26 @@
               </div>
             </div>
 
-            <!-- Questions Table (All 15 questions) -->
-            <table class="print-questions-table">
-              <thead>
-                <tr>
-                  <th class="col-qnum">번호</th>
-                  <th class="col-qtext">문항 내용</th>
-                  <th class="col-qoptions">응답 척도 (1~5점)</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${QUESTIONS.map(q => {
-                  const val = Number(survey.answers[`q${q.id}`]);
-                  return `
-                    <tr>
-                      <td class="col-qnum">${q.id}</td>
-                      <td class="col-qtext">${q.text}</td>
-                      <td class="col-qoptions">
-                        <div class="print-scale-container">
-                          ${SCALE_OPTIONS.map(opt => {
-                            const isSelected = val === opt.value;
-                            return `
-                              <div class="print-scale-btn ${isSelected ? 'selected' : ''}">
-                                <span class="print-score-num">${opt.value}</span>
-                                <span class="print-score-label">${opt.displayHtml || opt.label}</span>
-                              </div>
-                            `;
-                          }).join('')}
-                        </div>
-                      </td>
-                    </tr>
-                  `;
-                }).join('')}
-              </tbody>
-            </table>
+            <!-- Page 1 Domains (Domain 1: 인식 & Domain 2: 이용) -->
+            ${DOMAIN_SECTIONS.filter(d => d.page === 1).map(d => renderDomainSectionHtml(d, survey)).join('')}
 
-            <!-- Feedback -->
-            <div class="print-feedback-box">
+            <!-- Page 2 Domains (Domain 3: 소통 & Domain 4: 시민성, page-break at Domain 3) -->
+            ${DOMAIN_SECTIONS.filter(d => d.page === 2).map(d => renderDomainSectionHtml(d, survey)).join('')}
+
+            <!-- Feedback Section (Page 2) -->
+            <div class="print-feedback-section">
               <div class="print-feedback-title">
-                ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분
+                ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
               </div>
-              <p class="print-feedback-content">
+              <div class="print-feedback-desc">
+                (예: 스마트폰으로 버스/지하철 길찾기, 카카오페이 송금하기, 사진 예쁘게 편집해서 가족에게 보내기 등)
+              </div>
+              <div class="print-feedback-content-box">
                 ${escapeHtml(survey.feedback || '(작성된 희망사항이 없습니다.)')}
-              </p>
+              </div>
             </div>
 
-            <!-- Footer -->
+            <!-- Footer (Page 2) -->
             <div class="print-footer">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="print-footer-logo" onerror="this.style.display='none'">
               <div class="print-footer-text">
