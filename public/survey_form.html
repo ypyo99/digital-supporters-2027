@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>2027년 역량활용사업 1:1 디지털 교육 설문조사지(사전) - 시립성동노인종합복지관</title>
+  <link rel="icon" type="image/svg+xml" href="/icon-c-bulb.svg">
+  
+  <!-- Font: Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans KR"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#1d4ed8',
+              600: '#1e40af',
+              700: '#1e3a8a',
+              800: '#172554',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SheetJS for Excel export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    /* Smooth Scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Font Size Scaling for Seniors */
+    body.font-size-normal {
+      font-size: 16px;
+    }
+    body.font-size-large {
+      font-size: 18.5px;
+    }
+    body.font-size-large h2 {
+      font-size: 1.85rem !important;
+    }
+    body.font-size-large .question-text {
+      font-size: 1.25rem !important;
+      line-height: 1.6 !important;
+    }
+    body.font-size-large .scale-btn {
+      min-height: 82px !important;
+      padding-top: 0.75rem !important;
+    }
+
+    body.font-size-xlarge {
+      font-size: 21px;
+    }
+    body.font-size-xlarge h2 {
+      font-size: 2.15rem !important;
+    }
+    body.font-size-xlarge .question-text {
+      font-size: 1.45rem !important;
+      line-height: 1.6 !important;
+    }
+    body.font-size-xlarge .scale-btn {
+      min-height: 92px !important;
+      padding-top: 0.85rem !important;
+    }
+
+    /* Question Option Buttons - Aligned 1,2,3,4,5 Numbers */
+    .scale-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 0.75rem;
+      border: 2px solid #e2e8f0;
+      background-color: #ffffff;
+      padding: 0.65rem 0.2rem 0.5rem 0.2rem;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      user-select: none;
+      min-height: 72px;
+      position: relative;
+    }
+
+    .scale-btn:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .scale-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Selected State */
+    .scale-btn.selected {
+      background-color: #1d4ed8 !important;
+      border-color: #1e3a8a !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 10px rgba(29, 78, 216, 0.35);
+    }
+
+    .scale-btn.selected .score-num {
+      color: #ffffff !important;
+      background-color: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    .scale-btn.selected .score-label {
+      color: #eff6ff !important;
+      font-weight: 700 !important;
+    }
+
+    /* Score Number Circle/Badge */
+    .score-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      background-color: #eff6ff;
+      margin-top: 0;
+      margin-bottom: 0.35rem;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    /* Score Label Text Container */
+    .score-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #475569;
+      text-align: center;
+      line-height: 1.25;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    /* Error/Missing Highlight */
+    .question-item.has-error {
+      background-color: #fef2f2 !important;
+      border: 2px solid #ef4444 !important;
+      border-radius: 0.75rem;
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    /* Mobile specific layout tweaks */
+    @media (max-width: 640px) {
+      .options-container {
+        gap: 0.35rem;
+      }
+      .scale-btn {
+        min-height: 68px;
+        padding: 0.5rem 0.15rem 0.4rem 0.15rem;
+        justify-content: flex-start;
+      }
+      .score-label {
+        font-size: 0.67rem;
+        letter-spacing: -0.04em;
+        line-height: 1.2;
+      }
+      .score-num {
+        width: 24px;
+        height: 24px;
+        font-size: 0.88rem;
+        margin-bottom: 0.25rem;
+      }
+    }
+
+    /* Print Styling (A4 Clean Output) */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt !important;
+        padding: 0 !important;
+      }
+      
+      header, #mobileQuickBar, #surveyView, #toast, .print-hide, .print\:hidden {
+        display: none !important;
+      }
+
+      #detailModal {
+        position: static !important;
+        background: transparent !important;
+        padding: 0 !important;
+        display: block !important;
+      }
+
+      #detailModal > div {
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+
+      .printable-paper {
+        padding: 0 !important;
+      }
+
+      table {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col font-size-normal antialiased py-3 sm:py-6 pb-28">
+
+  <!-- TOP STICKY BAR: Progress & Font Resize (Print hidden) -->
+  <header id="topBar" class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs px-3 sm:px-6 py-2.5 max-w-4xl w-full mx-auto rounded-xl mb-4 print:hidden">
+    <div class="flex items-center justify-between gap-3">
+      <!-- Title & Progress -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <span class="text-xs sm:text-sm font-bold text-slate-800 truncate">
+            📋 2027년 1:1 디지털 교육 사전 설문지
+          </span>
+          <span id="mobileProgressText" class="text-xs font-bold text-blue-700 whitespace-nowrap">
+            0 / 15문항 (0%)
+          </span>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+          <div id="surveyProgressBar" class="bg-blue-600 h-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Font Size Buttons -->
+      <div class="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-lg border border-slate-200">
+        <button type="button" id="btnFontNormal" title="보통 글자 크기" class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
+          보통
+        </button>
+        <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
+          크게
+        </button>
+        <button type="button" id="btnFontXLarge" title="아주 큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
+          아주크게
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-6 lg:p-8">
+
+    <!-- STATUS BANNER (Alert for existing survey load or new survey) -->
+    <div id="statusBanner" class="hidden mb-6 p-4 rounded-xl border flex items-center justify-between gap-3 shadow-xs transition-all">
+      <div class="flex items-center gap-3">
+        <span id="statusIcon" class="text-2xl">ℹ️</span>
+        <div id="statusContent" class="text-xs sm:text-sm font-semibold"></div>
+      </div>
+      <div id="statusAction"></div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 1: SURVEY FORM                                            -->
+    <!-- ============================================================== -->
+    <div id="surveyView" class="space-y-6">
+      
+      <!-- Survey Document Card -->
+      <form id="surveyForm" class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden" novalidate>
+        
+        <!-- Header Banner & Title -->
+        <div class="border-b-4 border-blue-900 p-6 sm:p-8 bg-gradient-to-b from-blue-50/50 to-white">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <span class="text-xs sm:text-sm font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded-full inline-block self-start">
+              시립성동노인종합복지관
+            </span>
+            <span class="text-xs text-slate-500 font-medium">
+              사회복지법인 서울가톨릭사회복지회
+            </span>
+          </div>
+          <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
+            2027년 역량활용사업 1:1 디지털 교육 설문조사지<span class="text-blue-700">(사전)</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2">
+            본 설문은 참여 어르신의 디지털 기기 활용 수준을 사전에 파악하여 맞춤형 1:1 교육 계획을 수립하기 위한 기초 자료로 활용됩니다.
+          </p>
+        </div>
+
+        <div class="p-4 sm:p-8 space-y-8">
+
+          <!-- Section: Respondent Info (응답자 일반사항) -->
+          <section class="bg-slate-50 border border-slate-300 rounded-xl p-4 sm:p-5">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+              ■ 응답자 일반사항
+            </h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <!-- Survey Date -->
+              <div>
+                <label for="surveyDate" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                  조사일자 <span class="text-red-500 font-bold">*</span>
+                </label>
+                <div class="relative">
+                  <input type="date" id="surveyDate" name="surveyDate" required
+                    class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                </div>
+                <p class="text-[11px] text-blue-600 mt-1">※ 오늘 날짜가 자동으로 설정됩니다.</p>
+              </div>
+
+              <!-- Participant Name -->
+              <div>
+                <label for="participantName" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                  참여자(성명) <span class="text-red-500 font-bold">*</span>
+                </label>
+                <input type="text" id="participantName" name="participantName" required placeholder="성명을 입력하세요"
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+              </div>
+
+              <!-- Surveyor Name -->
+              <div>
+                <label for="surveyorName" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                  조사자(강사/담당자)
+                </label>
+                <input type="text" id="surveyorName" name="surveyorName" placeholder="조사자 이름"
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+              </div>
+            </div>
+          </section>
+
+          <!-- Rating Scale Legend Banner -->
+          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-slate-700">
+            <div class="font-bold text-blue-900 mb-2 flex items-center gap-1.5">
+              <span>📌</span> 5단계 응답 기준 안내
+            </div>
+            <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center text-xs font-semibold">
+              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
+                <span class="block text-blue-700 text-sm sm:text-base font-black">①</span>
+                <span class="text-[11px] sm:text-xs">전혀 그렇지 않다</span>
+              </div>
+              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
+                <span class="block text-blue-700 text-sm sm:text-base font-black">②</span>
+                <span class="text-[11px] sm:text-xs">별로 그렇지 않다</span>
+              </div>
+              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
+                <span class="block text-blue-700 text-sm sm:text-base font-black">③</span>
+                <span class="text-[11px] sm:text-xs">보통이다</span>
+              </div>
+              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
+                <span class="block text-blue-700 text-sm sm:text-base font-black">④</span>
+                <span class="text-[11px] sm:text-xs">그렇다</span>
+              </div>
+              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
+                <span class="block text-blue-700 text-sm sm:text-base font-black">⑤</span>
+                <span class="text-[11px] sm:text-xs">매우 그렇다</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================================================= -->
+          <!-- DOMAIN 1: 디지털 인식                                      -->
+          <!-- ========================================================= -->
+          <section class="survey-section" data-domain="awareness">
+            <div class="bg-slate-800 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
+                ■ 디지털 인식
+                <span class="text-xs sm:text-sm font-normal text-slate-300">(핵심변화: 디지털에 대한 두려움 감소 및 자신감 향상)</span>
+              </h3>
+              <span class="text-xs bg-slate-700 text-slate-200 px-2.5 py-0.5 rounded-full font-medium">1번 ~ 3번 문항</span>
+            </div>
+
+            <!-- Questions Container -->
+            <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
+              
+              <!-- Q1 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_1" data-q="1">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 새로운 디지털 기기에 두려움 없이 잘 적응하는 편이다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q2 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_2" data-q="2">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 새로운 디지털 기기를 적극적으로 이용해 보는 편이다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q3 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_3" data-q="3">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 익숙하지 않은 디지털 기기를 사용할 때도 편안하다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- DOMAIN 2: 디지털 이용                                      -->
+          <!-- ========================================================= -->
+          <section class="survey-section" data-domain="usage">
+            <div class="bg-blue-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
+                ■ 디지털 이용
+                <span class="text-xs sm:text-sm font-normal text-blue-200">(핵심변화: 생활 속 디지털 활용 능력 향상)</span>
+              </h3>
+              <span class="text-xs bg-blue-800 text-blue-100 px-2.5 py-0.5 rounded-full font-medium">4번 ~ 9번 문항</span>
+            </div>
+
+            <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
+              
+              <!-- Q4 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_4" data-q="4">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 스마트폰에서 화면/소리/보안/알림/와이파이 등 환경설정을 할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q5 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_5" data-q="5">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">5</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 스마트폰으로 사진을 찍고, 저장할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q6 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_6" data-q="6">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">6</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 스마트폰에서 필요한 앱을 검색, 설치, 삭제 할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q7 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_7" data-q="7">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">7</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 필요한 정보를 인터넷이나 앱으로 검색할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q8 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_8" data-q="8">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">8</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    병원·식당·기차 등을 모바일로 예약할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q9 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_9" data-q="9">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">9</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 송금, 간편결제 등 디지털 금융 서비스를 사용할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- DOMAIN 3: 디지털 소통                                      -->
+          <!-- ========================================================= -->
+          <section class="survey-section" data-domain="communication">
+            <div class="bg-indigo-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
+                ■ 디지털 소통
+                <span class="text-xs sm:text-sm font-normal text-indigo-200">(핵심변화: 가족·사회와의 소통 확대)</span>
+              </h3>
+              <span class="text-xs bg-indigo-800 text-indigo-100 px-2.5 py-0.5 rounded-full font-medium">10번 ~ 12번 문항</span>
+            </div>
+
+            <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
+              
+              <!-- Q10 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_10" data-q="10">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">10</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 메신저(카카오톡, 문자 등)을 활용하여 대화를 나누거나 사진, 파일 등을 전송할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q11 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_11" data-q="11">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">11</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 복지관·구청 등 일상생활에 필요한 안내 문자나 링크를 확인하고 활용할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q12 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_12" data-q="12">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">12</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 온라인 교육 또는 줌(Zoom) 수업에 참여 또는 활용할 수 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- DOMAIN 4: 디지털 시민성                                    -->
+          <!-- ========================================================= -->
+          <section class="survey-section" data-domain="citizenship">
+            <div class="bg-teal-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
+                ■ 디지털 시민성
+                <span class="text-xs sm:text-sm font-normal text-teal-200">(핵심변화: 안전한 디지털 사용 습관 형성)</span>
+              </h3>
+              <span class="text-xs bg-teal-800 text-teal-100 px-2.5 py-0.5 rounded-full font-medium">13번 ~ 15번 문항</span>
+            </div>
+
+            <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
+              
+              <!-- Q13 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_13" data-q="13">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">13</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 의심되는 문자나 링크를 함부로 누르지 않는다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q14 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_14" data-q="14">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">14</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    다른 사람의 사진이나 정보를 허락 없이 공유하면 안 된다는 것을 알고 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+              <!-- Q15 -->
+              <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_15" data-q="15">
+                <div class="flex items-start gap-2 mb-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">15</span>
+                  <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                    나는 스팸, 스미싱, 보이스피싱 등 사이버 범죄에 대응하는 방법(신고 등)을 알고 있다.
+                  </p>
+                </div>
+                <div class="options-container grid grid-cols-5 gap-1.5 sm:gap-3 mt-2"></div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- OPEN-ENDED FEEDBACK (주관식 희망사항)                       -->
+          <!-- ========================================================= -->
+          <section class="bg-white border border-slate-300 rounded-xl p-4 sm:p-6 shadow-xs">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+              ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
+            </h3>
+            <p class="text-xs text-slate-500 mb-3">
+              (예: 스마트폰으로 버스/지하철 길찾기, 카카오페이 송금하기, 사진 예쁘게 편집해서 가족에게 보내기 등)
+            </p>
+            <textarea id="feedback" name="feedback" rows="4" placeholder="자유롭게 작성해 주세요 (선택사항)"
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm sm:text-base focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+          </section>
+
+          <!-- Reference & Organization Footer in Card -->
+          <div class="pt-4 border-t border-slate-200 text-center space-y-3">
+            <p class="text-xs text-slate-500 font-medium">
+              ※ 설문지 문항참고: 어르신 맞춤형 디지털 역량 진단도구 개발연구(2022.10. / 길혜자_충북대) ※
+            </p>
+            <div class="flex items-center justify-center gap-2 text-slate-700 font-bold text-sm sm:text-base">
+              <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <span>사회복지법인 서울가톨릭사회복지회 <strong class="text-blue-900">시립성동노인종합복지관</strong></span>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+      <!-- Subtle admin entry link at very bottom -->
+      <div class="text-center pt-2 pb-6 print:hidden">
+        <a href="javascript:void(0)" id="linkAdminBottom" class="text-xs text-slate-400 hover:text-blue-700 font-medium transition inline-flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-2xs">
+          🔒 관리자 전용 (결과 조회 / 엑셀 다운로드)
+        </a>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 2: ADMIN & RESULTS DASHBOARD                             -->
+    <!-- ============================================================== -->
+    <div id="adminView" class="space-y-6 hidden">
+      
+      <!-- Back to Survey Navigation Bar -->
+      <div class="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <button id="tabSurvey" type="button" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          설문 작성 화면으로 돌아가기
+        </button>
+        <div class="text-xs text-slate-500 font-semibold hidden sm:block">
+          시립성동노인종합복지관 1:1 디지털 교육 사전 설문 관리자
+        </div>
+      </div>
+      
+      <!-- Summary Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+        <!-- Card 1: Total Count -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-xs font-semibold text-slate-500">총 응답 건수</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-blue-700 mt-1" id="statTotalCount">0<span class="text-sm font-normal text-slate-500 ml-1">명</span></div>
+          <div class="text-[11px] text-slate-400 mt-1">저장된 전체 설문</div>
+        </div>
+        <!-- Card 2: Awareness Avg -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-xs font-semibold text-slate-500">디지털 인식 평균</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-1" id="statAvgAwareness">0.0<span class="text-xs font-normal text-slate-400 ml-1">/5점</span></div>
+          <div class="text-[11px] text-blue-600 mt-1">두려움 감소·자신감</div>
+        </div>
+        <!-- Card 3: Usage Avg -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-xs font-semibold text-slate-500">디지털 이용 평균</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-1" id="statAvgUsage">0.0<span class="text-xs font-normal text-slate-400 ml-1">/5점</span></div>
+          <div class="text-[11px] text-emerald-600 mt-1">생활 속 활용 능력</div>
+        </div>
+        <!-- Card 4: Communication Avg -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-xs font-semibold text-slate-500">디지털 소통 평균</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-1" id="statAvgComm">0.0<span class="text-xs font-normal text-slate-400 ml-1">/5점</span></div>
+          <div class="text-[11px] text-indigo-600 mt-1">가족·사회와의 소통</div>
+        </div>
+        <!-- Card 5: Citizenship Avg -->
+        <div class="col-span-2 lg:col-span-1 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-xs font-semibold text-slate-500">디지털 시민성 평균</div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-1" id="statAvgCitizen">0.0<span class="text-xs font-normal text-slate-400 ml-1">/5점</span></div>
+          <div class="text-[11px] text-teal-600 mt-1">안전한 디지털 습관</div>
+        </div>
+      </div>
+
+      <!-- Action & Filter Bar -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <!-- Search Input -->
+        <div class="flex-1 min-w-[240px]">
+          <div class="relative">
+            <input type="text" id="adminSearchInput" placeholder="참여자 성명 또는 조사자로 검색..."
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-9 pr-4 py-2 text-sm focus:bg-white focus:ring-2 focus:ring-blue-500">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex items-center gap-2">
+          <!-- Refresh -->
+          <button id="btnRefreshList" type="button" title="목록 새로고침"
+            class="p-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-600 transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          </button>
+
+          <!-- Export Excel / CSV -->
+          <button id="btnExportCSV" type="button"
+            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            엑셀(.xlsx) 다운로드
+          </button>
+        </div>
+      </div>
+
+      <!-- Survey Table List -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-xs font-bold uppercase">
+                <th class="p-3.5 text-center w-12">번호</th>
+                <th class="p-3.5">조사일자</th>
+                <th class="p-3.5">참여자(성명)</th>
+                <th class="p-3.5">조사자</th>
+                <th class="p-3.5 text-center">인식(15)</th>
+                <th class="p-3.5 text-center">이용(30)</th>
+                <th class="p-3.5 text-center">소통(15)</th>
+                <th class="p-3.5 text-center">시민성(15)</th>
+                <th class="p-3.5 text-center">총점(75)</th>
+                <th class="p-3.5 text-center">평균(5)</th>
+                <th class="p-3.5 text-center w-28">관리</th>
+              </tr>
+            </thead>
+            <tbody id="surveyTableBody" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="11" class="text-center py-12 text-slate-400">
+                  저장된 설문 응답 내역을 불러오는 중입니다...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- FLOATING ACTION BUTTONS (저장하기, 인쇄하기, 닫기, 새로작성)     -->
+  <!-- ============================================================== -->
+  <div class="print-hide fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3 z-50">
+    <!-- 저장하기 버튼 -->
+    <button type="button" id="btnSaveFloating"
+      class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-5 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-2 text-sm sm:text-base cursor-pointer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+      </svg>
+      <span id="saveBtnText">저장하기</span>
+    </button>
+
+    <!-- 인쇄하기 버튼 (스마트폰에서는 숨김: hidden sm:inline-flex) -->
+    <button type="button" id="btnPrintFloating"
+      class="hidden sm:inline-flex bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 items-center gap-2 text-sm sm:text-base cursor-pointer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+      </svg>
+      <span>인쇄하기</span>
+    </button>
+
+    <!-- 새로 작성 버튼 -->
+    <button type="button" id="btnResetFloating"
+      class="bg-slate-700 hover:bg-slate-800 text-white font-semibold py-3 px-4 sm:px-5 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 text-xs sm:text-sm cursor-pointer">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <span>새로 작성</span>
+    </button>
+
+    <!-- 닫기 버튼 -->
+    <button type="button" id="btnCloseFloating"
+      class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-5 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-2 text-sm sm:text-base cursor-pointer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+      <span>닫기</span>
+    </button>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: SURVEY DETAIL & PRINT PREVIEW                           -->
+  <!-- ============================================================== -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 hidden">
+    <div class="bg-white w-full max-w-3xl max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 print-hide">
+        <div>
+          <h3 class="font-bold text-lg text-slate-900">설문 응답 상세 정보</h3>
+          <p class="text-xs text-slate-500" id="modalSubtitle">응답자 상세 내역</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btnPrintDetail" type="button" class="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            인쇄 / PDF 출력
+          </button>
+          <button id="btnCloseModal" type="button" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Printable Area) -->
+      <div class="p-6 overflow-y-auto space-y-6 printable-paper" id="modalPrintContent">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-24 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-xl flex items-center gap-2">
+      <span id="toastIcon">✅</span>
+      <span id="toastMessage">알림 메시지</span>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // Supabase Client Initialization
+    // -------------------------------------------------------------
+    const SUPABASE_URL = 'https://oudrcfxkneopgtcfbwhd.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91ZHJjZnhrbmVvcGd0Y2Zid2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNzk0MTYsImV4cCI6MjA5NDY1NTQxNn0.ovAp6X3VogCeyKa74pC3x2f4lKR6m3gkE0kEEhJbGpQ';
+    let supabaseClient = null;
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch (e) {
+      console.error('Supabase initialization failed:', e);
+    }
+
+    // -------------------------------------------------------------
+    // State Management
+    // -------------------------------------------------------------
+    let currentSurveyId = null; // Supabase record ID if editing existing
+    const state = {
+      currentFontSize: 'normal',
+      answers: {}, // { q1: 3, q2: 4, ... }
+      surveys: [], // List of submitted surveys for Admin
+      activeTab: 'survey', // 'survey' | 'admin'
+    };
+
+    // Scale Definitions
+    const SCALE_OPTIONS = [
+      { value: 1, label: '전혀 그렇지 않다', displayHtml: '전혀 그렇지<br>않다' },
+      { value: 2, label: '별로 그렇지 않다', displayHtml: '별로 그렇지<br>않다' },
+      { value: 3, label: '보통이다', displayHtml: '보통이다' },
+      { value: 4, label: '그렇다', displayHtml: '그렇다' },
+      { value: 5, label: '매우 그렇다', displayHtml: '매우 그렇다' }
+    ];
+
+    // Question Definitions
+    const QUESTIONS = [
+      { id: 1, domain: 'awareness', domainTitle: '디지털 인식', text: '나는 새로운 디지털 기기에 두려움 없이 잘 적응하는 편이다.' },
+      { id: 2, domain: 'awareness', domainTitle: '디지털 인식', text: '나는 새로운 디지털 기기를 적극적으로 이용해 보는 편이다.' },
+      { id: 3, domain: 'awareness', domainTitle: '디지털 인식', text: '나는 익숙하지 않은 디지털 기기를 사용할 때도 편안하다.' },
+      { id: 4, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰에서 화면/소리/보안/알림/와이파이 등 환경설정을 할 수 있다.' },
+      { id: 5, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰으로 사진을 찍고, 저장할 수 있다.' },
+      { id: 6, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰에서 필요한 앱을 검색, 설치, 삭제 할 수 있다.' },
+      { id: 7, domain: 'usage', domainTitle: '디지털 이용', text: '나는 필요한 정보를 인터넷이나 앱으로 검색할 수 있다.' },
+      { id: 8, domain: 'usage', domainTitle: '디지털 이용', text: '병원·식당·기차 등을 모바일로 예약할 수 있다.' },
+      { id: 9, domain: 'usage', domainTitle: '디지털 이용', text: '나는 송금, 간편결제 등 디지털 금융 서비스를 사용할 수 있다.' },
+      { id: 10, domain: 'communication', domainTitle: '디지털 소통', text: '나는 메신저(카카오톡, 문자 등)을 활용하여 대화를 나누거나 사진, 파일 등을 전송할 수 있다.' },
+      { id: 11, domain: 'communication', domainTitle: '디지털 소통', text: '나는 복지관·구청 등 일상생활에 필요한 안내 문자나 링크를 확인하고 활용할 수 있다.' },
+      { id: 12, domain: 'communication', domainTitle: '디지털 소통', text: '나는 온라인 교육 또는 줌(Zoom) 수업에 참여 또는 활용할 수 있다.' },
+      { id: 13, domain: 'citizenship', domainTitle: '디지털 시민성', text: '나는 의심되는 문자나 링크를 함부로 누르지 않는다.' },
+      { id: 14, domain: 'citizenship', domainTitle: '디지털 시민성', text: '다른 사람의 사진이나 정보를 허락 없이 공유하면 안 된다는 것을 알고 있다.' },
+      { id: 15, domain: 'citizenship', domainTitle: '디지털 시민성', text: '나는 스팸, 스미싱, 보이스피싱 등 사이버 범죄에 대응하는 방법(신고 등)을 알고 있다.' }
+    ];
+
+    // Helper: Format Date to YYYY-MM-DD
+    function getTodayString() {
+      const d = new Date();
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    // -------------------------------------------------------------
+    // App Initialization
+    // -------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', async () => {
+      initTodayDate();
+      renderScaleButtons();
+      setupEventListeners();
+      loadSavedFontSize();
+      
+      // Read URL Query Parameters (?name=...&surveyor=...)
+      const urlParams = new URLSearchParams(window.location.search);
+      const nameParam = (urlParams.get('name') || '').trim();
+      const surveyorParam = (urlParams.get('surveyor') || '').trim();
+
+      if (surveyorParam) {
+        const surveyorInput = document.getElementById('surveyorName');
+        if (surveyorInput) surveyorInput.value = surveyorParam;
+      }
+
+      if (nameParam) {
+        const participantInput = document.getElementById('participantName');
+        if (participantInput) participantInput.value = nameParam;
+        await loadExistingSurvey(nameParam);
+      }
+
+      if (urlParams.has('admin') || window.location.hash.includes('admin')) {
+        switchTab('admin');
+      }
+    });
+
+    // 1. Set Today's Date
+    function initTodayDate() {
+      const dateInput = document.getElementById('surveyDate');
+      if (dateInput && !dateInput.value) {
+        dateInput.value = getTodayString();
+      }
+    }
+
+    // 2. Render 5-point scale buttons for all 15 questions
+    function renderScaleButtons() {
+      QUESTIONS.forEach(q => {
+        const qBox = document.getElementById(`qBox_${q.id}`);
+        if (!qBox) return;
+
+        const optContainer = qBox.querySelector('.options-container');
+        if (!optContainer) return;
+
+        optContainer.innerHTML = '';
+
+        SCALE_OPTIONS.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'scale-btn';
+          btn.setAttribute('data-q', q.id);
+          btn.setAttribute('data-val', opt.value);
+          btn.setAttribute('aria-label', `${q.id}번 문항 ${opt.value}점: ${opt.label}`);
+
+          btn.innerHTML = `
+            <span class="score-num">${opt.value}</span>
+            <span class="score-label">${opt.displayHtml || opt.label}</span>
+          `;
+
+          btn.addEventListener('click', () => {
+            selectOption(q.id, opt.value);
+          });
+
+          optContainer.appendChild(btn);
+        });
+      });
+    }
+
+    // Handle Option Selection
+    function selectOption(qId, val) {
+      state.answers[`q${qId}`] = val;
+
+      const qBox = document.getElementById(`qBox_${qId}`);
+      if (qBox) {
+        qBox.classList.remove('has-error');
+      }
+
+      if (qBox) {
+        const buttons = qBox.querySelectorAll('.scale-btn');
+        buttons.forEach(btn => {
+          if (Number(btn.getAttribute('data-val')) === val) {
+            btn.classList.add('selected');
+          } else {
+            btn.classList.remove('selected');
+          }
+        });
+      }
+
+      updateProgress();
+    }
+
+    // 3. Update Progress Bar
+    function updateProgress() {
+      const answeredCount = Object.keys(state.answers).length;
+      const total = 15;
+      const percent = Math.round((answeredCount / total) * 100);
+
+      const progressBar = document.getElementById('surveyProgressBar');
+      if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+      }
+
+      const mobileText = document.getElementById('mobileProgressText');
+      if (mobileText) {
+        mobileText.textContent = `${answeredCount} / ${total}문항 (${percent}%)`;
+        if (answeredCount === total) {
+          mobileText.textContent = `모든 문항 작성 완료! (100%)`;
+          mobileText.classList.remove('text-blue-700');
+          mobileText.classList.add('text-emerald-700', 'font-bold');
+        } else {
+          mobileText.classList.remove('text-emerald-700');
+          mobileText.classList.add('text-blue-700');
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Status Banner & Auto-load Existing Survey
+    // -------------------------------------------------------------
+    function showStatusBanner(type, messageHtml, showResetButton = false) {
+      const banner = document.getElementById('statusBanner');
+      const icon = document.getElementById('statusIcon');
+      const content = document.getElementById('statusContent');
+      const action = document.getElementById('statusAction');
+
+      if (!banner || !content) return;
+
+      if (type === 'success') {
+        banner.className = 'mb-6 p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 flex items-center justify-between gap-3 shadow-xs';
+        icon.textContent = '✅';
+      } else if (type === 'info') {
+        banner.className = 'mb-6 p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-950 flex items-center justify-between gap-3 shadow-xs';
+        icon.textContent = 'ℹ️';
+      } else if (type === 'warning') {
+        banner.className = 'mb-6 p-4 rounded-xl border border-amber-300 bg-amber-50 text-amber-950 flex items-center justify-between gap-3 shadow-xs';
+        icon.textContent = '⚠️';
+      }
+
+      content.innerHTML = messageHtml;
+
+      if (showResetButton) {
+        action.innerHTML = `
+          <button type="button" onclick="handleResetForm(false)"
+            class="px-3 py-1.5 bg-white border border-emerald-400 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold transition shadow-2xs whitespace-nowrap cursor-pointer">
+            새로 작성하기
+          </button>
+        `;
+      } else {
+        action.innerHTML = '';
+      }
+
+      banner.classList.remove('hidden');
+    }
+
+    async function loadExistingSurvey(name) {
+      if (!name) return;
+      const cleanName = name.trim();
+
+      let surveyData = null;
+
+      // 1. Try Supabase
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('pre_surveys')
+            .select('*')
+            .eq('participant_name', cleanName)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          if (!error && data && data.length > 0) {
+            surveyData = data[0];
+          }
+        } catch (e) {
+          console.warn('Supabase fetch existing survey error:', e);
+        }
+      }
+
+      // 2. Fallback to localStorage
+      if (!surveyData) {
+        const localList = getLocalSurveys();
+        surveyData = localList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
+      }
+
+      if (surveyData) {
+        currentSurveyId = surveyData.id;
+        populateSurveyForm(surveyData);
+        
+        const dateDisplay = surveyData.survey_date || surveyData.surveyDate || (surveyData.created_at ? surveyData.created_at.slice(0, 10) : '');
+        const msg = dateDisplay
+          ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
+          : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지를 성공적으로 불러왔습니다.</div>`;
+        showStatusBanner('success', msg, true);
+      } else {
+        currentSurveyId = null;
+        showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 기존 저장된 설문지가 없습니다. 새 설문을 입력해주세요.`);
+      }
+    }
+
+    function populateSurveyForm(data) {
+      if (!data) return;
+
+      const surveyDate = data.survey_date || data.surveyDate;
+      if (surveyDate) {
+        const dateInput = document.getElementById('surveyDate');
+        if (dateInput) dateInput.value = surveyDate;
+      }
+
+      const participantName = data.participant_name || data.participantName;
+      if (participantName) {
+        const nameInput = document.getElementById('participantName');
+        if (nameInput) nameInput.value = participantName;
+      }
+
+      const surveyorName = data.surveyor_name || data.surveyorName;
+      if (surveyorName) {
+        const surveyorInput = document.getElementById('surveyorName');
+        if (surveyorInput) surveyorInput.value = surveyorName;
+      }
+
+      const feedback = data.feedback;
+      if (feedback) {
+        const feedbackInput = document.getElementById('feedback');
+        if (feedbackInput) feedbackInput.value = feedback;
+      }
+
+      const answers = data.answers || {};
+      state.answers = {};
+      for (let i = 1; i <= 15; i++) {
+        const val = Number(answers[`q${i}`]);
+        if (val) {
+          selectOption(i, val);
+        }
+      }
+      updateProgress();
+    }
+
+    // -------------------------------------------------------------
+    // Setup Event Listeners
+    // -------------------------------------------------------------
+    function setupEventListeners() {
+      // Form submission
+      const form = document.getElementById('surveyForm');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          handleSubmitSurvey();
+        });
+      }
+
+      // Floating Save Button
+      document.getElementById('btnSaveFloating')?.addEventListener('click', () => {
+        handleSubmitSurvey();
+      });
+
+      // Floating Print Button
+      document.getElementById('btnPrintFloating')?.addEventListener('click', () => {
+        handlePrintSurvey();
+      });
+
+      // Floating Reset Button
+      document.getElementById('btnResetFloating')?.addEventListener('click', () => {
+        handleResetForm(true);
+      });
+
+      // Floating Close Button
+      document.getElementById('btnCloseFloating')?.addEventListener('click', () => {
+        handleCloseWindow();
+      });
+
+      // Font size buttons
+      document.getElementById('btnFontNormal')?.addEventListener('click', () => setFontSize('normal'));
+      document.getElementById('btnFontLarge')?.addEventListener('click', () => setFontSize('large'));
+      document.getElementById('btnFontXLarge')?.addEventListener('click', () => setFontSize('xlarge'));
+
+      // Tab switching
+      document.getElementById('tabSurvey')?.addEventListener('click', () => switchTab('survey'));
+      document.getElementById('linkAdminBottom')?.addEventListener('click', () => switchTab('admin'));
+
+      // Admin Search
+      document.getElementById('adminSearchInput')?.addEventListener('input', (e) => {
+        filterSurveysTable(e.target.value);
+      });
+
+      // Admin Refresh
+      document.getElementById('btnRefreshList')?.addEventListener('click', () => {
+        loadSurveys();
+        showToast('목록을 새로고침했습니다.');
+      });
+
+      // Export CSV / Excel
+      document.getElementById('btnExportCSV')?.addEventListener('click', handleExportExcel);
+
+      // Detail Modal Close & Print
+      document.getElementById('btnCloseModal')?.addEventListener('click', closeDetailModal);
+      document.getElementById('btnPrintDetail')?.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    // -------------------------------------------------------------
+    // Font Size Handler
+    // -------------------------------------------------------------
+    function setFontSize(size) {
+      state.currentFontSize = size;
+      document.body.classList.remove('font-size-normal', 'font-size-large', 'font-size-xlarge');
+      document.body.classList.add(`font-size-${size}`);
+
+      ['Normal', 'Large', 'XLarge'].forEach(s => {
+        const btn = document.getElementById(`btnFont${s}`);
+        if (btn) {
+          if (s.toLowerCase() === size) {
+            btn.classList.add('bg-white', 'text-slate-800', 'font-bold', 'shadow-xs');
+            btn.classList.remove('text-slate-600');
+          } else {
+            btn.classList.remove('bg-white', 'text-slate-800', 'font-bold', 'shadow-xs');
+            btn.classList.add('text-slate-600');
+          }
+        }
+      });
+
+      try {
+        localStorage.setItem('survey_font_size', size);
+      } catch (e) {}
+    }
+
+    function loadSavedFontSize() {
+      try {
+        const saved = localStorage.getItem('survey_font_size');
+        if (saved && ['normal', 'large', 'xlarge'].includes(saved)) {
+          setFontSize(saved);
+        }
+      } catch (e) {}
+    }
+
+    // -------------------------------------------------------------
+    // Tab Navigation
+    // -------------------------------------------------------------
+    function switchTab(tab) {
+      state.activeTab = tab;
+      const surveyView = document.getElementById('surveyView');
+      const adminView = document.getElementById('adminView');
+      const topBar = document.getElementById('topBar');
+      const statusBanner = document.getElementById('statusBanner');
+      const floatingGroup = document.querySelector('.print-hide.fixed.bottom-6');
+
+      if (tab === 'survey') {
+        surveyView?.classList.remove('hidden');
+        adminView?.classList.add('hidden');
+        topBar?.classList.remove('hidden');
+        floatingGroup?.classList.remove('hidden');
+      } else {
+        surveyView?.classList.add('hidden');
+        adminView?.classList.remove('hidden');
+        topBar?.classList.add('hidden');
+        statusBanner?.classList.add('hidden');
+        floatingGroup?.classList.add('hidden');
+
+        loadSurveys();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Handle Survey Submission (Save to Supabase)
+    // -------------------------------------------------------------
+    async function handleSubmitSurvey() {
+      const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
+      const participantName = document.getElementById('participantName')?.value?.trim();
+      const surveyorName = document.getElementById('surveyorName')?.value?.trim();
+      const feedback = document.getElementById('feedback')?.value?.trim();
+
+      // Validate Participant Name
+      if (!participantName) {
+        showToast('참여자(성명)을 입력해 주세요.', '⚠️');
+        document.getElementById('participantName')?.focus();
+        return;
+      }
+
+      // Validate 15 Questions
+      const missingQuestions = [];
+      for (let i = 1; i <= 15; i++) {
+        if (!state.answers[`q${i}`]) {
+          missingQuestions.push(i);
+          const qBox = document.getElementById(`qBox_${i}`);
+          if (qBox) qBox.classList.add('has-error');
+        }
+      }
+
+      if (missingQuestions.length > 0) {
+        const firstMissing = missingQuestions[0];
+        showToast(`미응답 문항이 있습니다: [${missingQuestions.join(', ')}번]`, '⚠️');
+        
+        const firstBox = document.getElementById(`qBox_${firstMissing}`);
+        if (firstBox) {
+          firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      // Calculate Metrics
+      const metrics = computeClientMetrics(state.answers);
+
+      const payload = {
+        survey_date: surveyDate,
+        participant_name: participantName,
+        surveyor_name: surveyorName || null,
+        answers: state.answers,
+        score_awareness: metrics.scoreAwareness,
+        score_usage: metrics.scoreUsage,
+        score_communication: metrics.scoreCommunication,
+        score_citizenship: metrics.scoreCitizenship,
+        score_total: metrics.totalScore,
+        score_average: metrics.averageScore,
+        feedback: feedback || null,
+        raw_data: {
+          metrics,
+          submitted_at: new Date().toISOString()
+        }
+      };
+
+      const btnSaveFloating = document.getElementById('btnSaveFloating');
+      const saveBtnText = document.getElementById('saveBtnText');
+      if (btnSaveFloating) {
+        btnSaveFloating.disabled = true;
+        if (saveBtnText) saveBtnText.innerText = '저장 중...';
+        btnSaveFloating.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+
+      let savedRecord = null;
+
+      // 1. Save to Supabase
+      if (supabaseClient) {
+        try {
+          if (currentSurveyId) {
+            // Update existing
+            const { data, error } = await supabaseClient
+              .from('pre_surveys')
+              .update({
+                ...payload,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', currentSurveyId)
+              .select();
+
+            if (!error && data && data.length > 0) {
+              savedRecord = data[0];
+            } else if (error) {
+              console.error('Supabase update error:', error);
+            }
+          } else {
+            // Insert new
+            const { data, error } = await supabaseClient
+              .from('pre_surveys')
+              .insert([payload])
+              .select();
+
+            if (!error && data && data.length > 0) {
+              savedRecord = data[0];
+              currentSurveyId = savedRecord.id;
+            } else if (error) {
+              console.error('Supabase insert error:', error);
+            }
+          }
+        } catch (e) {
+          console.error('Supabase save exception:', e);
+        }
+      }
+
+      // 2. Backup to localStorage
+      const localItem = {
+        id: savedRecord ? savedRecord.id : (currentSurveyId || 'srv_' + Date.now()),
+        ...payload,
+        metrics,
+        createdAt: new Date().toISOString()
+      };
+      saveSurveyLocally(localItem);
+
+      if (btnSaveFloating) {
+        btnSaveFloating.disabled = false;
+        if (saveBtnText) saveBtnText.innerText = '저장하기';
+        btnSaveFloating.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+
+      showToast(`'${participantName}' 님의 설문이 성공적으로 저장되었습니다!`, '🎉');
+      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 사전설문지가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`, true);
+
+      setTimeout(() => {
+        if (confirm(`'${participantName}' 님의 설문이 저장되었습니다.\n\n[확인]을 누르면 결과 관리자 화면으로 이동합니다.\n[취소]를 누르면 현재 설문화면을 유지합니다.`)) {
+          switchTab('admin');
+        }
+      }, 300);
+    }
+
+    // Print Survey
+    function handlePrintSurvey() {
+      const participantName = document.getElementById('participantName')?.value?.trim() || '사전설문지';
+      const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
+      const surveyorName = document.getElementById('surveyorName')?.value?.trim() || '';
+      const feedback = document.getElementById('feedback')?.value?.trim() || '';
+      const metrics = computeClientMetrics(state.answers);
+
+      const fakeSurvey = {
+        id: currentSurveyId || 'temp',
+        survey_date: surveyDate,
+        surveyDate,
+        participant_name: participantName,
+        participantName,
+        surveyor_name: surveyorName,
+        surveyorName,
+        answers: state.answers,
+        metrics,
+        feedback
+      };
+
+      renderDetailModalContent(fakeSurvey);
+      const modal = document.getElementById('detailModal');
+      modal?.classList.remove('hidden');
+      setTimeout(() => {
+        window.print();
+      }, 150);
+    }
+
+    // Close Window
+    function handleCloseWindow() {
+      window.close();
+      setTimeout(() => {
+        if (!window.closed) {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = '/';
+          }
+        }
+      }, 150);
+    }
+
+    // Reset Form State
+    function handleResetForm(askConfirm = true) {
+      if (askConfirm && !confirm('작성 중인 내용을 모두 지우고 초기화하시겠습니까?')) {
+        return;
+      }
+
+      currentSurveyId = null;
+      state.answers = {};
+      const nameInput = document.getElementById('participantName');
+      const surveyorInput = document.getElementById('surveyorName');
+      const feedbackInput = document.getElementById('feedback');
+
+      if (nameInput) nameInput.value = '';
+      if (surveyorInput) surveyorInput.value = '';
+      if (feedbackInput) feedbackInput.value = '';
+      initTodayDate();
+
+      document.querySelectorAll('.scale-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('.question-item').forEach(item => item.classList.remove('has-error'));
+
+      const statusBanner = document.getElementById('statusBanner');
+      if (statusBanner) statusBanner.classList.add('hidden');
+
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast('설문지가 초기화되었습니다.');
+    }
+
+    // Metric Calculation
+    function computeClientMetrics(answers) {
+      const scores = [];
+      for (let i = 1; i <= 15; i++) scores.push(Number(answers[`q${i}`]) || 0);
+
+      const scoreAwareness = scores.slice(0, 3).reduce((a, b) => a + b, 0);
+      const scoreUsage = scores.slice(3, 9).reduce((a, b) => a + b, 0);
+      const scoreCommunication = scores.slice(9, 12).reduce((a, b) => a + b, 0);
+      const scoreCitizenship = scores.slice(12, 15).reduce((a, b) => a + b, 0);
+      const totalScore = scoreAwareness + scoreUsage + scoreCommunication + scoreCitizenship;
+
+      return {
+        scoreAwareness,
+        avgAwareness: Number((scoreAwareness / 3).toFixed(2)),
+        scoreUsage,
+        avgUsage: Number((scoreUsage / 6).toFixed(2)),
+        scoreCommunication,
+        avgCommunication: Number((scoreCommunication / 3).toFixed(2)),
+        scoreCitizenship,
+        avgCitizenship: Number((scoreCitizenship / 3).toFixed(2)),
+        totalScore,
+        averageScore: Number((totalScore / 15).toFixed(2))
+      };
+    }
+
+    // LocalStorage management
+    function saveSurveyLocally(surveyItem) {
+      try {
+        const list = getLocalSurveys();
+        const existingIndex = list.findIndex(s => String(s.id) === String(surveyItem.id));
+        if (existingIndex >= 0) {
+          list[existingIndex] = surveyItem;
+        } else {
+          list.unshift(surveyItem);
+        }
+        localStorage.setItem('digital_surveys_backup', JSON.stringify(list));
+      } catch (e) {
+        console.error('LocalStorage write error:', e);
+      }
+    }
+
+    function getLocalSurveys() {
+      try {
+        const raw = localStorage.getItem('digital_surveys_backup');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    // -------------------------------------------------------------
+    // Admin Dashboard: Load Surveys & Metrics
+    // -------------------------------------------------------------
+    async function loadSurveys() {
+      let surveys = [];
+
+      // 1. Fetch from Supabase
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('pre_surveys')
+            .select('*')
+            .order('survey_date', { ascending: false })
+            .order('id', { ascending: false });
+
+          if (!error && Array.isArray(data)) {
+            surveys = data.map(item => {
+              const answers = item.answers || {};
+              const metrics = item.raw_data?.metrics || computeClientMetrics(answers);
+              return {
+                id: item.id,
+                surveyDate: item.survey_date,
+                participantName: item.participant_name,
+                surveyorName: item.surveyor_name || '',
+                answers,
+                metrics,
+                feedback: item.feedback || '',
+                createdAt: item.created_at
+              };
+            });
+          } else if (error) {
+            console.warn('Supabase load surveys error:', error);
+          }
+        } catch (e) {
+          console.warn('Supabase fetch exception:', e);
+        }
+      }
+
+      // 2. Merge with LocalStorage fallback
+      const localList = getLocalSurveys();
+      if (surveys.length === 0) {
+        surveys = localList.map(item => ({
+          id: item.id,
+          surveyDate: item.survey_date || item.surveyDate,
+          participantName: item.participant_name || item.participantName,
+          surveyorName: item.surveyor_name || item.surveyorName || '',
+          answers: item.answers || {},
+          metrics: item.metrics || computeClientMetrics(item.answers || {}),
+          feedback: item.feedback || '',
+          createdAt: item.createdAt || item.created_at
+        }));
+      } else {
+        localList.forEach(item => {
+          const id = item.id;
+          if (!surveys.find(s => String(s.id) === String(id))) {
+            surveys.push({
+              id: item.id,
+              surveyDate: item.survey_date || item.surveyDate,
+              participantName: item.participant_name || item.participantName,
+              surveyorName: item.surveyor_name || item.surveyorName || '',
+              answers: item.answers || {},
+              metrics: item.metrics || computeClientMetrics(item.answers || {}),
+              feedback: item.feedback || '',
+              createdAt: item.createdAt || item.created_at
+            });
+          }
+        });
+      }
+
+      state.surveys = surveys;
+      updateAdminMetrics(surveys);
+      renderSurveysTable(surveys);
+    }
+
+    function renderSurveysTable(list) {
+      const tbody = document.getElementById('surveyTableBody');
+      if (!tbody) return;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="text-center py-12 text-slate-400">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>아직 저장된 설문 응답이 없습니다. 첫 설문을 작성해 보세요!</span>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map((s, idx) => `
+        <tr class="hover:bg-blue-50/40 transition">
+          <td class="p-3 text-center text-xs font-mono text-slate-400">${idx + 1}</td>
+          <td class="p-3 font-medium text-slate-900 whitespace-nowrap">${s.surveyDate}</td>
+          <td class="p-3 font-bold text-blue-950">${escapeHtml(s.participantName)}</td>
+          <td class="p-3 text-slate-600">${escapeHtml(s.surveyorName || '-')}</td>
+          <td class="p-3 text-center font-semibold text-slate-700">${s.metrics?.scoreAwareness ?? '-'}<span class="text-[11px] text-slate-400">/15</span></td>
+          <td class="p-3 text-center font-semibold text-slate-700">${s.metrics?.scoreUsage ?? '-'}<span class="text-[11px] text-slate-400">/30</span></td>
+          <td class="p-3 text-center font-semibold text-slate-700">${s.metrics?.scoreCommunication ?? '-'}<span class="text-[11px] text-slate-400">/15</span></td>
+          <td class="p-3 text-center font-semibold text-slate-700">${s.metrics?.scoreCitizenship ?? '-'}<span class="text-[11px] text-slate-400">/15</span></td>
+          <td class="p-3 text-center font-extrabold text-blue-700">${s.metrics?.totalScore ?? '-'}<span class="text-[11px] text-slate-400">/75</span></td>
+          <td class="p-3 text-center font-bold text-slate-900">${s.metrics?.averageScore ?? '-'}</td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="viewSurveyDetail('${s.id}')" title="상세보기 및 인쇄"
+                class="px-2 py-1 rounded bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-bold transition cursor-pointer">
+                보기
+              </button>
+              <button onclick="deleteSurvey('${s.id}', '${escapeHtml(s.participantName)}')" title="삭제"
+                class="px-2 py-1 rounded bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold transition cursor-pointer">
+                삭제
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterSurveysTable(keyword) {
+      if (!keyword || !keyword.trim()) {
+        renderSurveysTable(state.surveys);
+        return;
+      }
+      const term = keyword.trim().toLowerCase();
+      const filtered = state.surveys.filter(s => 
+        (s.participantName && s.participantName.toLowerCase().includes(term)) ||
+        (s.surveyorName && s.surveyorName.toLowerCase().includes(term)) ||
+        (s.surveyDate && s.surveyDate.includes(term))
+      );
+      renderSurveysTable(filtered);
+    }
+
+    function updateAdminMetrics(surveys) {
+      const total = surveys.length;
+      document.getElementById('statTotalCount').innerHTML = `${total}<span class="text-sm font-normal text-slate-500 ml-1">명</span>`;
+
+      if (total === 0) {
+        document.getElementById('statAvgAwareness').textContent = '0.0/5점';
+        document.getElementById('statAvgUsage').textContent = '0.0/5점';
+        document.getElementById('statAvgComm').textContent = '0.0/5점';
+        document.getElementById('statAvgCitizen').textContent = '0.0/5점';
+        return;
+      }
+
+      let sumAwareness = 0;
+      let sumUsage = 0;
+      let sumComm = 0;
+      let sumCitizen = 0;
+
+      surveys.forEach(s => {
+        sumAwareness += (s.metrics?.avgAwareness || 0);
+        sumUsage += (s.metrics?.avgUsage || 0);
+        sumComm += (s.metrics?.avgCommunication || 0);
+        sumCitizen += (s.metrics?.avgCitizenship || 0);
+      });
+
+      document.getElementById('statAvgAwareness').innerHTML = `${(sumAwareness / total).toFixed(2)}<span class="text-xs font-normal text-slate-400 ml-1">/5점</span>`;
+      document.getElementById('statAvgUsage').innerHTML = `${(sumUsage / total).toFixed(2)}<span class="text-xs font-normal text-slate-400 ml-1">/5점</span>`;
+      document.getElementById('statAvgComm').innerHTML = `${(sumComm / total).toFixed(2)}<span class="text-xs font-normal text-slate-400 ml-1">/5점</span>`;
+      document.getElementById('statAvgCitizen').innerHTML = `${(sumCitizen / total).toFixed(2)}<span class="text-xs font-normal text-slate-400 ml-1">/5점</span>`;
+    }
+
+    // -------------------------------------------------------------
+    // View Survey Detail Modal & Delete
+    // -------------------------------------------------------------
+    window.viewSurveyDetail = function(id) {
+      const survey = state.surveys.find(s => String(s.id) === String(id));
+      if (!survey) {
+        showToast('해당 설문 정보를 찾을 수 없습니다.', '⚠️');
+        return;
+      }
+
+      renderDetailModalContent(survey);
+      const modal = document.getElementById('detailModal');
+      modal?.classList.remove('hidden');
+    };
+
+    function renderDetailModalContent(survey) {
+      const content = document.getElementById('modalPrintContent');
+      const subtitle = document.getElementById('modalSubtitle');
+
+      if (subtitle) {
+        subtitle.textContent = `조사일자: ${survey.surveyDate} | 참여자: ${survey.participantName}`;
+      }
+
+      if (content) {
+        content.innerHTML = `
+          <div class="space-y-6">
+            <div class="text-center pb-4 border-b-2 border-slate-900">
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                2027년 역량활용사업 1:1 디지털 교육 설문조사지(사전)
+              </h2>
+              <div class="text-xs text-slate-500 mt-1">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
+            </div>
+
+            <table class="w-full border-collapse border border-slate-900 text-sm">
+              <tr>
+                <th class="border border-slate-900 bg-slate-100 p-2 text-center w-28">조사일자</th>
+                <td class="border border-slate-900 p-2">${survey.surveyDate}</td>
+                <th class="border border-slate-900 bg-slate-100 p-2 text-center w-28">참여자(성명)</th>
+                <td class="border border-slate-900 p-2 font-bold">${escapeHtml(survey.participantName)}</td>
+                <th class="border border-slate-900 bg-slate-100 p-2 text-center w-24">조사자</th>
+                <td class="border border-slate-900 p-2">${escapeHtml(survey.surveyorName || '-')}</td>
+              </tr>
+            </table>
+
+            <div class="grid grid-cols-4 gap-2 text-center text-xs">
+              <div class="bg-blue-50 border border-blue-200 p-2 rounded">
+                <div class="font-bold text-blue-900">디지털 인식</div>
+                <div class="text-base font-extrabold text-blue-700">${survey.metrics?.scoreAwareness ?? 0}점 <span class="text-xs text-slate-500">(${survey.metrics?.avgAwareness ?? 0}/5)</span></div>
+              </div>
+              <div class="bg-emerald-50 border border-emerald-200 p-2 rounded">
+                <div class="font-bold text-emerald-900">디지털 이용</div>
+                <div class="text-base font-extrabold text-emerald-700">${survey.metrics?.scoreUsage ?? 0}점 <span class="text-xs text-slate-500">(${survey.metrics?.avgUsage ?? 0}/5)</span></div>
+              </div>
+              <div class="bg-indigo-50 border border-indigo-200 p-2 rounded">
+                <div class="font-bold text-indigo-900">디지털 소통</div>
+                <div class="text-base font-extrabold text-indigo-700">${survey.metrics?.scoreCommunication ?? 0}점 <span class="text-xs text-slate-500">(${survey.metrics?.avgCommunication ?? 0}/5)</span></div>
+              </div>
+              <div class="bg-teal-50 border border-teal-200 p-2 rounded">
+                <div class="font-bold text-teal-900">디지털 시민성</div>
+                <div class="text-base font-extrabold text-teal-700">${survey.metrics?.scoreCitizenship ?? 0}점 <span class="text-xs text-slate-500">(${survey.metrics?.avgCitizenship ?? 0}/5)</span></div>
+              </div>
+            </div>
+            <div class="text-right text-sm font-bold text-slate-800">
+              총점: <span class="text-blue-700 text-lg">${survey.metrics?.totalScore ?? 0}</span> / 75점 (평균 ${survey.metrics?.averageScore ?? 0}점)
+            </div>
+
+            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm">
+              <thead>
+                <tr class="bg-slate-100 text-slate-900 border-b border-slate-900 font-bold">
+                  <th class="p-2 border border-slate-900 text-center w-12">번호</th>
+                  <th class="p-2 border border-slate-900 text-left">문항 내용</th>
+                  <th class="p-2 border border-slate-900 text-center w-24">응답 점수</th>
+                  <th class="p-2 border border-slate-900 text-center w-36">척도 의미</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${QUESTIONS.map(q => {
+                  const val = Number(survey.answers[`q${q.id}`]) || '-';
+                  const opt = SCALE_OPTIONS.find(o => o.value === val);
+                  return `
+                    <tr class="border-b border-slate-300">
+                      <td class="p-2 border border-slate-900 text-center font-bold">${q.id}</td>
+                      <td class="p-2 border border-slate-900">${q.text}</td>
+                      <td class="p-2 border border-slate-900 text-center font-bold text-blue-700 text-base">
+                        ${val}점
+                      </td>
+                      <td class="p-2 border border-slate-900 text-center text-xs text-slate-600">
+                        ${opt ? opt.label : '-'}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+
+            <div class="border border-slate-900 rounded p-4 bg-slate-50">
+              <div class="font-bold text-slate-900 text-sm mb-1">
+                ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분
+              </div>
+              <p class="text-sm text-slate-700 whitespace-pre-wrap min-h-[48px]">
+                ${escapeHtml(survey.feedback || '(작성된 희망사항이 없습니다.)')}
+              </p>
+            </div>
+
+            <div class="text-center pt-2 text-xs text-slate-500">
+              사회복지법인 서울가톨릭사회복지회 <strong>시립성동노인종합복지관</strong>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal')?.classList.add('hidden');
+    }
+
+    window.deleteSurvey = async function(id, name) {
+      if (!confirm(`'${name}' 님의 설문 응답을 정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.`)) {
+        return;
+      }
+
+      if (supabaseClient) {
+        try {
+          await supabaseClient.from('pre_surveys').delete().eq('id', id);
+        } catch (e) {
+          console.error('Supabase delete error:', e);
+        }
+      }
+
+      const localList = getLocalSurveys().filter(s => String(s.id) !== String(id));
+      localStorage.setItem('digital_surveys_backup', JSON.stringify(localList));
+
+      showToast('설문이 삭제되었습니다.', '🗑️');
+      loadSurveys();
+    };
+
+    // -------------------------------------------------------------
+    // Export to Excel / CSV (.xlsx)
+    // -------------------------------------------------------------
+    function handleExportExcel() {
+      if (state.surveys.length === 0) {
+        showToast('내보낼 설문 데이터가 없습니다.', '⚠️');
+        return;
+      }
+
+      const headers = [
+        '등록ID', '조사일자', '참여자(성명)', '조사자',
+        '문항1(적응도)', '문항2(적극성)', '문항3(편안함)', '디지털인식소계(15)', '디지털인식평균(5)',
+        '문항4(설정)', '문항5(사진)', '문항6(앱설치/삭제)', '문항7(정보검색)', '문항8(예약)', '문항9(금융서비스)', '디지털이용소계(30)', '디지털이용평균(5)',
+        '문항10(메신저/파일)', '문항11(안내문자/링크)', '문항12(온라인교육/줌)', '디지털소통소계(15)', '디지털소통평균(5)',
+        '문항13(의심링크주의)', '문항14(초상권/정보보호)', '문항15(사이버범죄대응)', '디지털시민성소계(15)', '디지털시민성평균(5)',
+        '총점(75점만점)', '전체평균(5점만점)', '희망및건의사항', '제출일시'
+      ];
+
+      const rows = state.surveys.map(s => [
+        s.id,
+        s.surveyDate,
+        s.participantName,
+        s.surveyorName || '',
+        s.answers?.q1 ?? '', s.answers?.q2 ?? '', s.answers?.q3 ?? '',
+        s.metrics?.scoreAwareness ?? '', s.metrics?.avgAwareness ?? '',
+        s.answers?.q4 ?? '', s.answers?.q5 ?? '', s.answers?.q6 ?? '', s.answers?.q7 ?? '', s.answers?.q8 ?? '', s.answers?.q9 ?? '',
+        s.metrics?.scoreUsage ?? '', s.metrics?.avgUsage ?? '',
+        s.answers?.q10 ?? '', s.answers?.q11 ?? '', s.answers?.q12 ?? '',
+        s.metrics?.scoreCommunication ?? '', s.metrics?.avgCommunication ?? '',
+        s.answers?.q13 ?? '', s.answers?.q14 ?? '', s.answers?.q15 ?? '',
+        s.metrics?.scoreCitizenship ?? '', s.metrics?.avgCitizenship ?? '',
+        s.metrics?.totalScore ?? '', s.metrics?.averageScore ?? '',
+        (s.feedback || '').replace(/\r?\n/g, ' '),
+        s.createdAt || ''
+      ]);
+
+      try {
+        if (typeof XLSX !== 'undefined') {
+          const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "사전설문결과");
+          XLSX.writeFile(wb, `2027_디지털교육_사전설문결과_${getTodayString()}.xlsx`);
+          showToast('엑셀(.xlsx) 파일이 다운로드되었습니다!', '📊');
+          return;
+        }
+      } catch (err) {
+        console.warn('XLSX direct export error, fallback to CSV:', err);
+      }
+
+      // Fallback CSV with UTF-8 BOM
+      const csvString = '\uFEFF' + [
+        headers.map(h => `"${h}"`).join(','),
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\r\n');
+
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `2027_디지털교육_사전설문결과_${getTodayString()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('CSV 파일이 다운로드되었습니다!', '📊');
+    }
+
+    // -------------------------------------------------------------
+    // Toast Notification & Helper
+    // -------------------------------------------------------------
+    function showToast(message, icon = '✅') {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toastMessage');
+      const iconEl = document.getElementById('toastIcon');
+
+      if (!toast || !msgEl) return;
+
+      msgEl.textContent = message;
+      if (iconEl) iconEl.textContent = icon;
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
