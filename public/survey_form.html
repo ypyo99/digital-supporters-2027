@@ -225,12 +225,12 @@
 
       /* Modal and print wrapper overrides (break out of 92vh scroll container) */
       #detailModal, #detailModal.hidden {
+        display: block !important;
         position: static !important;
         inset: auto !important;
         background: transparent !important;
         padding: 0 !important;
         margin: 0 !important;
-        display: block !important;
         width: 100% !important;
         height: auto !important;
         max-height: none !important;
@@ -238,6 +238,7 @@
       }
 
       #detailModal > div {
+        display: block !important;
         position: static !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -247,18 +248,17 @@
         border: none !important;
         border-radius: 0 !important;
         overflow: visible !important;
-        display: block !important;
         margin: 0 !important;
         padding: 0 !important;
       }
 
       #modalPrintContent {
+        display: block !important;
         padding: 0 !important;
         margin: 0 !important;
         max-height: none !important;
         height: auto !important;
         overflow: visible !important;
-        display: block !important;
       }
 
       .printable-paper {
@@ -268,22 +268,179 @@
         break-inside: avoid !important;
       }
 
-      #modalPrintContent table {
+      /* Print Document Container & Specific Rules */
+      .print-doc-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        color: #0f172a !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* 1. Header */
+      .print-header {
+        text-align: center !important;
+        border-bottom: 2.5px solid #0f172a !important;
+        padding-bottom: 6px !important;
+        margin-bottom: 0 !important;
+      }
+      .print-header h2 {
+        font-size: 22px !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.025em !important;
+        line-height: 1.25 !important;
+        margin: 0 !important;
+        color: #0f172a !important;
+      }
+      .print-header .print-subtitle {
+        font-size: 11.5px !important;
+        color: #475569 !important;
+        margin-top: 3px !important;
+      }
+
+      /* 2. Respondent Table */
+      .print-respondent-table {
         width: 100% !important;
         border-collapse: collapse !important;
+        border: 1.5px solid #0f172a !important;
+        font-size: 12px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+      .print-respondent-table th, .print-respondent-table td {
+        border: 1px solid #0f172a !important;
+        padding: 6.5px 8px !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+      }
+      .print-respondent-table th {
+        background-color: #f1f5f9 !important;
+        font-weight: 700 !important;
+      }
 
-      #modalPrintContent tr, #modalPrintContent th, #modalPrintContent td {
+      /* 3. Domain Cards */
+      .print-domain-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px !important;
+        text-align: center !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+      .print-domain-card {
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 6px 4px !important;
+        background-color: #f8fafc !important;
+      }
+      .print-domain-title {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+      }
+      .print-domain-score {
+        font-size: 13.5px !important;
+        font-weight: 800 !important;
+        margin-top: 2px !important;
+      }
+      .print-total-score-bar {
+        text-align: right !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        margin-top: 4px !important;
+      }
+      .print-total-score-num {
+        font-size: 15px !important;
+        font-weight: 900 !important;
+        color: #1d4ed8 !important;
+      }
 
-      #modalPrintContent th, #modalPrintContent td {
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
-        line-height: 1.4 !important;
+      /* 4. 15 Questions Table */
+      .print-questions-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1.5px solid #0f172a !important;
+        font-size: 11.5px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-questions-table tr, .print-questions-table th, .print-questions-table td {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-questions-table th, .print-questions-table td {
+        border: 1px solid #0f172a !important;
+        padding-top: 6.5px !important;
+        padding-bottom: 6.5px !important;
+        line-height: 1.38 !important;
+        vertical-align: middle !important;
+      }
+      .print-questions-table th {
+        background-color: #f1f5f9 !important;
+        font-weight: 700 !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+      }
+      .print-questions-table td.col-qnum {
+        text-align: center !important;
+        font-weight: 700 !important;
+        width: 36px !important;
+      }
+      .print-questions-table td.col-qtext {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        text-align: left !important;
+      }
+      .print-questions-table td.col-qscore {
+        text-align: center !important;
+        font-weight: 800 !important;
+        color: #1d4ed8 !important;
+        font-size: 12px !important;
+        width: 72px !important;
+        white-space: nowrap !important;
+      }
+      .print-questions-table td.col-qscale {
+        text-align: center !important;
+        font-size: 11px !important;
+        color: #334155 !important;
+        width: 96px !important;
+        white-space: nowrap !important;
+      }
+
+      /* 5. Feedback Box */
+      .print-feedback-box {
+        border: 1.5px solid #0f172a !important;
+        border-radius: 6px !important;
+        padding: 10px 14px !important;
+        background-color: transparent !important;
+        min-height: 125px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-feedback-title {
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        margin-bottom: 6px !important;
+      }
+      .print-feedback-content {
+        font-size: 11px !important;
+        color: #334155 !important;
+        line-height: 1.5 !important;
+        white-space: pre-wrap !important;
+        flex-grow: 1 !important;
+      }
+
+      /* 6. Footer */
+      .print-footer {
+        text-align: center !important;
+        padding-top: 10px !important;
+        font-size: 12px !important;
+        color: #475569 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
     }
   </style>
@@ -1423,58 +1580,60 @@
 
       if (content) {
         content.innerHTML = `
-          <div class="space-y-3 sm:space-y-5 print:space-y-3 text-slate-900">
+          <div class="print-doc-container text-slate-900">
             <!-- Header Title -->
-            <div class="text-center pb-2 border-b-2 border-slate-900 print:pb-2 print:mb-1">
-              <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight print:text-[22px]">
+            <div class="print-header">
+              <h2>
                 2027년 역량활용사업 1:1 디지털 교육 설문조사지(사전)
               </h2>
-              <div class="text-xs text-slate-600 mt-1 print:text-[12px] print:mt-1">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
+              <div class="print-subtitle">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
             </div>
 
             <!-- Respondent Info Table -->
-            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm print:text-[12px]">
+            <table class="print-respondent-table">
               <tr>
-                <th class="border border-slate-900 bg-slate-100 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center w-24 sm:w-28 print:w-24 font-bold">조사일자</th>
-                <td class="border border-slate-900 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center">${survey.surveyDate}</td>
-                <th class="border border-slate-900 bg-slate-100 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center w-24 sm:w-28 print:w-28 font-bold">참여자(성명)</th>
-                <td class="border border-slate-900 p-1.5 sm:p-2 print:py-2 print:px-2.5 font-bold text-center">${escapeHtml(survey.participantName)}</td>
-                <th class="border border-slate-900 bg-slate-100 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center w-20 sm:w-24 print:w-22 font-bold">조사자</th>
-                <td class="border border-slate-900 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center">${escapeHtml(survey.surveyorName || '-')}</td>
+                <th style="width: 14%;">조사일자</th>
+                <td style="width: 20%;">${survey.surveyDate}</td>
+                <th style="width: 20%;">참여자(성명)</th>
+                <td style="width: 20%; font-weight: bold;">${escapeHtml(survey.participantName)}</td>
+                <th style="width: 13%;">조사자</th>
+                <td style="width: 13%;">${escapeHtml(survey.surveyorName || '-')}</td>
               </tr>
             </table>
 
             <!-- Domain Scores Summary + Total -->
-            <div class="grid grid-cols-4 gap-2 text-center text-xs print:gap-2 print:text-[11.5px]">
-              <div class="bg-blue-50 border border-blue-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
-                <div class="font-bold text-blue-900">디지털 인식</div>
-                <div class="text-sm sm:text-base font-extrabold text-blue-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreAwareness ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgAwareness ?? 0}/5)</span></div>
+            <div>
+              <div class="print-domain-grid">
+                <div class="print-domain-card">
+                  <div class="print-domain-title text-blue-900">디지털 인식</div>
+                  <div class="print-domain-score text-blue-700">${survey.metrics?.scoreAwareness ?? 0}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${survey.metrics?.avgAwareness ?? 0}/5)</span></div>
+                </div>
+                <div class="print-domain-card">
+                  <div class="print-domain-title text-emerald-900">디지털 이용</div>
+                  <div class="print-domain-score text-emerald-700">${survey.metrics?.scoreUsage ?? 0}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${survey.metrics?.avgUsage ?? 0}/5)</span></div>
+                </div>
+                <div class="print-domain-card">
+                  <div class="print-domain-title text-indigo-900">디지털 소통</div>
+                  <div class="print-domain-score text-indigo-700">${survey.metrics?.scoreCommunication ?? 0}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${survey.metrics?.avgCommunication ?? 0}/5)</span></div>
+                </div>
+                <div class="print-domain-card">
+                  <div class="print-domain-title text-teal-900">디지털 시민성</div>
+                  <div class="print-domain-score text-teal-700">${survey.metrics?.scoreCitizenship ?? 0}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${survey.metrics?.avgCitizenship ?? 0}/5)</span></div>
+                </div>
               </div>
-              <div class="bg-emerald-50 border border-emerald-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
-                <div class="font-bold text-emerald-900">디지털 이용</div>
-                <div class="text-sm sm:text-base font-extrabold text-emerald-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreUsage ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgUsage ?? 0}/5)</span></div>
+              <div class="print-total-score-bar">
+                총점: <span class="print-total-score-num">${survey.metrics?.totalScore ?? 0}</span> / 75점 (평균 ${survey.metrics?.averageScore ?? 0}점)
               </div>
-              <div class="bg-indigo-50 border border-indigo-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
-                <div class="font-bold text-indigo-900">디지털 소통</div>
-                <div class="text-sm sm:text-base font-extrabold text-indigo-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreCommunication ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgCommunication ?? 0}/5)</span></div>
-              </div>
-              <div class="bg-teal-50 border border-teal-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
-                <div class="font-bold text-teal-900">디지털 시민성</div>
-                <div class="text-sm sm:text-base font-extrabold text-teal-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreCitizenship ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgCitizenship ?? 0}/5)</span></div>
-              </div>
-            </div>
-            <div class="text-right text-xs sm:text-sm font-bold text-slate-800 print:text-[12px] print:my-1">
-              총점: <span class="text-blue-700 text-sm sm:text-lg print:text-[14.5px] font-black">${survey.metrics?.totalScore ?? 0}</span> / 75점 (평균 ${survey.metrics?.averageScore ?? 0}점)
             </div>
 
             <!-- Questions Table (All 15 questions) -->
-            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm print:text-[11.5px]">
+            <table class="print-questions-table">
               <thead>
-                <tr class="bg-slate-100 text-slate-900 border-b border-slate-900 font-bold">
-                  <th class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center w-10 print:w-9">번호</th>
-                  <th class="p-1.5 sm:p-2 print:py-2 print:px-2 border border-slate-900 text-left">문항 내용</th>
-                  <th class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center w-20 print:w-20">응답 점수</th>
-                  <th class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center w-28 print:w-28">척도 의미</th>
+                <tr>
+                  <th class="col-qnum">번호</th>
+                  <th class="col-qtext">문항 내용</th>
+                  <th class="col-qscore">응답 점수</th>
+                  <th class="col-qscale">척도 의미</th>
                 </tr>
               </thead>
               <tbody>
@@ -1482,15 +1641,11 @@
                   const val = Number(survey.answers[`q${q.id}`]) || '-';
                   const opt = SCALE_OPTIONS.find(o => o.value === val);
                   return `
-                    <tr class="border-b border-slate-300">
-                      <td class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center font-bold">${q.id}</td>
-                      <td class="p-1.5 sm:p-2 print:py-2 print:px-2 border border-slate-900 leading-snug">${q.text}</td>
-                      <td class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center font-bold text-blue-700 text-xs sm:text-base print:text-[12px] whitespace-nowrap">
-                        ${val}점
-                      </td>
-                      <td class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center text-[10px] sm:text-xs print:text-[11.5px] text-slate-600 whitespace-nowrap">
-                        ${opt ? opt.label : '-'}
-                      </td>
+                    <tr>
+                      <td class="col-qnum">${q.id}</td>
+                      <td class="col-qtext">${q.text}</td>
+                      <td class="col-qscore">${val}점</td>
+                      <td class="col-qscale">${opt ? opt.label : '-'}</td>
                     </tr>
                   `;
                 }).join('')}
@@ -1498,21 +1653,22 @@
             </table>
 
             <!-- Feedback -->
-            <div class="border border-slate-900 rounded p-2.5 sm:p-3 print:py-3 print:px-3.5 bg-slate-50 print:bg-transparent">
-              <div class="font-bold text-slate-900 text-xs sm:text-sm print:text-[11.5px] mb-1.5">
+            <div class="print-feedback-box">
+              <div class="print-feedback-title">
                 ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분
               </div>
-              <p class="text-xs sm:text-sm print:text-[11px] text-slate-700 whitespace-pre-wrap min-h-[36px] print:min-h-[85px] leading-relaxed">
+              <p class="print-feedback-content">
                 ${escapeHtml(survey.feedback || '(작성된 희망사항이 없습니다.)')}
               </p>
             </div>
 
             <!-- Footer -->
-            <div class="text-center pt-2 print:pt-4 text-xs print:text-[12px] text-slate-600">
-              사회복지법인 서울가톨릭사회복지회 <strong class="text-slate-900">시립성동노인종합복지관</strong>
+            <div class="print-footer">
+              사회복지법인 서울가톨릭사회복지회 <strong>시립성동노인종합복지관</strong>
             </div>
           </div>
         `;
+      }
       }
     }
 
