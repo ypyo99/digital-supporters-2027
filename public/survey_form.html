@@ -862,9 +862,6 @@
         <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
           크게
         </button>
-        <button type="button" id="btnFontXLarge" title="아주 큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
-          아주크게
-        </button>
       </div>
     </div>
   </header>
@@ -1693,7 +1690,6 @@
       // Font size buttons
       document.getElementById('btnFontNormal')?.addEventListener('click', () => setFontSize('normal'));
       document.getElementById('btnFontLarge')?.addEventListener('click', () => setFontSize('large'));
-      document.getElementById('btnFontXLarge')?.addEventListener('click', () => setFontSize('xlarge'));
 
       // Detail Modal Close & Print
       document.getElementById('btnCloseModal')?.addEventListener('click', closeDetailModal);
@@ -1734,7 +1730,7 @@
       document.body.classList.remove('font-size-normal', 'font-size-large', 'font-size-xlarge');
       document.body.classList.add(`font-size-${size}`);
 
-      ['Normal', 'Large', 'XLarge'].forEach(s => {
+      ['Normal', 'Large'].forEach(s => {
         const btn = document.getElementById(`btnFont${s}`);
         if (btn) {
           if (s.toLowerCase() === size) {
@@ -1755,7 +1751,7 @@
     function loadSavedFontSize() {
       try {
         const saved = localStorage.getItem('survey_font_size');
-        if (saved && ['normal', 'large', 'xlarge'].includes(saved)) {
+        if (saved && ['normal', 'large'].includes(saved)) {
           setFontSize(saved);
         }
       } catch (e) {}
