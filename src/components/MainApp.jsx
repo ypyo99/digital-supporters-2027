@@ -3785,7 +3785,7 @@ export default function MainApp({
                                 <div className="space-y-2 sm:space-y-2.5">
                                   {(() => {
                                     if (studentNames.length > 1) {
-                                      const validStudents = studentNames.filter(s => !s.trim().includes("보조강사"));
+                                      const validStudents = studentNames.filter(s => s.trim() && !s.trim().includes("보조강사"));
                                       if (validStudents.length === 0) return null;
                                       return (
                                         <div className="flex items-center gap-1.5 flex-wrap">
@@ -3865,7 +3865,7 @@ export default function MainApp({
                                     }
 
                                     const singleStudent = (studentNames[0] || logs[index]?.student || "").trim();
-                                    if (singleStudent.includes("보조강사")) {
+                                    if (!singleStudent || singleStudent.includes("보조강사")) {
                                       return null;
                                     }
 
