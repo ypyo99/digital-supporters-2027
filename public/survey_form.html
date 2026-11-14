@@ -43,6 +43,11 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
+    /* Universal Box-Sizing & Overflow Safety */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
     /* Smooth Scrolling */
     html {
       scroll-behavior: smooth;
@@ -67,8 +72,13 @@
     }
 
     body.font-size-large .scale-btn {
-      min-height: 82px !important;
-      padding-top: 0.75rem !important;
+      min-height: 80px !important;
+      padding-top: 0.65rem !important;
+    }
+
+    body.font-size-large .score-label {
+      font-size: 0.76rem !important;
+      line-height: 1.2 !important;
     }
 
     body.font-size-xlarge {
@@ -85,8 +95,56 @@
     }
 
     body.font-size-xlarge .scale-btn {
-      min-height: 92px !important;
-      padding-top: 0.85rem !important;
+      min-height: 90px !important;
+      padding-top: 0.75rem !important;
+    }
+
+    /* Responsive Inputs & Forms: prevent overlap and clipping across all screen sizes */
+    input[type="date"],
+    input[type="text"],
+    textarea,
+    select {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+    }
+
+    input[type="date"] {
+      min-height: 44px;
+      line-height: 1.25;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    /* Prevent native calendar picker icon from colliding with date numbers */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      margin-left: 2px;
+      flex-shrink: 0;
+    }
+
+    .question-item {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .question-text {
+      min-width: 0;
+      flex: 1;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+
+    .options-container {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
     }
 
     /* Question Option Buttons - Aligned 1,2,3,4,5 Numbers */
@@ -98,12 +156,17 @@
       border-radius: 0.75rem;
       border: 2px solid #e2e8f0;
       background-color: #ffffff;
-      padding: 0.65rem 0.2rem 0.5rem 0.2rem;
+      padding: 0.6rem 0.15rem 0.45rem 0.15rem;
       cursor: pointer;
       transition: all 0.15s ease-in-out;
       user-select: none;
       min-height: 72px;
       position: relative;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+      overflow: hidden;
     }
 
     .scale-btn:hover {
@@ -157,13 +220,17 @@
       align-items: center;
       justify-content: center;
       flex: 1;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       font-size: 0.72rem;
       font-weight: 500;
       color: #475569;
       text-align: center;
       line-height: 1.25;
       word-break: keep-all;
-      overflow-wrap: break-word;
+      overflow-wrap: anywhere;
     }
 
     /* Error/Missing Highlight */
@@ -199,26 +266,69 @@
 
     @media (max-width: 640px) {
       .options-container {
-        gap: 0.35rem;
+        gap: 0.25rem;
       }
 
       .scale-btn {
-        min-height: 68px;
-        padding: 0.5rem 0.15rem 0.4rem 0.15rem;
+        min-height: 64px;
+        padding: 0.45rem 0.1rem 0.35rem 0.1rem;
         justify-content: flex-start;
       }
 
       .score-label {
-        font-size: 0.67rem;
+        font-size: 0.65rem;
         letter-spacing: -0.04em;
-        line-height: 1.2;
+        line-height: 1.15;
       }
 
       .score-num {
-        width: 24px;
-        height: 24px;
-        font-size: 0.88rem;
-        margin-bottom: 0.25rem;
+        width: 22px;
+        height: 22px;
+        font-size: 0.82rem;
+        margin-bottom: 0.2rem;
+      }
+
+      body.font-size-large .scale-btn {
+        min-height: 70px !important;
+        padding-top: 0.45rem !important;
+      }
+
+      body.font-size-large .score-label {
+        font-size: 0.68rem !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .options-container {
+        gap: 0.15rem;
+      }
+
+      .scale-btn {
+        min-height: 56px;
+        padding: 0.35rem 0.05rem 0.25rem 0.05rem;
+        border-radius: 0.5rem;
+      }
+
+      .score-label {
+        font-size: 0.58rem;
+        letter-spacing: -0.05em;
+        line-height: 1.1;
+      }
+
+      .score-num {
+        width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+        margin-bottom: 0.15rem;
+      }
+
+      body.font-size-large .scale-btn {
+        min-height: 62px !important;
+        padding-top: 0.35rem !important;
+      }
+
+      body.font-size-large .score-label {
+        font-size: 0.6rem !important;
       }
     }
 
@@ -1118,12 +1228,12 @@
 
     <!-- STATUS BANNER (Alert for existing survey load or new survey) -->
     <div id="statusBanner"
-      class="print-hide hidden mb-6 p-3.5 sm:p-4 rounded-xl border flex items-center justify-between gap-3 shadow-xs transition-all">
-      <div class="flex items-center gap-3">
-        <span id="statusIcon" class="text-2xl shrink-0">ℹ️</span>
-        <div id="statusContent" class="text-xs sm:text-sm font-semibold"></div>
+      class="print-hide hidden mb-6 p-3 sm:p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shadow-xs transition-all max-w-full overflow-hidden">
+      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+        <span id="statusIcon" class="text-xl sm:text-2xl shrink-0">ℹ️</span>
+        <div id="statusContent" class="text-xs sm:text-sm font-semibold min-w-0 break-words leading-snug"></div>
       </div>
-      <div id="statusAction" class="shrink-0"></div>
+      <div id="statusAction" class="shrink-0 self-end sm:self-center"></div>
     </div>
 
     <!-- ============================================================== -->
@@ -1147,69 +1257,69 @@
         <div class="p-4 sm:p-8 space-y-8">
 
           <!-- Section: Respondent Info (응답자 일반사항) -->
-          <section class="bg-slate-50 border border-slate-300 rounded-xl p-4 sm:p-5">
+          <section class="bg-slate-50 border border-slate-300 rounded-xl p-3.5 sm:p-5 max-w-full overflow-hidden">
             <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
               ■ 응답자 일반사항
             </h3>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 w-full">
               <!-- Survey Date -->
-              <div>
+              <div class="min-w-0 w-full">
                 <label for="surveyDate" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
                   조사일자 <span class="text-red-500 font-bold">*</span>
                 </label>
-                <div class="relative">
+                <div class="relative w-full min-w-0">
                   <input type="date" id="surveyDate" name="surveyDate" required
-                    class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                    class="w-full max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
                 </div>
-                <p class="text-[11px] text-blue-600 mt-1">※ 오늘 날짜가 자동으로 설정됩니다.</p>
+                <p class="text-[11px] text-blue-600 mt-1 leading-tight">※ 오늘 날짜가 자동으로 설정됩니다.</p>
               </div>
 
               <!-- Participant Name -->
-              <div>
+              <div class="min-w-0 w-full">
                 <label for="participantName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
                   참여자(성명) <span class="text-red-500 font-bold">*</span>
                 </label>
                 <input type="text" id="participantName" name="participantName" required placeholder="성명을 입력하세요"
-                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                  class="w-full max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
               </div>
 
               <!-- Surveyor Name -->
-              <div>
+              <div class="min-w-0 w-full">
                 <label for="surveyorName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
                   조사자(강사/담당자)
                 </label>
                 <input type="text" id="surveyorName" name="surveyorName" placeholder="조사자 이름"
-                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                  class="w-full max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
               </div>
             </div>
           </section>
 
           <!-- Rating Scale Legend Banner -->
-          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-slate-700">
+          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-slate-700 max-w-full overflow-hidden">
             <div class="font-bold text-blue-900 mb-2 flex items-center gap-1.5">
               <span>📌</span> 5단계 응답 기준 안내
             </div>
-            <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center text-xs font-semibold">
-              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
-                <span class="block text-blue-700 text-sm sm:text-base font-black">①</span>
-                <span class="text-[11px] sm:text-xs">전혀 그렇지 않다</span>
+            <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center text-xs font-semibold w-full">
+              <div class="bg-white p-1 sm:p-2 rounded border border-blue-100 shadow-2xs min-w-0 flex flex-col items-center justify-center text-center overflow-hidden">
+                <span class="block text-blue-700 text-xs sm:text-base font-black shrink-0">①</span>
+                <span class="text-[9.5px] sm:text-xs leading-tight break-keep text-center">전혀 그렇지 않다</span>
               </div>
-              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
-                <span class="block text-blue-700 text-sm sm:text-base font-black">②</span>
-                <span class="text-[11px] sm:text-xs">별로 그렇지 않다</span>
+              <div class="bg-white p-1 sm:p-2 rounded border border-blue-100 shadow-2xs min-w-0 flex flex-col items-center justify-center text-center overflow-hidden">
+                <span class="block text-blue-700 text-xs sm:text-base font-black shrink-0">②</span>
+                <span class="text-[9.5px] sm:text-xs leading-tight break-keep text-center">별로 그렇지 않다</span>
               </div>
-              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
-                <span class="block text-blue-700 text-sm sm:text-base font-black">③</span>
-                <span class="text-[11px] sm:text-xs">보통이다</span>
+              <div class="bg-white p-1 sm:p-2 rounded border border-blue-100 shadow-2xs min-w-0 flex flex-col items-center justify-center text-center overflow-hidden">
+                <span class="block text-blue-700 text-xs sm:text-base font-black shrink-0">③</span>
+                <span class="text-[9.5px] sm:text-xs leading-tight break-keep text-center">보통이다</span>
               </div>
-              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
-                <span class="block text-blue-700 text-sm sm:text-base font-black">④</span>
-                <span class="text-[11px] sm:text-xs">그렇다</span>
+              <div class="bg-white p-1 sm:p-2 rounded border border-blue-100 shadow-2xs min-w-0 flex flex-col items-center justify-center text-center overflow-hidden">
+                <span class="block text-blue-700 text-xs sm:text-base font-black shrink-0">④</span>
+                <span class="text-[9.5px] sm:text-xs leading-tight break-keep text-center">그렇다</span>
               </div>
-              <div class="bg-white p-1.5 sm:p-2 rounded border border-blue-100 shadow-2xs">
-                <span class="block text-blue-700 text-sm sm:text-base font-black">⑤</span>
-                <span class="text-[11px] sm:text-xs">매우 그렇다</span>
+              <div class="bg-white p-1 sm:p-2 rounded border border-blue-100 shadow-2xs min-w-0 flex flex-col items-center justify-center text-center overflow-hidden">
+                <span class="block text-blue-700 text-xs sm:text-base font-black shrink-0">⑤</span>
+                <span class="text-[9.5px] sm:text-xs leading-tight break-keep text-center">매우 그렇다</span>
               </div>
             </div>
           </div>
@@ -1474,20 +1584,20 @@
           <!-- ========================================================= -->
           <!-- OPEN-ENDED FEEDBACK (주관식 희망사항 또는 사후 분석)          -->
           <!-- ========================================================= -->
-          <section id="feedbackSection" class="bg-white border border-slate-300 rounded-xl p-4 sm:p-6 shadow-xs">
-            <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <section id="feedbackSection" class="bg-white border border-slate-300 rounded-xl p-4 sm:p-6 shadow-xs max-w-full overflow-hidden">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2 flex items-center gap-2 break-keep">
               ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
             </h3>
-            <p class="text-xs text-slate-500 mb-3">
+            <p class="text-xs text-slate-500 mb-3 break-keep">
               (예: 스마트폰으로 버스/지하철 길찾기, 카카오페이 송금하기, 사진 예쁘게 편집해서 가족에게 보내기 등)
             </p>
             <textarea id="feedback" name="feedback" rows="4" placeholder="자유롭게 작성해 주세요 (선택사항)"
-              class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm sm:text-base focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+              class="w-full max-w-full min-w-0 box-border bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm sm:text-base focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
           </section>
 
           <!-- Reference & Organization Footer in Card -->
           <div class="pt-4 border-t border-slate-200 text-center space-y-3">
-            <p class="text-xs text-slate-500 font-medium">
+            <p class="text-xs text-slate-500 font-medium break-keep">
               ※ 설문지 문항참고: 어르신 맞춤형 디지털 역량 진단도구 개발연구(2022.10. / 길혜자_충북대) ※
             </p>
             <div class="flex items-center justify-center gap-3">
@@ -1509,10 +1619,10 @@
   <!-- ============================================================== -->
   <!-- FLOATING ACTION BUTTONS (저장하기, 인쇄하기, 닫기, 새로작성)     -->
   <!-- ============================================================== -->
-  <div class="print-hide fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3 z-50">
+  <div class="print-hide fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 sm:gap-3 z-50 max-w-[96vw] px-1">
     <!-- 저장하기 버튼 -->
     <button type="button" id="btnSaveFloating"
-      class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap">
+      class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap shrink-0">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
           d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -1522,7 +1632,7 @@
 
     <!-- PDF 저장 버튼 -->
     <button type="button" id="btnPrintFloating"
-      class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap">
+      class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap shrink-0">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -1534,7 +1644,7 @@
 
     <!-- 새로 작성 버튼 (스마트폰에서는 숨김: hidden md:inline-flex) -->
     <button type="button" id="btnResetFloating"
-      class="hidden md:inline-flex bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-3.5 sm:py-3 sm:px-5 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 items-center gap-1.5 text-xs sm:text-sm cursor-pointer whitespace-nowrap">
+      class="hidden md:inline-flex bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-3.5 sm:py-3 sm:px-5 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 items-center gap-1.5 text-xs sm:text-sm cursor-pointer whitespace-nowrap shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1544,7 +1654,7 @@
 
     <!-- 닫기 버튼 -->
     <button type="button" id="btnCloseFloating"
-      class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap">
+      class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap shrink-0">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
       </svg>
@@ -1871,20 +1981,20 @@
       if (!banner || !content) return;
 
       if (type === 'success') {
-        banner.className = 'print-hide mb-6 p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 flex items-center justify-between gap-3 shadow-xs';
+        banner.className = 'print-hide mb-6 p-3 sm:p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shadow-xs max-w-full overflow-hidden';
         icon.textContent = '✅';
       } else if (type === 'info') {
-        banner.className = 'print-hide mb-6 p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-950 flex items-center justify-between gap-3 shadow-xs';
+        banner.className = 'print-hide mb-6 p-3 sm:p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shadow-xs max-w-full overflow-hidden';
         icon.textContent = 'ℹ️';
       } else if (type === 'warning') {
-        banner.className = 'print-hide mb-6 p-4 rounded-xl border border-amber-300 bg-amber-50 text-amber-950 flex items-center justify-between gap-3 shadow-xs';
+        banner.className = 'print-hide mb-6 p-3 sm:p-4 rounded-xl border border-amber-300 bg-amber-50 text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shadow-xs max-w-full overflow-hidden';
         icon.textContent = '⚠️';
       }
 
       content.innerHTML = messageHtml;
       if (action) {
         if (showReset) {
-          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="ml-2 sm:ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>새로 작성</span></button>`;
+          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-end sm:self-center flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>새로 작성</span></button>`;
         } else {
           action.innerHTML = '';
         }
@@ -2730,12 +2840,12 @@
           </div>
 
           <!-- Teacher's optional comment -->
-          <div>
+          <div class="w-full min-w-0 max-w-full">
             <label for="feedback" class="block text-xs font-semibold text-slate-700 mb-1">
               강사 종합 소견 및 특이사항 (선택사항)
             </label>
             <textarea id="feedback" name="feedback" rows="3" placeholder="교육 과정에서 어르신의 변화나 특이사항, 소감 등을 자유롭게 입력하세요."
-              class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">${escapeHtml(state.feedback || '')}</textarea>
+              class="w-full max-w-full min-w-0 box-border bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">${escapeHtml(state.feedback || '')}</textarea>
           </div>
         </div>
       `;
