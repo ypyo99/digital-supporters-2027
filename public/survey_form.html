@@ -434,6 +434,34 @@
       white-space: pre-wrap;
     }
 
+    /* Screen Analysis Table & Box (for Modal Preview) */
+    .print-analysis-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      font-size: 10px;
+      text-align: center;
+    }
+    .print-analysis-table th,
+    .print-analysis-table td {
+      border: 1px solid #cbd5e1;
+      padding: 4px 6px;
+    }
+    .print-analysis-table th {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .print-analysis-summary-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
     /* Print Styling (A4 Clean 1-Page Output) */
     @page {
       size: A4 portrait;
@@ -802,6 +830,36 @@
         min-height: 180px !important;
         line-height: 1.4 !important;
         white-space: pre-wrap !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .print-analysis-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-top: 6px !important;
+        margin-bottom: 6px !important;
+        font-size: 9.5px !important;
+        text-align: center !important;
+      }
+      .print-analysis-table th,
+      .print-analysis-table td {
+        border: 1px solid #cbd5e1 !important;
+        padding: 3.5px 5px !important;
+      }
+      .print-analysis-table th {
+        background-color: #f1f5f9 !important;
+        color: #1e293b !important;
+        font-weight: 700 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .print-analysis-summary-box {
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 6px 10px !important;
+        margin-top: 6px !important;
+        line-height: 1.4 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -1220,9 +1278,9 @@
           </section>
 
           <!-- ========================================================= -->
-          <!-- OPEN-ENDED FEEDBACK (주관식 희망사항)                       -->
+          <!-- OPEN-ENDED FEEDBACK (주관식 희망사항 또는 사후 분석)          -->
           <!-- ========================================================= -->
-          <section class="bg-white border border-slate-300 rounded-xl p-4 sm:p-6 shadow-xs">
+          <section id="feedbackSection" class="bg-white border border-slate-300 rounded-xl p-4 sm:p-6 shadow-xs">
             <h3 class="text-sm sm:text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
               ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
             </h3>
@@ -1357,9 +1415,11 @@
     const tableName = isPostSurvey ? 'post_surveys' : 'pre_surveys';
 
     let currentSurveyId = null; // Supabase record ID if editing existing
+    let loadedPreSurvey = null; // Stored pre-survey data for comparison in post-survey
     const state = {
       currentFontSize: 'normal',
       answers: {}, // { q1: 3, q2: 4, ... }
+      feedback: '',
       surveys: [], // List of submitted surveys for Admin
       activeTab: 'survey', // 'survey' | 'admin'
     };
@@ -1489,6 +1549,10 @@
       if (desc && isPostSurvey) {
         desc.textContent = '본 설문은 1:1 디지털 교육 후 어르신의 디지털 기기 활용 역량 및 인식 변화를 파악하여 교육 효과성을 평가하기 위한 자료로 활용됩니다.';
       }
+
+      if (isPostSurvey) {
+        renderPrePostAnalysis();
+      }
     }
 
     // 1. Set Today's Date
@@ -1553,6 +1617,9 @@
       }
 
       updateProgress();
+      if (isPostSurvey) {
+        renderPrePostAnalysis();
+      }
     }
 
     // 3. Update Progress Bar
@@ -1614,9 +1681,32 @@
 
       if (isPostSurvey) {
         // [사후설문지 모드]
-        let postData = null;
+        // 1. 사전설문지 데이터를 항상 먼저 조회하여 비교 분석용(loadedPreSurvey)으로 보관
+        let preData = null;
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('pre_surveys')
+              .select('*')
+              .eq('participant_name', cleanName)
+              .order('created_at', { ascending: false })
+              .limit(1);
 
-        // 1. 기존 저장된 사후설문지가 이미 존재하는지 확인 (Supabase)
+            if (!error && data && data.length > 0) {
+              preData = data[0];
+            }
+          } catch (e) {
+            console.warn('Supabase fetch pre_surveys for post comparison error:', e);
+          }
+        }
+        if (!preData) {
+          const localPreList = getLocalSurveys('pre');
+          preData = localPreList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
+        }
+        loadedPreSurvey = preData;
+
+        // 2. 기존 저장된 사후설문지가 이미 존재하는지 확인
+        let postData = null;
         if (supabaseClient) {
           try {
             const { data, error } = await supabaseClient
@@ -1634,7 +1724,7 @@
           }
         }
 
-        // 2. 로컬 백업에서 사후설문지 확인
+        // 로컬 백업에서 사후설문지 확인
         if (!postData) {
           const localPostList = getLocalSurveys('post');
           postData = localPostList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
@@ -1650,37 +1740,10 @@
             ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
             : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div>`;
           showStatusBanner('success', msg);
-          return;
-        }
+        } else if (preData) {
+          // 4. 사후설문지가 없는 경우 -> 사전설문지 점수를 기본값으로 로드
+          currentSurveyId = null;
 
-        // 4. 사후설문지가 없는 경우 -> 기본적으로 "사전설문지"로부터 값을 읽어옴!
-        let preData = null;
-        if (supabaseClient) {
-          try {
-            const { data, error } = await supabaseClient
-              .from('pre_surveys')
-              .select('*')
-              .eq('participant_name', cleanName)
-              .order('created_at', { ascending: false })
-              .limit(1);
-
-            if (!error && data && data.length > 0) {
-              preData = data[0];
-            }
-          } catch (e) {
-            console.warn('Supabase fetch pre_surveys for post default error:', e);
-          }
-        }
-
-        if (!preData) {
-          const localPreList = getLocalSurveys('pre');
-          preData = localPreList.find(s => s.participant_name === cleanName || s.participantName === cleanName);
-        }
-
-        if (preData) {
-          currentSurveyId = null; // 신규 사후 설문 작성이므로 ID는 null
-
-          // 사전설문지의 점수들을 기본값으로 설정
           const answers = preData.answers || {};
           state.answers = {};
           for (let i = 1; i <= 15; i++) {
@@ -1690,7 +1753,6 @@
             }
           }
 
-          // 조사자 이름이 현재 폼에 비어있다면 사전설문지의 조사자 이름 채우기
           const surveyorInput = document.getElementById('surveyorName');
           if (surveyorInput && !surveyorInput.value && (preData.surveyor_name || preData.surveyorName)) {
             surveyorInput.value = preData.surveyor_name || preData.surveyorName;
@@ -1706,6 +1768,7 @@
           showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지 기록이 없습니다. 새로운 사후설문을 입력해 주세요.`);
         }
 
+        renderPrePostAnalysis();
       } else {
         // [사전설문지 모드]
         let surveyData = null;
@@ -1786,6 +1849,9 @@
         }
       }
       updateProgress();
+      if (isPostSurvey) {
+        renderPrePostAnalysis();
+      }
     }
 
     // -------------------------------------------------------------
@@ -2132,6 +2198,237 @@
       };
     }
 
+    // -------------------------------------------------------------
+    // Pre/Post Comparative Analysis Metrics & Rendering
+    // -------------------------------------------------------------
+    function computeComparisonMetrics(preAnswers = {}, postAnswers = {}) {
+      const preMetrics = computeClientMetrics(preAnswers);
+      const postMetrics = computeClientMetrics(postAnswers);
+
+      const domains = [
+        {
+          key: 'awareness',
+          title: '디지털 인식',
+          range: '1~3번',
+          maxScore: 15,
+          preScore: preMetrics.scoreAwareness,
+          preAvg: preMetrics.avgAwareness,
+          postScore: postMetrics.scoreAwareness,
+          postAvg: postMetrics.avgAwareness,
+          diff: postMetrics.scoreAwareness - preMetrics.scoreAwareness,
+          diffAvg: Number((postMetrics.avgAwareness - preMetrics.avgAwareness).toFixed(2))
+        },
+        {
+          key: 'usage',
+          title: '디지털 이용',
+          range: '4~9번',
+          maxScore: 30,
+          preScore: preMetrics.scoreUsage,
+          preAvg: preMetrics.avgUsage,
+          postScore: postMetrics.scoreUsage,
+          postAvg: postMetrics.avgUsage,
+          diff: postMetrics.scoreUsage - preMetrics.scoreUsage,
+          diffAvg: Number((postMetrics.avgUsage - preMetrics.avgUsage).toFixed(2))
+        },
+        {
+          key: 'communication',
+          title: '디지털 소통',
+          range: '10~12번',
+          maxScore: 15,
+          preScore: preMetrics.scoreCommunication,
+          preAvg: preMetrics.avgCommunication,
+          postScore: postMetrics.scoreCommunication,
+          postAvg: postMetrics.avgCommunication,
+          diff: postMetrics.scoreCommunication - preMetrics.scoreCommunication,
+          diffAvg: Number((postMetrics.avgCommunication - preMetrics.avgCommunication).toFixed(2))
+        },
+        {
+          key: 'citizenship',
+          title: '디지털 시민성',
+          range: '13~15번',
+          maxScore: 15,
+          preScore: preMetrics.scoreCitizenship,
+          preAvg: preMetrics.avgCitizenship,
+          postScore: postMetrics.scoreCitizenship,
+          postAvg: postMetrics.avgCitizenship,
+          diff: postMetrics.scoreCitizenship - preMetrics.scoreCitizenship,
+          diffAvg: Number((postMetrics.avgCitizenship - preMetrics.avgCitizenship).toFixed(2))
+        }
+      ];
+
+      const totalDiff = postMetrics.totalScore - preMetrics.totalScore;
+      const avgDiff = Number((postMetrics.averageScore - preMetrics.averageScore).toFixed(2));
+      const growthRate = preMetrics.totalScore > 0
+        ? Number(((totalDiff / preMetrics.totalScore) * 100).toFixed(1))
+        : 0;
+
+      const sortedByDiff = [...domains].sort((a, b) => b.diff - a.diff);
+      const bestDomain = sortedByDiff[0];
+
+      const hasPreData = preMetrics.totalScore > 0 && Object.keys(preAnswers).length > 0;
+
+      return {
+        preMetrics,
+        postMetrics,
+        domains,
+        totalDiff,
+        avgDiff,
+        growthRate,
+        bestDomain,
+        hasPreData
+      };
+    }
+
+    function generateAnalysisSummaryText(comparison, participantName = '어르신') {
+      const name = participantName ? escapeHtml(participantName) : '어르신';
+      if (!comparison.hasPreData) {
+        return `${name} 어르신의 사후 평가 총점은 <strong>${comparison.postMetrics.totalScore}점</strong>(평균 ${comparison.postMetrics.averageScore}점/5.0점)입니다. 사전 설문지 데이터가 확인되지 않아 단독 사후 평가 결과로 집계되었습니다.`;
+      }
+
+      const { totalDiff, avgDiff, growthRate, bestDomain, postMetrics } = comparison;
+      let text = '';
+
+      if (totalDiff > 0) {
+        text += `1:1 맞춤형 디지털 교육을 통해 <strong>${name}</strong> 어르신의 디지털 역량 총점이 사전 대비 <strong>+${totalDiff}점 향상</strong>(+${growthRate}%, 평균 +${avgDiff}점)되었습니다. `;
+        if (bestDomain && bestDomain.diff > 0) {
+          text += `특히 <strong>[${bestDomain.title}]</strong> 영역에서 가장 두드러진 역량 향상(+${bestDomain.diff}점)을 나타냈습니다. `;
+        }
+        if (postMetrics.scoreUsage >= 20) {
+          text += `실생활에 필요한 스마트폰 기능 활용 능력이 크게 향상되어 일상생활에서의 자립적 디지털 활용이 기대됩니다.`;
+        } else {
+          text += `기본적인 디지털 활용 능력과 기기 조작에 대한 자신감이 뚜렷하게 증진되었습니다.`;
+        }
+      } else if (totalDiff === 0) {
+        text += `사전 조사 점수(${comparison.preMetrics.totalScore}점)와 동일한 역량 수준(${postMetrics.totalScore}점)을 유지하고 계시며, 지속적인 반복 실습을 통해 숙련도를 더욱 높일 수 있습니다.`;
+      } else {
+        text += `사후 평가 총점은 ${postMetrics.totalScore}점(사전 ${comparison.preMetrics.totalScore}점, ${totalDiff}점)으로 집계되었습니다. 어르신의 학습 속도에 맞춘 추가적인 보충 교육이 도움이 될 수 있습니다.`;
+      }
+
+      return text;
+    }
+
+    function renderPrePostAnalysis() {
+      if (!isPostSurvey) return;
+
+      const container = document.getElementById('feedbackSection');
+      if (!container) return;
+
+      // Preserve current text in textarea if user typed
+      const currentFeedbackElem = document.getElementById('feedback');
+      if (currentFeedbackElem) {
+        state.feedback = currentFeedbackElem.value;
+      }
+
+      const participantName = document.getElementById('participantName')?.value?.trim() || '어르신';
+      const preAnswers = loadedPreSurvey?.answers || {};
+      const postAnswers = state.answers || {};
+      const comparison = computeComparisonMetrics(preAnswers, postAnswers);
+      const preDate = loadedPreSurvey?.survey_date || loadedPreSurvey?.surveyDate || (loadedPreSurvey?.created_at ? loadedPreSurvey.created_at.slice(0, 10) : '');
+
+      container.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+            <div>
+              <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                ■ 사전 · 사후 디지털 역량 변화 분석 <span class="text-xs bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded-full">교육 효과성 평가</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                사전 설문조사와 사후 설문조사의 4대 영역별 점수 변화 및 종합 성장도를 분석한 결과입니다.
+              </p>
+            </div>
+            ${comparison.hasPreData ? `
+              <div class="text-xs text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 font-medium whitespace-nowrap self-start sm:self-auto flex items-center gap-1.5">
+                <span class="inline-block w-2 h-2 rounded-full bg-blue-600"></span>
+                <span>사전조사: <strong>${escapeHtml(preDate)}</strong> ➔ 사후조사: <strong>오늘</strong></span>
+              </div>
+            ` : `
+              <div class="text-xs text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 font-medium whitespace-nowrap self-start sm:self-auto flex items-center gap-1.5">
+                <span class="inline-block w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>사전 설문지 미확인 (사후 단독 점수 집계)</span>
+              </div>
+            `}
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="overflow-x-auto rounded-lg border border-slate-300">
+            <table class="w-full text-xs sm:text-sm border-collapse text-center">
+              <thead>
+                <tr class="bg-slate-100 border-b border-slate-300 text-slate-700 font-bold">
+                  <th class="py-2.5 px-3 text-left">평가 영역</th>
+                  <th class="py-2.5 px-2">사전 점수</th>
+                  <th class="py-2.5 px-2">사후 점수</th>
+                  <th class="py-2.5 px-2">점수 증감</th>
+                  <th class="py-2.5 px-2">평균 평점</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                ${comparison.domains.map(d => `
+                  <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="py-2.5 px-3 text-left font-semibold text-slate-800">
+                      ${d.title} <span class="text-[11px] text-slate-400 font-normal">(${d.range})</span>
+                    </td>
+                    <td class="py-2.5 px-2 text-slate-600">
+                      ${comparison.hasPreData ? `${d.preScore}점 <span class="text-[11px] text-slate-400">(${d.preAvg})</span>` : '-'}
+                    </td>
+                    <td class="py-2.5 px-2 font-bold text-blue-800">
+                      ${d.postScore}점 <span class="text-[11px] text-slate-500 font-normal">(${d.postAvg})</span>
+                    </td>
+                    <td class="py-2.5 px-2 font-bold ${d.diff > 0 ? 'text-emerald-600' : (d.diff < 0 ? 'text-rose-600' : 'text-slate-500')}">
+                      ${comparison.hasPreData ? (d.diff > 0 ? `▲ +${d.diff}점` : (d.diff < 0 ? `▼ ${d.diff}점` : '0점')) : '-'}
+                    </td>
+                    <td class="py-2.5 px-2 text-slate-700">
+                      ${comparison.hasPreData ? `${d.preAvg} ➔ ${d.postAvg}` : `${d.postAvg}점`}
+                    </td>
+                  </tr>
+                `).join('')}
+                <!-- Total Row -->
+                <tr class="bg-blue-50/80 border-t-2 border-blue-200 font-bold text-slate-900">
+                  <td class="py-3 px-3 text-left text-blue-950 font-extrabold">종합 총점 / 평균</td>
+                  <td class="py-3 px-2 text-slate-700">
+                    ${comparison.hasPreData ? `${comparison.preMetrics.totalScore}점 <span class="text-[11px] text-slate-500 font-normal">(${comparison.preMetrics.averageScore})</span>` : '-'}
+                  </td>
+                  <td class="py-3 px-2 text-blue-700 text-base font-extrabold">
+                    ${comparison.postMetrics.totalScore}점 <span class="text-[11px] text-blue-600 font-normal">(${comparison.postMetrics.averageScore})</span>
+                  </td>
+                  <td class="py-3 px-2 ${comparison.totalDiff > 0 ? 'text-emerald-700' : (comparison.totalDiff < 0 ? 'text-rose-700' : 'text-slate-600')} text-sm font-extrabold">
+                    ${comparison.hasPreData ? (comparison.totalDiff > 0 ? `▲ +${comparison.totalDiff}점 (+${comparison.growthRate}%)` : (comparison.totalDiff < 0 ? `▼ ${comparison.totalDiff}점` : '0점')) : '-'}
+                  </td>
+                  <td class="py-3 px-2 text-blue-950">
+                    ${comparison.hasPreData ? `${comparison.preMetrics.averageScore} ➔ ${comparison.postMetrics.averageScore}` : `${comparison.postMetrics.averageScore}점`}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Analysis Summary Insight Box -->
+          <div class="bg-gradient-to-r from-purple-50 to-indigo-50/50 border border-purple-200 rounded-lg p-3.5 text-xs sm:text-sm text-purple-950 leading-relaxed shadow-2xs">
+            <div class="font-bold text-purple-900 mb-1.5 flex items-center gap-1.5 text-sm">
+              <span>📊 종합 교육 효과성 분석 소견</span>
+            </div>
+            <p class="leading-normal">${generateAnalysisSummaryText(comparison, participantName)}</p>
+          </div>
+
+          <!-- Teacher's optional comment -->
+          <div>
+            <label for="feedback" class="block text-xs font-semibold text-slate-700 mb-1">
+              강사 종합 소견 및 특이사항 (선택사항)
+            </label>
+            <textarea id="feedback" name="feedback" rows="3" placeholder="교육 과정에서 어르신의 변화나 특이사항, 소감 등을 자유롭게 입력하세요."
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-xs sm:text-sm focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">${escapeHtml(state.feedback || '')}</textarea>
+          </div>
+        </div>
+      `;
+
+      // Re-attach input event listener on feedback textarea
+      const fb = document.getElementById('feedback');
+      if (fb) {
+        fb.addEventListener('input', (e) => {
+          state.feedback = e.target.value;
+        });
+      }
+    }
+
     // LocalStorage management
     function getLocalBackupKey(targetType = null) {
       const type = targetType || surveyType;
@@ -2268,17 +2565,89 @@
             ${DOMAIN_SECTIONS.filter(d => d.page === 2).map(d => renderDomainSectionHtml(d, survey)).join('')}
 
             <!-- Feedback Section (Page 2) -->
-            <div class="print-feedback-section">
-              <div class="print-feedback-title">
-                ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
+            ${isPostSurvey ? (() => {
+              const comparison = computeComparisonMetrics(loadedPreSurvey?.answers || {}, survey.answers || {});
+              const preDate = loadedPreSurvey?.survey_date || loadedPreSurvey?.surveyDate || (loadedPreSurvey?.created_at ? loadedPreSurvey.created_at.slice(0, 10) : '');
+              return `
+                <div class="print-feedback-section">
+                  <div class="print-feedback-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>■ 사전 · 사후 디지털 역량 변화 분석 (교육 효과성 평가)</span>
+                    ${comparison.hasPreData ? `
+                      <span style="font-size: 10px; font-weight: normal; color: #1e40af;">
+                        사전조사: ${escapeHtml(preDate)} ➔ 사후조사: ${escapeHtml(survey.surveyDate)}
+                      </span>
+                    ` : ''}
+                  </div>
+                  <div class="print-feedback-desc">
+                    사전 및 사후 설문조사의 4대 영역별 점수 변화 및 종합 성장도를 분석한 결과입니다.
+                  </div>
+
+                  <table class="print-analysis-table">
+                    <thead>
+                      <tr>
+                        <th style="width: 26%; text-align: left; padding-left: 8px;">평가 영역</th>
+                        <th style="width: 17%;">사전 점수</th>
+                        <th style="width: 17%;">사후 점수</th>
+                        <th style="width: 20%;">점수 증감</th>
+                        <th style="width: 20%;">평균 평점</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${comparison.domains.map(d => `
+                        <tr>
+                          <td style="text-align: left; padding-left: 8px; font-weight: 600;">
+                            ${d.title} <span style="font-size: 8.5px; color: #64748b; font-weight: normal;">(${d.range})</span>
+                          </td>
+                          <td>${comparison.hasPreData ? `${d.preScore}점 <span style="font-size: 8.5px; color: #64748b;">(${d.preAvg})</span>` : '-'}</td>
+                          <td style="font-weight: bold; color: #1e3a8a;">${d.postScore}점 <span style="font-size: 8.5px; color: #64748b; font-weight: normal;">(${d.postAvg})</span></td>
+                          <td style="font-weight: bold; color: ${d.diff > 0 ? '#15803d' : (d.diff < 0 ? '#b91c1c' : '#475569')};">
+                            ${comparison.hasPreData ? (d.diff > 0 ? `▲ +${d.diff}점` : (d.diff < 0 ? `▼ ${d.diff}점` : '0점')) : '-'}
+                          </td>
+                          <td style="font-size: 9px; color: #334155;">
+                            ${comparison.hasPreData ? `${d.preAvg} ➔ ${d.postAvg}` : `${d.postAvg}점`}
+                          </td>
+                        </tr>
+                      `).join('')}
+                      <tr style="background-color: #eff6ff; font-weight: bold;">
+                        <td style="text-align: left; padding-left: 8px; color: #1e3a8a; font-weight: 800;">종합 총점 / 평균</td>
+                        <td>${comparison.hasPreData ? `${comparison.preMetrics.totalScore}점 <span style="font-size: 8.5px; color: #64748b; font-weight: normal;">(${comparison.preMetrics.averageScore})</span>` : '-'}</td>
+                        <td style="color: #1d4ed8; font-weight: 900; font-size: 10.5px;">${comparison.postMetrics.totalScore}점 <span style="font-size: 8.5px; color: #1d4ed8; font-weight: normal;">(${comparison.postMetrics.averageScore})</span></td>
+                        <td style="color: ${comparison.totalDiff > 0 ? '#15803d' : (comparison.totalDiff < 0 ? '#b91c1c' : '#475569')}; font-weight: 900;">
+                          ${comparison.hasPreData ? (comparison.totalDiff > 0 ? `▲ +${comparison.totalDiff}점 (+${comparison.growthRate}%)` : (comparison.totalDiff < 0 ? `▼ ${comparison.totalDiff}점` : '0점')) : '-'}
+                        </td>
+                        <td style="color: #0f172a; font-weight: bold;">
+                          ${comparison.hasPreData ? `${comparison.preMetrics.averageScore} ➔ ${comparison.postMetrics.averageScore}` : `${comparison.postMetrics.averageScore}점`}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="print-analysis-summary-box">
+                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 2px; font-size: 10px;">[교육 효과성 종합 분석 소견]</div>
+                    <div style="font-size: 9.5px; line-height: 1.45; color: #334155;">
+                      ${generateAnalysisSummaryText(comparison, survey.participantName)}
+                    </div>
+                    ${survey.feedback ? `
+                      <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed #cbd5e1; font-size: 9.5px; color: #1e293b;">
+                        <strong>[강사 종합 소견]:</strong> ${escapeHtml(survey.feedback)}
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              `;
+            })() : `
+              <div class="print-feedback-section">
+                <div class="print-feedback-title">
+                  ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
+                </div>
+                <div class="print-feedback-desc">
+                  (예: 스마트폰으로 버스/지하철 길찾기, 카카오페이 송금하기, 사진 예쁘게 편집해서 가족에게 보내기 등)
+                </div>
+                <div class="print-feedback-content-box">
+                  ${escapeHtml(survey.feedback || '(작성된 희망사항이 없습니다.)')}
+                </div>
               </div>
-              <div class="print-feedback-desc">
-                (예: 스마트폰으로 버스/지하철 길찾기, 카카오페이 송금하기, 사진 예쁘게 편집해서 가족에게 보내기 등)
-              </div>
-              <div class="print-feedback-content-box">
-                ${escapeHtml(survey.feedback || '(작성된 희망사항이 없습니다.)')}
-              </div>
-            </div>
+            `}
 
             <!-- Footer (Page 2) -->
             <div class="print-footer">
