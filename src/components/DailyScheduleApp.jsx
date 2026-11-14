@@ -210,7 +210,7 @@ function SummarySection({ data, date, team, onTouchStart, onTouchEnd }) {
 
   if (contents.length === 0 && (!attendanceStats || attendanceStats.total === 0)) {
     return (
-      <div className="mt-6 sm:mt-8 bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-10 text-center animate-fadeIn">
+      <div className="mt-6 sm:mt-8 bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 p-6 sm:p-10 text-center animate-fadeIn">
         <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gray-50 rounded-full mb-4 sm:mb-6">
           <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-gray-200" />
         </div>
@@ -1076,16 +1076,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800 overflow-y-auto">
-      <div className="shrink-0 bg-[#2b5ce6] text-white shadow-md z-40 relative">
+      <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 pt-safe-4 flex justify-between items-center">
           <div>
             <div className="flex items-center mb-0.5 sm:mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-5 sm:h-7 bg-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md object-contain mr-1.5 sm:mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-5 sm:h-7 hdr-logo object-contain mr-1.5 sm:mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-lg sm:text-xl md:text-2xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-xs sm:text-base md:text-lg font-bold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-xs sm:text-base md:text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
           </div>
-          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg shadow-md transition-all touch-manipulation bg-blue-800 text-white opacity-90 active:scale-95 shrink-0">
+          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
             <Home className="w-4 h-4 sm:w-5 sm:h-5 mb-0.5" /> 처음으로
           </button>
         </div>
@@ -1093,7 +1093,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
       <div className="flex-1 flex flex-col pb-0">
         <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-2 sm:p-4 md:p-6 pb-0 mt-1 sm:mt-2">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 flex flex-col overflow-hidden">
             <div className="shrink-0 z-30 bg-white px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 md:pt-6 pb-3 sm:pb-4 shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] relative">
               <div className="flex flex-row items-center justify-between gap-2 mb-2 border-b border-gray-100 pb-2 sm:pb-3 w-full">
                 <h2 className="text-sm min-[360px]:text-base sm:text-lg md:text-xl font-bold flex items-center gap-1 sm:gap-2 text-gray-800 whitespace-nowrap tracking-tight shrink-0">
@@ -1311,7 +1311,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                               } else if (row.isSpecial || combinedText.includes("공휴일") || combinedText.includes("간담회")) {
                                 studentCellBg = "bg-red-200";
                               } else if (combinedText.includes("보조강사")) {
-                                studentCellBg = "bg-[#FFFF00]";
+                                studentCellBg = "bg-amber-200";
                               } else if (combinedText.includes("경로당") || combinedText.includes("도선복지관")) {
                                 studentCellBg = "bg-orange-100";
                               } else {
@@ -1519,7 +1519,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       </div>
 
       {selectedStudentDates && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-3 sm:p-4" onClick={() => setSelectedStudentDates(null)}>
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[60] p-3 sm:p-4" onClick={() => setSelectedStudentDates(null)}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh] animate-fadeIn" onClick={e => e.stopPropagation()}>
             <div className="bg-purple-600 text-white py-3 px-4 flex justify-between items-center shrink-0">
               <h3 className="font-bold text-[18px] sm:text-[20px]">{selectedStudentDates.name}님의 출석 일자 <span className="text-purple-200 text-[15px] sm:text-[16px]">({selectedStudentDates.count}회)</span></h3>

@@ -651,14 +651,14 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
         }
       `}</style>
       {/* 헤더 영역 */}
-      <header className="bg-blue-600 text-white px-4 pt-4 pb-12 shadow-md z-20 relative flex justify-between items-start shrink-0 min-h-[116px]">
+      <header className="app-header text-white px-4 pt-4 pb-12 z-20 relative flex justify-between items-start shrink-0 min-h-[116px]">
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 bg-white px-2 py-1 rounded-md object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-bold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
             <p className="text-base opacity-95 flex items-center mt-1 font-bold">
               <LucideCalendar className="w-4 h-4 mr-1" /> 공지사항 관리
             </p>
@@ -669,14 +669,14 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
         <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50 flex items-center gap-3">
           <button
             onClick={handleAdminClick}
-            className={`px-5 py-1.5 md:px-8 md:py-2 rounded-lg border border-blue-900 font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap ${isAdmin ? 'bg-white text-blue-800 shadow' : 'bg-blue-800 text-white hover:bg-blue-900 shadow-md'}`}
+            className={`px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
           >
             {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
           </button>
           {isAdmin && (
             <button
               onClick={handleNewNotice}
-              className="px-5 py-1.5 md:px-8 md:py-2 rounded-lg border border-blue-900 font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap bg-blue-800 hover:bg-blue-900 text-white shadow-md"
+              className="px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap"
             >
               새로 작성
             </button>
@@ -695,7 +695,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
             }
             onNavigateBack();
           }}
-          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation bg-blue-800 text-white opacity-90 active:scale-95"
+          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
         >
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
@@ -786,7 +786,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 content-start items-start flex-1 min-w-0">
           {/* 좌측: 공지사항 목록 */}
-          <section ref={listRef} className={`bg-white rounded-2xl shadow-md border border-gray-100 p-4 transition-all duration-350 min-w-0 ${(selectedNotice || isEditing) ? 'md:col-span-5' : 'md:col-span-12'} ${isEditing ? 'hidden md:flex md:flex-col' : 'flex flex-col'}`}>
+          <section ref={listRef} className={`bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-4 transition-all duration-350 min-w-0 ${(selectedNotice || isEditing) ? 'md:col-span-5' : 'md:col-span-12'} ${isEditing ? 'hidden md:flex md:flex-col' : 'flex flex-col'}`}>
             <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 pb-2 border-b">공지사항 목록</h2>
             {loading ? (
               <div className="flex-1 flex items-center justify-center text-gray-400 font-bold">
@@ -843,7 +843,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
 
           {/* 우측: 상세 조회 또는 편집 */}
           {(selectedNotice || isEditing) && (
-            <section ref={detailsRef} className="md:col-span-7 bg-white rounded-2xl shadow-md border border-gray-100 p-4 flex flex-col transition-all duration-350 min-w-0">
+            <section ref={detailsRef} className="md:col-span-7 bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-4 flex flex-col transition-all duration-350 min-w-0">
               {isEditing ? (
                 /* 편집 및 작성 폼 */
                 <div className="flex flex-col gap-4 flex-1 min-w-0">
@@ -1159,7 +1159,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
 
       {/* 담당자 암호 입력 모달 */}
       {showPwdModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[70] px-4 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
             <input
@@ -1195,7 +1195,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
               </button>
               <button
                 onClick={checkPassword}
-                className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold touch-manipulation text-sm sm:text-base"
+                className="flex-1 py-3 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 active:scale-[0.98] transition-all touch-manipulation text-sm sm:text-base"
               >
                 확인
               </button>

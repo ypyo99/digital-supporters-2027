@@ -656,26 +656,26 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans">
-      <header className="bg-blue-600 text-white px-4 pb-4 pt-safe-4 shadow-lg z-40 flex justify-between items-center relative">
+      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-40 flex justify-between items-center relative">
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 bg-white px-2 py-1 rounded-md object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-bold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
             <p className="text-base opacity-95 flex items-center mt-1 font-bold">
               <User className="w-4 h-4 mr-1" /> [{team}] {teacher.replace(/\n/g, ' ')} 선생님
             </p>
           </div>
         </div>
-        <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation bg-blue-800 text-white opacity-90 active:scale-95">
+        <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
       </header>
 
       <main className="flex-1 flex flex-col w-full mx-auto p-3 sm:p-5 lg:p-8">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 flex flex-col flex-1 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 flex flex-col flex-1 overflow-hidden">
           <div className="shrink-0 bg-white px-4 sm:px-6 pt-5 pb-4 shadow-sm relative z-10 flex flex-col items-center border-b border-gray-100">
             <h2 className="text-[18px] sm:text-2xl font-black text-gray-900 mb-4 flex items-center gap-2">
               <MainCalendarIcon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" />
@@ -747,7 +747,7 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                         const isHoliday = !!specialDayInfo || (cellData.student && /공휴일|근로자의날|어린이날|휴일|공휴/.test(cellData.student.replace(/\s/g, ''))) ||
                           (cellData.status && /공휴일|근로자의날|어린이날|휴일|공휴/.test(cellData.status.replace(/\s/g, ''))) ||
                           (cellData.location && /공휴일|근로자의날|어린이날|휴일|공휴/.test(cellData.location.replace(/\s/g, '')));
-                        const cardBgClass = isAssistant ? "bg-[#FFFF00]" : isKyungrodang ? "bg-orange-100" : "bg-white";
+                        const cardBgClass = isAssistant ? "bg-amber-200" : isKyungrodang ? "bg-orange-100" : "bg-white";
 
                         let cellBgClass = cardBgClass;
                         if (specialDayInfo) {
@@ -820,7 +820,7 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
       </main>
 
       {selectedStudentDates && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-3 sm:p-4" onClick={() => setSelectedStudentDates(null)}>
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[60] p-3 sm:p-4" onClick={() => setSelectedStudentDates(null)}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh] animate-fadeIn" onClick={e => e.stopPropagation()}>
             <div className="bg-purple-600 text-white py-3 px-4 flex justify-between items-center shrink-0">
               <h3 className="font-bold text-[18px] sm:text-[20px]">{selectedStudentDates.name}님의 출석 일자 <span className="text-purple-200 text-[15px] sm:text-[16px]">({selectedStudentDates.count}회)</span></h3>

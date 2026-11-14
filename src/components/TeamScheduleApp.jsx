@@ -994,13 +994,13 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
     <div className="w-full min-h-screen bg-gray-50 flex flex-col font-sans">
       <div className="bg-white flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <div className="shrink-0 bg-[#2b5ce6] text-white shadow-md z-40 relative flex items-start px-4 pt-3 pb-9 sm:pb-7 min-h-[110px] sm:min-h-[92px]">
+        <div className="shrink-0 app-header text-white z-40 relative flex items-start px-4 pt-3 pb-9 sm:pb-7 min-h-[110px] sm:min-h-[92px]">
           <div>
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 bg-white px-2 py-1 rounded-md object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl sm:text-2xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-[18px] font-bold text-yellow-300">
+            <p className="text-[18px] font-semibold text-blue-100">
               디지털교육 서포터즈
             </p>
           </div>
@@ -1010,7 +1010,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
             <button
               onClick={handleExportExcel}
               disabled={exporting}
-              className="px-5 py-1.5 md:px-7 md:py-2 rounded-lg border border-blue-900 bg-blue-800 text-white font-bold hover:bg-blue-900 shadow-lg active:scale-95 text-sm md:text-base transition-all flex items-center gap-1.5 disabled:opacity-50"
+              className="px-5 py-1.5 md:px-7 md:py-2 hdr-pill font-bold active:scale-95 text-sm md:text-base transition-all flex items-center gap-1.5 disabled:opacity-50"
             >
               <DownloadIcon className="w-4 h-4 md:w-5 md:h-5" />
               <span
@@ -1026,7 +1026,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
           </div>
 
           <div className="ml-auto">
-            <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation bg-blue-800 text-white opacity-90 active:scale-95">
+            <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
               <Home className="w-5 h-5 mb-1" />
               <span>처음으로</span>
             </button>
@@ -1230,7 +1230,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
                                   if (dateStr.endsWith("-11-25") && isFirstShift) {
                                     cellClass = "bg-red-300 text-gray-950 font-extrabold text-[12px] sm:text-[13px] md:text-sm lg:text-base py-1 px-1";
                                   } else if (item.student?.includes('보조강사')) {
-                                    cellClass = "bg-yellow-300 text-gray-950 font-extrabold text-[12px] sm:text-[13px] md:text-sm lg:text-base py-1 px-1";
+                                    cellClass = "bg-amber-200 text-gray-950 font-extrabold text-[12px] sm:text-[13px] md:text-sm lg:text-base py-1 px-1";
                                   } else if (item.student) {
                                     cellClass = "text-gray-955 font-bold bg-sky-100";
                                   }
@@ -1512,7 +1512,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
         </div>
         {/* 엑셀 완료 안내 모달 */}
         {showExportModal && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl transform transition-all border border-gray-100 flex flex-col items-center">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600 text-2xl">
                 🎉

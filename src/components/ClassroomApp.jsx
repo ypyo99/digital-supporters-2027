@@ -326,22 +326,22 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800">
-      <div className="shrink-0 bg-blue-600 text-white px-4 pt-4 pb-7 shadow-md z-20 relative flex items-start justify-center min-h-[96px]">
-        <h1 className="text-lg md:text-xl font-bold flex items-center gap-2 mt-1">
+      <div className="shrink-0 app-header text-white px-[84px] pt-4 pb-12 z-20 relative flex items-start justify-center min-h-[104px]">
+        <h1 className="text-[17px] sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 mt-1 leading-tight text-center tracking-tight">
           <LucideCalendar className="w-6 h-6 md:w-8 md:h-8" /> 평생교육실2 사용 현황
         </h1>
         <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
-          <button onClick={handleManagerClick} className={`px-6 py-1.5 md:px-10 md:py-2 rounded-lg border border-blue-900 font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation ${isManagerMode ? 'bg-white text-blue-800 shadow' : 'bg-blue-800 text-white hover:bg-blue-900 shadow-md'}`}>
+          <button onClick={handleManagerClick} className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation ${isManagerMode ? 'is-on' : ''}`}>
             {isManagerMode ? '저장/담당자 모드 종료' : '담당자 로그인'}
           </button>
         </div>
-        <button onClick={onNavigateBack} className="absolute right-4 top-3 text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation bg-blue-800 text-white opacity-90 active:scale-95">
+        <button onClick={onNavigateBack} className="absolute right-4 top-3 text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
       </div>
 
       <div className="flex-1 flex flex-col p-3 md:p-8 pb-10">
-        <div className="max-w-5xl w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden border flex flex-col">
+        <div className="max-w-5xl w-full mx-auto bg-white rounded-2xl shadow-lg overflow-hidden ring-1 ring-gray-900/5 flex flex-col">
           <div className="shrink-0 z-10 bg-white px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-3 shadow-sm relative">
             <div className="bg-white rounded-xl p-3 md:p-4 border border-gray-200 flex flex-col items-center shadow-sm">
               {saveErrorMsg && (
@@ -537,14 +537,14 @@ CREATE POLICY "Allow public all access" ON public.classroom_schedules FOR ALL US
       </div>
 
       {showPwdModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
             <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (val === import.meta.env.VITE_ADMIN_PASSWORD) { setIsManagerMode(true); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500" placeholder="••••" />
             {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
             <div className="flex gap-2">
               <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>
-              <button onClick={checkPassword} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold touch-manipulation">확인</button>
+              <button onClick={checkPassword} className="flex-1 py-3 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 active:scale-[0.98] transition-all touch-manipulation">확인</button>
             </div>
           </div>
         </div>

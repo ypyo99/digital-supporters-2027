@@ -35,8 +35,13 @@ body {
   padding-right: 2.75rem !important;
 }
 
-/* 메인 메뉴 카드 */
+/* 메인 메뉴 카드 — 메뉴마다 고유 색상(tone)으로 구분 */
 .menu-card {
+  --t-bg: #eff6ff;
+  --t-bg2: #ffffff;
+  --t-border: #bfdbfe;
+  --t-chip: #2563eb;
+  --t-text: #1e3a8a;
   position: relative;
   display: flex;
   align-items: center;
@@ -45,22 +50,22 @@ body {
   padding: 0.625rem 1rem 0.625rem 0.625rem;
   min-height: 60px;
   border-radius: 1rem;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04);
-  color: #1e293b;
+  background: linear-gradient(100deg, var(--t-bg) 0%, var(--t-bg2) 100%);
+  border: 1px solid var(--t-border);
+  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  color: var(--t-text);
   text-align: left;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease, background-color .18s ease;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease, filter .18s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 .menu-card:hover {
-  border-color: #bfdbfe;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 8px 20px -8px rgb(37 99 235 / 0.25);
+  border-color: var(--t-chip);
+  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05), 0 10px 22px -10px var(--t-chip);
 }
 .menu-card:active {
   transform: scale(0.985);
-  background: #f8fafc;
+  filter: brightness(0.97);
 }
 .menu-card .menu-chip {
   flex-shrink: 0;
@@ -70,8 +75,9 @@ body {
   width: 42px;
   height: 42px;
   border-radius: 0.75rem;
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--t-chip);
+  color: #ffffff;
+  box-shadow: 0 4px 10px -4px var(--t-chip);
 }
 .menu-card .menu-label {
   flex: 1;
@@ -86,39 +92,50 @@ body {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
-  color: #cbd5e1;
-  transition: transform .18s ease, color .18s ease;
+  color: var(--t-chip);
+  opacity: 0.55;
+  transition: transform .18s ease, opacity .18s ease;
 }
 .menu-card:hover .menu-chevron {
-  color: #3b82f6;
+  opacity: 1;
   transform: translateX(2px);
 }
-.menu-card.is-admin .menu-chip {
-  background: #fff1f2;
-  color: #e11d48;
-}
-.menu-card.is-admin:hover {
-  border-color: #fecdd3;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 8px 20px -8px rgb(225 29 72 / 0.22);
-}
-.menu-card.is-admin:hover .menu-chevron {
-  color: #e11d48;
-}
+
+/* 색상 톤 */
+.menu-card.tone-blue    { --t-bg: #dbeafe; --t-bg2: #eff6ff; --t-border: #bfdbfe; --t-chip: #2563eb; --t-text: #1e3a8a; }
+.menu-card.tone-indigo  { --t-bg: #e0e7ff; --t-bg2: #eef2ff; --t-border: #c7d2fe; --t-chip: #4f46e5; --t-text: #312e81; }
+.menu-card.tone-violet  { --t-bg: #ede9fe; --t-bg2: #f5f3ff; --t-border: #ddd6fe; --t-chip: #7c3aed; --t-text: #4c1d95; }
+.menu-card.tone-emerald { --t-bg: #d1fae5; --t-bg2: #ecfdf5; --t-border: #a7f3d0; --t-chip: #059669; --t-text: #064e3b; }
+.menu-card.tone-teal    { --t-bg: #ccfbf1; --t-bg2: #f0fdfa; --t-border: #99f6e4; --t-chip: #0d9488; --t-text: #134e4a; }
+.menu-card.tone-sky     { --t-bg: #e0f2fe; --t-bg2: #f0f9ff; --t-border: #bae6fd; --t-chip: #0284c7; --t-text: #0c4a6e; }
+.menu-card.tone-pink    { --t-bg: #fce7f3; --t-bg2: #fdf2f8; --t-border: #fbcfe8; --t-chip: #db2777; --t-text: #831843; }
+.menu-card.tone-amber   { --t-bg: #fef3c7; --t-bg2: #fffbeb; --t-border: #fde68a; --t-chip: #d97706; --t-text: #78350f; }
+.menu-card.tone-rose    { --t-bg: #ffe4e6; --t-bg2: #fff1f2; --t-border: #fecdd3; --t-chip: #e11d48; --t-text: #881337; }
+.menu-card.tone-red     { --t-bg: #fee2e2; --t-bg2: #fef2f2; --t-border: #fecaca; --t-chip: #dc2626; --t-text: #7f1d1d; }
+.menu-card.tone-orange  { --t-bg: #ffedd5; --t-bg2: #fff7ed; --t-border: #fed7aa; --t-chip: #ea580c; --t-text: #7c2d12; }
+
+/* 비활성(팀·선생님 미선택) */
 .menu-card.is-disabled {
   cursor: not-allowed;
   background: #f8fafc;
+  border-color: #e2e8f0;
   color: #94a3b8;
   box-shadow: none;
 }
 .menu-card.is-disabled .menu-chip {
-  background: #f1f5f9;
+  background: #e2e8f0;
   color: #94a3b8;
+  box-shadow: none;
+}
+.menu-card.is-disabled .menu-chevron {
+  color: #cbd5e1;
+  opacity: 1;
 }
 .menu-card.is-disabled:hover {
   border-color: #e2e8f0;
+  box-shadow: none;
 }
 .menu-card.is-disabled:hover .menu-chevron {
-  color: #cbd5e1;
   transform: none;
 }
 
@@ -297,4 +314,86 @@ input[type="date"].opacity-0::-webkit-calendar-picker-indicator {
   animation: waveGradientRight 2s linear infinite, waveY 1.5s ease-in-out infinite;
   display: inline-block;
   font-weight: 900;
+}
+
+/* ───────── 작업화면 공통 헤더 ───────── */
+.app-header {
+  background:
+    radial-gradient(900px 220px at 15% -40%, rgba(255, 255, 255, 0.22), transparent 60%),
+    linear-gradient(120deg, #1e40af 0%, #2563eb 48%, #4f46e5 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 10px 30px -14px rgba(30, 64, 175, 0.55);
+}
+.app-header.is-teal {
+  background:
+    radial-gradient(900px 220px at 15% -40%, rgba(255, 255, 255, 0.22), transparent 60%),
+    linear-gradient(120deg, #0f766e 0%, #0d9488 50%, #059669 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 10px 30px -14px rgba(15, 118, 110, 0.55);
+}
+.app-header h1 {
+  letter-spacing: -0.03em;
+}
+
+/* 헤더의 '처음으로' 버튼: 반투명 유리 질감 */
+.hdr-btn {
+  color: #fff;
+  border-radius: 0.875rem;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28), 0 4px 12px -6px rgba(15, 23, 42, 0.35);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 1;
+  transition: background-color .18s ease, transform .12s ease;
+  touch-action: manipulation;
+}
+.hdr-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+.hdr-btn:active {
+  transform: scale(0.95);
+}
+
+/* 헤더 하단의 '담당자 로그인' / '다운로드' 알약 버튼 */
+.hdr-pill {
+  color: #fff;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.30), 0 6px 16px -8px rgba(15, 23, 42, 0.45);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  letter-spacing: -0.01em;
+  transition: background-color .18s ease, color .18s ease, transform .12s ease;
+}
+.hdr-pill:hover {
+  background: rgba(15, 23, 42, 0.34);
+}
+.hdr-pill.is-on {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 6px 16px -8px rgba(15, 23, 42, 0.45);
+}
+
+.hdr-logo {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.45rem;
+  box-shadow: 0 2px 6px -2px rgba(15, 23, 42, 0.3);
+}
+
+/* 얇은 스크롤바 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
 }

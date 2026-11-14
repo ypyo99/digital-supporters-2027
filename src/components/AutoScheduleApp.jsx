@@ -944,14 +944,14 @@ export default function AutoScheduleApp({ onNavigateBack }) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans pb-6">
-      <header className="bg-blue-600 text-white px-4 pt-4 pb-7 shadow-lg z-40 flex justify-between items-start relative shrink-0 min-h-[96px]">
+      <header className="app-header text-white px-4 pt-4 pb-12 z-40 flex justify-between items-start relative shrink-0 min-h-[116px]">
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 bg-white px-2 py-1 rounded-md object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-bold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
             <p className="text-base opacity-95 flex items-center mt-1 font-bold">
               <LucideCalendar className="w-4 h-4 mr-1" /> 시간표 작성
             </p>
@@ -962,7 +962,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
         <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
           <button
             onClick={handleAdminClick}
-            className={`px-6 py-1.5 md:px-10 md:py-2 rounded-lg border border-blue-900 font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isAdmin ? 'bg-white text-blue-800 shadow' : 'bg-blue-800 text-white hover:bg-blue-900 shadow-md'}`}
+            className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
           >
             {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
           </button>
@@ -970,7 +970,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
 
         <button
           onClick={onNavigateBack}
-          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation bg-blue-800 text-white opacity-90 active:scale-95"
+          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
         >
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
@@ -988,7 +988,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-5 mb-6 w-full">
+          <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6 w-full">
             <div className="flex justify-between items-center border-b pb-3 mb-4 gap-2">
               <h2 className="text-base sm:text-lg font-bold text-gray-800">기간 및 팀 선택</h2>
               <div className="flex gap-2">
@@ -1083,7 +1083,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
         )}
 
         {!analyzing && draftRecords.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-5 animate-fadeIn w-full">
+          <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 animate-fadeIn w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 mb-4 gap-3">
               <div>
                 <h2 className="text-lg font-bold text-gray-800">작성될 시간표 미리보기 ({team})</h2>
@@ -1278,7 +1278,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
 
         {/* ── 확인 모달 ── */}
         {showConfirmModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-[3px]">
             <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 animate-fadeIn">
               <div className="text-center mb-6">
                 <div className="text-4xl mb-3">📋</div>
@@ -1303,7 +1303,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
 
         {/* ── 완료 모달 ── */}
         {showSuccessModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 backdrop-blur-[3px]">
             <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 animate-fadeIn">
               <div className="text-center mb-6">
                 <div className="text-5xl mb-3">✅</div>
@@ -1322,7 +1322,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
       </main>
 
       {showPwdModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
             <input
@@ -1346,7 +1346,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
             {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
             <div className="flex gap-2 text-black">
               <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>
-              <button onClick={checkPassword} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold touch-manipulation">확인</button>
+              <button onClick={checkPassword} className="flex-1 py-3 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 active:scale-[0.98] transition-all touch-manipulation">확인</button>
             </div>
           </div>
         </div>

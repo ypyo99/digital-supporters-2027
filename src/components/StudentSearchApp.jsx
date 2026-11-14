@@ -379,16 +379,16 @@ export default function StudentSearchApp({ onNavigateBack }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800">
-      <div className="shrink-0 bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg z-40 relative">
+      <div className="shrink-0 app-header is-teal text-white z-40 relative">
         <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-start">
           <div>
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 bg-white px-2 py-1 rounded-md object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-bold text-yellow-300 mb-1">디지털교육 서포터즈</p>
+            <p className="text-lg font-semibold text-blue-100 mb-1">디지털교육 서포터즈</p>
           </div>
-          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation bg-teal-800 text-white opacity-90 active:scale-95">
+          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
             <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>
         </div>
@@ -396,7 +396,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
 
       <div className="flex-1 flex flex-col pb-4">
         <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-2">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
             <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-3 md:px-6 py-2.5">
               <div className="flex items-start justify-between gap-1 md:gap-2">
                 <div className="flex flex-col min-w-0">

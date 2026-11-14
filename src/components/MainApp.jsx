@@ -120,8 +120,8 @@ const hasIndependentKeyword = (str, keywords) => {
 };
 
 // 메인 화면 메뉴 카드 (아이콘 칩 + 라벨 + 화살표)
-const MenuCard = ({ icon, label, onClick, href, variant, disabled }) => {
-  const className = `menu-card${variant === 'admin' ? ' is-admin' : ''}${disabled ? ' is-disabled' : ''}`;
+const MenuCard = ({ icon, label, onClick, href, tone = 'blue', disabled }) => {
+  const className = `menu-card tone-${tone}${disabled ? ' is-disabled' : ''}`;
   const content = (
     <>
       <span className="menu-chip">{icon}</span>
@@ -3090,62 +3090,70 @@ export default function MainApp({
               }}
               icon={<CalendarIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="나의 주간 일정"
+              tone="blue"
             />
             {errorMessage && <div className="text-rose-600 font-semibold text-center text-sm md:text-base">{errorMessage}</div>}
             <MenuCard
               onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }}
               icon={<CalendarClockIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="팀별 오늘 일정"
+              tone="indigo"
             />
             <MenuCard
               onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }}
               icon={<CalendarDaysIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="전체 일정 보기/엑셀 다운로드"
+              tone="emerald"
             />
             <MenuCard
               href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>}
               label="수업 희망자 및 기타 참여자 관리"
+              tone="amber"
             />
             <MenuCard
               onClick={onNavigateToStudentSearch}
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><path d="M11 8a3 3 0 0 0-3 3" /></svg>}
               label="대상자 검색"
+              tone="teal"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToClassroom(); }}
               icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="평생교육실2 사용 현황"
+              tone="sky"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
               icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="낭만스튜디오 사용 현황"
+              tone="pink"
             />
             <MenuCard
               onClick={() => { handleLogout(); onNavigateToNoticeManagement(); }}
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>}
               label="공지사항"
+              tone="violet"
             />
 
             <div className="section-label mt-5 sm:mt-6 mb-0.5">관리자 메뉴</div>
             <MenuCard
-              variant="admin"
               onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
               icon={<UsersIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="선생님 명단 관리"
+              tone="rose"
             />
             <MenuCard
-              variant="admin"
               onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
               icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
               label="공휴일/휴무일 관리"
+              tone="orange"
             />
             <MenuCard
-              variant="admin"
               onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
               icon={<LucideCalendar className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
               label="시간표 작성"
+              tone="red"
             />
           </div>
 
@@ -3201,14 +3209,14 @@ export default function MainApp({
 
   return (
     <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
-      <header className="bg-blue-600 text-white px-4 pb-4 pt-safe-4 shadow-md z-20 relative flex justify-between items-center shrink-0 min-h-[70px]">
+      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-20 relative flex justify-between items-center shrink-0 min-h-[70px]">
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 bg-white px-2 py-1 rounded-md object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-bold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
             <div className="text-base opacity-95 flex items-center mt-1 font-bold">
               <User className="w-4 h-4 mr-1" /> [{selectedTeam}] {currentUser.replace(/\n/g, ' ')} 선생님
             </div>
@@ -3224,7 +3232,7 @@ export default function MainApp({
             }
             handleLogout();
           }}
-          className={`text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation ${isSubmitting ? 'bg-blue-800 text-gray-400 opacity-60 cursor-not-allowed' : 'bg-blue-800 text-white opacity-90 active:scale-95'}`}
+          className={`text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation ${isSubmitting ? 'hdr-btn opacity-50 cursor-not-allowed' : 'hdr-btn'}`}
         >
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
@@ -3235,7 +3243,7 @@ export default function MainApp({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <section className="bg-white rounded-2xl shadow-md border border-gray-100 flex flex-col h-auto animate-fadeIn">
+        <section className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 flex flex-col h-auto animate-fadeIn">
           <div className="bg-white px-5 pt-3 pb-2 relative rounded-t-2xl">
             <h2 className="text-xl font-bold text-gray-800 mb-1 border-b pb-2 flex items-center justify-between">
               <span className="flex items-center"><MainCalendarIcon className="w-5 h-5 mr-2 text-blue-500" /> 근무기록 입력</span>
@@ -3556,7 +3564,7 @@ export default function MainApp({
                                       }}
                                       onBlur={handleInputBlur}
                                       disabled={isDataLoading}
-                                      className={`flex-[1.5] min-w-0 py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-3 md:px-4 border-2 rounded-lg outline-none font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] min-[360px]:text-[20px] sm:text-xl md:text-2xl landscape:text-[22px] md:landscape:text-[26px] leading-tight ${!logs[index].student || (logs[index].student || '').includes('보조강사') ? 'caret-black' : 'caret-white'} ${!logs[index].student ? 'bg-gray-200 text-gray-800 placeholder-gray-500 border-gray-400' : (logs[index].location === '공휴일' || logs[index].location === '휴무일' ? 'bg-red-400 text-white placeholder-red-200 border-transparent' : (logs[index].student || '').includes('보조강사') ? 'bg-[#FFFF00] text-black placeholder-gray-500 border-orange-400' : 'bg-blue-600 text-white placeholder-blue-200 border-transparent')}`}
+                                      className={`flex-[1.5] min-w-0 py-1.5 sm:py-2 md:py-2.5 px-2 sm:px-3 md:px-4 border-2 rounded-lg outline-none font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] min-[360px]:text-[20px] sm:text-xl md:text-2xl landscape:text-[22px] md:landscape:text-[26px] leading-tight ${!logs[index].student || (logs[index].student || '').includes('보조강사') ? 'caret-black' : 'caret-white'} ${!logs[index].student ? 'bg-gray-200 text-gray-800 placeholder-gray-500 border-gray-400' : (logs[index].location === '공휴일' || logs[index].location === '휴무일' ? 'bg-red-400 text-white placeholder-red-200 border-transparent' : (logs[index].student || '').includes('보조강사') ? 'bg-amber-200 text-black placeholder-gray-500 border-orange-400' : 'bg-blue-600 text-white placeholder-blue-200 border-transparent')}`}
 
                                     />
                                     <input
@@ -3692,7 +3700,7 @@ export default function MainApp({
       </main>
 
       {showValidationError && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] px-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[70] px-4 animate-fadeIn">
           <div className="bg-white rounded-2xl shadow-2xl flex flex-col max-w-sm w-full overflow-hidden">
             <div className="bg-red-500 py-4 px-6 text-center flex items-center justify-center gap-2">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -3724,7 +3732,7 @@ export default function MainApp({
       )}
 
       {showSavePopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-2xl flex flex-col max-w-sm w-full animate-fadeIn overflow-hidden">
             <div className="bg-blue-600 py-4 px-6 text-center">
               <h3 className="text-2xl font-bold text-white tracking-wide">
@@ -3798,7 +3806,7 @@ export default function MainApp({
       )}
 
       {showAssistantConflictModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[55] px-4">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[55] px-4">
           <div className="bg-white rounded-2xl shadow-2xl flex flex-col max-w-sm w-full animate-fadeIn overflow-hidden">
             <div className="bg-blue-500 py-4 px-6 text-center">
               <h3 className="text-xl font-bold text-white tracking-wide">보조강사 일정 덮어쓰기 주의</h3>
@@ -3806,7 +3814,7 @@ export default function MainApp({
             <div className="p-6">
               <p className="text-gray-800 font-bold text-[18px] sm:text-[20px] mb-6 text-center leading-relaxed">
                 현재 일정을 복제할 미래 날짜에<br />
-                <span className="bg-[#FFFF00] text-black px-1.5 py-0.5 rounded mx-1 whitespace-nowrap">보조강사</span><br />
+                <span className="bg-amber-200 text-black px-1.5 py-0.5 rounded mx-1 whitespace-nowrap">보조강사</span><br />
                 일정이 있습니다. 복제하시겠습니까?
               </p>
               <div className="flex gap-3">
@@ -3829,7 +3837,7 @@ export default function MainApp({
       )}
 
       {showRepeatConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-2xl flex flex-col max-w-sm w-full animate-fadeIn overflow-hidden">
             <div className="bg-indigo-600 py-4 px-6 text-center">
               <h3 className="text-xl font-bold text-white tracking-wide">확인해 주세요!</h3>
@@ -3971,7 +3979,7 @@ export default function MainApp({
         });
 
         return (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] px-2 sm:px-4" onClick={() => setSelectedStudentHistory(null)}>
+          <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[60] px-2 sm:px-4" onClick={() => setSelectedStudentHistory(null)}>
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[80vh] animate-fadeIn" onClick={e => e.stopPropagation()}>
               <div className="bg-green-600 text-white py-3 px-4 flex justify-between items-center shrink-0">
                 <h3 className="font-bold text-[18px] sm:text-[20px]">{selectedStudentHistory.name}님의 이전 교육 기록</h3>
@@ -4028,7 +4036,7 @@ export default function MainApp({
       })()}
 
       {selectedStudentDates && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] px-2 sm:px-4" onClick={() => setSelectedStudentDates(null)}>
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[60] px-2 sm:px-4" onClick={() => setSelectedStudentDates(null)}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[80vh] animate-fadeIn" onClick={e => e.stopPropagation()}>
             <div className="bg-purple-600 text-white py-3 px-4 flex justify-between items-center shrink-0">
               <h3 className="font-bold text-[18px] sm:text-[20px]">{selectedStudentDates.name}님의 출석 일자 <span className="text-purple-200 text-[15px] sm:text-[16px]">({selectedStudentDates.count}회)</span></h3>
@@ -4077,7 +4085,7 @@ export default function MainApp({
       )}
 
       {showLogoutConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] px-4">
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[70] px-4">
           <div className="bg-white rounded-2xl shadow-2xl flex flex-col max-w-sm w-full animate-fadeIn overflow-hidden">
             <div className="bg-blue-600 py-4 px-6 text-center">
               <h3 className="text-xl font-bold text-white tracking-wide">저장 확인</h3>
