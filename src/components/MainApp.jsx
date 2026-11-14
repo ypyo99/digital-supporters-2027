@@ -3706,7 +3706,7 @@ export default function MainApp({
                             return (
                               <div key={index} id={`log-card-${index}`} className={`log-card p-4 sm:p-5 md:p-6 border-[1.5px] rounded-2xl ${cardColorClass}`}>
                                 <div className={`flex justify-between items-center w-full mb-3 transition-opacity ${(isDataLoading) ? 'opacity-50' : ''}`}>
-                                  <div className="flex items-center text-gray-900 font-extrabold text-[18px] sm:text-xl tracking-tight flex-wrap gap-y-1.5">
+                                  <div className="flex items-center text-gray-900 font-extrabold text-base sm:text-lg tracking-tight flex-wrap gap-y-1.5">
                                     <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-2 shrink-0"><Clock className="w-4 h-4 sm:w-[18px] sm:h-[18px]" /></span>
                                     <span className="shrink-0">
                                       {(() => {
