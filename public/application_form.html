@@ -473,6 +473,9 @@
     <!-- 문서 컨테이너 -->
     <div class="page-container max-w-4xl mx-auto bg-white p-4 sm:p-8 md:p-12 shadow-xl border border-gray-200">
         
+        <!-- 신청서 조회 상태 알림 배너 (인쇄 시 숨김) -->
+        <div id="loadStatusBanner" class="hidden print-hide mb-5 p-3 sm:p-4 rounded-xl text-sm sm:text-base font-semibold flex items-center justify-between shadow-sm border"></div>
+
         <!-- 제목 -->
         <h1 id="docTitle" class="text-center mb-6 md:mb-8 leading-tight">
             <span class="title-project block text-base sm:text-lg md:text-xl font-bold text-gray-900 tracking-tight whitespace-nowrap">2027년 노인일자리 및 사회활동지원사업(역량활용)</span>
@@ -749,19 +752,35 @@
     </div>
 
     <script>
+        // Supabase 클라이언트 초기화 (스크립트 최상단에서 선언)
+        const SUPABASE_URL = 'https://oudrcfxkneopgtcfbwhd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91ZHJjZnhrbmVvcGd0Y2Zid2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNzk0MTYsImV4cCI6MjA5NDY1NTQxNn0.ovAp6X3VogCeyKa74pC3x2f4lKR6m3gkE0kEEhJbGpQ';
+        let supabaseClient = null;
+        try {
+            if (window.supabase && window.supabase.createClient) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        } catch (e) {
+            console.error('Supabase 클라이언트 생성 에러:', e);
+        }
+
+        // 현재 불러온 신청서 레코드 ID (수정 시 업데이트에 활용)
+        let currentApplicationId = null;
+
         // 서명 패드 (Canvas) 로직
         const canvas = document.getElementById('signaturePad');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas ? canvas.getContext('2d') : null;
         let isDrawing = false;
 
-        // 기본 선 스타일 설정
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#000000';
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        if (ctx) {
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#000000';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
 
-        // 좌표 계산 함수 (마우스 & 터치 모두 지원, 반응형 스케일 대응)
         function getCoordinates(e) {
+            if (!canvas) return { x: 0, y: 0 };
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
@@ -778,48 +797,58 @@
             };
         }
 
-        // 그리기 시작
         function startDrawing(e) {
+            if (!ctx) return;
             isDrawing = true;
             const coords = getCoordinates(e);
             ctx.beginPath();
             ctx.moveTo(coords.x, coords.y);
-            // 모바일에서 스크롤 방지
-            if(e.type.includes('touch')) e.preventDefault(); 
+            if (e.type && e.type.includes('touch')) e.preventDefault(); 
         }
 
-        // 그리기
         function draw(e) {
-            if (!isDrawing) return;
+            if (!isDrawing || !ctx) return;
             const coords = getCoordinates(e);
             ctx.lineTo(coords.x, coords.y);
             ctx.stroke();
-            if(e.type.includes('touch')) e.preventDefault();
+            if (e.type && e.type.includes('touch')) e.preventDefault();
         }
 
-        // 그리기 종료
         function stopDrawing() {
+            if (!ctx) return;
             isDrawing = false;
             ctx.closePath();
         }
 
-        // 마우스 이벤트
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
+        if (canvas) {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
 
-        // 터치 이벤트
-        canvas.addEventListener('touchstart', startDrawing, {passive: false});
-        canvas.addEventListener('touchmove', draw, {passive: false});
-        canvas.addEventListener('touchend', stopDrawing);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+        }
 
-        // 지우기 버튼 이벤트
-        document.getElementById('clearSignature').addEventListener('click', () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        });
+        const clearBtn = document.getElementById('clearSignature');
+        if (clearBtn && ctx && canvas) {
+            clearBtn.addEventListener('click', () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            });
+        }
 
-        // 오늘 날짜 기본 입력 (년, 월, 일) - 수정 가능
+        function isCanvasBlank(cvs) {
+            if (!cvs || !ctx) return true;
+            try {
+                const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, cvs.width, cvs.height).data.buffer);
+                return !pixelBuffer.some(color => color !== 0);
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // 오늘 날짜 기본 입력 (년, 월, 일)
         const today = new Date();
         const yearInput = document.getElementById('signYear');
         const monthInput = document.getElementById('signMonth');
@@ -829,7 +858,7 @@
         if (monthInput) monthInput.value = today.getMonth() + 1;
         if (dayInput) dayInput.value = today.getDate();
 
-        // PDF 저장 / 인쇄 시 파일 이름 동적 생성 ('화일이름-대상자 이름-날짜')
+        // PDF 저장 / 인쇄 시 파일 이름 동적 생성
         function updatePrintTitle() {
             const baseName = '2027년 프로그램 참여 신청서';
             const name = (document.getElementById('applicantName')?.value || document.getElementById('signerName')?.value || '').trim();
@@ -847,22 +876,243 @@
             }
         }
 
-        // 성명 입력 시 하단 신청자 이름 자동 동기화 (양방향) 및 파일명 갱신
-        const applicantNameInput = document.getElementById('applicantName');
-        const signerNameInput = document.getElementById('signerName');
-
-        // URL query parameter (?name=...) 가 있으면 이름 자동 입력
-        const urlParams = new URLSearchParams(window.location.search);
-        const nameParam = urlParams.get('name');
-        if (nameParam) {
-            const cleanName = decodeURIComponent(nameParam).trim();
-            if (applicantNameInput) applicantNameInput.value = cleanName;
-            if (signerNameInput) signerNameInput.value = cleanName;
-            loadSavedDataIfAvailable(cleanName);
+        // 상단 안내 배너 제어 함수
+        function showStatusBanner(type, message, showReset = false) {
+            const banner = document.getElementById('loadStatusBanner');
+            if (!banner) return;
+            banner.className = 'print-hide mb-5 p-3.5 sm:p-4 rounded-xl text-sm sm:text-base font-semibold flex items-center justify-between shadow-sm transition-all ';
+            
+            if (type === 'loading') {
+                banner.className += 'bg-blue-50 border-blue-200 text-blue-900 animate-pulse';
+                banner.innerHTML = `<span class="flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-blue-600 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>${message}</span>`;
+            } else if (type === 'success') {
+                banner.className += 'bg-emerald-50 border-emerald-300 text-emerald-950';
+                banner.innerHTML = `<span class="flex items-center gap-2"><svg class="h-5 w-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>${message}</span>` +
+                    (showReset ? `<button type="button" onclick="resetToNewForm()" class="ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap">새로 작성하기</button>` : '');
+            } else if (type === 'info') {
+                banner.className += 'bg-amber-50 border-amber-300 text-amber-950';
+                banner.innerHTML = `<span class="flex items-center gap-2"><svg class="h-5 w-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>${message}</span>`;
+            } else if (type === 'error') {
+                banner.className += 'bg-rose-50 border-rose-300 text-rose-950';
+                banner.innerHTML = `<span class="flex items-center gap-2">⚠️ ${message}</span>`;
+            }
+            banner.classList.remove('hidden');
         }
 
-        // 초기 타이틀 세팅
-        updatePrintTitle();
+        // 불러온 신청서 데이터를 폼 각 항목에 적용
+        function populateFormData(row) {
+            if (!row) return;
+
+            // 성명 & 서명인
+            if (row.applicant_name) {
+                if (applicantNameInput) applicantNameInput.value = row.applicant_name;
+                if (signerNameInput) signerNameInput.value = row.signer_name || row.applicant_name;
+            }
+
+            // 성별
+            if (row.gender) {
+                const radio = document.querySelector(`input[name="gender"][value="${row.gender}"]`);
+                if (radio) radio.checked = true;
+            }
+
+            // 연락처
+            if (phoneInput && row.phone) {
+                phoneInput.value = row.phone;
+            }
+
+            // 주소
+            const addrInput = document.getElementById('applicantAddress');
+            if (addrInput && row.address) {
+                addrInput.value = row.address;
+            }
+
+            // 신청경로
+            if (Array.isArray(row.apply_routes)) {
+                document.querySelectorAll('input[name="apply_route"]').forEach(cb => cb.checked = false);
+                const helperDetail = document.getElementById('routeHelperDetail');
+                const otherDetail = document.getElementById('routeOtherDetail');
+                if (helperDetail) helperDetail.value = '';
+                if (otherDetail) otherDetail.value = '';
+
+                row.apply_routes.forEach(route => {
+                    if (route.startsWith('생활지원사 소개')) {
+                        const cb = document.querySelector('input[name="apply_route"][value="생활지원사 소개"]');
+                        if (cb) cb.checked = true;
+                        const m = route.match(/\((.*?)\)/);
+                        if (m && helperDetail) helperDetail.value = m[1];
+                    } else if (route.startsWith('기타')) {
+                        const cb = document.querySelector('input[name="apply_route"][value="기타"]');
+                        if (cb) cb.checked = true;
+                        const m = route.match(/\((.*?)\)/);
+                        if (m && otherDetail) otherDetail.value = m[1];
+                    } else {
+                        const cb = document.querySelector(`input[name="apply_route"][value="${route}"]`);
+                        if (cb) cb.checked = true;
+                    }
+                });
+            }
+
+            // 희망서비스
+            if (Array.isArray(row.hope_services)) {
+                document.querySelectorAll('input[name="hope_service"]').forEach(cb => cb.checked = false);
+                row.hope_services.forEach(svc => {
+                    const cb = document.querySelector(`input[name="hope_service"][value="${svc}"]`);
+                    if (cb) cb.checked = true;
+                });
+            }
+
+            // 희망요일
+            if (Array.isArray(row.hope_days)) {
+                document.querySelectorAll('input[name="hope_days"]').forEach(cb => cb.checked = false);
+                row.hope_days.forEach(d => {
+                    const cb = document.querySelector(`input[name="hope_days"][value="${d}"]`);
+                    if (cb) cb.checked = true;
+                });
+            }
+
+            // 희망시간
+            if (row.hope_time) {
+                const mCheck = document.getElementById('hopeTimeMorningCheck');
+                const mInput = document.getElementById('hopeTimeMorning');
+                const aCheck = document.getElementById('hopeTimeAfternoonCheck');
+                const aInput = document.getElementById('hopeTimeAfternoon');
+
+                if (mCheck) mCheck.checked = !!row.hope_time.morning_checked;
+                if (mInput && row.hope_time.morning) mInput.value = row.hope_time.morning;
+                if (aCheck) aCheck.checked = !!row.hope_time.afternoon_checked;
+                if (aInput && row.hope_time.afternoon) aInput.value = row.hope_time.afternoon;
+            }
+
+            // 비고
+            const memoInput = document.getElementById('applicantMemo');
+            if (memoInput && row.memo) {
+                memoInput.value = row.memo;
+            }
+
+            // 동의 항목
+            if (typeof row.privacy_consent === 'boolean') {
+                const pRadio = document.querySelector(`input[name="privacy_consent"][value="${row.privacy_consent}"]`);
+                if (pRadio) pRadio.checked = true;
+            }
+            if (typeof row.portrait_consent === 'boolean') {
+                const portRadio = document.querySelector(`input[name="portrait_consent"][value="${row.portrait_consent}"]`);
+                if (portRadio) portRadio.checked = true;
+            }
+
+            // 날짜
+            if (row.sign_date) {
+                const parts = row.sign_date.split('-');
+                if (parts.length === 3) {
+                    if (yearInput) yearInput.value = parts[0];
+                    if (monthInput) monthInput.value = parseInt(parts[1], 10);
+                    if (dayInput) dayInput.value = parseInt(parts[2], 10);
+                }
+            }
+
+            // 서명 이미지
+            if (row.signature_data && canvas && ctx) {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = row.signature_data;
+            }
+        }
+
+        // 신규 작성 모드로 폼 리셋 (성명은 유지)
+        function resetToNewForm() {
+            currentApplicationId = null;
+            const name = (applicantNameInput?.value || '').trim();
+
+            document.querySelectorAll('input[name="gender"]').forEach(r => r.checked = false);
+            if (phoneInput) phoneInput.value = '010-';
+            const addrInput = document.getElementById('applicantAddress');
+            if (addrInput) addrInput.value = '서울시 성동구 ';
+            document.querySelectorAll('input[name="apply_route"]').forEach(cb => cb.checked = (cb.value === '복지관 소개'));
+            const helperDetail = document.getElementById('routeHelperDetail');
+            const otherDetail = document.getElementById('routeOtherDetail');
+            if (helperDetail) helperDetail.value = '';
+            if (otherDetail) otherDetail.value = '';
+            document.querySelectorAll('input[name="hope_service"]').forEach(cb => cb.checked = (cb.value === '스마트폰 프로그램(1:1 맞춤형)'));
+            document.querySelectorAll('input[name="hope_days"]').forEach(cb => cb.checked = false);
+            
+            const mCheck = document.getElementById('hopeTimeMorningCheck');
+            const mInput = document.getElementById('hopeTimeMorning');
+            const aCheck = document.getElementById('hopeTimeAfternoonCheck');
+            const aInput = document.getElementById('hopeTimeAfternoon');
+            if (mCheck) mCheck.checked = false;
+            if (mInput) mInput.value = '';
+            if (aCheck) aCheck.checked = false;
+            if (aInput) aInput.value = '';
+
+            const memoInput = document.getElementById('applicantMemo');
+            if (memoInput) memoInput.value = '';
+
+            const pRadio = document.querySelector('input[name="privacy_consent"][value="true"]');
+            if (pRadio) pRadio.checked = true;
+            const portRadio = document.querySelector('input[name="portrait_consent"][value="true"]');
+            if (portRadio) portRadio.checked = true;
+
+            if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const now = new Date();
+            if (yearInput) yearInput.value = now.getFullYear();
+            if (monthInput) monthInput.value = now.getMonth() + 1;
+            if (dayInput) dayInput.value = now.getDate();
+
+            updatePrintTitle();
+            showStatusBanner('info', `[${name}] 님의 신규 신청서 작성 모드입니다. 내용을 입력해주세요.`);
+        }
+
+        // 대상자 이름으로 이전에 저장된 최신 신청서 정보 확인 및 로드
+        async function loadSavedDataIfAvailable(cleanName) {
+            if (!cleanName) return;
+
+            showStatusBanner('loading', `[${cleanName}] 님의 기존 저장된 신청서를 확인하고 있습니다...`);
+
+            let row = null;
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('application_forms')
+                        .select('*')
+                        .eq('applicant_name', cleanName)
+                        .order('id', { ascending: false })
+                        .limit(1);
+
+                    if (!error && data && data.length > 0) {
+                        row = data[0];
+                    }
+                } catch (e) {
+                    console.warn('Supabase 조회 예외:', e);
+                }
+            }
+
+            // 로컬 스토리지 백업 확인
+            if (!row) {
+                try {
+                    const localBackup = JSON.parse(localStorage.getItem('application_forms_backup') || '[]');
+                    row = localBackup.find(item => item.applicant_name === cleanName) || null;
+                } catch (e) {}
+            }
+
+            if (row) {
+                currentApplicationId = row.id || null;
+                populateFormData(row);
+                updatePrintTitle();
+                const dateDisplay = row.sign_date || (row.created_at ? row.created_at.slice(0, 10) : '');
+                showStatusBanner('success', `기존에 저장된 [${cleanName}] 님의 신청서를 성공적으로 불러왔습니다.${dateDisplay ? ` (저장일: ${dateDisplay})` : ''}`, true);
+            } else {
+                currentApplicationId = null;
+                updatePrintTitle();
+                showStatusBanner('info', `[${cleanName}] 님의 기존 저장된 신청서가 없습니다. 새 신청서를 입력해주세요.`);
+            }
+        }
+
+        // 성명 입력 시 하단 신청자 이름 자동 동기화
+        const applicantNameInput = document.getElementById('applicantName');
+        const signerNameInput = document.getElementById('signerName');
 
         if (applicantNameInput && signerNameInput) {
             applicantNameInput.addEventListener('input', () => {
@@ -882,7 +1132,6 @@
             }
         });
 
-        // 인쇄 이벤트 시 최신 타이틀 재확인
         window.addEventListener('beforeprint', updatePrintTitle);
 
         // 연락처(휴대폰) 자동 포맷팅 ('010-' 기본값 및 4자리마다 '-' 자동 삽입)
@@ -897,7 +1146,6 @@
                     return;
                 }
 
-                // 사용자가 010 없이 8자리 번호만 친 경우 010 자동 보정
                 if (!raw.startsWith('010') && raw.length <= 8) {
                     raw = '010' + raw;
                 }
@@ -929,7 +1177,6 @@
         // 폼 화면 닫기 핸들러
         function handleClose() {
             window.close();
-            // 브라우저 탭 닫기가 제한되는 환경을 대비한 폴백 처리
             setTimeout(() => {
                 if (!window.closed) {
                     if (window.history.length > 1) {
@@ -941,25 +1188,7 @@
             }, 150);
         }
 
-        // Supabase 클라이언트 초기화
-        const SUPABASE_URL = 'https://oudrcfxkneopgtcfbwhd.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91ZHJjZnhrbmVvcGd0Y2Zid2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNzk0MTYsImV4cCI6MjA5NDY1NTQxNn0.ovAp6X3VogCeyKa74pC3x2f4lKR6m3gkE0kEEhJbGpQ';
-        const supabaseClient = (window.supabase && window.supabase.createClient) 
-            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) 
-            : null;
-
-        // 서명 캔버스에 서명이 있는지 확인하는 함수
-        function isCanvasBlank(cvs) {
-            if (!cvs) return true;
-            try {
-                const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, cvs.width, cvs.height).data.buffer);
-                return !pixelBuffer.some(color => color !== 0);
-            } catch (e) {
-                return false;
-            }
-        }
-
-        // Supabase 데이터 저장 핸들러
+        // Supabase 저장 핸들러
         async function handleSave() {
             const applicantName = (document.getElementById('applicantName')?.value || '').trim();
             if (!applicantName) {
@@ -1023,7 +1252,6 @@
                 const signDate = (year && month && day) ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : null;
                 const signerName = (document.getElementById('signerName')?.value || applicantName).trim();
 
-                // 캔버스 서명 확인
                 let signatureData = null;
                 if (!isCanvasBlank(canvas)) {
                     signatureData = canvas.toDataURL('image/png');
@@ -1044,18 +1272,20 @@
                     sign_date: signDate,
                     signer_name: signerName,
                     signature_data: signatureData,
+                    updated_at: new Date().toISOString(),
                     raw_data: {
                         saved_at: new Date().toISOString(),
                         user_agent: navigator.userAgent
                     }
                 };
 
-                // 로컬 브라우저 캐시 백업 (네트워크나 스키마 문제 시 데이터 보존)
+                // 로컬 브라우저 캐시 백업
                 try {
                     const backupKey = 'application_forms_backup';
                     const history = JSON.parse(localStorage.getItem(backupKey) || '[]');
-                    history.unshift({ ...payload, saved_at_local: new Date().toLocaleString() });
-                    localStorage.setItem(backupKey, JSON.stringify(history.slice(0, 50)));
+                    const filtered = history.filter(item => item.applicant_name !== applicantName);
+                    filtered.unshift({ ...payload, id: currentApplicationId, saved_at_local: new Date().toLocaleString() });
+                    localStorage.setItem(backupKey, JSON.stringify(filtered.slice(0, 50)));
                 } catch (e) {
                     console.warn('로컬 스토리지 백업 실패:', e);
                 }
@@ -1064,20 +1294,35 @@
                     throw new Error('Supabase 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
                 }
 
-                const { data, error } = await supabaseClient
-                    .from('application_forms')
-                    .insert([payload]);
+                let saveError = null;
+                if (currentApplicationId) {
+                    const { error } = await supabaseClient
+                        .from('application_forms')
+                        .update(payload)
+                        .eq('id', currentApplicationId);
+                    saveError = error;
+                } else {
+                    const { data, error } = await supabaseClient
+                        .from('application_forms')
+                        .insert([payload])
+                        .select();
+                    saveError = error;
+                    if (!error && data && data.length > 0) {
+                        currentApplicationId = data[0].id;
+                    }
+                }
 
-                if (error) {
-                    console.error('Supabase 저장 실패:', error);
-                    if (error.message && (error.message.includes('schema cache') || error.message.includes('relation'))) {
+                if (saveError) {
+                    console.error('Supabase 저장 실패:', saveError);
+                    if (saveError.message && (saveError.message.includes('schema cache') || saveError.message.includes('relation'))) {
                         alert("Supabase에 'application_forms' 테이블 생성이 필요합니다.\n\n프로젝트의 'supabase/migrations/004_create_application_forms_table.sql' 파일 내용을 Supabase SQL Editor에서 실행해주시면 데이터베이스에 저장됩니다!\n(작성하신 내용은 브라우저 로컬 저장소에 안전하게 임시 보관되었습니다.)");
                     } else {
-                        alert('Supabase 저장 중 오류가 발생했습니다: ' + error.message);
+                        alert('Supabase 저장 중 오류가 발생했습니다: ' + saveError.message);
                     }
                     return;
                 }
 
+                showStatusBanner('success', `[${applicantName}] 님의 신청서가 성공적으로 저장되었습니다!`, true);
                 alert(`[${applicantName}] 님의 참여 신청서가 Supabase에 성공적으로 저장되었습니다!`);
             } catch (err) {
                 console.error('저장 예외 발생:', err);
@@ -1091,88 +1336,20 @@
             }
         }
 
-        // 대상자 이름으로 이전에 저장된 최신 신청서 정보 불러오기
-        async function loadSavedDataIfAvailable(nameToSearch) {
-            if (!supabaseClient || !nameToSearch) return;
-            try {
-                const { data, error } = await supabaseClient
-                    .from('application_forms')
-                    .select('*')
-                    .eq('applicant_name', nameToSearch)
-                    .order('id', { ascending: false })
-                    .limit(1);
-
-                if (error || !data || data.length === 0) return;
-
-                const row = data[0];
-                if (row.gender) {
-                    const radio = document.querySelector(`input[name="gender"][value="${row.gender}"]`);
-                    if (radio) radio.checked = true;
-                }
-                if (row.phone && document.getElementById('applicantPhone')) {
-                    document.getElementById('applicantPhone').value = row.phone;
-                }
-                if (row.address && document.getElementById('applicantAddress')) {
-                    document.getElementById('applicantAddress').value = row.address;
-                }
-                if (row.memo && document.getElementById('applicantMemo')) {
-                    document.getElementById('applicantMemo').value = row.memo;
-                }
-                if (Array.isArray(row.apply_routes)) {
-                    document.querySelectorAll('input[name="apply_route"]').forEach(cb => cb.checked = false);
-                    row.apply_routes.forEach(route => {
-                        if (route.startsWith('생활지원사 소개')) {
-                            const cb = document.querySelector('input[name="apply_route"][value="생활지원사 소개"]');
-                            if (cb) cb.checked = true;
-                            const m = route.match(/\((.*?)\)/);
-                            if (m && document.getElementById('routeHelperDetail')) document.getElementById('routeHelperDetail').value = m[1];
-                        } else if (route.startsWith('기타')) {
-                            const cb = document.querySelector('input[name="apply_route"][value="기타"]');
-                            if (cb) cb.checked = true;
-                            const m = route.match(/\((.*?)\)/);
-                            if (m && document.getElementById('routeOtherDetail')) document.getElementById('routeOtherDetail').value = m[1];
-                        } else {
-                            const cb = document.querySelector(`input[name="apply_route"][value="${route}"]`);
-                            if (cb) cb.checked = true;
-                        }
-                    });
-                }
-                if (Array.isArray(row.hope_services)) {
-                    document.querySelectorAll('input[name="hope_service"]').forEach(cb => cb.checked = false);
-                    row.hope_services.forEach(svc => {
-                        const cb = document.querySelector(`input[name="hope_service"][value="${svc}"]`);
-                        if (cb) cb.checked = true;
-                    });
-                }
-                if (Array.isArray(row.hope_days)) {
-                    document.querySelectorAll('input[name="hope_days"]').forEach(cb => cb.checked = false);
-                    row.hope_days.forEach(day => {
-                        const cb = document.querySelector(`input[name="hope_days"][value="${day}"]`);
-                        if (cb) cb.checked = true;
-                    });
-                }
-                if (row.hope_time) {
-                    if (row.hope_time.morning_checked && document.getElementById('hopeTimeMorningCheck')) document.getElementById('hopeTimeMorningCheck').checked = true;
-                    if (row.hope_time.morning && document.getElementById('hopeTimeMorning')) document.getElementById('hopeTimeMorning').value = row.hope_time.morning;
-                    if (row.hope_time.afternoon_checked && document.getElementById('hopeTimeAfternoonCheck')) document.getElementById('hopeTimeAfternoonCheck').checked = true;
-                    if (row.hope_time.afternoon && document.getElementById('hopeTimeAfternoon')) document.getElementById('hopeTimeAfternoon').value = row.hope_time.afternoon;
-                }
-                if (row.signer_name && document.getElementById('signerName')) {
-                    document.getElementById('signerName').value = row.signer_name;
-                }
-                if (row.signature_data && canvas) {
-                    const img = new Image();
-                    img.onload = () => {
-                        ctx.drawImage(img, 0, 0);
-                    };
-                    img.src = row.signature_data;
-                }
-            } catch (e) {
-                console.warn('이전 저장 데이터 불러오기 생략:', e);
+        // 페이지 로드 시 URL 파라미터 확인 및 기존 신청서 조회 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameParam = urlParams.get('name');
+            if (nameParam) {
+                const cleanName = decodeURIComponent(nameParam).trim();
+                if (applicantNameInput) applicantNameInput.value = cleanName;
+                if (signerNameInput) signerNameInput.value = cleanName;
+                updatePrintTitle();
+                loadSavedDataIfAvailable(cleanName);
+            } else {
+                updatePrintTitle();
             }
-        }
-
+        });
     </script>
 </body>
 </html>
-
