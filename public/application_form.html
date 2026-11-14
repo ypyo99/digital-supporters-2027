@@ -1097,8 +1097,8 @@
                 updatePrintTitle();
                 const dateDisplay = row.sign_date || (row.created_at ? row.created_at.slice(0, 10) : '');
                 const msg = dateDisplay 
-                    ? `<div>기존에 저장된 [${cleanName}] 님의 신청서를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(저장일: ${dateDisplay})</div>`
-                    : `<div>기존에 저장된 [${cleanName}] 님의 신청서를 성공적으로 불러왔습니다.</div>`;
+                    ? `<div>[${cleanName}] 님의 신청서를 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(저장일: ${dateDisplay})</div>`
+                    : `<div>[${cleanName}] 님의 신청서를 불러왔습니다.</div>`;
                 showStatusBanner('success', msg, true);
             } else {
                 currentApplicationId = null;

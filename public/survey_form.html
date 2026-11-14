@@ -1746,8 +1746,8 @@
 
           const dateDisplay = postData.survey_date || postData.surveyDate || (postData.created_at ? postData.created_at.slice(0, 10) : '');
           const msg = dateDisplay
-            ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
-            : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div>`;
+            ? `<div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
+            : `<div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 불러왔습니다.</div>`;
           showStatusBanner('success', msg, true);
         } else if (preData) {
           // 4. 사후설문지가 없는 경우 -> 사전설문지 점수를 기본값으로 로드
@@ -1812,8 +1812,8 @@
           
           const dateDisplay = surveyData.survey_date || surveyData.surveyDate || (surveyData.created_at ? surveyData.created_at.slice(0, 10) : '');
           const msg = dateDisplay
-            ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
-            : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 성공적으로 불러왔습니다.</div>`;
+            ? `<div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
+            : `<div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 불러왔습니다.</div>`;
           showStatusBanner('success', msg, true);
         } else {
           currentSurveyId = null;
