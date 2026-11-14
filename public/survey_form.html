@@ -361,10 +361,11 @@
       box-sizing: border-box;
     }
     .print-scale-btn.selected {
-      background-color: #1d4ed8;
-      border-color: #1e3a8a;
-      color: #ffffff;
+      background-color: #ffffff;
+      border: 2px solid #1d4ed8;
+      box-shadow: 0 1px 3px rgba(29, 78, 216, 0.12);
     }
+    .print-scale-btn .score-num,
     .print-score-num {
       display: flex;
       align-items: center;
@@ -373,27 +374,33 @@
       height: 18px;
       border-radius: 9999px;
       font-size: 10px;
-      font-weight: 800;
-      color: #1e3a8a;
-      background-color: #eff6ff;
+      font-weight: 700;
+      color: #64748b;
+      background-color: #f1f5f9;
+      border: 1px solid #e2e8f0;
       margin-bottom: 3px;
       flex-shrink: 0;
     }
+    .print-scale-btn.selected .score-num,
     .print-scale-btn.selected .print-score-num {
-      background-color: rgba(255, 255, 255, 0.28);
+      background-color: #1d4ed8;
       color: #ffffff;
+      border: 1px solid #1d4ed8;
+      font-weight: 900;
     }
+    .print-scale-btn .score-label,
     .print-score-label {
       font-size: 8.5px;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 1.15;
       text-align: center;
-      color: #475569;
+      color: #64748b;
       word-break: keep-all;
     }
+    .print-scale-btn.selected .score-label,
     .print-scale-btn.selected .print-score-label {
-      color: #ffffff;
-      font-weight: 700;
+      color: #1d4ed8;
+      font-weight: 800;
     }
 
     /* Feedback Box (Screen) */
@@ -713,7 +720,7 @@
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        border: 1.2px solid #e2e8f0 !important;
+        border: 1.2px solid #cbd5e1 !important;
         border-radius: 7px !important;
         background-color: #ffffff !important;
         padding: 4px 2px 3px 2px !important;
@@ -723,9 +730,8 @@
         print-color-adjust: exact !important;
       }
       .print-scale-btn.selected {
-        background-color: #1d4ed8 !important;
-        border-color: #1e3a8a !important;
-        color: #ffffff !important;
+        background-color: #ffffff !important;
+        border: 2px solid #1d4ed8 !important;
       }
       .print-scale-btn .score-num {
         display: flex !important;
@@ -735,29 +741,34 @@
         height: 18px !important;
         border-radius: 9999px !important;
         font-size: 10px !important;
-        font-weight: 800 !important;
-        color: #1e3a8a !important;
-        background-color: #eff6ff !important;
+        font-weight: 700 !important;
+        color: #64748b !important;
+        background-color: #f1f5f9 !important;
+        border: 1px solid #e2e8f0 !important;
         margin-bottom: 3px !important;
         flex-shrink: 0 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
       .print-scale-btn.selected .score-num {
-        background-color: rgba(255, 255, 255, 0.28) !important;
+        background-color: #1d4ed8 !important;
         color: #ffffff !important;
+        border: 1px solid #1d4ed8 !important;
+        font-weight: 900 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       .print-scale-btn .score-label {
         font-size: 8.5px !important;
-        font-weight: 600 !important;
+        font-weight: 500 !important;
         line-height: 1.15 !important;
         text-align: center !important;
-        color: #475569 !important;
+        color: #64748b !important;
         word-break: keep-all !important;
       }
       .print-scale-btn.selected .score-label {
-        color: #ffffff !important;
-        font-weight: 700 !important;
+        color: #1d4ed8 !important;
+        font-weight: 800 !important;
       }
 
       /* 6. Feedback Box */
