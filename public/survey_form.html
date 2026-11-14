@@ -931,14 +931,24 @@
         </div>
       </div>
 
-      <!-- Font Size Buttons -->
-      <div class="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-lg border border-slate-200">
-        <button type="button" id="btnFontNormal" title="보통 글자 크기" class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
-          보통
+      <!-- Top Action & Font Size Buttons -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="handleResetForm(true)" class="text-xs sm:text-sm bg-white hover:bg-emerald-50 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          <span>새로 작성하기</span>
         </button>
-        <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
-          크게
-        </button>
+
+        <!-- Font Size Buttons -->
+        <div class="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-lg border border-slate-200">
+          <button type="button" id="btnFontNormal" title="보통 글자 크기" class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
+            보통
+          </button>
+          <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
+            크게
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -1341,7 +1351,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
       </svg>
-      <span>새로 작성</span>
+      <span>새로 작성하기</span>
     </button>
 
     <!-- 닫기 버튼 -->
@@ -1653,7 +1663,7 @@
     // -------------------------------------------------------------
     // Status Banner & Auto-load Existing Survey
     // -------------------------------------------------------------
-    function showStatusBanner(type, messageHtml) {
+    function showStatusBanner(type, messageHtml, showReset = false) {
       const banner = document.getElementById('statusBanner');
       const icon = document.getElementById('statusIcon');
       const content = document.getElementById('statusContent');
@@ -1673,7 +1683,13 @@
       }
 
       content.innerHTML = messageHtml;
-      if (action) action.innerHTML = '';
+      if (action) {
+        if (showReset) {
+          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center">새로 작성하기</button>`;
+        } else {
+          action.innerHTML = '';
+        }
+      }
 
       banner.classList.remove('hidden');
     }
@@ -1742,7 +1758,7 @@
           const msg = dateDisplay
             ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
             : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사후설문지</strong>를 성공적으로 불러왔습니다.</div>`;
-          showStatusBanner('success', msg);
+          showStatusBanner('success', msg, true);
         } else if (preData) {
           // 4. 사후설문지가 없는 경우 -> 사전설문지 점수를 기본값으로 로드
           currentSurveyId = null;
@@ -1765,7 +1781,7 @@
           showStatusBanner('info', `
             <div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지 응답 결과</strong>를 기본값으로 불러왔습니다.</div>
             <div class="text-xs sm:text-sm text-blue-800 font-medium mt-1">1:1 교육 후 변화된 항목의 점수를 수정하신 뒤 저장해 주세요. ${preDateDisplay ? `(사전조사일: ${preDateDisplay})` : ''}</div>
-          `);
+          `, true);
         } else {
           currentSurveyId = null;
           showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지 기록이 없습니다. 새로운 사후설문을 입력해 주세요.`);
@@ -1808,7 +1824,7 @@
           const msg = dateDisplay
             ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
             : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 성공적으로 불러왔습니다.</div>`;
-          showStatusBanner('success', msg);
+          showStatusBanner('success', msg, true);
         } else {
           currentSurveyId = null;
           showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 기존 저장된 사전설문지가 없습니다. 새 설문을 입력해주세요.`);
@@ -2108,7 +2124,7 @@
       }
 
       showToast(`'${participantName}' 님의 ${typeLabel}설문이 성공적으로 저장되었습니다!`, '🎉');
-      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 <strong>${typeLabel}설문지</strong>가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`);
+      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 <strong>${typeLabel}설문지</strong>가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`, true);
 
       setTimeout(() => {
         if (savedRecord) {
@@ -2258,7 +2274,7 @@
           showStatusBanner('info', `
             <div>[<strong>${escapeHtml(cleanName || '대상자')}</strong>] 님의 <strong>사전설문지 응답 결과</strong>를 불러왔습니다.</div>
             <div class="text-xs sm:text-sm text-blue-800 font-medium mt-1">1:1 교육 후 변화된 항목의 점수를 수정한 후 저장해 주세요. ${preDateDisplay ? `(사전조사일: ${preDateDisplay})` : ''}</div>
-          `);
+          `, true);
           showToast('사전설문지 데이터를 바탕으로 사후설문지를 초기화했습니다.');
         } else {
           showStatusBanner('info', cleanName
