@@ -1523,7 +1523,7 @@
     // -------------------------------------------------------------
     // Status Banner & Auto-load Existing Survey
     // -------------------------------------------------------------
-    function showStatusBanner(type, messageHtml, showResetButton = false) {
+    function showStatusBanner(type, messageHtml) {
       const banner = document.getElementById('statusBanner');
       const icon = document.getElementById('statusIcon');
       const content = document.getElementById('statusContent');
@@ -1543,17 +1543,7 @@
       }
 
       content.innerHTML = messageHtml;
-
-      if (showResetButton) {
-        action.innerHTML = `
-          <button type="button" onclick="handleResetForm(false)"
-            class="px-3 py-1.5 bg-white border border-emerald-400 hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold transition shadow-2xs whitespace-nowrap cursor-pointer">
-            새로 작성하기
-          </button>
-        `;
-      } else {
-        action.innerHTML = '';
-      }
+      if (action) action.innerHTML = '';
 
       banner.classList.remove('hidden');
     }
@@ -1596,7 +1586,7 @@
         const msg = dateDisplay
           ? `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
           : `<div>기존에 저장된 [<strong>${escapeHtml(cleanName)}</strong>] 님의 사전설문지를 성공적으로 불러왔습니다.</div>`;
-        showStatusBanner('success', msg, true);
+        showStatusBanner('success', msg);
       } else {
         currentSurveyId = null;
         showStatusBanner('info', `[<strong>${escapeHtml(cleanName)}</strong>] 님의 기존 저장된 설문지가 없습니다. 새 설문을 입력해주세요.`);
@@ -1867,7 +1857,7 @@
       }
 
       showToast(`'${participantName}' 님의 설문이 성공적으로 저장되었습니다!`, '🎉');
-      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 사전설문지가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`, true);
+      showStatusBanner('success', `<div>[<strong>${escapeHtml(participantName)}</strong>] 님의 사전설문지가 정상 저장되었습니다. (저장일시: ${new Date().toLocaleDateString('ko-KR')})</div>`);
 
       setTimeout(() => {
         alert(`[${participantName}] 님의 사전설문지가 Supabase에 성공적으로 저장되었습니다!`);
