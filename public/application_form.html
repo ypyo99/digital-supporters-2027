@@ -884,17 +884,17 @@
             
             if (type === 'loading') {
                 banner.className += 'bg-blue-50 border-blue-200 text-blue-900 animate-pulse';
-                banner.innerHTML = `<span class="flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-blue-600 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>${message}</span>`;
+                banner.innerHTML = `<div class="flex items-start gap-2.5"><svg class="animate-spin h-5 w-5 text-blue-600 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><div class="leading-snug">${message}</div></div>`;
             } else if (type === 'success') {
                 banner.className += 'bg-emerald-50 border-emerald-300 text-emerald-950';
-                banner.innerHTML = `<span class="flex items-center gap-2"><svg class="h-5 w-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>${message}</span>` +
-                    (showReset ? `<button type="button" onclick="resetToNewForm()" class="ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap">새로 작성하기</button>` : '');
+                banner.innerHTML = `<div class="flex items-start gap-2.5"><svg class="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><div class="leading-snug">${message}</div></div>` +
+                    (showReset ? `<button type="button" onclick="resetToNewForm()" class="ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center">새로 작성하기</button>` : '');
             } else if (type === 'info') {
                 banner.className += 'bg-amber-50 border-amber-300 text-amber-950';
-                banner.innerHTML = `<span class="flex items-center gap-2"><svg class="h-5 w-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg>${message}</span>`;
+                banner.innerHTML = `<div class="flex items-start gap-2.5"><svg class="h-5 w-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 8v4m0 4h.01"/></svg><div class="leading-snug">${message}</div></div>`;
             } else if (type === 'error') {
                 banner.className += 'bg-rose-50 border-rose-300 text-rose-950';
-                banner.innerHTML = `<span class="flex items-center gap-2">⚠️ ${message}</span>`;
+                banner.innerHTML = `<div class="flex items-start gap-2.5"><span class="shrink-0">⚠️</span><div class="leading-snug">${message}</div></div>`;
             }
             banner.classList.remove('hidden');
         }
@@ -1102,7 +1102,10 @@
                 populateFormData(row);
                 updatePrintTitle();
                 const dateDisplay = row.sign_date || (row.created_at ? row.created_at.slice(0, 10) : '');
-                showStatusBanner('success', `기존에 저장된 [${cleanName}] 님의 신청서를 성공적으로 불러왔습니다.${dateDisplay ? ` (저장일: ${dateDisplay})` : ''}`, true);
+                const msg = dateDisplay 
+                    ? `<div>기존에 저장된 [${cleanName}] 님의 신청서를 성공적으로 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(저장일: ${dateDisplay})</div>`
+                    : `<div>기존에 저장된 [${cleanName}] 님의 신청서를 성공적으로 불러왔습니다.</div>`;
+                showStatusBanner('success', msg, true);
             } else {
                 currentApplicationId = null;
                 updatePrintTitle();
