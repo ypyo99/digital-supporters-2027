@@ -20,7 +20,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2563EB">
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/svg+xml" href="/icon-c-bulb.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/pwa-icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/pwa-icon-512.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -28,47 +32,6 @@
   <script>
     window.addEventListener('error', function (e) {
       alert("⚠️ JS 오류 발생: " + e.message + "\n위치: " + e.filename + ":" + e.lineno);
-    });
-  </script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-
-      ctx.fillStyle = '#2563EB';
-      ctx.fillRect(0, 0, 512, 512);
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 120px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('업무', 256, 200);
-      ctx.fillText('일지', 256, 360);
-
-      const iconUrl = canvas.toDataURL('image/png');
-
-      const manifest = {
-        name: "성동노인종합복지관 디지털교육 서포터즈",
-        short_name: "업무일지",
-        start_url: window.location.href.split('?')[0].split('#')[0],
-        display: "standalone",
-        background_color: "#f9fafb",
-        theme_color: "#2563EB",
-        icons: [
-          { src: iconUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-          { src: iconUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }
-        ]
-      };
-
-      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-      const manifestUrl = URL.createObjectURL(blob);
-      const link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = manifestUrl;
-      document.head.appendChild(link);
     });
   </script>
 </head>
