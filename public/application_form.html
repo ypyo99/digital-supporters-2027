@@ -442,16 +442,26 @@
             }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- 인쇄 버튼 (인쇄 시 숨김) -->
-    <button onclick="handlePrint()" class="print-hide fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2 z-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-        </svg>
-        인쇄하기
-    </button>
+    <!-- 플로팅 작업 버튼 그룹 (저장하기 & 인쇄하기, 인쇄 시 숨김) -->
+    <div class="print-hide fixed bottom-6 right-6 sm:bottom-8 sm:right-8 flex items-center gap-2 sm:gap-3 z-50">
+        <button id="btnSave" type="button" onclick="handleSave()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-emerald-500">
+            <svg id="saveIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 0 0 2-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            <span id="saveBtnText">저장하기</span>
+        </button>
+
+        <button type="button" onclick="handlePrint()" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-blue-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span>인쇄하기</span>
+        </button>
+    </div>
 
     <!-- 문서 컨테이너 -->
     <div class="page-container max-w-4xl mx-auto bg-white p-4 sm:p-8 md:p-12 shadow-xl border border-gray-200">
@@ -482,11 +492,11 @@
                     <th>성 별</th>
                     <td class="text-left md:text-center">
                         <label class="inline-flex items-center cursor-pointer mr-6">
-                            <input type="radio" name="gender" class="form-radio h-4 w-4 text-blue-600">
+                            <input type="radio" name="gender" value="남" class="form-radio h-4 w-4 text-blue-600">
                             <span class="ml-1.5">남</span>
                         </label>
                         <label class="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="gender" class="form-radio h-4 w-4 text-blue-600">
+                            <input type="radio" name="gender" value="여" class="form-radio h-4 w-4 text-blue-600">
                             <span class="ml-1.5">여</span>
                         </label>
                     </td>
@@ -496,7 +506,7 @@
                 <!-- 주소 -->
                 <tr>
                     <th>주 소</th>
-                    <td colspan="5"><input type="text" value="서울시 성동구 " placeholder="상세주소를 입력해주세요"></td>
+                    <td colspan="5"><input type="text" id="applicantAddress" value="서울시 성동구 " placeholder="상세주소를 입력해주세요"></td>
                 </tr>
                 <!-- 신청경로 -->
                 <tr>
@@ -504,32 +514,32 @@
                     <td colspan="5" class="py-3">
                         <div id="applyRouteGrid" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="성동구치매안심센터 소개" class="form-checkbox h-4 w-4">
                                 <span class="ml-2">성동구치매안심센터 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="성동정신건강복지센터 소개" class="form-checkbox h-4 w-4">
                                 <span class="ml-2">성동정신건강복지센터 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="대한노인회 소개" class="form-checkbox h-4 w-4">
                                 <span class="ml-2">대한노인회 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4" checked>
+                                <input type="checkbox" name="apply_route" value="복지관 소개" class="form-checkbox h-4 w-4" checked>
                                 <span class="ml-2">복지관 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
-                                <span class="ml-2 whitespace-nowrap">생활지원사 소개(<input type="text" class="inline-input">)</span>
+                                <input type="checkbox" name="apply_route" value="생활지원사 소개" class="form-checkbox h-4 w-4">
+                                <span class="ml-2 whitespace-nowrap">생활지원사 소개(<input type="text" id="routeHelperDetail" class="inline-input">)</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="지인 소개(가족,친구,이웃 등)" class="form-checkbox h-4 w-4">
                                 <span class="ml-2">지인 소개(가족,친구,이웃 등)</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
-                                <span class="ml-2 whitespace-nowrap">기타(<input type="text" class="inline-input" style="width: 120px;">)</span>
+                                <input type="checkbox" name="apply_route" value="기타" class="form-checkbox h-4 w-4">
+                                <span class="ml-2 whitespace-nowrap">기타(<input type="text" id="routeOtherDetail" class="inline-input" style="width: 120px;">)</span>
                             </label>
                         </div>
                     </td>
@@ -541,7 +551,7 @@
                         <div id="hopeServiceList" class="flex flex-col gap-3 text-sm">
                             <label class="cursor-pointer service-item">
                                 <div class="flex items-start">
-                                    <input type="checkbox" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
+                                    <input type="checkbox" name="hope_service" value="마음이음 프로그램" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
                                     <div>
                                         <span class="font-bold service-name">마음이음 프로그램</span><br class="service-br">
                                         <span class="text-gray-600 service-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을 지원)</span>
@@ -550,7 +560,7 @@
                             </label>
                             <label class="cursor-pointer service-item">
                                 <div class="flex items-start">
-                                    <input type="checkbox" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
+                                    <input type="checkbox" name="hope_service" value="기억돌봄 프로그램" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
                                     <div>
                                         <span class="font-bold service-name">기억돌봄 프로그램</span><br class="service-br">
                                         <span class="text-gray-600 service-desc">(인지활동 프로그램 운영을 통해 치매 예방 지원)</span>
@@ -559,7 +569,7 @@
                             </label>
                             <label class="cursor-pointer service-item">
                                 <div class="flex items-start">
-                                    <input type="checkbox" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0" checked>
+                                    <input type="checkbox" name="hope_service" value="스마트폰 프로그램(1:1 맞춤형)" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0" checked>
                                     <div>
                                         <span class="font-bold service-name">스마트폰 프로그램(1:1 맞춤형)</span><br class="service-br">
                                         <span class="text-gray-600 service-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소 지원)</span>
@@ -574,11 +584,11 @@
                     <th>희망요일</th>
                     <td colspan="5" class="py-3">
                         <div id="hopeDaysList" class="flex flex-wrap gap-4 md:gap-6 text-sm">
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" class="form-checkbox h-4 w-4"><span class="ml-2">월</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" class="form-checkbox h-4 w-4"><span class="ml-2">화</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" class="form-checkbox h-4 w-4"><span class="ml-2">수</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" class="form-checkbox h-4 w-4"><span class="ml-2">목</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" class="form-checkbox h-4 w-4"><span class="ml-2">금</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="월" class="form-checkbox h-4 w-4"><span class="ml-2">월</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="화" class="form-checkbox h-4 w-4"><span class="ml-2">화</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="수" class="form-checkbox h-4 w-4"><span class="ml-2">수</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="목" class="form-checkbox h-4 w-4"><span class="ml-2">목</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="금" class="form-checkbox h-4 w-4"><span class="ml-2">금</span></label>
                         </div>
                     </td>
                 </tr>
@@ -588,12 +598,12 @@
                     <td colspan="5" class="py-3">
                         <div id="hopeTimeList" class="flex flex-col md:flex-row gap-4 md:gap-8 text-sm">
                             <label class="inline-flex items-center cursor-pointer whitespace-nowrap">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
-                                <span class="ml-2">오전: <input type="text" class="inline-input" style="width: 150px;" placeholder="예: 09:00~12:00"></span>
+                                <input type="checkbox" id="hopeTimeMorningCheck" name="hope_time_morning_check" class="form-checkbox h-4 w-4">
+                                <span class="ml-2">오전: <input type="text" id="hopeTimeMorning" class="inline-input" style="width: 150px;" placeholder="예: 09:00~12:00"></span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer whitespace-nowrap">
-                                <input type="checkbox" class="form-checkbox h-4 w-4">
-                                <span class="ml-2">오후: <input type="text" class="inline-input" style="width: 150px;" placeholder="예: 13:00~16:00"></span>
+                                <input type="checkbox" id="hopeTimeAfternoonCheck" name="hope_time_afternoon_check" class="form-checkbox h-4 w-4">
+                                <span class="ml-2">오후: <input type="text" id="hopeTimeAfternoon" class="inline-input" style="width: 150px;" placeholder="예: 13:00~16:00"></span>
                             </label>
                         </div>
                     </td>
@@ -603,7 +613,7 @@
                     <th>비 고</th>
                     <td id="memoCell" colspan="5" class="h-20 align-top">
                         <div class="relative h-full w-full">
-                            <textarea class="w-full h-full p-2 resize-none bg-transparent outline-none text-sm placeholder-gray-400" placeholder="ex.) 귀가 잘 안들림, 시력이 좋지 않음, 한글을 모름 등"></textarea>
+                            <textarea id="applicantMemo" class="w-full h-full p-2 resize-none bg-transparent outline-none text-sm placeholder-gray-400" placeholder="ex.) 귀가 잘 안들림, 시력이 좋지 않음, 한글을 모름 등"></textarea>
                         </div>
                     </td>
                 </tr>
@@ -639,11 +649,11 @@
                 </table>
                 <div class="flex justify-end gap-6 text-sm font-bold consent-radios">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="privacy_consent" class="form-radio h-5 w-5" checked>
+                        <input type="radio" name="privacy_consent" value="true" class="form-radio h-5 w-5" checked>
                         <span class="ml-2">동의함</span>
                     </label>
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="privacy_consent" class="form-radio h-5 w-5">
+                        <input type="radio" name="privacy_consent" value="false" class="form-radio h-5 w-5">
                         <span class="ml-2">동의하지 않음</span>
                     </label>
                 </div>
@@ -673,11 +683,11 @@
                 </table>
                 <div class="flex justify-end gap-6 text-sm font-bold consent-radios">
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="portrait_consent" class="form-radio h-5 w-5" checked>
+                        <input type="radio" name="portrait_consent" value="true" class="form-radio h-5 w-5" checked>
                         <span class="ml-2">동의함</span>
                     </label>
                     <label class="inline-flex items-center cursor-pointer">
-                        <input type="radio" name="portrait_consent" class="form-radio h-5 w-5">
+                        <input type="radio" name="portrait_consent" value="false" class="form-radio h-5 w-5">
                         <span class="ml-2">동의하지 않음</span>
                     </label>
                 </div>
@@ -841,6 +851,7 @@
             const cleanName = decodeURIComponent(nameParam).trim();
             if (applicantNameInput) applicantNameInput.value = cleanName;
             if (signerNameInput) signerNameInput.value = cleanName;
+            loadSavedDataIfAvailable(cleanName);
         }
 
         // 초기 타이틀 세팅
@@ -907,6 +918,239 @@
             updatePrintTitle();
             window.print();
         }
+
+        // Supabase 클라이언트 초기화
+        const SUPABASE_URL = 'https://oudrcfxkneopgtcfbwhd.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91ZHJjZnhrbmVvcGd0Y2Zid2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNzk0MTYsImV4cCI6MjA5NDY1NTQxNn0.ovAp6X3VogCeyKa74pC3x2f4lKR6m3gkE0kEEhJbGpQ';
+        const supabaseClient = (window.supabase && window.supabase.createClient) 
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) 
+            : null;
+
+        // 서명 캔버스에 서명이 있는지 확인하는 함수
+        function isCanvasBlank(cvs) {
+            if (!cvs) return true;
+            try {
+                const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, cvs.width, cvs.height).data.buffer);
+                return !pixelBuffer.some(color => color !== 0);
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Supabase 데이터 저장 핸들러
+        async function handleSave() {
+            const applicantName = (document.getElementById('applicantName')?.value || '').trim();
+            if (!applicantName) {
+                alert('신청자 성명을 입력해주세요.');
+                document.getElementById('applicantName')?.focus();
+                return;
+            }
+
+            const btnSave = document.getElementById('btnSave');
+            const saveBtnText = document.getElementById('saveBtnText');
+            const originalText = saveBtnText ? saveBtnText.innerText : '저장하기';
+
+            if (btnSave) {
+                btnSave.disabled = true;
+                if (saveBtnText) saveBtnText.innerText = '저장 중...';
+                btnSave.classList.add('opacity-75', 'cursor-not-allowed');
+            }
+
+            try {
+                const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
+                const phone = (document.getElementById('applicantPhone')?.value || '').trim();
+                const address = (document.getElementById('applicantAddress')?.value || '').trim();
+
+                const applyRoutes = [];
+                document.querySelectorAll('input[name="apply_route"]:checked').forEach(cb => {
+                    if (cb.value === '생활지원사 소개') {
+                        const detail = (document.getElementById('routeHelperDetail')?.value || '').trim();
+                        applyRoutes.push(`생활지원사 소개${detail ? `(${detail})` : ''}`);
+                    } else if (cb.value === '기타') {
+                        const detail = (document.getElementById('routeOtherDetail')?.value || '').trim();
+                        applyRoutes.push(`기타${detail ? `(${detail})` : ''}`);
+                    } else {
+                        applyRoutes.push(cb.value);
+                    }
+                });
+
+                const hopeServices = [];
+                document.querySelectorAll('input[name="hope_service"]:checked').forEach(cb => {
+                    hopeServices.push(cb.value);
+                });
+
+                const hopeDays = [];
+                document.querySelectorAll('input[name="hope_days"]:checked').forEach(cb => {
+                    hopeDays.push(cb.value);
+                });
+
+                const hopeTime = {
+                    morning_checked: document.getElementById('hopeTimeMorningCheck')?.checked || false,
+                    morning: (document.getElementById('hopeTimeMorning')?.value || '').trim(),
+                    afternoon_checked: document.getElementById('hopeTimeAfternoonCheck')?.checked || false,
+                    afternoon: (document.getElementById('hopeTimeAfternoon')?.value || '').trim()
+                };
+
+                const memo = (document.getElementById('applicantMemo')?.value || '').trim();
+                const privacyConsent = document.querySelector('input[name="privacy_consent"]:checked')?.value === 'true';
+                const portraitConsent = document.querySelector('input[name="portrait_consent"]:checked')?.value === 'true';
+
+                const year = (document.getElementById('signYear')?.value || '').trim();
+                const month = (document.getElementById('signMonth')?.value || '').trim();
+                const day = (document.getElementById('signDay')?.value || '').trim();
+                const signDate = (year && month && day) ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : null;
+                const signerName = (document.getElementById('signerName')?.value || applicantName).trim();
+
+                // 캔버스 서명 확인
+                let signatureData = null;
+                if (!isCanvasBlank(canvas)) {
+                    signatureData = canvas.toDataURL('image/png');
+                }
+
+                const payload = {
+                    applicant_name: applicantName,
+                    gender: gender,
+                    phone: phone,
+                    address: address,
+                    apply_routes: applyRoutes,
+                    hope_services: hopeServices,
+                    hope_days: hopeDays,
+                    hope_time: hopeTime,
+                    memo: memo,
+                    privacy_consent: privacyConsent,
+                    portrait_consent: portraitConsent,
+                    sign_date: signDate,
+                    signer_name: signerName,
+                    signature_data: signatureData,
+                    raw_data: {
+                        saved_at: new Date().toISOString(),
+                        user_agent: navigator.userAgent
+                    }
+                };
+
+                // 로컬 브라우저 캐시 백업 (네트워크나 스키마 문제 시 데이터 보존)
+                try {
+                    const backupKey = 'application_forms_backup';
+                    const history = JSON.parse(localStorage.getItem(backupKey) || '[]');
+                    history.unshift({ ...payload, saved_at_local: new Date().toLocaleString() });
+                    localStorage.setItem(backupKey, JSON.stringify(history.slice(0, 50)));
+                } catch (e) {
+                    console.warn('로컬 스토리지 백업 실패:', e);
+                }
+
+                if (!supabaseClient) {
+                    throw new Error('Supabase 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
+                }
+
+                const { data, error } = await supabaseClient
+                    .from('application_forms')
+                    .insert([payload]);
+
+                if (error) {
+                    console.error('Supabase 저장 실패:', error);
+                    if (error.message && (error.message.includes('schema cache') || error.message.includes('relation'))) {
+                        alert("Supabase에 'application_forms' 테이블 생성이 필요합니다.\n\n프로젝트의 'supabase/migrations/004_create_application_forms_table.sql' 파일 내용을 Supabase SQL Editor에서 실행해주시면 데이터베이스에 저장됩니다!\n(작성하신 내용은 브라우저 로컬 저장소에 안전하게 임시 보관되었습니다.)");
+                    } else {
+                        alert('Supabase 저장 중 오류가 발생했습니다: ' + error.message);
+                    }
+                    return;
+                }
+
+                alert(`[${applicantName}] 님의 참여 신청서가 Supabase에 성공적으로 저장되었습니다!`);
+            } catch (err) {
+                console.error('저장 예외 발생:', err);
+                alert('저장 중 문제가 발생했습니다: ' + (err.message || err));
+            } finally {
+                if (btnSave) {
+                    btnSave.disabled = false;
+                    if (saveBtnText) saveBtnText.innerText = originalText;
+                    btnSave.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        // 대상자 이름으로 이전에 저장된 최신 신청서 정보 불러오기
+        async function loadSavedDataIfAvailable(nameToSearch) {
+            if (!supabaseClient || !nameToSearch) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('application_forms')
+                    .select('*')
+                    .eq('applicant_name', nameToSearch)
+                    .order('id', { ascending: false })
+                    .limit(1);
+
+                if (error || !data || data.length === 0) return;
+
+                const row = data[0];
+                if (row.gender) {
+                    const radio = document.querySelector(`input[name="gender"][value="${row.gender}"]`);
+                    if (radio) radio.checked = true;
+                }
+                if (row.phone && document.getElementById('applicantPhone')) {
+                    document.getElementById('applicantPhone').value = row.phone;
+                }
+                if (row.address && document.getElementById('applicantAddress')) {
+                    document.getElementById('applicantAddress').value = row.address;
+                }
+                if (row.memo && document.getElementById('applicantMemo')) {
+                    document.getElementById('applicantMemo').value = row.memo;
+                }
+                if (Array.isArray(row.apply_routes)) {
+                    document.querySelectorAll('input[name="apply_route"]').forEach(cb => cb.checked = false);
+                    row.apply_routes.forEach(route => {
+                        if (route.startsWith('생활지원사 소개')) {
+                            const cb = document.querySelector('input[name="apply_route"][value="생활지원사 소개"]');
+                            if (cb) cb.checked = true;
+                            const m = route.match(/\((.*?)\)/);
+                            if (m && document.getElementById('routeHelperDetail')) document.getElementById('routeHelperDetail').value = m[1];
+                        } else if (route.startsWith('기타')) {
+                            const cb = document.querySelector('input[name="apply_route"][value="기타"]');
+                            if (cb) cb.checked = true;
+                            const m = route.match(/\((.*?)\)/);
+                            if (m && document.getElementById('routeOtherDetail')) document.getElementById('routeOtherDetail').value = m[1];
+                        } else {
+                            const cb = document.querySelector(`input[name="apply_route"][value="${route}"]`);
+                            if (cb) cb.checked = true;
+                        }
+                    });
+                }
+                if (Array.isArray(row.hope_services)) {
+                    document.querySelectorAll('input[name="hope_service"]').forEach(cb => cb.checked = false);
+                    row.hope_services.forEach(svc => {
+                        const cb = document.querySelector(`input[name="hope_service"][value="${svc}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+                if (Array.isArray(row.hope_days)) {
+                    document.querySelectorAll('input[name="hope_days"]').forEach(cb => cb.checked = false);
+                    row.hope_days.forEach(day => {
+                        const cb = document.querySelector(`input[name="hope_days"][value="${day}"]`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+                if (row.hope_time) {
+                    if (row.hope_time.morning_checked && document.getElementById('hopeTimeMorningCheck')) document.getElementById('hopeTimeMorningCheck').checked = true;
+                    if (row.hope_time.morning && document.getElementById('hopeTimeMorning')) document.getElementById('hopeTimeMorning').value = row.hope_time.morning;
+                    if (row.hope_time.afternoon_checked && document.getElementById('hopeTimeAfternoonCheck')) document.getElementById('hopeTimeAfternoonCheck').checked = true;
+                    if (row.hope_time.afternoon && document.getElementById('hopeTimeAfternoon')) document.getElementById('hopeTimeAfternoon').value = row.hope_time.afternoon;
+                }
+                if (row.signer_name && document.getElementById('signerName')) {
+                    document.getElementById('signerName').value = row.signer_name;
+                }
+                if (row.signature_data && canvas) {
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = row.signature_data;
+                }
+            } catch (e) {
+                console.warn('이전 저장 데이터 불러오기 생략:', e);
+            }
+        }
+
     </script>
 </body>
 </html>
+

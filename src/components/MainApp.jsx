@@ -3609,7 +3609,19 @@ export default function MainApp({
                                     ) : null}
                                   </div>
 
-                                  <div className="ml-auto flex items-center gap-1.5 shrink-0">
+                                  {shouldRepeatPerShift[index] && !noNewScheduleToRepeat && logsDate === date && isFutureOrToday && (!currentSelectedHoliday || currentSelectedHoliday.vacation_available) && !logs[index].student?.includes("안전교육") && !logs[index].student?.includes("직무교육") && !logs[index].student?.includes("간담회") && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRepeatScheduleForShift(index)}
+                                      className="ml-auto bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold"
+                                    >
+                                      복제
+                                    </button>
+                                  )}
+                                </div>
+
+                                <div className="space-y-2 sm:space-y-2.5">
+                                  <div className="flex items-center justify-between">
                                     <button
                                       type="button"
                                       onClick={() => {
@@ -3618,7 +3630,7 @@ export default function MainApp({
                                         window.open(url, '_blank');
                                       }}
                                       title="2027년 프로그램 참여 신청서 열기"
-                                      className="bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
+                                      className="bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
                                     >
                                       <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -3628,20 +3640,8 @@ export default function MainApp({
                                       </svg>
                                       <span>신청서</span>
                                     </button>
-
-                                    {shouldRepeatPerShift[index] && !noNewScheduleToRepeat && logsDate === date && isFutureOrToday && (!currentSelectedHoliday || currentSelectedHoliday.vacation_available) && !logs[index].student?.includes("안전교육") && !logs[index].student?.includes("직무교육") && !logs[index].student?.includes("간담회") && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleRepeatScheduleForShift(index)}
-                                        className="bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold"
-                                      >
-                                        복제
-                                      </button>
-                                    )}
                                   </div>
-                                </div>
 
-                                <div className="space-y-4">
                                   <div className="flex gap-1.5 sm:gap-3 lg:gap-4 items-stretch">
                                     <input
                                       type="text"
