@@ -2122,10 +2122,11 @@
 
     function getSurveyPdfFileName() {
       const formKind = isPostSurvey ? '사후설문지' : '사전설문지';
-      const participantName = document.getElementById('participantName')?.value?.trim() || formKind;
-      const surveyDate = document.getElementById('surveyDate')?.value || getTodayString();
-      const cleanDate = surveyDate.replace(/-/g, '');
-      return `2027년_${formKind}_${participantName}_${cleanDate}`;
+      const participantName = document.getElementById('participantName')?.value?.trim();
+      if (participantName) {
+        return `${participantName}_${formKind}`;
+      }
+      return formKind;
     }
 
     // Print / PDF Survey
