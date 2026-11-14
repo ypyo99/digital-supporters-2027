@@ -2876,15 +2876,30 @@ export default function MainApp({
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-[42px] sm:h-[52px] object-contain" onError={(e) => e.target.style.display = 'none'} />
             </div>
             <div className="flex items-center justify-center mb-1 sm:mb-2">
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-blue-600">성동노인종합복지관<sub className="text-[0.38em] font-black align-sub ml-0.5 text-gray-400">DB</sub></h1>
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-blue-600">성동노인종합복지관</h1>
             </div>
             <h2 className="text-[clamp(14px,4.5vw,18px)] sm:text-2xl md:text-3xl font-bold text-red-600 whitespace-nowrap tracking-tighter flex items-center justify-center gap-2">
-              <svg className="w-6 h-6 sm:w-8 sm:h-8 animate-pulse shrink-0 drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#EF4444" stroke="#B91C1C" strokeWidth="1" />
-                <circle cx="19" cy="5" r="1.5" fill="#F87171" />
-                <circle cx="5" cy="19" r="1" fill="#F87171" />
+              <svg
+                className="w-6 h-6 sm:w-8 sm:h-8 shrink-0 drop-shadow-[0_2px_8px_rgba(240,71,107,0.3)] transition-transform duration-300 hover:scale-110"
+                viewBox="0 0 128 128"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="bulbGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#F0476B" />
+                    <stop offset="1" stopColor="#5B4BF0" />
+                  </linearGradient>
+                </defs>
+                <path d="M64 14 a36 36 0 0 0 -22 64.5 c4 3.2 6 7 6 11.5 v4 h32 v-4 c0 -4.5 2 -8.3 6 -11.5 A36 36 0 0 0 64 14 z" fill="url(#bulbGrad)" />
+                <rect x="48" y="99" width="32" height="7" rx="3.5" fill="#5B4BF0" />
+                <rect x="53" y="109" width="22" height="7" rx="3.5" fill="#5B4BF0" />
+                <path d="M44 50 a28 28 0 0 1 40 0" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" />
+                <path d="M52 59 a16 16 0 0 1 24 0" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" />
+                <circle cx="64" cy="69" r="5" fill="#fff" />
+                <path d="M108 10 C109.3 18 111 19.7 119 21 C111 22.3 109.3 24 108 32 C106.7 24 105 22.3 97 21 C105 19.7 106.7 18 108 10 Z" fill="#F7B733" />
               </svg>
-              디지털교육 서포터즈 <span className="text-indigo-700">업무일지 시스템</span>
+              2027 디지털교육 서포터즈 <span className="text-indigo-700">업무일지 시스템</span>
             </h2>
           </div>
 
@@ -2911,6 +2926,20 @@ export default function MainApp({
                 background-clip: text;
                 animation: shineText 2.5s linear infinite;
                 display: inline;
+              }
+              @keyframes gentleTwinkle {
+                0%, 100% {
+                  transform: scale(1) rotate(0deg);
+                  filter: drop-shadow(0 2px 7px rgba(244, 63, 94, 0.35));
+                }
+                50% {
+                  transform: scale(1.08) rotate(3deg);
+                  filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.45));
+                }
+              }
+              .sparkle-twinkle {
+                animation: gentleTwinkle 3s ease-in-out infinite;
+                transform-origin: center;
               }
             `}</style>
             {todayNotices.length > 0 && (
