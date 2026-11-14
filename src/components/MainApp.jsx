@@ -3581,26 +3581,46 @@ export default function MainApp({
                                     {counts && counts.length > 0 && (!currentSelectedHoliday || currentSelectedHoliday.vacation_available) && !logs[index].student?.includes("간담회") && !logs[index].student?.includes("안전교육") && !logs[index].student?.includes("직무교육") ? (
                                       <div className="flex items-center overflow-hidden ml-2 sm:ml-3 gap-1.5 sm:gap-2 flex-wrap">
                                         {counts.map((c, cIdx) => {
-                                          let sessionColorClass = "bg-gray-100 text-gray-700 border-gray-200 font-bold";
-                                          if (c.count >= 15) sessionColorClass = "bg-orange-500 text-white border-orange-500 font-extrabold";
-                                          else if (c.count >= 10) sessionColorClass = "bg-purple-800 text-white border-purple-800 font-extrabold";
-                                          else if (c.count >= 7) sessionColorClass = "bg-purple-500 text-white border-purple-500 font-bold";
+                                          let sessionColorClass = "bg-slate-50 hover:bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200 font-bold";
+                                          let sessionIconColor = "text-slate-600";
+                                          if (c.count >= 15) {
+                                            sessionColorClass = "bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-300 font-extrabold";
+                                            sessionIconColor = "text-orange-600";
+                                          } else if (c.count >= 10) {
+                                            sessionColorClass = "bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-300 font-extrabold";
+                                            sessionIconColor = "text-purple-600";
+                                          } else if (c.count >= 7) {
+                                            sessionColorClass = "bg-purple-50 hover:bg-purple-100 text-purple-600 ring-1 ring-inset ring-purple-200 font-bold";
+                                            sessionIconColor = "text-purple-500";
+                                          }
 
                                           return (
-                                            <div key={cIdx} className="flex items-center">
+                                            <div key={cIdx} className="flex items-center gap-1">
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(c)}
-                                                className={`${sessionColorClass} border px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[13.5px] sm:text-[15px] leading-tight tracking-tight whitespace-nowrap shrink-0 transition-all cursor-pointer hover:brightness-95 active:scale-95 text-center`}
+                                                title={`${c.student ? `${c.student} 님의 ` : ''}수업 진행 날짜 목록 열기`}
+                                                className={`${sessionColorClass} px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-sm`}
                                               >
-                                                {c.count}회차
+                                                <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${sessionIconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                  <line x1="16" y1="2" x2="16" y2="6" />
+                                                  <line x1="8" y1="2" x2="8" y2="6" />
+                                                  <line x1="3" y1="10" x2="21" y2="10" />
+                                                </svg>
+                                                <span>{c.count}회차</span>
                                               </button>
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentHistory(c)}
-                                                className="ml-1 bg-white text-emerald-700 border-emerald-300 border px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[13.5px] sm:text-[15px] leading-tight tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:bg-emerald-50 active:scale-95 font-bold"
+                                                title={`${c.student ? `${c.student} 님의 ` : ''}이전 교육 기록 보기`}
+                                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm"
                                               >
-                                                이전교육
+                                                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                                  <circle cx="12" cy="12" r="10" />
+                                                  <polyline points="12 6 12 12 16 14" />
+                                                </svg>
+                                                <span>이전교육</span>
                                               </button>
                                             </div>
                                           );
