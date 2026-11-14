@@ -230,6 +230,26 @@
       letter-spacing: -0.02em;
     }
 
+    /* Respondent Table */
+    .print-respondent-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1.5px solid #0f172a;
+      font-size: 12.5px;
+    }
+    .print-respondent-table th, .print-respondent-table td {
+      border: 1px solid #0f172a;
+      padding: 10px 8px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 1.35;
+    }
+    .print-respondent-table th {
+      background-color: #f1f5f9;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
     /* Print Section & Questions Styling (Matches Screen UI) */
     .print-section {
       margin-bottom: 0.75rem;
@@ -513,19 +533,24 @@
         width: 100% !important;
         border-collapse: collapse !important;
         border: 1.5px solid #0f172a !important;
-        font-size: 11px !important;
+        font-size: 12.5px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
       .print-respondent-table th, .print-respondent-table td {
         border: 1px solid #0f172a !important;
-        padding: 4px 6px !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
         text-align: center !important;
         vertical-align: middle !important;
+        line-height: 1.35 !important;
       }
       .print-respondent-table th {
         background-color: #f1f5f9 !important;
         font-weight: 700 !important;
+        color: #0f172a !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
