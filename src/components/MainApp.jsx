@@ -3593,14 +3593,14 @@ export default function MainApp({
                                                 onClick={() => setSelectedStudentDates(c)}
                                                 className={`${sessionColorClass} border px-1.5 py-0.5 rounded-full text-[12px] sm:text-[13px] leading-tight tracking-tight whitespace-nowrap shrink-0 transition-all cursor-pointer hover:brightness-95 active:scale-95 min-w-[22px] text-center`}
                                               >
-                                                {c.count}
+                                                {c.count}회
                                               </button>
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentHistory(c)}
                                                 className="ml-1 bg-white text-emerald-700 border-emerald-300 border px-1.5 py-0.5 rounded-full text-[12px] sm:text-[13px] leading-tight tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer hover:bg-emerald-50 active:scale-95 font-bold"
                                               >
-                                                이전
+                                                이전교육
                                               </button>
                                             </div>
                                           );
