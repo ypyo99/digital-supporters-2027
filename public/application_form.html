@@ -452,7 +452,7 @@
             <svg id="saveIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>
-            <span id="saveBtnText">저장하기</span>
+            <span id="saveBtnText">저장</span>
         </button>
 
         <button type="button" onclick="handlePrint()" class="hidden md:flex bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-blue-500 whitespace-nowrap">
@@ -1202,7 +1202,7 @@
 
             const btnSave = document.getElementById('btnSave');
             const saveBtnText = document.getElementById('saveBtnText');
-            const originalText = saveBtnText ? saveBtnText.innerText : '저장하기';
+            const originalText = saveBtnText ? saveBtnText.innerText : '저장';
 
             if (btnSave) {
                 btnSave.disabled = true;

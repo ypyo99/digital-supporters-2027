@@ -779,7 +779,7 @@
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
       </svg>
-      <span id="saveBtnText">저장하기</span>
+      <span id="saveBtnText">저장</span>
     </button>
 
     <!-- 인쇄하기 버튼 (스마트폰에서는 숨김: hidden md:inline-flex) -->
@@ -1393,7 +1393,7 @@
 
       if (btnSaveFloating) {
         btnSaveFloating.disabled = false;
-        if (saveBtnText) saveBtnText.innerText = '저장하기';
+        if (saveBtnText) saveBtnText.innerText = '저장';
         btnSaveFloating.classList.remove('opacity-75', 'cursor-not-allowed');
       }
 
