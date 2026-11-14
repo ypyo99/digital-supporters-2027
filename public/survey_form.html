@@ -230,6 +230,64 @@
       letter-spacing: -0.02em;
     }
 
+    /* Print Scale Buttons */
+    .print-scale-container {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
+    }
+    .print-scale-btn {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1.2px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: #ffffff;
+      padding: 3px 1px 2px 1px;
+      height: 38px;
+      box-sizing: border-box;
+    }
+    .print-scale-btn.selected {
+      background-color: #1d4ed8;
+      border-color: #1e3a8a;
+      color: #ffffff;
+    }
+    .print-score-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 9999px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #1e3a8a;
+      background-color: #eff6ff;
+      margin-bottom: 2px;
+      flex-shrink: 0;
+    }
+    .print-scale-btn.selected .print-score-num {
+      background-color: rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+    }
+    .print-score-label {
+      font-size: 7.8px;
+      font-weight: 600;
+      line-height: 1.1;
+      text-align: center;
+      color: #475569;
+      word-break: keep-all;
+    }
+    .print-scale-btn.selected .print-score-label {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
     /* Print Styling (A4 Clean 1-Page Output) */
     @page {
       size: A4 portrait;
@@ -387,12 +445,12 @@
         color: #1d4ed8 !important;
       }
 
-      /* 4. 15 Questions Table (설문항목들의 높이 대폭 확대) */
+      /* 4. 15 Questions Table */
       .print-questions-table {
         width: 100% !important;
         border-collapse: collapse !important;
         border: 1.5px solid #0f172a !important;
-        font-size: 12px !important;
+        font-size: 11.5px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
@@ -402,41 +460,100 @@
       }
       .print-questions-table th, .print-questions-table td {
         border: 1px solid #0f172a !important;
-        padding-top: 10.5px !important;
-        padding-bottom: 10.5px !important;
-        line-height: 1.4 !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+        line-height: 1.35 !important;
         vertical-align: middle !important;
       }
       .print-questions-table th {
         background-color: #f1f5f9 !important;
         font-weight: 700 !important;
-        padding-left: 6px !important;
-        padding-right: 6px !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
       }
-      .print-questions-table td.col-qnum {
+      .print-questions-table th.col-qnum, .print-questions-table td.col-qnum {
         text-align: center !important;
         font-weight: 700 !important;
-        width: 38px !important;
+        width: 34px !important;
+      }
+      .print-questions-table th.col-qtext {
+        text-align: center !important;
       }
       .print-questions-table td.col-qtext {
-        padding-left: 10px !important;
-        padding-right: 10px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
         text-align: left !important;
+        font-size: 11px !important;
+        color: #0f172a !important;
       }
-      .print-questions-table td.col-qscore {
+      .print-questions-table th.col-qoptions {
+        width: 345px !important;
         text-align: center !important;
+      }
+      .print-questions-table td.col-qoptions {
+        padding: 3px 6px !important;
+        vertical-align: middle !important;
+        width: 345px !important;
+      }
+      .print-scale-container {
+        display: flex !important;
+        align-items: stretch !important;
+        justify-content: space-between !important;
+        gap: 4px !important;
+        width: 100% !important;
+      }
+      .print-scale-btn {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: 1.2px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        background-color: #ffffff !important;
+        padding: 3px 1px 2px 1px !important;
+        height: 38px !important;
+        box-sizing: border-box !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .print-scale-btn.selected {
+        background-color: #1d4ed8 !important;
+        border-color: #1e3a8a !important;
+        color: #ffffff !important;
+      }
+      .print-score-num {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 16px !important;
+        height: 16px !important;
+        border-radius: 9999px !important;
+        font-size: 9.5px !important;
         font-weight: 800 !important;
-        color: #1d4ed8 !important;
-        font-size: 12.5px !important;
-        width: 76px !important;
-        white-space: nowrap !important;
+        color: #1e3a8a !important;
+        background-color: #eff6ff !important;
+        margin-bottom: 2px !important;
+        flex-shrink: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
-      .print-questions-table td.col-qscale {
+      .print-scale-btn.selected .print-score-num {
+        background-color: rgba(255, 255, 255, 0.28) !important;
+        color: #ffffff !important;
+      }
+      .print-score-label {
+        font-size: 7.8px !important;
+        font-weight: 600 !important;
+        line-height: 1.1 !important;
         text-align: center !important;
-        font-size: 11.5px !important;
-        color: #334155 !important;
-        width: 100px !important;
-        white-space: nowrap !important;
+        color: #475569 !important;
+        word-break: keep-all !important;
+      }
+      .print-scale-btn.selected .print-score-label {
+        color: #ffffff !important;
+        font-weight: 700 !important;
       }
 
       /* 5. Feedback Box */
@@ -1690,20 +1807,29 @@
                 <tr>
                   <th class="col-qnum">번호</th>
                   <th class="col-qtext">문항 내용</th>
-                  <th class="col-qscore">응답 점수</th>
-                  <th class="col-qscale">척도 의미</th>
+                  <th class="col-qoptions">응답 척도 (1~5점)</th>
                 </tr>
               </thead>
               <tbody>
                 ${QUESTIONS.map(q => {
-                  const val = Number(survey.answers[`q${q.id}`]) || '-';
-                  const opt = SCALE_OPTIONS.find(o => o.value === val);
+                  const val = Number(survey.answers[`q${q.id}`]);
                   return `
                     <tr>
                       <td class="col-qnum">${q.id}</td>
                       <td class="col-qtext">${q.text}</td>
-                      <td class="col-qscore">${val}점</td>
-                      <td class="col-qscale">${opt ? opt.label : '-'}</td>
+                      <td class="col-qoptions">
+                        <div class="print-scale-container">
+                          ${SCALE_OPTIONS.map(opt => {
+                            const isSelected = val === opt.value;
+                            return `
+                              <div class="print-scale-btn ${isSelected ? 'selected' : ''}">
+                                <span class="print-score-num">${opt.value}</span>
+                                <span class="print-score-label">${opt.displayHtml || opt.label}</span>
+                              </div>
+                            `;
+                          }).join('')}
+                        </div>
+                      </td>
                     </tr>
                   `;
                 }).join('')}
