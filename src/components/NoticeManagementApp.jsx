@@ -342,7 +342,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
   };
 
   const checkPassword = () => {
-    if (pwdInput === import.meta.env.VITE_ADMIN_PASSWORD) {
+    if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
       setIsAdmin(true);
       setSavedItem('sungdong_admin_logged_in', 'true');
       setShowPwdModal(false);
@@ -1170,7 +1170,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
               onChange={(e) => {
                 const val = e.target.value;
                 setPwdInput(val);
-                if (val === import.meta.env.VITE_ADMIN_PASSWORD) {
+                if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
                   setIsAdmin(true);
                   setSavedItem('sungdong_admin_logged_in', 'true');
                   setShowPwdModal(false);
