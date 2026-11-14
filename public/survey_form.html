@@ -224,7 +224,7 @@
       }
 
       /* Modal and print wrapper overrides (break out of 92vh scroll container) */
-      #detailModal {
+      #detailModal, #detailModal.hidden {
         position: static !important;
         inset: auto !important;
         background: transparent !important;
@@ -1482,11 +1482,17 @@
       };
 
       renderDetailModalContent(fakeSurvey);
-      const modal = document.getElementById('detailModal');
-      modal?.classList.remove('hidden');
+
+      // 화면에 모달 팝업을 띄우지 않고 인쇄 레이아웃만 갱신 후 바로 브라우저 인쇄창 호출
+      const handleAfterPrint = () => {
+        closeDetailModal();
+        window.removeEventListener('afterprint', handleAfterPrint);
+      };
+      window.addEventListener('afterprint', handleAfterPrint);
+
       setTimeout(() => {
         window.print();
-      }, 150);
+      }, 50);
     }
 
     // Close Window
