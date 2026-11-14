@@ -931,24 +931,14 @@
         </div>
       </div>
 
-      <!-- Top Action & Font Size Buttons -->
-      <div class="flex items-center gap-2 shrink-0">
-        <button type="button" onclick="handleResetForm(true)" class="text-xs sm:text-sm bg-white hover:bg-emerald-50 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap flex items-center gap-1">
-          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-          <span>새로 작성하기</span>
+      <!-- Font Size Buttons -->
+      <div class="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-lg border border-slate-200">
+        <button type="button" id="btnFontNormal" title="보통 글자 크기" class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
+          보통
         </button>
-
-        <!-- Font Size Buttons -->
-        <div class="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-lg border border-slate-200">
-          <button type="button" id="btnFontNormal" title="보통 글자 크기" class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
-            보통
-          </button>
-          <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
-            크게
-          </button>
-        </div>
+        <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
+          크게
+        </button>
       </div>
     </div>
   </header>
@@ -957,12 +947,12 @@
   <main class="print-hide flex-1 max-w-4xl w-full mx-auto p-3 sm:p-6 lg:p-8">
 
     <!-- STATUS BANNER (Alert for existing survey load or new survey) -->
-    <div id="statusBanner" class="print-hide hidden mb-6 p-4 rounded-xl border flex items-center justify-between gap-3 shadow-xs transition-all">
+    <div id="statusBanner" class="print-hide hidden mb-6 p-3.5 sm:p-4 rounded-xl border flex items-center justify-between gap-3 shadow-xs transition-all">
       <div class="flex items-center gap-3">
-        <span id="statusIcon" class="text-2xl">ℹ️</span>
+        <span id="statusIcon" class="text-2xl shrink-0">ℹ️</span>
         <div id="statusContent" class="text-xs sm:text-sm font-semibold"></div>
       </div>
-      <div id="statusAction"></div>
+      <div id="statusAction" class="shrink-0"></div>
     </div>
 
     <!-- ============================================================== -->
@@ -1685,7 +1675,7 @@
       content.innerHTML = messageHtml;
       if (action) {
         if (showReset) {
-          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center">새로 작성하기</button>`;
+          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="ml-2 sm:ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>새로 작성하기</span></button>`;
         } else {
           action.innerHTML = '';
         }
