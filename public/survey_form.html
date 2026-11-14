@@ -202,7 +202,7 @@
     /* Print Styling (A4 Clean 1-Page Output) */
     @page {
       size: A4 portrait;
-      margin: 8mm 10mm 8mm 10mm;
+      margin: 10mm 12mm 10mm 12mm;
     }
 
     @media print {
@@ -278,6 +278,12 @@
       #modalPrintContent tr, #modalPrintContent th, #modalPrintContent td {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+      }
+
+      #modalPrintContent th, #modalPrintContent td {
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        line-height: 1.4 !important;
       }
     }
   </style>
@@ -1766,58 +1772,58 @@
 
       if (content) {
         content.innerHTML = `
-          <div class="space-y-2 sm:space-y-4 print:space-y-1.5 text-slate-900">
+          <div class="space-y-3 sm:space-y-5 print:space-y-3 text-slate-900">
             <!-- Header Title -->
-            <div class="text-center pb-1.5 border-b-2 border-slate-900 print:pb-1">
-              <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight print:text-[18px]">
+            <div class="text-center pb-2 border-b-2 border-slate-900 print:pb-2 print:mb-1">
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight print:text-[22px]">
                 2027년 역량활용사업 1:1 디지털 교육 설문조사지(사전)
               </h2>
-              <div class="text-xs text-slate-500 mt-0.5 print:text-[10px]">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
+              <div class="text-xs text-slate-600 mt-1 print:text-[12px] print:mt-1">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
             </div>
 
             <!-- Respondent Info Table -->
-            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm print:text-[10.5px]">
+            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm print:text-[12px]">
               <tr>
-                <th class="border border-slate-900 bg-slate-100 p-1 sm:p-2 print:py-0.5 print:px-1.5 text-center w-24 sm:w-28 print:w-20 font-bold">조사일자</th>
-                <td class="border border-slate-900 p-1 sm:p-2 print:py-0.5 print:px-1.5 text-center">${survey.surveyDate}</td>
-                <th class="border border-slate-900 bg-slate-100 p-1 sm:p-2 print:py-0.5 print:px-1.5 text-center w-24 sm:w-28 print:w-24 font-bold">참여자(성명)</th>
-                <td class="border border-slate-900 p-1 sm:p-2 print:py-0.5 print:px-1.5 font-bold text-center">${escapeHtml(survey.participantName)}</td>
-                <th class="border border-slate-900 bg-slate-100 p-1 sm:p-2 print:py-0.5 print:px-1.5 text-center w-20 sm:w-24 print:w-18 font-bold">조사자</th>
-                <td class="border border-slate-900 p-1 sm:p-2 print:py-0.5 print:px-1.5 text-center">${escapeHtml(survey.surveyorName || '-')}</td>
+                <th class="border border-slate-900 bg-slate-100 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center w-24 sm:w-28 print:w-24 font-bold">조사일자</th>
+                <td class="border border-slate-900 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center">${survey.surveyDate}</td>
+                <th class="border border-slate-900 bg-slate-100 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center w-24 sm:w-28 print:w-28 font-bold">참여자(성명)</th>
+                <td class="border border-slate-900 p-1.5 sm:p-2 print:py-2 print:px-2.5 font-bold text-center">${escapeHtml(survey.participantName)}</td>
+                <th class="border border-slate-900 bg-slate-100 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center w-20 sm:w-24 print:w-22 font-bold">조사자</th>
+                <td class="border border-slate-900 p-1.5 sm:p-2 print:py-2 print:px-2.5 text-center">${escapeHtml(survey.surveyorName || '-')}</td>
               </tr>
             </table>
 
             <!-- Domain Scores Summary + Total -->
-            <div class="grid grid-cols-4 gap-1.5 sm:gap-2 text-center text-xs print:gap-1 print:text-[10px]">
-              <div class="bg-blue-50 border border-blue-200 p-1 sm:p-2 rounded print:py-0.5 print:px-1">
+            <div class="grid grid-cols-4 gap-2 text-center text-xs print:gap-2 print:text-[11.5px]">
+              <div class="bg-blue-50 border border-blue-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
                 <div class="font-bold text-blue-900">디지털 인식</div>
-                <div class="text-sm sm:text-base font-extrabold text-blue-700 print:text-[11.5px]">${survey.metrics?.scoreAwareness ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal">(${survey.metrics?.avgAwareness ?? 0}/5)</span></div>
+                <div class="text-sm sm:text-base font-extrabold text-blue-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreAwareness ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgAwareness ?? 0}/5)</span></div>
               </div>
-              <div class="bg-emerald-50 border border-emerald-200 p-1 sm:p-2 rounded print:py-0.5 print:px-1">
+              <div class="bg-emerald-50 border border-emerald-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
                 <div class="font-bold text-emerald-900">디지털 이용</div>
-                <div class="text-sm sm:text-base font-extrabold text-emerald-700 print:text-[11.5px]">${survey.metrics?.scoreUsage ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal">(${survey.metrics?.avgUsage ?? 0}/5)</span></div>
+                <div class="text-sm sm:text-base font-extrabold text-emerald-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreUsage ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgUsage ?? 0}/5)</span></div>
               </div>
-              <div class="bg-indigo-50 border border-indigo-200 p-1 sm:p-2 rounded print:py-0.5 print:px-1">
+              <div class="bg-indigo-50 border border-indigo-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
                 <div class="font-bold text-indigo-900">디지털 소통</div>
-                <div class="text-sm sm:text-base font-extrabold text-indigo-700 print:text-[11.5px]">${survey.metrics?.scoreCommunication ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal">(${survey.metrics?.avgCommunication ?? 0}/5)</span></div>
+                <div class="text-sm sm:text-base font-extrabold text-indigo-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreCommunication ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgCommunication ?? 0}/5)</span></div>
               </div>
-              <div class="bg-teal-50 border border-teal-200 p-1 sm:p-2 rounded print:py-0.5 print:px-1">
+              <div class="bg-teal-50 border border-teal-200 p-1.5 sm:p-2 rounded print:py-2 print:px-2">
                 <div class="font-bold text-teal-900">디지털 시민성</div>
-                <div class="text-sm sm:text-base font-extrabold text-teal-700 print:text-[11.5px]">${survey.metrics?.scoreCitizenship ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal">(${survey.metrics?.avgCitizenship ?? 0}/5)</span></div>
+                <div class="text-sm sm:text-base font-extrabold text-teal-700 print:text-[13.5px] mt-0.5">${survey.metrics?.scoreCitizenship ?? 0}점 <span class="text-[10px] sm:text-xs text-slate-500 font-normal print:text-[10.5px]">(${survey.metrics?.avgCitizenship ?? 0}/5)</span></div>
               </div>
             </div>
-            <div class="text-right text-xs sm:text-sm font-bold text-slate-800 print:text-[10.5px]">
-              총점: <span class="text-blue-700 text-sm sm:text-lg print:text-[13px] font-black">${survey.metrics?.totalScore ?? 0}</span> / 75점 (평균 ${survey.metrics?.averageScore ?? 0}점)
+            <div class="text-right text-xs sm:text-sm font-bold text-slate-800 print:text-[12px] print:my-1">
+              총점: <span class="text-blue-700 text-sm sm:text-lg print:text-[14.5px] font-black">${survey.metrics?.totalScore ?? 0}</span> / 75점 (평균 ${survey.metrics?.averageScore ?? 0}점)
             </div>
 
             <!-- Questions Table (All 15 questions) -->
-            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm print:text-[10px]">
+            <table class="w-full border-collapse border border-slate-900 text-xs sm:text-sm print:text-[11.5px]">
               <thead>
                 <tr class="bg-slate-100 text-slate-900 border-b border-slate-900 font-bold">
-                  <th class="p-1 sm:p-1.5 print:py-0.5 print:px-0.5 border border-slate-900 text-center w-10 print:w-7">번호</th>
-                  <th class="p-1 sm:p-1.5 print:py-0.5 print:px-1.5 border border-slate-900 text-left">문항 내용</th>
-                  <th class="p-1 sm:p-1.5 print:py-0.5 print:px-0.5 border border-slate-900 text-center w-20 print:w-16">응답 점수</th>
-                  <th class="p-1 sm:p-1.5 print:py-0.5 print:px-0.5 border border-slate-900 text-center w-28 print:w-22">척도 의미</th>
+                  <th class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center w-10 print:w-9">번호</th>
+                  <th class="p-1.5 sm:p-2 print:py-2 print:px-2 border border-slate-900 text-left">문항 내용</th>
+                  <th class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center w-20 print:w-20">응답 점수</th>
+                  <th class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center w-28 print:w-28">척도 의미</th>
                 </tr>
               </thead>
               <tbody>
@@ -1826,12 +1832,12 @@
                   const opt = SCALE_OPTIONS.find(o => o.value === val);
                   return `
                     <tr class="border-b border-slate-300">
-                      <td class="p-1 sm:p-1.5 print:py-0.5 print:px-0.5 border border-slate-900 text-center font-bold">${q.id}</td>
-                      <td class="p-1 sm:p-1.5 print:py-0.5 print:px-1.5 border border-slate-900 leading-tight">${q.text}</td>
-                      <td class="p-1 sm:p-1.5 print:py-0.5 print:px-0.5 border border-slate-900 text-center font-bold text-blue-700 text-xs sm:text-base print:text-[11px] whitespace-nowrap">
+                      <td class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center font-bold">${q.id}</td>
+                      <td class="p-1.5 sm:p-2 print:py-2 print:px-2 border border-slate-900 leading-snug">${q.text}</td>
+                      <td class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center font-bold text-blue-700 text-xs sm:text-base print:text-[12px] whitespace-nowrap">
                         ${val}점
                       </td>
-                      <td class="p-1 sm:p-1.5 print:py-0.5 print:px-0.5 border border-slate-900 text-center text-[10px] sm:text-xs text-slate-600 whitespace-nowrap">
+                      <td class="p-1.5 sm:p-2 print:py-2 print:px-1 border border-slate-900 text-center text-[10px] sm:text-xs print:text-[11.5px] text-slate-600 whitespace-nowrap">
                         ${opt ? opt.label : '-'}
                       </td>
                     </tr>
@@ -1841,18 +1847,18 @@
             </table>
 
             <!-- Feedback -->
-            <div class="border border-slate-900 rounded p-2 sm:p-3 print:py-1 print:px-2 bg-slate-50 print:bg-transparent">
-              <div class="font-bold text-slate-900 text-xs sm:text-sm print:text-[10px] mb-0.5">
+            <div class="border border-slate-900 rounded p-2.5 sm:p-3 print:py-3 print:px-3.5 bg-slate-50 print:bg-transparent">
+              <div class="font-bold text-slate-900 text-xs sm:text-sm print:text-[11.5px] mb-1.5">
                 ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분
               </div>
-              <p class="text-xs sm:text-sm print:text-[9.5px] text-slate-700 whitespace-pre-wrap min-h-[28px] print:min-h-[18px] leading-tight">
+              <p class="text-xs sm:text-sm print:text-[11px] text-slate-700 whitespace-pre-wrap min-h-[36px] print:min-h-[85px] leading-relaxed">
                 ${escapeHtml(survey.feedback || '(작성된 희망사항이 없습니다.)')}
               </p>
             </div>
 
             <!-- Footer -->
-            <div class="text-center pt-1 print:pt-0.5 text-xs print:text-[9.5px] text-slate-500">
-              사회복지법인 서울가톨릭사회복지회 <strong>시립성동노인종합복지관</strong>
+            <div class="text-center pt-2 print:pt-4 text-xs print:text-[12px] text-slate-600">
+              사회복지법인 서울가톨릭사회복지회 <strong class="text-slate-900">시립성동노인종합복지관</strong>
             </div>
           </div>
         `;

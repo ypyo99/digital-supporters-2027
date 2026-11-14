@@ -38,3 +38,4 @@ END $$;
 
 CREATE INDEX IF NOT EXISTS idx_pre_surveys_participant ON public.pre_surveys(participant_name);
 CREATE INDEX IF NOT EXISTS idx_pre_surveys_date ON public.pre_surveys(survey_date);
+
