@@ -119,14 +119,41 @@ const hasIndependentKeyword = (str, keywords) => {
   return tokens.some(token => keywords.includes(token));
 };
 
-// 메인 화면 메뉴 카드 (아이콘 칩 + 라벨 + 화살표)
-const MenuCard = ({ icon, label, onClick, href, tone = 'blue', disabled }) => {
-  const className = `menu-card tone-${tone}${disabled ? ' is-disabled' : ''}`;
+// ───────── 메인 화면 메뉴 아이콘 ─────────
+const svgProps = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
+const IconClassroom = (p) => (<svg {...svgProps} {...p}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M7 20h10M12 16v4M7 8h6M7 11h4" /></svg>);
+const IconStudio = (p) => (<svg {...svgProps} {...p}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="m16 11 6-3v8l-6-3" /><circle cx="6.5" cy="10.5" r="0.6" fill="currentColor" /></svg>);
+const IconMegaphone = (p) => (<svg {...svgProps} {...p}><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1Z" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" /></svg>);
+const IconCalendarStar = (p) => (<svg {...svgProps} {...p}><rect x="3" y="4.5" width="18" height="16.5" rx="2" /><path d="M8 2.5v4M16 2.5v4M3 9.5h18" /><path d="m12 12.2 1.1 2.2 2.4.35-1.75 1.7.4 2.4L12 17.7l-2.15 1.15.4-2.4-1.75-1.7 2.4-.35Z" /></svg>);
+const IconTimetable = (p) => (<svg {...svgProps} {...p}><rect x="3" y="3.5" width="18" height="17" rx="2" /><path d="M3 9h18M3 14.5h18M9 3.5v17M15 3.5v17" /></svg>);
+const IconSearchUser = (p) => (<svg {...svgProps} {...p}><circle cx="10.5" cy="10.5" r="7" /><path d="m21 21-5.5-5.5" /><circle cx="10.5" cy="9" r="2.2" /><path d="M6.8 14.3a4.3 4.3 0 0 1 7.4 0" /></svg>);
+const IconPeople = (p) => (<svg {...svgProps} {...p}><circle cx="9" cy="8" r="3.2" /><path d="M3 19.5a6 6 0 0 1 12 0" /><path d="M16 5.2a3 3 0 0 1 0 5.6M17.5 14.2a5.5 5.5 0 0 1 3.5 5.3" /></svg>);
+const IconChevronRight = (p) => (<svg {...svgProps} strokeWidth={2.5} {...p}><path d="m9 18 6-6-6-6" /></svg>);
+const IconExternal = (p) => (<svg {...svgProps} strokeWidth={2.3} {...p}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>);
+const IconLock = (p) => (<svg {...svgProps} {...p}><rect x="4.5" y="10.5" width="15" height="10" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" /></svg>);
+const IconCheck = (p) => (<svg {...svgProps} strokeWidth={3} {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>);
+
+// 메뉴 그룹 (제목 + 묶음 목록)
+const MenuGroup = ({ title, icon, children }) => (
+  <section className="menu-group">
+    <h3 className="menu-group-title">{icon}{title}</h3>
+    <div className="menu-list">{children}</div>
+  </section>
+);
+
+// 목록형 메뉴 한 줄 (아이콘 + 이름/설명 + 화살표 또는 외부링크 표시)
+const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant }) => {
+  const className = `menu-row${variant === 'admin' ? ' is-admin' : ''}${disabled ? ' is-disabled' : ''}`;
   const content = (
     <>
-      <span className="menu-chip">{icon}</span>
-      <span className="menu-label">{label}</span>
-      <svg className="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      <span className="row-chip">{icon}</span>
+      <span className="row-text">
+        <span className="row-label">{label}</span>
+        {desc && <span className="row-desc">{desc}</span>}
+      </span>
+      {href
+        ? <IconExternal className="row-trail" aria-label="새 창에서 열림" />
+        : <IconChevronRight className="row-trail" />}
     </>
   );
   if (href) {
@@ -135,24 +162,35 @@ const MenuCard = ({ icon, label, onClick, href, tone = 'blue', disabled }) => {
   return <button type="button" onClick={onClick} className={className} aria-disabled={disabled || undefined}>{content}</button>;
 };
 
-const AnimatedRefreshButton = ({ onClick, isFetching }) => {
-  const [toggle, setToggle] = useState(false);
-  useEffect(() => {
-    const interval = setInterval(() => setToggle(prev => !prev), 2000);
-    return () => clearInterval(interval);
-  }, []);
-  return (
-    <button
-      onClick={onClick}
-      disabled={isFetching}
-      className="w-[80px] sm:w-[88px] md:w-[96px] h-[52px] sm:h-[58px] md:h-[62px] shrink-0 bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50/60 text-blue-600 font-semibold rounded-2xl shadow-sm flex flex-col items-center justify-center transition-all disabled:opacity-50 active:scale-95 px-1 touch-manipulation"
-      title="선생님 목록 다시 읽어오기"
-    >
-      <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 mb-0.5 ${isFetching ? 'animate-spin' : ''}`} />
-      <span className="text-[14px] sm:text-[16px] md:text-[17px] tracking-tight whitespace-nowrap">{toggle ? '선생님목록' : '다시읽기'}</span>
-    </button>
-  );
-};
+// 타일형 메뉴 (2칸 나란히)
+const MenuTile = ({ icon, label, sub, onClick }) => (
+  <button type="button" onClick={onClick} className="menu-tile">
+    <span className="row-chip">{icon}</span>
+    <span className="tile-text">
+      <span className="row-label">{label}</span>
+      {sub && <span className="row-desc">{sub}</span>}
+    </span>
+  </button>
+);
+
+// 단계 표시 배지: 선택 전에는 번호, 선택 후에는 체크
+const StepBadge = ({ n, done }) => (
+  <span className={`step-badge${done ? ' is-done' : ''}`} aria-hidden="true">
+    {done ? <IconCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : n}
+  </span>
+);
+
+const AnimatedRefreshButton = ({ onClick, isFetching }) => (
+  <button
+    onClick={onClick}
+    disabled={isFetching}
+    className="w-[76px] sm:w-[88px] h-[52px] sm:h-[58px] md:h-[62px] shrink-0 bg-white border border-gray-200 hover:border-blue-300 hover:bg-blue-50/60 text-gray-600 hover:text-blue-600 font-semibold rounded-2xl shadow-sm flex flex-col items-center justify-center gap-0.5 transition-all disabled:opacity-50 active:scale-95 px-1 touch-manipulation"
+    title="선생님 목록 새로고침"
+  >
+    <RefreshCw className={`w-[18px] h-[18px] sm:w-5 sm:h-5 ${isFetching ? 'animate-spin' : ''}`} />
+    <span className="text-[13px] sm:text-[15px] tracking-tight whitespace-nowrap">새로고침</span>
+  </button>
+);
 
 export default function MainApp({
   onNavigateToClassroom,
@@ -182,6 +220,13 @@ export default function MainApp({
   const [studentCounts, setStudentCounts] = useState({});
   const [records, setRecords] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(() => getSavedItem('sungdong_admin_menu_open', '') === 'true');
+  const toggleAdminMenu = () => {
+    setIsAdminMenuOpen(prev => {
+      setSavedItem('sungdong_admin_menu_open', String(!prev));
+      return !prev;
+    });
+  };
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [showValidationError, setShowValidationError] = useState(false);
   const [validationErrorMsg, setValidationErrorMsg] = useState("");
@@ -2880,7 +2925,7 @@ export default function MainApp({
         </div>
 
         <div
-          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] bg-white/95 sm:bg-white/90 sm:backdrop-blur-xl px-5 pb-8 pt-safe-4 sm:px-9 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
+          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-5 pb-8 pt-safe-4 sm:px-9 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
           style={{
             transform: `translateY(${pullDistance * 0.1}px)`,
             transition: pullDistance === 0 ? 'transform 0.3s ease-out' : 'none'
@@ -2893,7 +2938,7 @@ export default function MainApp({
             <div className="flex items-center justify-center mb-2 sm:mb-3">
               <h1 className="text-[28px] sm:text-[40px] md:text-[44px] leading-tight font-extrabold tracking-[-0.035em] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 bg-clip-text text-transparent">성동노인종합복지관</h1>
             </div>
-            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-gray-50 ring-1 ring-gray-200/80 pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-semibold text-gray-600 whitespace-nowrap tracking-tight">
+            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white ring-1 ring-gray-200/80 shadow-sm pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-semibold text-gray-600 whitespace-nowrap tracking-tight">
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-transform duration-300 hover:scale-110"
                 viewBox="0 0 128 128"
@@ -2957,84 +3002,87 @@ export default function MainApp({
                 transform-origin: center;
               }
             `}</style>
-            {todayNotices.length > 0 && (
-              <div className="animate-fadeIn w-full">
-                <div className="bg-gradient-to-br from-rose-50 to-white ring-1 ring-rose-200/70 rounded-2xl px-3.5 sm:px-5 py-3 sm:py-4 shadow-sm overflow-hidden text-left hover:ring-rose-300 transition-all touch-pan-y touch-pinch-zoom">
-                  <div className="flex flex-col gap-1.5 sm:gap-2 w-full min-w-0">
-                    <div
-                      className="flex items-center gap-2 sm:gap-3 w-full cursor-pointer hover:opacity-90 transition-opacity active:scale-[0.98]"
-                      onClick={() => onNavigateToNoticeManagement()}
-                    >
-                      <div className="bg-rose-500 p-1.5 rounded-lg shrink-0 shadow-sm shadow-rose-500/30">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                        </svg>
-                      </div>
-                      <div className="flex items-center justify-between flex-1 w-full gap-2">
-                        <h4 className="font-bold text-[16px] min-[360px]:text-[17px] sm:text-[20px] leading-tight text-gray-900 m-0 shrink-0 tracking-tight">
-                          공지사항
-                        </h4>
-                        {!weatherData ? (
-                          <span className="text-[14px] sm:text-[15px] text-red-500 font-medium ml-auto text-right">
-                            날씨 정보 불러오는 중...
+            {/* 오늘 날짜 + 날씨 */}
+            <div className="flex items-center justify-between gap-2 px-1 -mb-1">
+              <span className="text-[15px] sm:text-[17px] font-bold text-gray-700 tracking-tight whitespace-nowrap">
+                {new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
+              </span>
+              {!weatherData ? (
+                <span className="text-[13px] sm:text-[14px] text-gray-400 font-medium">날씨 불러오는 중…</span>
+              ) : weatherData.error ? (
+                <span className="text-[13px] sm:text-[14px] text-gray-400 font-medium truncate">날씨 정보 준비 중</span>
+              ) : (
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 hover:opacity-80 active:scale-95 transition-all bg-white px-2.5 py-1 rounded-full ring-1 ring-gray-200 shadow-sm"
+                  onClick={() => window.open('https://weather.naver.com', '_blank')}
+                  title="네이버 날씨로 이동"
+                >
+                  <span className={`text-[14px] sm:text-[15px] font-bold tracking-tight whitespace-nowrap ${weatherData.isRain ? 'text-blue-600' : 'text-gray-600'}`}>
+                    {weatherData.isTomorrow ? '내일 ' : ''}{weatherData.weatherDesc}
+                  </span>
+                  <span className="text-gray-300 text-[12px]">|</span>
+                  <span className="text-[14px] sm:text-[15px] font-bold text-gray-600 whitespace-nowrap">
+                    {weatherData.minTemp}° / <span className="text-rose-500">{weatherData.maxTemp}°</span>
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* 공지사항 */}
+            <div className="animate-fadeIn w-full">
+              <div className="bg-white ring-1 ring-gray-200/90 rounded-[1.125rem] px-3.5 sm:px-5 py-3 sm:py-4 shadow-[0_1px_2px_0_rgb(15_23_42/0.05),0_4px_12px_-8px_rgb(15_23_42/0.12)] overflow-hidden text-left touch-pan-y touch-pinch-zoom">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 sm:gap-2.5 w-full text-left group"
+                  onClick={() => onNavigateToNoticeManagement()}
+                >
+                  <span className="bg-rose-500 p-1.5 rounded-lg shrink-0 shadow-sm shadow-rose-500/30 text-white">
+                    <IconMegaphone className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </span>
+                  <span className="font-bold text-[17px] sm:text-[20px] leading-tight text-gray-900 tracking-tight">공지사항</span>
+                  <span className="ml-auto flex items-center gap-0.5 text-[14px] sm:text-[15px] font-semibold text-gray-500 group-hover:text-blue-600 transition-colors whitespace-nowrap">
+                    전체 보기 <IconChevronRight className="w-4 h-4" />
+                  </span>
+                </button>
+                {todayNotices.length > 0 ? (
+                  <div
+                    className="space-y-1.5 sm:space-y-2 w-full min-w-0 mt-2.5 max-h-[132px] sm:max-h-[150px] overflow-y-auto overscroll-contain touch-pan-y touch-pinch-zoom pr-1"
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onTouchMove={(e) => e.stopPropagation()}
+                    onTouchEnd={(e) => e.stopPropagation()}
+                  >
+                    {todayNotices.map((notice, idx) => {
+                      const isToday = notice.start_date && notice.start_date.substring(0, 10) === getLocalDateString(new Date());
+                      const textClass = isToday
+                        ? (notice.is_top ? 'shine-text-top' : 'shine-text-normal')
+                        : (notice.is_top ? 'text-rose-800' : 'text-gray-700');
+                      return (
+                        <p
+                          key={idx}
+                          className={`${isToday || notice.is_top ? 'font-bold' : 'font-medium'} text-[14.5px] min-[380px]:text-[15.5px] sm:text-[17px] leading-snug tracking-tight whitespace-nowrap overflow-x-auto scrollbar-hide w-full block cursor-pointer hover:underline hover:opacity-80 active:scale-[0.99] transition-all`}
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            const { data } = await supabaseClient.from('notices').select('*').eq('id', notice.id).single();
+                            onNavigateToNoticeManagement(data || notice);
+                          }}
+                        >
+                          {isToday && <span className="inline-block align-middle mr-1.5 px-1.5 py-px rounded-md bg-rose-500 text-white text-[11px] sm:text-[12px] font-bold tracking-normal">NEW</span>}
+                          <span className={textClass}>
+                            {notice.is_top ? '📌 ' : '· '}{notice.title}
                           </span>
-                        ) : weatherData.error ? (
-                          <span className="text-[14px] sm:text-[15px] text-red-500/80 font-medium ml-auto text-right leading-tight">
-                            날씨 정보 준비 중 ({weatherData.msg})
-                          </span>
-                        ) : (
-                          <div
-                            className="flex items-center gap-1.5 ml-auto cursor-pointer hover:opacity-80 active:scale-95 transition-all bg-white px-2.5 py-1 rounded-full ring-1 ring-gray-200 shadow-sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              window.open('https://weather.naver.com', '_blank');
-                            }}
-                            title="네이버 날씨로 이동"
-                          >
-                            <span className={`text-[15px] sm:text-[16px] font-bold tracking-tight whitespace-nowrap ${weatherData.isRain ? 'text-blue-600' : 'text-gray-600'}`}>
-                              {weatherData.isTomorrow ? '내일 ' : ''}{weatherData.weatherDesc}
-                            </span>
-                            <span className="text-gray-300 mx-0.5 text-[13px]">|</span>
-                            <span className="text-[15px] sm:text-[16px] font-bold text-gray-600 whitespace-nowrap">
-                              🌡️ {weatherData.minTemp}° / <span className="text-red-500">{weatherData.maxTemp}°</span>
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div
-                      className="space-y-1 sm:space-y-1.5 w-full min-w-0 mt-1 max-h-[126px] sm:max-h-[144px] overflow-y-auto overscroll-contain touch-pan-y touch-pinch-zoom pr-1"
-                      style={{ scrollbarWidth: 'thin', scrollbarColor: '#fca5a5 transparent' }}
-                      onTouchStart={(e) => e.stopPropagation()}
-                      onTouchMove={(e) => e.stopPropagation()}
-                      onTouchEnd={(e) => e.stopPropagation()}
-                    >
-                      {todayNotices.map((notice, idx) => {
-                        const isToday = notice.start_date && notice.start_date.substring(0, 10) === getLocalDateString(new Date());
-                        const shineClass = isToday ? (notice.is_top ? 'shine-text-top' : 'shine-text-normal') : (notice.is_top ? 'text-red-900' : 'text-indigo-700');
-                        return (
-                          <p
-                            key={idx}
-                            className={`font-bold text-[13.5px] min-[360px]:text-[14.5px] min-[380px]:text-[15.5px] sm:text-[18px] leading-tight tracking-tighter whitespace-nowrap overflow-x-auto pb-0.5 scrollbar-hide w-full block cursor-pointer hover:underline hover:opacity-80 active:scale-[0.98] transition-all ${notice.is_top ? 'bg-red-200/40 px-1.5 py-0.5 rounded border border-red-200' : ''}`}
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              const { data } = await supabaseClient.from('notices').select('*').eq('id', notice.id).single();
-                              onNavigateToNoticeManagement(data || notice);
-                            }}
-                          >
-                            <span className={shineClass}>
-                              {notice.is_top ? '📌 ' : '• '} {notice.title}
-                            </span>
-                          </p>
-                        );
-                      })}
-                    </div>
+                        </p>
+                      );
+                    })}
                   </div>
-                </div>
+                ) : (
+                  <p className="mt-2 text-[14.5px] sm:text-[16px] text-gray-500 font-medium">오늘 표시할 공지가 없습니다.</p>
+                )}
               </div>
-            )}
+            </div>
+
             <div className="w-full">
-              <label className="flex items-center gap-2 text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight"><span className="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-600 text-white text-[13px] sm:text-sm font-bold">1</span>팀 선택</label>
+              <label className="flex items-center gap-2 text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
               <select className={`w-full select-refined h-[52px] sm:h-[58px] md:h-[62px] px-4 border rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/70 border-blue-300 text-gray-900' : 'bg-white border-gray-200 text-gray-500'} outline-none font-bold shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
                 setSelectedTeam(e.target.value);
                 setCurrentUser("");
@@ -3046,8 +3094,8 @@ export default function MainApp({
             {selectedTeam && (
               <div>
                 <label className="text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight flex justify-between items-end">
-                  <span className="flex items-center gap-2"><span className="inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-600 text-white text-[13px] sm:text-sm font-bold">2</span>선생님 선택</span>
-                  {isFetchingTeachers && <span className="text-base sm:text-lg md:text-xl text-red-600 font-bold flex items-center mb-1 animate-pulse"><Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-1 animate-spin" />로딩 중...</span>}
+                  <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
+                  {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-semibold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
                 </label>
                 <div className="flex gap-2">
                   <select className={`flex-1 select-refined min-w-0 h-[52px] sm:h-[58px] md:h-[62px] px-4 border rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/70 border-blue-300 text-gray-900' : 'bg-white border-gray-200 text-gray-500'} outline-none font-bold shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
@@ -3065,7 +3113,7 @@ export default function MainApp({
 
             <div className="pt-1 sm:pt-2 flex">
               {!isLoginReady ? (
-                <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,22px)] tracking-tight font-bold text-gray-400 bg-gray-100 ring-1 ring-inset ring-gray-200 cursor-not-allowed select-none min-h-[56px] sm:min-h-[62px]">
+                <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,22px)] tracking-tight font-bold text-gray-400 bg-gray-200/60 ring-1 ring-inset ring-gray-200 cursor-not-allowed select-none min-h-[56px] sm:min-h-[62px]">
                   {isFetchingSchedule ? <><Clock className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2 animate-spin" /> 데이터 확인 중...</> : <><EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기</>}
                 </div>
               ) : (
@@ -3076,89 +3124,108 @@ export default function MainApp({
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col gap-2.5 sm:gap-3 min-h-[180px] mt-7 sm:mt-9">
-            <div className="section-label mb-0.5">일정 · 바로가기</div>
-            <MenuCard
-              disabled={!selectedTeam || !currentUser}
-              onClick={() => {
-                if (!selectedTeam || !currentUser) {
-                  setErrorMessage("팀과 선생님을 먼저 선택해주세요.");
-                  setTimeout(() => setErrorMessage(""), 3000);
-                  return;
-                }
-                onNavigateToMyWeeklySchedule();
-              }}
-              icon={<CalendarIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="나의 주간 일정"
-              tone="blue"
-            />
-            {errorMessage && <div className="text-rose-600 font-semibold text-center text-sm md:text-base">{errorMessage}</div>}
-            <MenuCard
-              onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }}
-              icon={<CalendarClockIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="팀별 오늘 일정"
-              tone="blue"
-            />
-            <MenuCard
-              onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }}
-              icon={<CalendarDaysIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="전체 일정 보기/엑셀 다운로드"
-              tone="blue"
-            />
-            <MenuCard
-              href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
-              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>}
-              label="수업 희망자 및 기타 참여자 관리"
-              tone="blue"
-            />
-            <MenuCard
-              onClick={onNavigateToStudentSearch}
-              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /><path d="M11 8a3 3 0 0 0-3 3" /></svg>}
-              label="대상자 검색"
-              tone="blue"
-            />
-            <MenuCard
-              onClick={() => { handleLogout(); onNavigateToClassroom(); }}
-              icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="평생교육실2 사용 현황"
-              tone="blue"
-            />
-            <MenuCard
-              onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
-              icon={<PresentationIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="낭만스튜디오 사용 현황"
-              tone="blue"
-            />
-            <MenuCard
-              onClick={() => { handleLogout(); onNavigateToNoticeManagement(); }}
-              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>}
-              label="공지사항"
-              tone="blue"
-            />
+          <div className="menu-backdrop flex-1 flex flex-col min-h-[180px] mt-8 sm:mt-10">
+            <MenuGroup title="일정">
+              <MenuRow
+                disabled={!selectedTeam || !currentUser}
+                onClick={() => {
+                  if (!selectedTeam || !currentUser) {
+                    setErrorMessage("팀과 선생님을 먼저 선택해주세요.");
+                    setTimeout(() => setErrorMessage(""), 3000);
+                    return;
+                  }
+                  onNavigateToMyWeeklySchedule();
+                }}
+                icon={<CalendarIcon />}
+                label="나의 주간 일정"
+                desc={(!selectedTeam || !currentUser) ? (errorMessage || "팀과 선생님을 먼저 선택하세요") : "이번 주 내 수업 일정"}
+              />
+              <MenuRow
+                onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }}
+                icon={<CalendarClockIcon />}
+                label="팀별 오늘 일정"
+                desc="팀별 오늘 수업과 출결"
+              />
+              <MenuRow
+                onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }}
+                icon={<CalendarDaysIcon />}
+                label="전체 일정 보기"
+                desc="월별 전체 일정 · 엑셀 다운로드"
+              />
+            </MenuGroup>
 
-            <div className="section-label mt-5 sm:mt-6 mb-0.5">관리자 메뉴</div>
-            <MenuCard
-              onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
-              icon={<UsersIcon className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="선생님 명단 관리"
-              tone="red"
-            />
-            <MenuCard
-              onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
-              icon={<svg className="w-[22px] h-[22px] sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
-              label="공휴일/휴무일 관리"
-              tone="red"
-            />
-            <MenuCard
-              onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
-              icon={<LucideCalendar className="w-[22px] h-[22px] sm:w-6 sm:h-6" />}
-              label="시간표 작성"
-              tone="red"
-            />
-          </div>
+            <MenuGroup title="대상자">
+              <MenuRow
+                onClick={onNavigateToStudentSearch}
+                icon={<IconSearchUser />}
+                label="대상자 검색"
+                desc="이름·초성으로 수업 기록 찾기"
+              />
+              <MenuRow
+                href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
+                icon={<IconPeople />}
+                label="수업 희망자 및 기타 참여자 관리"
+                desc="구글 시트에서 열립니다"
+              />
+            </MenuGroup>
 
-          <div className="mt-8 sm:mt-10 text-center text-[11px] text-gray-300 font-medium tracking-wider">
-            v260825-holidays
+            <section className="menu-group">
+              <h3 className="menu-group-title">교육실 현황</h3>
+              <div className="menu-tiles">
+                <MenuTile
+                  onClick={() => { handleLogout(); onNavigateToClassroom(); }}
+                  icon={<IconClassroom />}
+                  label="평생교육실2"
+                  sub="사용 현황"
+                />
+                <MenuTile
+                  onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
+                  icon={<IconStudio />}
+                  label="낭만스튜디오"
+                  sub="사용 현황"
+                />
+              </div>
+            </section>
+
+            <section className="menu-group">
+              <button
+                type="button"
+                className="admin-toggle"
+                aria-expanded={isAdminMenuOpen}
+                onClick={toggleAdminMenu}
+              >
+                <IconLock className="w-[18px] h-[18px]" />
+                관리자 메뉴
+                <span className="toggle-sub">담당자 전용</span>
+                <IconChevronRight className="toggle-caret" />
+              </button>
+              {isAdminMenuOpen && (
+                <div className="menu-list mt-2 animate-fadeIn">
+                  <MenuRow
+                    variant="admin"
+                    onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
+                    icon={<UsersIcon />}
+                    label="선생님 명단 관리"
+                  />
+                  <MenuRow
+                    variant="admin"
+                    onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
+                    icon={<IconCalendarStar />}
+                    label="공휴일/휴무일 관리"
+                  />
+                  <MenuRow
+                    variant="admin"
+                    onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
+                    icon={<IconTimetable />}
+                    label="시간표 작성"
+                  />
+                </div>
+              )}
+            </section>
+
+            <div className="mt-8 sm:mt-10 text-center text-[10px] text-gray-300/80 font-medium tracking-wider select-none" aria-hidden="true">
+              v260825-holidays
+            </div>
           </div>
         </div>
       </div>
