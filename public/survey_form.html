@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>2027년 역량활용사업 1:1 디지털 교육 설문조사지(사전) - 시립성동노인종합복지관</title>
   <link rel="icon" type="image/svg+xml" href="/icon-c-bulb.svg">
-  
+
   <!-- Font: Noto Sans KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -34,7 +36,7 @@
       }
     }
   </script>
-  
+
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS for Excel export -->
@@ -50,16 +52,20 @@
     body.font-size-normal {
       font-size: 16px;
     }
+
     body.font-size-large {
       font-size: 18.5px;
     }
+
     body.font-size-large h2 {
       font-size: 1.85rem !important;
     }
+
     body.font-size-large .question-text {
       font-size: 1.25rem !important;
       line-height: 1.6 !important;
     }
+
     body.font-size-large .scale-btn {
       min-height: 82px !important;
       padding-top: 0.75rem !important;
@@ -68,13 +74,16 @@
     body.font-size-xlarge {
       font-size: 21px;
     }
+
     body.font-size-xlarge h2 {
       font-size: 2.15rem !important;
     }
+
     body.font-size-xlarge .question-text {
       font-size: 1.45rem !important;
       line-height: 1.6 !important;
     }
+
     body.font-size-xlarge .scale-btn {
       min-height: 92px !important;
       padding-top: 0.85rem !important;
@@ -166,9 +175,19 @@
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-4px);
+      }
+
+      75% {
+        transform: translateX(4px);
+      }
     }
 
     /* Mobile specific layout tweaks */
@@ -177,20 +196,24 @@
         display: none !important;
       }
     }
+
     @media (max-width: 640px) {
       .options-container {
         gap: 0.35rem;
       }
+
       .scale-btn {
         min-height: 68px;
         padding: 0.5rem 0.15rem 0.4rem 0.15rem;
         justify-content: flex-start;
       }
+
       .score-label {
         font-size: 0.67rem;
         letter-spacing: -0.04em;
         line-height: 1.2;
       }
+
       .score-num {
         width: 24px;
         height: 24px;
@@ -207,22 +230,26 @@
       gap: 12px;
       padding-top: 12px;
     }
+
     .print-footer-logo {
       width: 36px;
       height: 36px;
       object-fit: contain;
       flex-shrink: 0;
     }
+
     .print-footer-text {
       text-align: left;
       line-height: 1.25;
     }
+
     .print-footer-sub {
       font-size: 11px;
       font-weight: 500;
       color: #64748b;
       letter-spacing: -0.01em;
     }
+
     .print-footer-title {
       font-size: 17px;
       font-weight: 800;
@@ -237,18 +264,22 @@
       border: 1.5px solid #0f172a;
       font-size: 12.5px;
     }
-    .print-respondent-table th, .print-respondent-table td {
+
+    .print-respondent-table th,
+    .print-respondent-table td {
       border: 1px solid #0f172a;
       padding: 10px 8px;
       text-align: center;
       vertical-align: middle;
       line-height: 1.35;
     }
+
     .print-respondent-table th {
       background-color: #f1f5f9;
       font-weight: 700;
       color: #0f172a;
     }
+
     .print-respondent-table td {
       font-weight: 700;
       color: #0f172a;
@@ -258,6 +289,7 @@
     .print-section {
       margin-bottom: 0.75rem;
     }
+
     .print-section-header {
       display: flex;
       align-items: center;
@@ -266,22 +298,26 @@
       border-radius: 0.5rem 0.5rem 0 0;
       color: #ffffff;
     }
+
     .print-section-title-wrap {
       display: flex;
       align-items: baseline;
       gap: 0.35rem;
       flex-wrap: wrap;
     }
+
     .print-section-title {
       font-size: 0.85rem;
       font-weight: 700;
       color: #ffffff;
     }
+
     .print-section-desc {
       font-size: 0.75rem;
       font-weight: 400;
       opacity: 0.85;
     }
+
     .print-section-badge {
       font-size: 0.7rem;
       font-weight: 600;
@@ -291,17 +327,41 @@
     }
 
     /* Section Theme Colors */
-    .print-header-awareness { background-color: #1e293b; }
-    .print-badge-awareness { background-color: #334155; color: #f1f5f9; }
+    .print-header-awareness {
+      background-color: #1e293b;
+    }
 
-    .print-header-usage { background-color: #1e3a8a; }
-    .print-badge-usage { background-color: #1d4ed8; color: #eff6ff; }
+    .print-badge-awareness {
+      background-color: #334155;
+      color: #f1f5f9;
+    }
 
-    .print-header-communication { background-color: #312e81; }
-    .print-badge-communication { background-color: #3730a3; color: #e0e7ff; }
+    .print-header-usage {
+      background-color: #1e3a8a;
+    }
 
-    .print-header-citizenship { background-color: #134e4a; }
-    .print-badge-citizenship { background-color: #115e59; color: #ccfbf1; }
+    .print-badge-usage {
+      background-color: #1d4ed8;
+      color: #eff6ff;
+    }
+
+    .print-header-communication {
+      background-color: #312e81;
+    }
+
+    .print-badge-communication {
+      background-color: #3730a3;
+      color: #e0e7ff;
+    }
+
+    .print-header-citizenship {
+      background-color: #134e4a;
+    }
+
+    .print-badge-citizenship {
+      background-color: #115e59;
+      color: #ccfbf1;
+    }
 
     /* Section Body & Questions */
     .print-section-body {
@@ -310,19 +370,23 @@
       border-radius: 0 0 0.5rem 0.5rem;
       background-color: #ffffff;
     }
+
     .print-q-item {
       padding: 0.45rem 0.75rem;
       border-bottom: 1px solid #e2e8f0;
     }
+
     .print-q-item:last-child {
       border-bottom: none;
     }
+
     .print-q-head {
       display: flex;
       align-items: flex-start;
       gap: 0.4rem;
       margin-bottom: 0.35rem;
     }
+
     .print-q-badge {
       width: 1.25rem;
       height: 1.25rem;
@@ -337,6 +401,7 @@
       flex-shrink: 0;
       margin-top: 0.1rem;
     }
+
     .print-q-text {
       font-size: 0.8rem;
       font-weight: 600;
@@ -344,6 +409,7 @@
       line-height: 1.35;
       margin: 0;
     }
+
     .print-options-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -364,11 +430,13 @@
       height: 44px;
       box-sizing: border-box;
     }
+
     .print-scale-btn.selected {
       background-color: #ffffff;
       border: 2px solid #1d4ed8;
       box-shadow: 0 1px 3px rgba(29, 78, 216, 0.12);
     }
+
     .print-scale-btn .score-num,
     .print-score-num {
       display: flex;
@@ -385,6 +453,7 @@
       margin-bottom: 3px;
       flex-shrink: 0;
     }
+
     .print-scale-btn.selected .score-num,
     .print-scale-btn.selected .print-score-num {
       background-color: #1d4ed8;
@@ -392,6 +461,7 @@
       border: 1px solid #1d4ed8;
       font-weight: 900;
     }
+
     .print-scale-btn .score-label,
     .print-score-label {
       font-size: 8.5px;
@@ -401,6 +471,7 @@
       color: #64748b;
       word-break: keep-all;
     }
+
     .print-scale-btn.selected .score-label,
     .print-scale-btn.selected .print-score-label {
       color: #1d4ed8;
@@ -415,17 +486,20 @@
       background-color: #ffffff;
       margin-top: 0.75rem;
     }
+
     .print-feedback-title {
       font-size: 0.82rem;
       font-weight: 700;
       color: #0f172a;
       margin-bottom: 0.2rem;
     }
+
     .print-feedback-desc {
       font-size: 0.72rem;
       color: #64748b;
       margin-bottom: 0.4rem;
     }
+
     .print-feedback-content-box {
       background-color: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -447,16 +521,19 @@
       font-size: 10px;
       text-align: center;
     }
+
     .print-analysis-table th,
     .print-analysis-table td {
       border: 1px solid #cbd5e1;
       padding: 4px 6px;
     }
+
     .print-analysis-table th {
       background-color: #f1f5f9;
       color: #1e293b;
       font-weight: 700;
     }
+
     .print-analysis-summary-box {
       background-color: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -473,7 +550,9 @@
     }
 
     @media print {
-      html, body {
+
+      html,
+      body {
         background-color: #ffffff !important;
         color: #000000 !important;
         font-family: 'Noto Sans KR', sans-serif !important;
@@ -485,13 +564,22 @@
         height: auto !important;
         overflow: visible !important;
       }
-      
-      header, #topBar, #mobileQuickBar, main, #statusBanner, #surveyView, #toast, .print-hide, .print\:hidden {
+
+      header,
+      #topBar,
+      #mobileQuickBar,
+      main,
+      #statusBanner,
+      #surveyView,
+      #toast,
+      .print-hide,
+      .print\:hidden {
         display: none !important;
       }
 
       /* Modal and print wrapper overrides (break out of 92vh scroll container) */
-      #detailModal, #detailModal.hidden {
+      #detailModal,
+      #detailModal.hidden {
         display: block !important;
         position: static !important;
         inset: auto !important;
@@ -504,7 +592,7 @@
         overflow: visible !important;
       }
 
-      #detailModal > div {
+      #detailModal>div {
         display: block !important;
         position: static !important;
         max-width: 100% !important;
@@ -553,6 +641,7 @@
         padding-bottom: 5px !important;
         margin-bottom: 2px !important;
       }
+
       .print-header h2 {
         font-size: 19px !important;
         font-weight: 900 !important;
@@ -561,6 +650,7 @@
         margin: 0 !important;
         color: #0f172a !important;
       }
+
       .print-header .print-subtitle {
         font-size: 10.5px !important;
         color: #475569 !important;
@@ -576,7 +666,9 @@
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
-      .print-respondent-table th, .print-respondent-table td {
+
+      .print-respondent-table th,
+      .print-respondent-table td {
         border: 1px solid #0f172a !important;
         padding-top: 10px !important;
         padding-bottom: 10px !important;
@@ -586,6 +678,7 @@
         vertical-align: middle !important;
         line-height: 1.35 !important;
       }
+
       .print-respondent-table th {
         background-color: #f1f5f9 !important;
         font-weight: 700 !important;
@@ -593,6 +686,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-respondent-table td {
         font-weight: 700 !important;
         color: #0f172a !important;
@@ -607,6 +701,7 @@
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+
       .print-domain-card {
         border: 1px solid #cbd5e1 !important;
         border-radius: 6px !important;
@@ -615,21 +710,25 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-domain-title {
         font-size: 10px !important;
         font-weight: 700 !important;
       }
+
       .print-domain-score {
         font-size: 12px !important;
         font-weight: 800 !important;
         margin-top: 1px !important;
       }
+
       .print-total-score-bar {
         text-align: right !important;
         font-size: 11px !important;
         font-weight: 700 !important;
         margin-top: 3px !important;
       }
+
       .print-total-score-num {
         font-size: 13.5px !important;
         font-weight: 900 !important;
@@ -642,12 +741,14 @@
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+
       .print-page-break {
         page-break-before: always !important;
         break-before: page !important;
         margin-top: 0 !important;
         padding-top: 6px !important;
       }
+
       .print-section-header {
         display: flex !important;
         align-items: center !important;
@@ -660,21 +761,25 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-section-title-wrap {
         display: flex !important;
         align-items: baseline !important;
         gap: 6px !important;
       }
+
       .print-section-title {
         font-size: 12.5px !important;
         font-weight: 700 !important;
         color: #ffffff !important;
       }
+
       .print-section-desc {
         font-size: 10px !important;
         font-weight: 400 !important;
         color: rgba(255, 255, 255, 0.85) !important;
       }
+
       .print-section-badge {
         font-size: 9.5px !important;
         font-weight: 600 !important;
@@ -685,17 +790,41 @@
         print-color-adjust: exact !important;
       }
 
-      .print-header-awareness { background-color: #1e293b !important; }
-      .print-badge-awareness { background-color: #334155 !important; color: #f1f5f9 !important; }
+      .print-header-awareness {
+        background-color: #1e293b !important;
+      }
 
-      .print-header-usage { background-color: #1e3a8a !important; }
-      .print-badge-usage { background-color: #1d4ed8 !important; color: #eff6ff !important; }
+      .print-badge-awareness {
+        background-color: #334155 !important;
+        color: #f1f5f9 !important;
+      }
 
-      .print-header-communication { background-color: #312e81 !important; }
-      .print-badge-communication { background-color: #3730a3 !important; color: #e0e7ff !important; }
+      .print-header-usage {
+        background-color: #1e3a8a !important;
+      }
 
-      .print-header-citizenship { background-color: #134e4a !important; }
-      .print-badge-citizenship { background-color: #115e59 !important; color: #ccfbf1 !important; }
+      .print-badge-usage {
+        background-color: #1d4ed8 !important;
+        color: #eff6ff !important;
+      }
+
+      .print-header-communication {
+        background-color: #312e81 !important;
+      }
+
+      .print-badge-communication {
+        background-color: #3730a3 !important;
+        color: #e0e7ff !important;
+      }
+
+      .print-header-citizenship {
+        background-color: #134e4a !important;
+      }
+
+      .print-badge-citizenship {
+        background-color: #115e59 !important;
+        color: #ccfbf1 !important;
+      }
 
       .print-section-body {
         border: 1.2px solid #cbd5e1 !important;
@@ -705,21 +834,25 @@
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+
       .print-q-item {
         padding: 7px 10px !important;
         border-bottom: 1px solid #e2e8f0 !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+
       .print-q-item:last-child {
         border-bottom: none !important;
       }
+
       .print-q-head {
         display: flex !important;
         align-items: flex-start !important;
         gap: 6px !important;
         margin-bottom: 5px !important;
       }
+
       .print-q-badge {
         width: 18px !important;
         height: 18px !important;
@@ -736,6 +869,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-q-text {
         font-size: 11.5px !important;
         font-weight: 600 !important;
@@ -743,6 +877,7 @@
         line-height: 1.35 !important;
         margin: 0 !important;
       }
+
       .print-options-grid {
         display: grid !important;
         grid-template-columns: repeat(5, 1fr) !important;
@@ -765,10 +900,12 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-scale-btn.selected {
         background-color: #ffffff !important;
         border: 2px solid #1d4ed8 !important;
       }
+
       .print-scale-btn .score-num {
         display: flex !important;
         align-items: center !important;
@@ -786,6 +923,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-scale-btn.selected .score-num {
         background-color: #1d4ed8 !important;
         color: #ffffff !important;
@@ -794,6 +932,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-scale-btn .score-label {
         font-size: 8.5px !important;
         font-weight: 500 !important;
@@ -802,6 +941,7 @@
         color: #64748b !important;
         word-break: keep-all !important;
       }
+
       .print-scale-btn.selected .score-label {
         color: #1d4ed8 !important;
         font-weight: 800 !important;
@@ -817,17 +957,20 @@
         break-inside: avoid !important;
         margin-top: 10px !important;
       }
+
       .print-feedback-title {
         font-size: 11.5px !important;
         font-weight: 700 !important;
         color: #0f172a !important;
         margin-bottom: 3px !important;
       }
+
       .print-feedback-desc {
         font-size: 9.5px !important;
         color: #64748b !important;
         margin-bottom: 6px !important;
       }
+
       .print-feedback-content-box {
         background-color: #f8fafc !important;
         border: 1px solid #e2e8f0 !important;
@@ -841,6 +984,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-analysis-table {
         width: 100% !important;
         border-collapse: collapse !important;
@@ -849,11 +993,13 @@
         font-size: 9.5px !important;
         text-align: center !important;
       }
+
       .print-analysis-table th,
       .print-analysis-table td {
         border: 1px solid #cbd5e1 !important;
         padding: 3.5px 5px !important;
       }
+
       .print-analysis-table th {
         background-color: #f1f5f9 !important;
         color: #1e293b !important;
@@ -861,6 +1007,7 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-analysis-summary-box {
         background-color: #f8fafc !important;
         border: 1px solid #e2e8f0 !important;
@@ -884,6 +1031,7 @@
         page-break-inside: avoid !important;
         break-inside: avoid !important;
       }
+
       .print-footer-logo {
         width: 36px !important;
         height: 36px !important;
@@ -891,16 +1039,19 @@
         flex-shrink: 0 !important;
         display: inline-block !important;
       }
+
       .print-footer-text {
         text-align: left !important;
         line-height: 1.25 !important;
       }
+
       .print-footer-sub {
         font-size: 11px !important;
         font-weight: 500 !important;
         color: #64748b !important;
         letter-spacing: -0.01em !important;
       }
+
       .print-footer-title {
         font-size: 17px !important;
         font-weight: 800 !important;
@@ -910,10 +1061,13 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col font-size-normal antialiased py-3 sm:py-6 pb-28">
+
+<body
+  class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col font-size-normal antialiased py-3 sm:py-6 pb-28">
 
   <!-- TOP STICKY BAR: Progress & Font Resize (Print hidden) -->
-  <header id="topBar" class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs px-3 sm:px-6 py-2.5 max-w-4xl w-full mx-auto rounded-xl mb-4 print:hidden">
+  <header id="topBar"
+    class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs px-3 sm:px-6 py-2.5 max-w-4xl w-full mx-auto rounded-xl mb-4 print:hidden">
     <div class="flex items-center justify-between gap-3">
       <!-- Title & Progress -->
       <div class="flex-1 min-w-0">
@@ -933,10 +1087,12 @@
 
       <!-- Font Size Buttons -->
       <div class="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-lg border border-slate-200">
-        <button type="button" id="btnFontNormal" title="보통 글자 크기" class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
+        <button type="button" id="btnFontNormal" title="보통 글자 크기"
+          class="px-2 py-1 text-xs rounded font-bold transition bg-white text-slate-800 shadow-xs">
           보통
         </button>
-        <button type="button" id="btnFontLarge" title="큰 글자 크기" class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
+        <button type="button" id="btnFontLarge" title="큰 글자 크기"
+          class="px-2 py-1 text-xs rounded font-semibold text-slate-600 transition hover:text-slate-900">
           크게
         </button>
       </div>
@@ -947,7 +1103,8 @@
   <main class="print-hide flex-1 max-w-4xl w-full mx-auto p-3 sm:p-6 lg:p-8">
 
     <!-- STATUS BANNER (Alert for existing survey load or new survey) -->
-    <div id="statusBanner" class="print-hide hidden mb-6 p-3.5 sm:p-4 rounded-xl border flex items-center justify-between gap-3 shadow-xs transition-all">
+    <div id="statusBanner"
+      class="print-hide hidden mb-6 p-3.5 sm:p-4 rounded-xl border flex items-center justify-between gap-3 shadow-xs transition-all">
       <div class="flex items-center gap-3">
         <span id="statusIcon" class="text-2xl shrink-0">ℹ️</span>
         <div id="statusContent" class="text-xs sm:text-sm font-semibold"></div>
@@ -959,10 +1116,10 @@
     <!-- VIEW 1: SURVEY FORM                                            -->
     <!-- ============================================================== -->
     <div id="surveyView" class="space-y-6">
-      
+
       <!-- Survey Document Card -->
       <form id="surveyForm" class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden" novalidate>
-        
+
         <!-- Header Banner & Title -->
         <div class="border-b-4 border-blue-900 p-6 sm:p-8 bg-gradient-to-b from-blue-50/50 to-white">
           <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug">
@@ -980,7 +1137,7 @@
             <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
               ■ 응답자 일반사항
             </h3>
-            
+
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <!-- Survey Date -->
               <div>
@@ -1047,7 +1204,8 @@
           <!-- DOMAIN 1: 디지털 인식                                      -->
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="awareness">
-            <div class="bg-slate-800 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+            <div
+              class="bg-slate-800 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
               <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
                 ■ 디지털 인식
                 <span class="text-xs sm:text-sm font-normal text-slate-300">(핵심변화: 디지털에 대한 두려움 감소 및 자신감 향상)</span>
@@ -1057,11 +1215,12 @@
 
             <!-- Questions Container -->
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
-              
+
               <!-- Q1 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_1" data-q="1">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 새로운 디지털 기기에 두려움 없이 잘 적응하는 편이다.
                   </p>
@@ -1072,7 +1231,8 @@
               <!-- Q2 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_2" data-q="2">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 새로운 디지털 기기를 적극적으로 이용해 보는 편이다.
                   </p>
@@ -1083,7 +1243,8 @@
               <!-- Q3 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_3" data-q="3">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 익숙하지 않은 디지털 기기를 사용할 때도 편안하다.
                   </p>
@@ -1098,7 +1259,8 @@
           <!-- DOMAIN 2: 디지털 이용                                      -->
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="usage">
-            <div class="bg-blue-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+            <div
+              class="bg-blue-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
               <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
                 ■ 디지털 이용
                 <span class="text-xs sm:text-sm font-normal text-blue-200">(핵심변화: 생활 속 디지털 활용 능력 향상)</span>
@@ -1107,11 +1269,12 @@
             </div>
 
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
-              
+
               <!-- Q4 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_4" data-q="4">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 스마트폰에서 화면/소리/보안/알림/와이파이 등 환경설정을 할 수 있다.
                   </p>
@@ -1122,7 +1285,8 @@
               <!-- Q5 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_5" data-q="5">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">5</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">5</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 스마트폰으로 사진을 찍고, 저장할 수 있다.
                   </p>
@@ -1133,7 +1297,8 @@
               <!-- Q6 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_6" data-q="6">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">6</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">6</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 스마트폰에서 필요한 앱을 검색, 설치, 삭제 할 수 있다.
                   </p>
@@ -1144,7 +1309,8 @@
               <!-- Q7 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_7" data-q="7">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">7</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">7</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 필요한 정보를 인터넷이나 앱으로 검색할 수 있다.
                   </p>
@@ -1155,7 +1321,8 @@
               <!-- Q8 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_8" data-q="8">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">8</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">8</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     병원·식당·기차 등을 모바일로 예약할 수 있다.
                   </p>
@@ -1166,7 +1333,8 @@
               <!-- Q9 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_9" data-q="9">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">9</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">9</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 송금, 간편결제 등 디지털 금융 서비스를 사용할 수 있다.
                   </p>
@@ -1181,20 +1349,23 @@
           <!-- DOMAIN 3: 디지털 소통                                      -->
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="communication">
-            <div class="bg-indigo-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+            <div
+              class="bg-indigo-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
               <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
                 ■ 디지털 소통
                 <span class="text-xs sm:text-sm font-normal text-indigo-200">(핵심변화: 가족·사회와의 소통 확대)</span>
               </h3>
-              <span class="text-xs bg-indigo-800 text-indigo-100 px-2.5 py-0.5 rounded-full font-medium">10번 ~ 12번 문항</span>
+              <span class="text-xs bg-indigo-800 text-indigo-100 px-2.5 py-0.5 rounded-full font-medium">10번 ~ 12번
+                문항</span>
             </div>
 
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
-              
+
               <!-- Q10 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_10" data-q="10">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">10</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">10</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 메신저(카카오톡, 문자 등)을 활용하여 대화를 나누거나 사진, 파일 등을 전송할 수 있다.
                   </p>
@@ -1205,7 +1376,8 @@
               <!-- Q11 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_11" data-q="11">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">11</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">11</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 복지관·구청 등 일상생활에 필요한 안내 문자나 링크를 확인하고 활용할 수 있다.
                   </p>
@@ -1216,7 +1388,8 @@
               <!-- Q12 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_12" data-q="12">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">12</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">12</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 온라인 교육 또는 줌(Zoom) 수업에 참여 또는 활용할 수 있다.
                   </p>
@@ -1231,7 +1404,8 @@
           <!-- DOMAIN 4: 디지털 시민성                                    -->
           <!-- ========================================================= -->
           <section class="survey-section" data-domain="citizenship">
-            <div class="bg-teal-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
+            <div
+              class="bg-teal-900 text-white px-4 py-2.5 rounded-t-xl flex flex-wrap items-center justify-between gap-2">
               <h3 class="text-sm sm:text-base font-bold flex items-center gap-2">
                 ■ 디지털 시민성
                 <span class="text-xs sm:text-sm font-normal text-teal-200">(핵심변화: 안전한 디지털 사용 습관 형성)</span>
@@ -1240,11 +1414,12 @@
             </div>
 
             <div class="border border-t-0 border-slate-300 rounded-b-xl divide-y divide-slate-200 bg-white">
-              
+
               <!-- Q13 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_13" data-q="13">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">13</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">13</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 의심되는 문자나 링크를 함부로 누르지 않는다.
                   </p>
@@ -1255,7 +1430,8 @@
               <!-- Q14 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_14" data-q="14">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">14</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">14</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     다른 사람의 사진이나 정보를 허락 없이 공유하면 안 된다는 것을 알고 있다.
                   </p>
@@ -1266,7 +1442,8 @@
               <!-- Q15 -->
               <div class="question-item p-4 sm:p-5 transition hover:bg-slate-50/70" id="qBox_15" data-q="15">
                 <div class="flex items-start gap-2 mb-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">15</span>
+                  <span
+                    class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">15</span>
                   <p class="question-text text-sm sm:text-base font-semibold text-slate-900 leading-snug">
                     나는 스팸, 스미싱, 보이스피싱 등 사이버 범죄에 대응하는 방법(신고 등)을 알고 있다.
                   </p>
@@ -1297,7 +1474,8 @@
               ※ 설문지 문항참고: 어르신 맞춤형 디지털 역량 진단도구 개발연구(2022.10. / 길혜자_충북대) ※
             </p>
             <div class="flex items-center justify-center gap-3">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-10 h-10 object-contain flex-shrink-0" onerror="this.style.display='none'">
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-10 h-10 object-contain flex-shrink-0"
+                onerror="this.style.display='none'">
               <div class="text-left leading-tight">
                 <div class="text-xs text-slate-500 font-medium tracking-wide">사회복지법인 서울가톨릭사회복지회</div>
                 <div class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">시립성동노인종합복지관</div>
@@ -1319,7 +1497,8 @@
     <button type="button" id="btnSaveFloating"
       class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+          d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
       </svg>
       <span id="saveBtnText">저장</span>
     </button>
@@ -1328,8 +1507,9 @@
     <button type="button" id="btnPrintFloating"
       class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4" />
       </svg>
       <span class="hidden sm:inline">PDF 저장 / 인쇄</span>
       <span class="sm:hidden">PDF 저장</span>
@@ -1339,16 +1519,17 @@
     <button type="button" id="btnResetFloating"
       class="hidden md:inline-flex bg-slate-700 hover:bg-slate-800 text-white font-semibold py-2.5 px-3.5 sm:py-3 sm:px-5 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 items-center gap-1.5 text-xs sm:text-sm cursor-pointer whitespace-nowrap">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </svg>
-      <span>새로 작성하기</span>
+      <span>새로 작성</span>
     </button>
 
     <!-- 닫기 버튼 -->
     <button type="button" id="btnCloseFloating"
       class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base cursor-pointer whitespace-nowrap">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
       </svg>
       <span>닫기</span>
     </button>
@@ -1357,9 +1538,11 @@
   <!-- ============================================================== -->
   <!-- MODAL: SURVEY DETAIL & PRINT PREVIEW                           -->
   <!-- ============================================================== -->
-  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 hidden">
-    <div class="bg-white w-full max-w-3xl max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
-      
+  <div id="detailModal"
+    class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 hidden">
+    <div
+      class="bg-white w-full max-w-3xl max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+
       <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 print-hide">
         <div>
@@ -1367,13 +1550,21 @@
           <p class="text-xs text-slate-500" id="modalSubtitle">응답자 상세 내역</p>
         </div>
         <div class="flex items-center gap-2">
-          <button id="btnPrintDetail" type="button" class="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4"/></svg>
+          <button id="btnPrintDetail" type="button"
+            class="px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-6 4h4" />
+            </svg>
             <span class="hidden sm:inline">PDF 저장 / 인쇄</span>
             <span class="sm:hidden">PDF 저장</span>
           </button>
-          <button id="btnCloseModal" type="button" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition cursor-pointer">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <button id="btnCloseModal" type="button"
+            class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
       </div>
@@ -1386,7 +1577,8 @@
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-24 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+  <div id="toast"
+    class="fixed bottom-24 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
     <div class="bg-slate-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-xl flex items-center gap-2">
       <span id="toastIcon">✅</span>
       <span id="toastMessage">알림 메시지</span>
@@ -1517,7 +1709,7 @@
       renderScaleButtons();
       setupEventListeners();
       loadSavedFontSize();
-      
+
       // Read URL Query Parameters (?name=...&surveyor=...)
       const nameParam = (urlParams.get('name') || '').trim();
       const surveyorParam = (urlParams.get('surveyor') || '').trim();
@@ -1536,7 +1728,7 @@
 
     function initSurveyTypeUI() {
       document.title = `2027년 역량활용사업 1:1 디지털 교육 설문조사지(${typeLabel}) - 시립성동노인종합복지관`;
-      
+
       const topBarTitle = document.getElementById('topBarTitle');
       if (topBarTitle) {
         topBarTitle.textContent = `📋 2027년 1:1 디지털 교육 ${typeLabel} 설문지`;
@@ -1675,7 +1867,7 @@
       content.innerHTML = messageHtml;
       if (action) {
         if (showReset) {
-          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="ml-2 sm:ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>새로 작성하기</span></button>`;
+          action.innerHTML = `<button type="button" onclick="handleResetForm(true)" class="ml-2 sm:ml-3 text-xs sm:text-sm bg-white hover:bg-emerald-100 text-emerald-800 font-bold border border-emerald-400 px-2.5 sm:px-3 py-1.5 rounded-lg cursor-pointer transition-colors shadow-xs shrink-0 whitespace-nowrap self-center flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>새로 작성</span></button>`;
         } else {
           action.innerHTML = '';
         }
@@ -1809,7 +2001,7 @@
         if (surveyData) {
           currentSurveyId = surveyData.id;
           populateSurveyForm(surveyData);
-          
+
           const dateDisplay = surveyData.survey_date || surveyData.surveyDate || (surveyData.created_at ? surveyData.created_at.slice(0, 10) : '');
           const msg = dateDisplay
             ? `<div>[<strong>${escapeHtml(cleanName)}</strong>] 님의 <strong>사전설문지</strong>를 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(조사일: ${dateDisplay})</div>`
@@ -1964,7 +2156,7 @@
 
       try {
         localStorage.setItem('survey_font_size', size);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     function loadSavedFontSize() {
@@ -1973,7 +2165,7 @@
         if (saved && ['normal', 'large'].includes(saved)) {
           setFontSize(saved);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // -------------------------------------------------------------
@@ -2005,7 +2197,7 @@
       if (missingQuestions.length > 0) {
         const firstMissing = missingQuestions[0];
         showToast(`미응답 문항이 있습니다: [${missingQuestions.join(', ')}번]`, '⚠️');
-        
+
         const firstBox = document.getElementById(`qBox_${firstMissing}`);
         if (firstBox) {
           firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2586,9 +2778,9 @@
           </div>
           <div class="print-section-body">
             ${domainDef.qIds.map(qId => {
-              const q = QUESTIONS.find(item => item.id === qId);
-              const val = Number(survey.answers[`q${q.id}`]);
-              return `
+        const q = QUESTIONS.find(item => item.id === qId);
+        const val = Number(survey.answers[`q${q.id}`]);
+        return `
                 <div class="print-q-item">
                   <div class="print-q-head">
                     <span class="print-q-badge">${q.id}</span>
@@ -2596,18 +2788,18 @@
                   </div>
                   <div class="print-options-grid">
                     ${SCALE_OPTIONS.map(opt => {
-                      const isSelected = val === opt.value;
-                      return `
+          const isSelected = val === opt.value;
+          return `
                         <div class="print-scale-btn ${isSelected ? 'selected' : ''}">
                           <span class="score-num">${opt.value}</span>
                           <span class="score-label">${opt.displayHtml || opt.label}</span>
                         </div>
                       `;
-                    }).join('')}
+        }).join('')}
                   </div>
                 </div>
               `;
-            }).join('')}
+      }).join('')}
           </div>
         </section>
       `;
@@ -2677,9 +2869,9 @@
 
             <!-- Feedback Section (Page 2) -->
             ${isPostSurvey ? (() => {
-              const comparison = computeComparisonMetrics(loadedPreSurvey?.answers || {}, survey.answers || {});
-              const preDate = loadedPreSurvey?.survey_date || loadedPreSurvey?.surveyDate || (loadedPreSurvey?.created_at ? loadedPreSurvey.created_at.slice(0, 10) : '');
-              return `
+            const comparison = computeComparisonMetrics(loadedPreSurvey?.answers || {}, survey.answers || {});
+            const preDate = loadedPreSurvey?.survey_date || loadedPreSurvey?.surveyDate || (loadedPreSurvey?.created_at ? loadedPreSurvey.created_at.slice(0, 10) : '');
+            return `
                 <div class="print-feedback-section">
                   <div class="print-feedback-title" style="display: flex; justify-content: space-between; align-items: center;">
                     <span>■ 사전 · 사후 디지털 역량 변화 분석 (교육 효과성 평가)</span>
@@ -2746,7 +2938,7 @@
                   </div>
                 </div>
               `;
-            })() : `
+          })() : `
               <div class="print-feedback-section">
                 <div class="print-feedback-title">
                   ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
@@ -2810,4 +3002,5 @@
     }
   </script>
 </body>
+
 </html>
