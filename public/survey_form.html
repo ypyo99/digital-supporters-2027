@@ -110,9 +110,30 @@
       width: 100% !important;
     }
 
+    /* Unify exact height and vertical alignment of all respondent inputs */
+    #surveyDate,
+    #participantName,
+    #surveyorName {
+      height: 46px !important;
+      min-height: 46px !important;
+      max-height: 46px !important;
+      box-sizing: border-box !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      line-height: normal !important;
+    }
+
+    body.font-size-large #surveyDate,
+    body.font-size-large #participantName,
+    body.font-size-large #surveyorName {
+      height: 50px !important;
+      min-height: 50px !important;
+      max-height: 50px !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
     input[type="date"] {
-      min-height: 44px;
-      line-height: 1.25;
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
@@ -1265,32 +1286,32 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 w-full">
               <!-- Survey Date -->
               <div class="min-w-0 w-full">
-                <label for="surveyDate" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
-                  조사일자 <span class="text-red-500 font-bold">*</span>
+                <label for="surveyDate" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1.5 h-5 flex items-center">
+                  조사일자 <span class="text-red-500 font-bold ml-0.5">*</span>
                 </label>
                 <div class="relative w-full min-w-0">
                   <input type="date" id="surveyDate" name="surveyDate" required
-                    class="w-full max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                    class="w-full h-[46px] max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-0 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
                 </div>
                 <p class="text-[11px] text-blue-600 mt-1 leading-tight">※ 오늘 날짜가 자동으로 설정됩니다.</p>
               </div>
 
               <!-- Participant Name -->
               <div class="min-w-0 w-full">
-                <label for="participantName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
-                  참여자(성명) <span class="text-red-500 font-bold">*</span>
+                <label for="participantName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1.5 h-5 flex items-center">
+                  참여자(성명) <span class="text-red-500 font-bold ml-0.5">*</span>
                 </label>
                 <input type="text" id="participantName" name="participantName" required placeholder="성명을 입력하세요"
-                  class="w-full max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                  class="w-full h-[46px] max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-0 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
               </div>
 
               <!-- Surveyor Name -->
               <div class="min-w-0 w-full">
-                <label for="surveyorName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
+                <label for="surveyorName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1.5 h-5 flex items-center">
                   조사자(강사/담당자)
                 </label>
                 <input type="text" id="surveyorName" name="surveyorName" placeholder="조사자 이름"
-                  class="w-full max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-2 sm:py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                  class="w-full h-[46px] max-w-full min-w-0 box-border bg-white border border-slate-300 rounded-lg px-3 py-0 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
               </div>
             </div>
           </section>
