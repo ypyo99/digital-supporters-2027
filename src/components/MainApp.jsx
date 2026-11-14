@@ -142,11 +142,11 @@ const MenuGroup = ({ title, icon, children }) => (
 );
 
 // 목록형 메뉴 한 줄 (아이콘 + 이름/설명 + 화살표 또는 외부링크 표시)
-const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant }) => {
+const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant, chipColor = "chip-blue" }) => {
   const className = `menu-row${variant === 'admin' ? ' is-admin' : ''}${disabled ? ' is-disabled' : ''}`;
   const content = (
     <>
-      <span className="row-chip">{icon}</span>
+      <span className={`row-chip ${disabled ? '' : chipColor}`}>{icon}</span>
       <span className="row-text">
         <span className="row-label">{label}</span>
         {desc && <span className="row-desc">{desc}</span>}
@@ -163,9 +163,9 @@ const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant }) => {
 };
 
 // 타일형 메뉴 (2칸 나란히)
-const MenuTile = ({ icon, label, sub, onClick }) => (
+const MenuTile = ({ icon, label, sub, onClick, chipColor = "chip-blue" }) => (
   <button type="button" onClick={onClick} className="menu-tile">
-    <span className="row-chip">{icon}</span>
+    <span className={`row-chip ${chipColor}`}>{icon}</span>
     <span className="tile-text">
       <span className="row-label">{label}</span>
       {sub && <span className="row-desc">{sub}</span>}
@@ -3031,7 +3031,7 @@ export default function MainApp({
 
             {/* 공지사항 */}
             <div className="animate-fadeIn w-full">
-              <div className="bg-white ring-1 ring-gray-200/90 rounded-[1.125rem] px-3.5 sm:px-5 py-3 sm:py-4 shadow-[0_1px_2px_0_rgb(15_23_42/0.05),0_4px_12px_-8px_rgb(15_23_42/0.12)] overflow-hidden text-left touch-pan-y touch-pinch-zoom">
+              <div className="bg-white border border-slate-300 rounded-[1.25rem] px-3.5 sm:px-5 py-3.5 sm:py-4 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.08),0_1px_3px_0_rgba(15,23,42,0.04)] overflow-hidden text-left touch-pan-y touch-pinch-zoom">
                 <button
                   type="button"
                   className="flex items-center gap-2 sm:gap-2.5 w-full text-left group"
@@ -3040,8 +3040,8 @@ export default function MainApp({
                   <span className="bg-rose-500 p-1.5 rounded-lg shrink-0 shadow-sm shadow-rose-500/30 text-white">
                     <IconMegaphone className="w-4 h-4 sm:w-5 sm:h-5" />
                   </span>
-                  <span className="font-bold text-[17px] sm:text-[20px] leading-tight text-gray-900 tracking-tight">공지사항</span>
-                  <span className="ml-auto flex items-center gap-0.5 text-[14px] sm:text-[15px] font-semibold text-gray-500 group-hover:text-blue-600 transition-colors whitespace-nowrap">
+                  <span className="font-extrabold text-[17.5px] sm:text-[20px] leading-tight text-slate-900 tracking-tight">공지사항</span>
+                  <span className="ml-auto flex items-center gap-0.5 text-[14px] sm:text-[15px] font-bold text-slate-500 group-hover:text-blue-600 transition-colors whitespace-nowrap">
                     전체 보기 <IconChevronRight className="w-4 h-4" />
                   </span>
                 </button>
@@ -3056,11 +3056,11 @@ export default function MainApp({
                       const isToday = notice.start_date && notice.start_date.substring(0, 10) === getLocalDateString(new Date());
                       const textClass = isToday
                         ? (notice.is_top ? 'shine-text-top' : 'shine-text-normal')
-                        : (notice.is_top ? 'text-rose-800' : 'text-gray-700');
+                        : (notice.is_top ? 'text-rose-800' : 'text-slate-800');
                       return (
                         <p
                           key={idx}
-                          className={`${isToday || notice.is_top ? 'font-bold' : 'font-medium'} text-[14.5px] min-[380px]:text-[15.5px] sm:text-[17px] leading-snug tracking-tight whitespace-nowrap overflow-x-auto scrollbar-hide w-full block cursor-pointer hover:underline hover:opacity-80 active:scale-[0.99] transition-all`}
+                          className={`${isToday || notice.is_top ? 'font-bold' : 'font-semibold'} text-[14.5px] min-[380px]:text-[15.5px] sm:text-[17px] leading-snug tracking-tight whitespace-nowrap overflow-x-auto scrollbar-hide w-full block cursor-pointer hover:underline hover:opacity-80 active:scale-[0.99] transition-all`}
                           onClick={async (e) => {
                             e.stopPropagation();
                             const { data } = await supabaseClient.from('notices').select('*').eq('id', notice.id).single();
@@ -3076,14 +3076,14 @@ export default function MainApp({
                     })}
                   </div>
                 ) : (
-                  <p className="mt-2 text-[14.5px] sm:text-[16px] text-gray-500 font-medium">오늘 표시할 공지가 없습니다.</p>
+                  <p className="mt-2 text-[14.5px] sm:text-[16px] text-slate-500 font-semibold">오늘 표시할 공지가 없습니다.</p>
                 )}
               </div>
             </div>
 
             <div className="w-full">
-              <label className="flex items-center gap-2 text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
-              <select className={`w-full select-refined h-[52px] sm:h-[58px] md:h-[62px] px-4 border rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/70 border-blue-300 text-gray-900' : 'bg-white border-gray-200 text-gray-500'} outline-none font-bold shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
+              <label className="flex items-center gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
+              <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
                 setSelectedTeam(e.target.value);
                 setCurrentUser("");
               }}>
@@ -3093,12 +3093,12 @@ export default function MainApp({
             </div>
             {selectedTeam && (
               <div>
-                <label className="text-gray-700 font-bold mb-1.5 sm:mb-2 text-[17px] sm:text-xl tracking-tight flex justify-between items-end">
+                <label className="text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight flex justify-between items-end">
                   <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
-                  {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-semibold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
+                  {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
                 </label>
                 <div className="flex gap-2">
-                  <select className={`flex-1 select-refined min-w-0 h-[52px] sm:h-[58px] md:h-[62px] px-4 border rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/70 border-blue-300 text-gray-900' : 'bg-white border-gray-200 text-gray-500'} outline-none font-bold shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
+                  <select className={`flex-1 select-refined min-w-0 h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
                     <option value="">선생님을 선택하세요</option>
                     {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
                   </select>
@@ -3113,12 +3113,12 @@ export default function MainApp({
 
             <div className="pt-1 sm:pt-2 flex">
               {!isLoginReady ? (
-                <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,22px)] tracking-tight font-bold text-gray-400 bg-gray-200/60 ring-1 ring-inset ring-gray-200 cursor-not-allowed select-none min-h-[56px] sm:min-h-[62px]">
-                  {isFetchingSchedule ? <><Clock className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2 animate-spin" /> 데이터 확인 중...</> : <><EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기</>}
+                <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,21px)] tracking-tight font-extrabold text-slate-400 bg-slate-200/90 border border-slate-300 cursor-not-allowed select-none min-h-[58px] sm:min-h-[64px]">
+                  {isFetchingSchedule ? <><Clock className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2 animate-spin text-blue-600" /> 데이터 확인 중...</> : <><EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기</>}
                 </div>
               ) : (
-                <button onClick={handleLogin} className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,22px)] tracking-tight font-bold text-white bg-gradient-to-b from-blue-500 to-blue-600 ring-1 ring-inset ring-blue-700/20 hover:from-blue-600 hover:to-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/25 touch-manipulation min-h-[56px] sm:min-h-[62px]">
-                  <EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성
+                <button onClick={handleLogin} className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(18px,4.8vw,22px)] tracking-tight font-extrabold text-white bg-gradient-to-r from-blue-600 to-indigo-600 ring-1 ring-inset ring-blue-700/20 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/30 touch-manipulation min-h-[58px] sm:min-h-[64px]">
+                  <EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기
                 </button>
               )}
             </div>
@@ -3137,18 +3137,21 @@ export default function MainApp({
                   onNavigateToMyWeeklySchedule();
                 }}
                 icon={<CalendarIcon />}
+                chipColor="chip-blue"
                 label="나의 주간 일정"
                 desc={(!selectedTeam || !currentUser) ? (errorMessage || "팀과 선생님을 먼저 선택하세요") : "이번 주 내 수업 일정"}
               />
               <MenuRow
                 onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToDailySchedule(selectedTeam || '1팀'); }}
                 icon={<CalendarClockIcon />}
+                chipColor="chip-emerald"
                 label="팀별 오늘 일정"
                 desc="팀별 오늘 수업과 출결"
               />
               <MenuRow
                 onClick={() => { window.sessionStorage.removeItem('sungdong_daily_schedule_date'); onNavigateToTeamSchedule(selectedTeam || '1팀'); }}
                 icon={<CalendarDaysIcon />}
+                chipColor="chip-indigo"
                 label="전체 일정 보기"
                 desc="월별 전체 일정 · 엑셀 다운로드"
               />
@@ -3158,12 +3161,14 @@ export default function MainApp({
               <MenuRow
                 onClick={onNavigateToStudentSearch}
                 icon={<IconSearchUser />}
+                chipColor="chip-amber"
                 label="대상자 검색"
                 desc="이름·초성으로 수업 기록 찾기"
               />
               <MenuRow
                 href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
                 icon={<IconPeople />}
+                chipColor="chip-teal"
                 label="수업 희망자 및 기타 참여자 관리"
                 desc="구글 시트에서 열립니다"
               />
@@ -3175,12 +3180,14 @@ export default function MainApp({
                 <MenuTile
                   onClick={() => { handleLogout(); onNavigateToClassroom(); }}
                   icon={<IconClassroom />}
+                  chipColor="chip-sky"
                   label="평생교육실2"
                   sub="사용 현황"
                 />
                 <MenuTile
                   onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
                   icon={<IconStudio />}
+                  chipColor="chip-pink"
                   label="낭만스튜디오"
                   sub="사용 현황"
                 />
@@ -3194,7 +3201,7 @@ export default function MainApp({
                 aria-expanded={isAdminMenuOpen}
                 onClick={toggleAdminMenu}
               >
-                <IconLock className="w-[18px] h-[18px]" />
+                <IconLock className="w-[18px] h-[18px] text-slate-700" />
                 관리자 메뉴
                 <span className="toggle-sub">담당자 전용</span>
                 <IconChevronRight className="toggle-caret" />
@@ -3203,18 +3210,21 @@ export default function MainApp({
                 <div className="menu-list mt-2 animate-fadeIn">
                   <MenuRow
                     variant="admin"
+                    chipColor="chip-blue"
                     onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
                     icon={<UsersIcon />}
                     label="선생님 명단 관리"
                   />
                   <MenuRow
                     variant="admin"
+                    chipColor="chip-rose"
                     onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
                     icon={<IconCalendarStar />}
                     label="공휴일/휴무일 관리"
                   />
                   <MenuRow
                     variant="admin"
+                    chipColor="chip-purple"
                     onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
                     icon={<IconTimetable />}
                     label="시간표 작성"

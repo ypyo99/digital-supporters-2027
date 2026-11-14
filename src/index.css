@@ -36,37 +36,49 @@ body {
 }
 
 /* ───────── 메인 메뉴: 그룹형 목록 ───────── */
-/* 메인 화면 전체가 연회색 바탕이므로 흰 박스가 떠 보이도록 테두리·그림자 조정 */
+/* 모바일 화면에서 배경과 각 카드가 명확히 구분되도록 테두리·그림자·대비 강화 */
 .menu-backdrop .menu-list,
 .menu-backdrop .menu-tile {
-  border-color: #e3e8ef;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05), 0 4px 12px -8px rgb(15 23 42 / 0.12);
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
 }
 .menu-backdrop .admin-toggle {
-  background: rgba(255, 255, 255, 0.55);
-}
-.menu-backdrop .admin-toggle:hover {
   background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+}
+.menu-backdrop .admin-toggle:hover,
+.menu-backdrop .admin-toggle:active {
+  background: #f8fafc;
+  border-color: #94a3b8;
 }
 .menu-group + .menu-group {
-  margin-top: 1.375rem;
+  margin-top: 1.5rem;
 }
 .menu-group-title {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  margin: 0 0 0.5rem 0.25rem;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #475569;
+  gap: 0.5rem;
+  margin: 0 0 0.625rem 0.25rem;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1e293b;
+}
+.menu-group-title::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background: #2563eb;
+  border-radius: 2px;
 }
 .menu-list {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 1.125rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 1.25rem;
   overflow: hidden;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 6px 16px -10px rgb(15 23 42 / 0.12);
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
 }
 
 .menu-row {
@@ -75,10 +87,10 @@ body {
   align-items: center;
   gap: 0.875rem;
   width: 100%;
-  min-height: 66px;
-  padding: 0.75rem 1rem 0.75rem 0.75rem;
+  min-height: 70px;
+  padding: 0.875rem 1rem 0.875rem 0.875rem;
   background: #ffffff;
-  color: #1e293b;
+  color: #0f172a;
   text-align: left;
   transition: background-color .15s ease;
   -webkit-tap-highlight-color: transparent;
@@ -89,10 +101,10 @@ body {
   content: "";
   position: absolute;
   top: 0;
-  left: 4.25rem;
-  right: 0;
+  left: 4.5rem;
+  right: 0.75rem;
   height: 1px;
-  background: #edf1f6;
+  background: #e2e8f0;
 }
 .menu-row:hover {
   background: #f8fafc;
@@ -106,16 +118,71 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 0.75rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 0.875rem;
   background: #eff6ff;
   color: #2563eb;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
 }
 .row-chip svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
+
+/* 항목별 특화 컬러 칩 (시각적 구분감 극대화) */
+.chip-blue {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.chip-emerald {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+.chip-indigo {
+  background: #eef2ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+.chip-amber {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+.chip-teal {
+  background: #f0fdfa;
+  color: #0f766e;
+  border-color: #99f6e4;
+}
+.chip-sky {
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+.chip-pink {
+  background: #fdf2f8;
+  color: #be185d;
+  border-color: #fbcfe8;
+}
+.chip-purple {
+  background: #faf5ff;
+  color: #7e22ce;
+  border-color: #e9d5ff;
+}
+.chip-rose {
+  background: #fff1f2;
+  color: #be123c;
+  border-color: #fecdd3;
+}
+.chip-slate {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
 .row-text,
 .tile-text {
   flex: 1;
@@ -124,26 +191,27 @@ body {
   flex-direction: column;
 }
 .row-label {
-  font-size: clamp(17px, 4.6vw, 19px);
-  font-weight: 700;
+  font-size: clamp(17px, 4.6vw, 19.5px);
+  font-weight: 800;
   line-height: 1.3;
   letter-spacing: -0.025em;
+  color: #0f172a;
   word-break: keep-all;
 }
 .row-desc {
   margin-top: 2px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.35;
   letter-spacing: -0.01em;
-  color: #64748b;
+  color: #475569;
   word-break: keep-all;
 }
 .row-trail {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  color: #94a3b8;
+  width: 22px;
+  height: 22px;
+  color: #64748b;
   transition: transform .18s ease, color .18s ease;
 }
 .menu-row:hover .row-trail {
@@ -164,9 +232,11 @@ a.menu-row:hover .row-trail {
 .menu-row.is-disabled .row-chip {
   background: #f1f5f9;
   color: #94a3b8;
+  border-color: #e2e8f0;
 }
 .menu-row.is-disabled .row-desc {
-  color: #ea580c;
+  color: #dc2626;
+  font-weight: 700;
 }
 .menu-row.is-disabled:hover {
   background: #ffffff;
@@ -176,59 +246,62 @@ a.menu-row:hover .row-trail {
   transform: none;
 }
 
-/* 관리자 메뉴: 무채색으로 차분하게 */
+/* 관리자 메뉴 */
 .menu-row.is-admin .row-chip {
   background: #f1f5f9;
   color: #475569;
+  border-color: #cbd5e1;
 }
 .menu-row.is-admin:hover .row-trail {
-  color: #475569;
+  color: #1e293b;
 }
 
 /* 2칸 타일 */
 .menu-tiles {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.625rem;
+  gap: 0.75rem;
 }
 .menu-tile {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.625rem;
-  min-height: 112px;
-  padding: 0.875rem;
+  gap: 0.75rem;
+  min-height: 118px;
+  padding: 1rem;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 1.125rem;
-  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  border-radius: 1.25rem;
+  color: #0f172a;
   text-align: left;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 6px 16px -10px rgb(15 23 42 / 0.12);
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
   transition: border-color .15s ease, box-shadow .15s ease, transform .12s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 .menu-tile:hover {
-  border-color: #bfdbfe;
-  box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 10px 22px -12px rgb(37 99 235 / 0.35);
+  border-color: #93c5fd;
+  box-shadow: 0 4px 14px -4px rgba(37, 99, 235, 0.2);
 }
 .menu-tile:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+  background: #f8fafc;
 }
 
 /* 관리자 메뉴 펼치기 버튼 */
 .admin-toggle {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.625rem;
   width: 100%;
-  padding: 0.875rem 1rem;
-  border: 1px dashed #cbd5e1;
-  border-radius: 1rem;
-  background: transparent;
-  color: #475569;
-  font-size: 15px;
-  font-weight: 700;
+  padding: 0.95rem 1.125rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 1.125rem;
+  background: #ffffff;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
   transition: background-color .15s ease, border-color .15s ease;
 }
 .admin-toggle:hover {
@@ -236,14 +309,16 @@ a.menu-row:hover .row-trail {
   border-color: #94a3b8;
 }
 .admin-toggle .toggle-sub {
-  font-size: 13px;
-  font-weight: 500;
-  color: #94a3b8;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #64748b;
+  margin-left: 0.25rem;
 }
 .admin-toggle .toggle-caret {
   margin-left: auto;
   width: 20px;
   height: 20px;
+  color: #64748b;
   transition: transform .2s ease;
   transform: rotate(90deg);
 }

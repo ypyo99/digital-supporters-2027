@@ -201,7 +201,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
         if (error) throw error;
         alert("일정 이관이 완료되었습니다.");
         setShowTransferModal(false);
-      } catch(e) {
+      } catch (e) {
         alert("이관 오류: " + e.message);
       } finally {
         setIsLoading(false);
