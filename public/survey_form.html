@@ -249,6 +249,10 @@
       font-weight: 700;
       color: #0f172a;
     }
+    .print-respondent-table td {
+      font-weight: 700;
+      color: #0f172a;
+    }
 
     /* Print Section & Questions Styling (Matches Screen UI) */
     .print-section {
@@ -588,6 +592,10 @@
         color: #0f172a !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+      }
+      .print-respondent-table td {
+        font-weight: 700 !important;
+        color: #0f172a !important;
       }
 
       /* 3. Domain Cards */
@@ -976,32 +984,32 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <!-- Survey Date -->
               <div>
-                <label for="surveyDate" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                <label for="surveyDate" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
                   조사일자 <span class="text-red-500 font-bold">*</span>
                 </label>
                 <div class="relative">
                   <input type="date" id="surveyDate" name="surveyDate" required
-                    class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                    class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
                 </div>
                 <p class="text-[11px] text-blue-600 mt-1">※ 오늘 날짜가 자동으로 설정됩니다.</p>
               </div>
 
               <!-- Participant Name -->
               <div>
-                <label for="participantName" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                <label for="participantName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
                   참여자(성명) <span class="text-red-500 font-bold">*</span>
                 </label>
                 <input type="text" id="participantName" name="participantName" required placeholder="성명을 입력하세요"
-                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
               </div>
 
               <!-- Surveyor Name -->
               <div>
-                <label for="surveyorName" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">
+                <label for="surveyorName" class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">
                   조사자(강사/담당자)
                 </label>
                 <input type="text" id="surveyorName" name="surveyorName" placeholder="조사자 이름"
-                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-sm sm:text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-xs">
               </div>
             </div>
           </section>
@@ -2582,7 +2590,7 @@
       const subtitle = document.getElementById('modalSubtitle');
 
       if (subtitle) {
-        subtitle.textContent = `조사일자: ${survey.surveyDate} | 참여자: ${survey.participantName}`;
+        subtitle.innerHTML = `조사일자: <strong>${escapeHtml(survey.surveyDate || '')}</strong> | 참여자: <strong>${escapeHtml(survey.participantName || '')}</strong> | 조사자: <strong>${escapeHtml(survey.surveyorName || '-')}</strong>`;
       }
 
       if (content) {
@@ -2600,11 +2608,11 @@
             <table class="print-respondent-table">
               <tr>
                 <th style="width: 14%;">조사일자</th>
-                <td style="width: 20%;">${survey.surveyDate}</td>
+                <td style="width: 20%; font-weight: bold;">${escapeHtml(survey.surveyDate || '')}</td>
                 <th style="width: 20%;">참여자(성명)</th>
-                <td style="width: 20%; font-weight: bold;">${escapeHtml(survey.participantName)}</td>
+                <td style="width: 20%; font-weight: bold;">${escapeHtml(survey.participantName || '')}</td>
                 <th style="width: 13%;">조사자</th>
-                <td style="width: 13%;">${escapeHtml(survey.surveyorName || '-')}</td>
+                <td style="width: 13%; font-weight: bold;">${escapeHtml(survey.surveyorName || '-')}</td>
               </tr>
             </table>
 
