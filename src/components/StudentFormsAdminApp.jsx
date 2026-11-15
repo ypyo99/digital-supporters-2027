@@ -992,9 +992,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <span>📋 참여자 서류 관리 및 일괄 인쇄</span>
                 <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">담당복지사용</span>
               </h1>
-              <p className="text-xs text-slate-500 mt-0.5 hidden sm:block">
-                학생별 프로그램 참여 신청서, 사전 설문지, 사후 설문지 작성 여부 파악 및 기간/선택 일괄 출력
-              </p>
             </div>
           </div>
 
