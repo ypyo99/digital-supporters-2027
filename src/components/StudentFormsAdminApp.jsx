@@ -1170,43 +1170,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 </button>
               </div>
             </div>
-
-            {/* Row 3: 결합 조건 (OR/AND) 및 필터 초기화 (대상 서류 아래로 이동) */}
-            <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-200/60">
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[11px] shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setDocMatchMode('or')}
-                  className={`px-2.5 py-1 rounded font-bold transition cursor-pointer select-none ${
-                    docMatchMode === 'or' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                  title="선택한 서류 중 하나라도 해당하면 목록에 표시합니다"
-                >
-                  하나라도 해당 (OR)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDocMatchMode('and')}
-                  className={`px-2.5 py-1 rounded font-bold transition cursor-pointer select-none ${
-                    docMatchMode === 'and' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                  title="선택한 모든 서류 조건을 만족해야 목록에 표시합니다"
-                >
-                  모두 해당 (AND)
-                </button>
-              </div>
-
-              {isCustomStatusFilterActive && (
-                <button
-                  type="button"
-                  onClick={handleResetStatusFilter}
-                  className="px-2.5 py-1 text-xs text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 rounded-lg border border-slate-200 font-bold cursor-pointer transition shadow-2xs"
-                  title="작성상태 필터를 전체 보기로 초기화"
-                >
-                  필터 초기화
-                </button>
-              )}
-            </div>
           </div>
 
           {/* Date Range Picker (등록 기간 선택) */}
