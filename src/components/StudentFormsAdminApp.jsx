@@ -1095,12 +1095,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             )}
           </div>
 
-          {/* Middle Row: 2-Dimensional Multi-Select Document Status Filter */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/90 p-3 rounded-xl border border-slate-200/80">
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5">
-              {/* 1. 작성 여부 선택 (중복 선택 가능, 클릭 시 ON/OFF 토글) */}
+          {/* Middle Box: 2-Dimensional Multi-Select Document Status Filter */}
+          <div className="bg-slate-50/90 p-3 rounded-xl border border-slate-200/80 space-y-2.5">
+            {/* Row 1: 작성 구분 */}
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-700 shrink-0">작성 구분:</span>
+                <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">작성 구분:</span>
                 <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
                   <button
                     type="button"
@@ -1129,10 +1129,23 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 </div>
               </div>
 
-              {/* 2. 대상 서류 선택 (중복 선택 가능, 클릭 시 ON/OFF 토글) */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-700 shrink-0">대상 서류:</span>
-                <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
+              {isCustomStatusFilterActive && (
+                <button
+                  type="button"
+                  onClick={handleResetStatusFilter}
+                  className="px-2.5 py-1 text-xs text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 rounded-lg border border-slate-200 font-bold cursor-pointer transition shadow-2xs"
+                  title="작성상태 필터를 전체 보기로 초기화"
+                >
+                  필터 초기화
+                </button>
+              )}
+            </div>
+
+            {/* Row 2: 대상 서류 (작성구분 아래 줄로 이동) */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">대상 서류:</span>
+                <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs flex-wrap">
                   <button
                     type="button"
                     onClick={() => toggleDocType('app')}
@@ -1171,11 +1184,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   </button>
                 </div>
               </div>
-            </div>
 
-            {/* Right: 결합 조건 (AND/OR) & 초기화 */}
-            <div className="flex items-center gap-2 self-end md:self-center">
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[11px] shadow-2xs">
+              {/* 결합 조건 (AND/OR) */}
+              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[11px] shadow-2xs self-start sm:self-auto">
                 <button
                   type="button"
                   onClick={() => setDocMatchMode('or')}
@@ -1197,17 +1208,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   모두 해당 (AND)
                 </button>
               </div>
-
-              {isCustomStatusFilterActive && (
-                <button
-                  type="button"
-                  onClick={handleResetStatusFilter}
-                  className="px-2.5 py-1 text-xs text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 rounded-lg border border-slate-200 font-bold cursor-pointer transition shadow-2xs"
-                  title="작성상태 필터를 전체 보기로 초기화"
-                >
-                  필터 초기화
-                </button>
-              )}
             </div>
           </div>
 
