@@ -579,12 +579,15 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       padding: 0;
     }
 
-    body {
+    html, body {
       background-color: #f1f5f9;
       font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
       color: #1e293b;
       line-height: 1.35;
       -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none !important;
+      overscroll-behavior-y: none !important;
+      overscroll-behavior-x: none !important;
     }
 
     /* Screen Top Action Bar */
@@ -1529,6 +1532,50 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
   </div>
 
   <script>
+    // 1. 키보드 새로고침 단축키 차단 (F5, Ctrl+R, Ctrl+F5, Ctrl+Shift+R, Cmd+R)
+    window.addEventListener('keydown', function (e) {
+      if (
+        e.key === 'F5' ||
+        ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R')) ||
+        (e.ctrlKey && e.key === 'F5')
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }, true);
+
+    // 2. 모바일 터치 당겨서 새로고침(Pull-to-refresh) 제스처 차단
+    var touchStartY = 0;
+    window.addEventListener('touchstart', function (e) {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', function (e) {
+      if (e.touches && e.touches.length > 0) {
+        var currentY = e.touches[0].clientY;
+        if (window.scrollY <= 0 && currentY > touchStartY) {
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        }
+      }
+    }, { passive: false });
+
+    // 3. 마우스 우클릭 메뉴를 통한 새로고침 방지
+    window.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+    }, false);
+
+    // 4. 브라우저 주소창 새로고침 버튼 또는 창 닫기 시 안내
+    window.addEventListener('beforeunload', function (e) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       // Small timeout to allow images/fonts to render before print dialog
       setTimeout(() => {
@@ -1553,4 +1600,7 @@ export function executeBatchPrint(documentsHtml, title = '참여자_서류_일�
   printWindow.document.open();
   printWindow.document.write(fullHtml);
   printWindow.document.close();
+  try {
+    printWindow.opener = null;
+  } catch (e) {}
 }

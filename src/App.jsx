@@ -104,7 +104,11 @@ export default function App() {
               const clientVersion = Number(import.meta.env.VITE_APP_VERSION);
               if (clientVersion && serverVersion > clientVersion) {
                 console.log('새 버전이 배포되어 앱을 최신 상태로 갱신합니다.', { clientVersion, serverVersion });
-                window.location.reload(true);
+                const activeView = getSessionItem('sungdong_current_view', 'main');
+                // 서류 관리, 일정 관리 등 작업/조회 화면에서는 강제 새로고침을 하지 않고 메인 화면일 때만 갱신
+                if (activeView === 'main') {
+                  window.location.reload(true);
+                }
               }
             }
           }

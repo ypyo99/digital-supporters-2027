@@ -48,9 +48,11 @@
       box-sizing: border-box;
     }
 
-    /* Smooth Scrolling */
-    html {
+    /* Smooth Scrolling & Prevent Pull-to-refresh */
+    html, body {
       scroll-behavior: smooth;
+      overscroll-behavior: none !important;
+      overscroll-behavior-y: none !important;
     }
 
     /* Font Size Scaling for Seniors */
