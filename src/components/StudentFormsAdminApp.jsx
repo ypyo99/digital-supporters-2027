@@ -1212,47 +1212,51 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           {/* Bottom Row: Date Range & Search Input */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
             {/* Date Range Picker (등록일자 기간별 선택) */}
-            <div className="md:col-span-7 flex flex-wrap items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">등록일자 기간:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="text-slate-400 text-xs">~</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
-              />
-              <div className="flex items-center gap-1 ml-1">
+            <div className="md:col-span-7 flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">등록일자 기간:</span>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-slate-400 text-xs">~</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Quick Date Presets (등록일자 아래 줄로 이동) */}
+              <div className="flex items-center gap-1 flex-wrap">
                 <button
                   type="button"
                   onClick={() => handleDatePreset('all')}
-                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-semibold"
+                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
                 >
                   전체
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDatePreset('today')}
-                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-semibold"
+                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
                 >
                   오늘
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDatePreset('thisWeek')}
-                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-semibold"
+                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
                 >
                   이번주
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDatePreset('thisMonth')}
-                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded text-[11px] font-semibold"
+                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
                 >
                   이번달
                 </button>
