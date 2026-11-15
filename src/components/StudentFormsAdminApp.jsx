@@ -1098,35 +1098,102 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           {/* Middle Box: 2-Dimensional Multi-Select Document Status Filter */}
           <div className="bg-slate-50/90 p-3 rounded-xl border border-slate-200/80 space-y-2.5">
             {/* Row 1: 작성 구분 */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">작성 구분:</span>
-                <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => toggleSubmissionFilter('submitted')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                      filterSubmitted
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                    title={filterSubmitted ? "클릭 시 작성 완료 해제 (OFF)" : "클릭 시 작성 완료 선택 (ON)"}
-                  >
-                    <span>{filterSubmitted ? '✓ ' : ''}작성 완료</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleSubmissionFilter('unsubmitted')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                      filterUnsubmitted
-                        ? 'bg-rose-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                    title={filterUnsubmitted ? "클릭 시 미작성 해제 (OFF)" : "클릭 시 미작성 선택 (ON)"}
-                  >
-                    <span>{filterUnsubmitted ? '✓ ' : ''}미작성</span>
-                  </button>
-                </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">작성 구분:</span>
+              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => toggleSubmissionFilter('submitted')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                    filterSubmitted
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                  }`}
+                  title={filterSubmitted ? "클릭 시 작성 완료 해제 (OFF)" : "클릭 시 작성 완료 선택 (ON)"}
+                >
+                  <span>{filterSubmitted ? '✓ ' : ''}작성 완료</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleSubmissionFilter('unsubmitted')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                    filterUnsubmitted
+                      ? 'bg-rose-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                  }`}
+                  title={filterUnsubmitted ? "클릭 시 미작성 해제 (OFF)" : "클릭 시 미작성 선택 (ON)"}
+                >
+                  <span>{filterUnsubmitted ? '✓ ' : ''}미작성</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Row 2: 대상 서류 */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-200/60">
+              <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">대상 서류:</span>
+              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => toggleDocType('app')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                    selectedDocTypes.has('app')
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                  }`}
+                  title={selectedDocTypes.has('app') ? "클릭 시 신청서 해제 (OFF)" : "클릭 시 신청서 선택 (ON)"}
+                >
+                  <span>{selectedDocTypes.has('app') ? '✓ ' : ''}참여 신청서</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleDocType('pre')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                    selectedDocTypes.has('pre')
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                  }`}
+                  title={selectedDocTypes.has('pre') ? "클릭 시 사전설문 해제 (OFF)" : "클릭 시 사전설문 선택 (ON)"}
+                >
+                  <span>{selectedDocTypes.has('pre') ? '✓ ' : ''}사전 설문지</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleDocType('post')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                    selectedDocTypes.has('post')
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                  }`}
+                  title={selectedDocTypes.has('post') ? "클릭 시 사후설문 해제 (OFF)" : "클릭 시 사후설문 선택 (ON)"}
+                >
+                  <span>{selectedDocTypes.has('post') ? '✓ ' : ''}사후 설문지</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Row 3: 결합 조건 (OR/AND) 및 필터 초기화 (대상 서류 아래로 이동) */}
+            <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-200/60">
+              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[11px] shadow-2xs">
+                <button
+                  type="button"
+                  onClick={() => setDocMatchMode('or')}
+                  className={`px-2.5 py-1 rounded font-bold transition cursor-pointer select-none ${
+                    docMatchMode === 'or' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                  title="선택한 서류 중 하나라도 해당하면 목록에 표시합니다"
+                >
+                  하나라도 해당 (OR)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDocMatchMode('and')}
+                  className={`px-2.5 py-1 rounded font-bold transition cursor-pointer select-none ${
+                    docMatchMode === 'and' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                  title="선택한 모든 서류 조건을 만족해야 목록에 표시합니다"
+                >
+                  모두 해당 (AND)
+                </button>
               </div>
 
               {isCustomStatusFilterActive && (
@@ -1139,75 +1206,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   필터 초기화
                 </button>
               )}
-            </div>
-
-            {/* Row 2: 대상 서류 (작성구분 아래 줄로 이동) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">대상 서류:</span>
-                <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => toggleDocType('app')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                      selectedDocTypes.has('app')
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                    title={selectedDocTypes.has('app') ? "클릭 시 신청서 해제 (OFF)" : "클릭 시 신청서 선택 (ON)"}
-                  >
-                    <span>{selectedDocTypes.has('app') ? '✓ ' : ''}참여 신청서</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleDocType('pre')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                      selectedDocTypes.has('pre')
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                    title={selectedDocTypes.has('pre') ? "클릭 시 사전설문 해제 (OFF)" : "클릭 시 사전설문 선택 (ON)"}
-                  >
-                    <span>{selectedDocTypes.has('pre') ? '✓ ' : ''}사전 설문지</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleDocType('post')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                      selectedDocTypes.has('post')
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                    title={selectedDocTypes.has('post') ? "클릭 시 사후설문 해제 (OFF)" : "클릭 시 사후설문 선택 (ON)"}
-                  >
-                    <span>{selectedDocTypes.has('post') ? '✓ ' : ''}사후 설문지</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* 결합 조건 (AND/OR) */}
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[11px] shadow-2xs self-start sm:self-auto">
-                <button
-                  type="button"
-                  onClick={() => setDocMatchMode('or')}
-                  className={`px-2 py-0.5 rounded font-bold transition cursor-pointer ${
-                    docMatchMode === 'or' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                  title="선택한 서류 중 하나라도 해당하면 목록에 표시합니다"
-                >
-                  하나라도 해당 (OR)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDocMatchMode('and')}
-                  className={`px-2 py-0.5 rounded font-bold transition cursor-pointer ${
-                    docMatchMode === 'and' ? 'bg-slate-800 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'
-                  }`}
-                  title="선택한 모든 서류 조건을 만족해야 목록에 표시합니다"
-                >
-                  모두 해당 (AND)
-                </button>
-              </div>
             </div>
           </div>
 
