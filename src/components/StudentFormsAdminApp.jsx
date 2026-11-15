@@ -1034,68 +1034,65 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         </div>
 
         {/* 2. FILTER & SEARCH CONTROL BAR */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3.5">
-          {/* Top Row: Team Tabs & Teacher Filter */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-            {/* Team Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
-              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">소속 팀:</span>
-              {['전체', '1팀', '2팀', '3팀', '취업팀'].map(team => (
-                <button
-                  key={team}
-                  type="button"
-                  onClick={() => {
-                    setTeamFilter(team);
-                    setTeacherFilter('전체');
-                  }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
-                    teamFilter === team
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                  }`}
-                >
-                  {team}
-                </button>
-              ))}
-            </div>
-
-            {/* Teacher Dropdown */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-500 shrink-0">담당 선생님:</span>
-              <select
-                value={teacherFilter}
-                onChange={(e) => handleTeacherChange(e.target.value)}
-                disabled={teamFilter === '전체'}
-                className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${
-                  teamFilter === '전체'
-                    ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                    : teacherFilter !== '전체'
-                      ? 'bg-blue-50 border-blue-400 text-blue-800'
-                      : 'bg-white border-slate-300 text-slate-800 hover:border-blue-400'
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
+          {/* Row 1: Team Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+            <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">소속 팀:</span>
+            {['전체', '1팀', '2팀', '3팀', '취업팀'].map(team => (
+              <button
+                key={team}
+                type="button"
+                onClick={() => {
+                  setTeamFilter(team);
+                  setTeacherFilter('전체');
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
+                  teamFilter === team
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
                 }`}
               >
-                <option value="전체">
-                  {teamFilter === '전체'
-                    ? '팀을 먼저 선택하세요'
-                    : `${teamFilter} 전체 선생님 (${availableTeachers.length}명)`}
+                {team}
+              </button>
+            ))}
+          </div>
+
+          {/* Row 2: Teacher Filter (팀선택 아래줄) */}
+          <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
+            <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">담당 선생님:</span>
+            <select
+              value={teacherFilter}
+              onChange={(e) => handleTeacherChange(e.target.value)}
+              disabled={teamFilter === '전체'}
+              className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${
+                teamFilter === '전체'
+                  ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                  : teacherFilter !== '전체'
+                    ? 'bg-blue-50 border-blue-400 text-blue-800 shadow-2xs'
+                    : 'bg-white border-slate-300 text-slate-800 hover:border-blue-400'
+              }`}
+            >
+              <option value="전체">
+                {teamFilter === '전체'
+                  ? '팀을 먼저 선택하세요'
+                  : `${teamFilter} 전체 선생님 (${availableTeachers.length}명)`}
+              </option>
+              {availableTeachers.map(t => (
+                <option key={t} value={t}>
+                  {t} 선생님
                 </option>
-                {availableTeachers.map(t => (
-                  <option key={t} value={t}>
-                    {t} 선생님
-                  </option>
-                ))}
-              </select>
-              {teamFilter !== '전체' && teacherFilter !== '전체' && (
-                <button
-                  type="button"
-                  onClick={() => setTeacherFilter('전체')}
-                  className="text-[11px] text-slate-400 hover:text-rose-500 underline font-semibold cursor-pointer"
-                  title="선생님 선택 해제"
-                >
-                  해제
-                </button>
-              )}
-            </div>
+              ))}
+            </select>
+            {teamFilter !== '전체' && teacherFilter !== '전체' && (
+              <button
+                type="button"
+                onClick={() => setTeacherFilter('전체')}
+                className="text-[11px] text-slate-400 hover:text-rose-500 underline font-semibold cursor-pointer ml-1"
+                title="선생님 선택 해제"
+              >
+                해제
+              </button>
+            )}
           </div>
 
           {/* Middle Row: 2-Dimensional Multi-Select Document Status Filter */}
