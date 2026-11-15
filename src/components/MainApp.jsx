@@ -132,6 +132,13 @@ const IconChevronRight = (p) => (<svg {...svgProps} strokeWidth={2.5} {...p}><pa
 const IconExternal = (p) => (<svg {...svgProps} strokeWidth={2.3} {...p}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>);
 const IconLock = (p) => (<svg {...svgProps} {...p}><rect x="4.5" y="10.5" width="15" height="10" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" /></svg>);
 const IconCheck = (p) => (<svg {...svgProps} strokeWidth={3} {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>);
+const IconDocumentCheck = (p) => (
+  <svg {...svgProps} {...p}>
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <path d="m9 15 2 2 4-4" />
+  </svg>
+);
 
 // 메뉴 그룹 (제목 + 묶음 목록)
 const MenuGroup = ({ title, icon, children }) => (
@@ -202,7 +209,8 @@ export default function MainApp({
   onNavigateToAutoSchedule,
   onNavigateToHolidayManagement,
   onNavigateToNangmanStudio,
-  onNavigateToNoticeManagement
+  onNavigateToNoticeManagement,
+  onNavigateToStudentFormsAdmin
 }) {
   const [selectedTeam, setSelectedTeam] = useState(() => getSavedItem('sungdong_team', ""));
   const [currentUser, setCurrentUser] = useState(() => getSavedItem('sungdong_teacher', ""));
@@ -3301,6 +3309,13 @@ export default function MainApp({
 
             <MenuGroup title="대상자">
               <MenuRow
+                onClick={onNavigateToStudentFormsAdmin}
+                icon={<IconDocumentCheck />}
+                chipColor="chip-blue"
+                label="참여자 서류 관리 (신청서·설문지)"
+                desc="학생별 서류 작성 현황 파악 및 일괄 인쇄"
+              />
+              <MenuRow
                 onClick={onNavigateToStudentSearch}
                 icon={<IconSearchUser />}
                 chipColor="chip-amber"
@@ -3350,6 +3365,13 @@ export default function MainApp({
               </button>
               {isAdminMenuOpen && (
                 <div className="menu-list mt-2 animate-fadeIn">
+                  <MenuRow
+                    variant="admin"
+                    chipColor="chip-emerald"
+                    onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin(); }}
+                    icon={<IconDocumentCheck />}
+                    label="참여자 서류 관리 (신청서·설문지 일괄출력)"
+                  />
                   <MenuRow
                     variant="admin"
                     chipColor="chip-blue"

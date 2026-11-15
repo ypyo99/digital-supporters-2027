@@ -44,6 +44,7 @@ const AutoScheduleApp = lazyWithRetry(() => import('./components/AutoScheduleApp
 const HolidayManagementApp = lazyWithRetry(() => import('./components/HolidayManagementApp'));
 const NangmanStudioApp = lazyWithRetry(() => import('./components/NangmanStudioApp'));
 const NoticeManagementApp = lazyWithRetry(() => import('./components/NoticeManagementApp'));
+const StudentFormsAdminApp = lazyWithRetry(() => import('./components/StudentFormsAdminApp'));
 
 const LoadingFallback = () => (
   <div className="min-h-[100dvh] flex flex-col items-center justify-center">
@@ -144,6 +145,10 @@ export default function App() {
       return <NoticeManagementApp onNavigateBack={() => setCurrentView('main')} initialNotice={selectedNoticeForView} />;
     }
 
+    if (currentView === 'studentFormsAdmin') {
+      return <StudentFormsAdminApp onNavigateBack={() => setCurrentView('main')} />;
+    }
+
     return (
       <MainApp
         onNavigateToClassroom={() => setCurrentView('classroom')}
@@ -162,6 +167,7 @@ export default function App() {
           setCurrentView('myWeeklySchedule');
         }}
         onNavigateToStudentSearch={() => setCurrentView('studentSearch')}
+        onNavigateToStudentFormsAdmin={() => setCurrentView('studentFormsAdmin')}
         onNavigateToTeamSchedule={(team) => {
           setSelectedTeamForSchedule(team);
           setCurrentView('teamSchedule');
