@@ -7,8 +7,9 @@ import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
   setSavedItem,
-  getTeamTeacherNames,
-  fetchAllTeachersFromDb
+  formatTeacherRow,
+  setGlobalTeachersList,
+  getTeacherSortWeight
 } from '../utils/helpers';
 import {
   Home,
@@ -74,11 +75,13 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     else setLoading(true);
 
     try {
-      // 0. Fetch Teachers from DB
+      // 0. Fetch Teachers from DB (MainApp과 동일한 방식)
       try {
-        const teachersList = await fetchAllTeachersFromDb();
-        if (teachersList && teachersList.length > 0) {
-          setDbTeachers(teachersList);
+        const { data: tData, error: tErr } = await supabaseClient.from('teachers').select('*');
+        if (!tErr && tData) {
+          const formatted = tData.map(formatTeacherRow);
+          setDbTeachers(formatted);
+          setGlobalTeachersList(formatted);
         }
       } catch (err) {
         console.warn('teachers fetch error:', err);
@@ -360,56 +363,38 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
   }, [students, teamFilter, teacherFilter, statusFilter, startDate, endDate, searchTerm]);
 
   // -------------------------------------------------------------
-  // Available Teachers for the selected team
+  // Available Teachers for the selected team (MainApp fetchTeachersFromSheet와 100% 동일)
   // -------------------------------------------------------------
   const availableTeachers = useMemo(() => {
+    if (!teamFilter || teamFilter === "전체" || !Array.isArray(dbTeachers) || dbTeachers.length === 0) {
+      return [];
+    }
+
     const teacherSet = new Set();
-
-    // 1. From DB teachers
-    dbTeachers.forEach(t => {
-      if (t.is_active === false) return;
-      if (teamFilter === "전체" || t.team === teamFilter) {
+    dbTeachers
+      .filter(t => t.team === teamFilter && t.is_active !== false)
+      .forEach(t => {
+        // MainApp과 동일: 1팀 특수 제외 규칙
+        if (teamFilter === "1팀") {
+          const clean = (t.name || "").replace(/\s/g, "");
+          if (clean === "천은선" || clean === "서승희" || clean === "천은선서승희") return;
+        }
         if (t.name) teacherSet.add(t.name.trim());
-      }
+      });
+
+    // MainApp과 동일: seq_num 및 getTeacherSortWeight 기준 정렬
+    return Array.from(teacherSet).sort((a, b) => {
+      const tA = dbTeachers.find(t => t.team === teamFilter && t.name === a);
+      const tB = dbTeachers.find(t => t.team === teamFilter && t.name === b);
+      const seqA = tA && tA.seq_num !== '' && tA.seq_num !== null ? parseInt(tA.seq_num, 10) : 999;
+      const seqB = tB && tB.seq_num !== '' && tB.seq_num !== null ? parseInt(tB.seq_num, 10) : 999;
+      if (seqA !== seqB) return seqA - seqB;
+      return getTeacherSortWeight(teamFilter, a, dbTeachers) - getTeacherSortWeight(teamFilter, b, dbTeachers);
     });
-
-    // 2. From students (logs)
-    students.forEach(s => {
-      if (teamFilter === "전체" || s.team === teamFilter) {
-        if (s.teacher && s.teacher !== '-' && s.teacher !== '미배정') {
-          teacherSet.add(s.teacher.trim());
-        }
-        if (s.teachers) {
-          s.teachers.forEach(tName => {
-            if (tName && tName !== '-' && tName !== '미배정') {
-              teacherSet.add(tName.trim());
-            }
-          });
-        }
-      }
-    });
-
-    return Array.from(teacherSet).sort((a, b) => a.localeCompare(b, 'ko'));
-  }, [dbTeachers, students, teamFilter]);
-
-  const getTeacherTeam = useCallback((teacherName) => {
-    const dbT = dbTeachers.find(t => t.name === teacherName);
-    if (dbT?.team) return dbT.team;
-    const s = students.find(s => s.teacher === teacherName || (s.teachers && s.teachers.has(teacherName)));
-    return s?.team || '';
-  }, [dbTeachers, students]);
+  }, [dbTeachers, teamFilter]);
 
   const handleTeacherChange = (teacherName) => {
     setTeacherFilter(teacherName);
-    if (teacherName !== '전체' && teamFilter === '전체') {
-      const dbT = dbTeachers.find(t => t.name === teacherName);
-      if (dbT?.team) {
-        setTeamFilter(dbT.team);
-      } else {
-        const s = students.find(s => s.teacher === teacherName || (s.teachers && s.teachers.has(teacherName)));
-        if (s?.team) setTeamFilter(s.team);
-      }
-    }
   };
 
   // -------------------------------------------------------------
@@ -986,24 +971,27 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <select
                   value={teacherFilter}
                   onChange={(e) => handleTeacherChange(e.target.value)}
+                  disabled={teamFilter === '전체'}
                   className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${
-                    teacherFilter !== '전체'
-                      ? 'bg-blue-50 border-blue-400 text-blue-800'
-                      : 'bg-slate-50 border-slate-300 text-slate-800'
+                    teamFilter === '전체'
+                      ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                      : teacherFilter !== '전체'
+                        ? 'bg-blue-50 border-blue-400 text-blue-800'
+                        : 'bg-white border-slate-300 text-slate-800 hover:border-blue-400'
                   }`}
                 >
                   <option value="전체">
                     {teamFilter === '전체'
-                      ? '전체 선생님'
+                      ? '팀을 먼저 선택하세요'
                       : `${teamFilter} 전체 선생님 (${availableTeachers.length}명)`}
                   </option>
                   {availableTeachers.map(t => (
                     <option key={t} value={t}>
-                      {t} {teamFilter === '전체' ? `(${getTeacherTeam(t)})` : '선생님'}
+                      {t} 선생님
                     </option>
                   ))}
                 </select>
-                {teacherFilter !== '전체' && (
+                {teamFilter !== '전체' && teacherFilter !== '전체' && (
                   <button
                     type="button"
                     onClick={() => setTeacherFilter('전체')}
