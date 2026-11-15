@@ -994,7 +994,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               type="button"
               onClick={() => loadData(true)}
               disabled={refreshing || loading}
-              className="p-1.5 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
+              className="p-2 sm:px-2.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0 border border-slate-200/80"
               title="최신 서류 작성 데이터 다시 불러오기"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -1003,7 +1003,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             <button
               type="button"
               onClick={handleExportExcel}
-              className="p-1.5 sm:px-2.5 sm:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-xs shrink-0"
+              className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-xs shrink-0"
               title="현재 목록 엑셀 파일로 다운로드"
             >
               <DownloadIcon className="w-3.5 h-3.5 text-white" />
@@ -1012,11 +1012,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             <button
               type="button"
               onClick={onNavigateBack}
-              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0"
+              className="hdr-btn-blue text-xs flex flex-col items-center justify-center font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl shadow-md transition-all touch-manipulation shrink-0 cursor-pointer"
               title="메인 화면(처음)으로 돌아가기"
             >
-              <Home className="w-3.5 h-3.5 text-white" />
-              <span>처음으로</span>
+              <Home className="w-4 h-4 sm:w-5 sm:h-5 mb-0.5 text-white stroke-[2.2]" />
+              <span className="text-[10px] sm:text-[11px] font-extrabold text-white leading-none">처음으로</span>
             </button>
           </div>
         </div>
