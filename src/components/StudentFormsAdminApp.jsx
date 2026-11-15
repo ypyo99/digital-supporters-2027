@@ -1059,7 +1059,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
           {/* Row 2: Teacher Filter (팀선택 아래줄) */}
           <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
-            <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">담당 선생님:</span>
+            <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">선생님:</span>
             <select
               value={teacherFilter}
               onChange={(e) => handleTeacherChange(e.target.value)}
