@@ -61,6 +61,9 @@ export default function App() {
   });
   const [selectedTeamForSchedule, setSelectedTeamForSchedule] = useState(() => getSavedItem('sungdong_schedule_team', ''));
   const [selectedTeacherForWeekly, setSelectedTeacherForWeekly] = useState(() => getSavedItem('sungdong_weekly_teacher', ''));
+  const [selectedFormsTeacher, setSelectedFormsTeacher] = useState(() => getSavedItem('sungdong_teacher', ''));
+  const [selectedFormsTeam, setSelectedFormsTeam] = useState(() => getSavedItem('sungdong_team', ''));
+  const [isFormsAdminMode, setIsFormsAdminMode] = useState(false);
   const [selectedNoticeForView, setSelectedNoticeForView] = useState(null);
 
   useEffect(() => {
@@ -150,7 +153,14 @@ export default function App() {
     }
 
     if (currentView === 'studentFormsAdmin') {
-      return <StudentFormsAdminApp onNavigateBack={() => setCurrentView('main')} />;
+      return (
+        <StudentFormsAdminApp
+          onNavigateBack={() => setCurrentView('main')}
+          initialTeacher={selectedFormsTeacher || getSavedItem('sungdong_teacher', '')}
+          initialTeam={selectedFormsTeam || getSavedItem('sungdong_team', '')}
+          isAdminMode={isFormsAdminMode}
+        />
+      );
     }
 
     return (
@@ -171,7 +181,14 @@ export default function App() {
           setCurrentView('myWeeklySchedule');
         }}
         onNavigateToStudentSearch={() => setCurrentView('studentSearch')}
-        onNavigateToStudentFormsAdmin={() => setCurrentView('studentFormsAdmin')}
+        onNavigateToStudentFormsAdmin={(options = {}) => {
+          const t = options.team || getSavedItem('sungdong_team', '');
+          const th = options.teacher || getSavedItem('sungdong_teacher', '');
+          setSelectedFormsTeam(t);
+          setSelectedFormsTeacher(th);
+          setIsFormsAdminMode(!!options.isAdminMode);
+          setCurrentView('studentFormsAdmin');
+        }}
         onNavigateToTeamSchedule={(team) => {
           setSelectedTeamForSchedule(team);
           setCurrentView('teamSchedule');

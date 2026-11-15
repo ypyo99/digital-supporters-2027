@@ -26,6 +26,22 @@ import {
   executeBatchPrint
 } from '../utils/formPrintTemplates';
 
+// 비학생 일정/행사/공휴일 제외 키워드
+const EXCLUDE_STUDENT_KEYWORDS = [
+  '보조강사', '자체학습', '대상자발굴', '도선복지관', '소양교육', '간담회', '수업', '준비', '컴기초', '공휴일',
+  '근로자의날', '근로자의 날', '삼일절', '3.1절', '어린이날', '현충일', '광복절', '개천절', '한글날', '석가탄신일',
+  '부처님오신날', '성탄절', '제헌절', '추석', '설날', '신정', '대체공휴일', '지방선거일', '지방 선거일', '선거일',
+  '안전교육', '안전교율', '직무교육', '폭염기 활동', '교재 연구', '교재연구', '온라인강의', '왕초보컴퓨터', '왕초보컴퓨터반',
+  '수강자 섭외', '대체수업', '문화활동', '회의'
+];
+
+function isRealStudent(name) {
+  if (!name || typeof name !== 'string') return false;
+  const clean = name.trim();
+  if (clean.length < 2 || clean === '.' || clean === '-' || clean.startsWith('(')) return false;
+  return !EXCLUDE_STUDENT_KEYWORDS.some(kw => clean.includes(kw));
+}
+
 // 초성 검색 헬퍼
 function getSearchChoSung(name) {
   if (!name) return "";
@@ -38,7 +54,16 @@ function getSearchChoSung(name) {
   }).join('');
 }
 
-export default function StudentFormsAdminApp({ onNavigateBack }) {
+export default function StudentFormsAdminApp({
+  onNavigateBack,
+  initialTeacher = null,
+  initialTeam = null,
+  isAdminMode = false
+}) {
+  const currentSavedTeacher = (initialTeacher !== null ? initialTeacher : (getSavedItem('sungdong_teacher', '') || '')).trim();
+  const currentSavedTeam = (initialTeam !== null ? initialTeam : (getSavedItem('sungdong_team', '전체') || '전체')).trim();
+  const isTeacherView = !isAdminMode && Boolean(currentSavedTeacher);
+
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [students, setStudents] = useState([]);
@@ -48,8 +73,15 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
   // Filter States: Team & Teacher
   const [teamFilter, setTeamFilter] = useState("전체");
-  const [teacherFilter, setTeacherFilter] = useState("전체");
+  const [teacherFilter, setTeacherFilter] = useState(() => (isTeacherView && currentSavedTeacher) ? currentSavedTeacher : "전체");
   const [dbTeachers, setDbTeachers] = useState([]);
+
+  useEffect(() => {
+    if (isTeacherView && currentSavedTeacher) {
+      setTeacherFilter(currentSavedTeacher);
+      setTeamFilter("전체");
+    }
+  }, [isTeacherView, currentSavedTeacher]);
 
   // 2-Dimensional Multi-Select Status Filters
   // 1. 작성 여부: filterSubmitted (작성 완료), filterUnsubmitted (미작성)
@@ -224,14 +256,15 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         const raw = r.student || '';
         const names = raw.split(/[\/,+&]/).map(s => s.trim()).filter(Boolean);
         names.forEach(name => {
-          if (name.includes('보조강사') || name.includes('도선복지관')) return;
+          if (!isRealStudent(name)) return;
           if (!studentMap.has(name)) {
             const tSet = new Set();
-            if (r.teacher) tSet.add(r.teacher);
+            const teacherName = (r.teacher || '').trim();
+            if (teacherName) tSet.add(teacherName);
             studentMap.set(name, {
               name,
               team: r.team || '1팀',
-              teacher: r.teacher || '',
+              teacher: teacherName,
               teachers: tSet,
               firstDate: r.log_date || '',
               lastDate: r.log_date || '',
@@ -241,10 +274,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             const cur = studentMap.get(name);
             cur.lessonCount++;
             if (!cur.team && r.team) cur.team = r.team;
-            if (r.teacher) cur.teachers.add(r.teacher);
+            const teacherName = (r.teacher || '').trim();
+            if (teacherName) cur.teachers.add(teacherName);
             if (r.log_date && (!cur.lastDate || r.log_date >= cur.lastDate)) {
               cur.lastDate = r.log_date;
-              if (r.teacher) cur.teacher = r.teacher;
+              if (teacherName) cur.teacher = teacherName;
               if (r.team) cur.team = r.team;
             }
             if (r.log_date && (!cur.firstDate || r.log_date < cur.firstDate)) cur.firstDate = r.log_date;
@@ -254,7 +288,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
       // Also ensure any applicants/participants in forms who might not be in logs are included!
       const ensureIncluded = (name, formDate) => {
-        if (!name || name.includes('보조강사') || name.includes('도선복지관')) return;
+        if (!isRealStudent(name)) return;
         if (!studentMap.has(name)) {
           studentMap.set(name, {
             name,
@@ -341,7 +375,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
       // 2. Teacher filter
       if (teacherFilter !== "전체") {
-        const matchesTeacher = s.teacher === teacherFilter || (s.teachers && s.teachers.has(teacherFilter));
+        const tf = teacherFilter.trim();
+        const matchesTeacher = (s.teacher && s.teacher.trim() === tf) ||
+          (s.teachers && (s.teachers.has(tf) || Array.from(s.teachers).some(t => t.trim() === tf)));
         if (!matchesTeacher) return false;
       }
 
@@ -909,9 +945,18 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           <div className="flex items-center gap-2 min-w-0 shrink">
             <h1 className="text-lg sm:text-2xl font-black text-slate-900 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap tracking-tight">
               <span className="text-lg sm:text-2xl leading-none">📋</span>
-              <span className="hidden md:inline">참여자 서류 관리 및 일괄 인쇄</span>
+              <span className="hidden md:inline">
+                {isTeacherView ? '참여자 서류 관리' : '참여자 서류 관리 및 일괄 인쇄'}
+              </span>
               <span className="md:hidden">서류 관리</span>
             </h1>
+            {isTeacherView && teacherFilter && teacherFilter !== "전체" && (
+              <span className="text-xs sm:text-sm font-extrabold bg-blue-50 text-blue-700 border border-blue-200 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl shrink-0 flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                <span>{teacherFilter} 선생님</span>
+                <span className="text-slate-400 font-normal">({filteredStudents.length}명)</span>
+              </span>
+            )}
           </div>
 
           {/* Right: Actions */}
@@ -951,8 +996,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-5 pb-12">
 
-        {/* 1. KPI SUMMARY DASHBOARD CARDS */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
+        {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
+        {!isTeacherView && (
+          <>
+            {/* 1. KPI SUMMARY DASHBOARD CARDS */}
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
           {/* Total Students */}
           <div
             onClick={handleResetStatusFilter}
@@ -1389,6 +1437,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             </button>
           </div>
         </div>
+      </>
+    )}
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
@@ -1396,15 +1446,17 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
-                  {/* Checkbox (연번과 함께 스크롤) */}
-                  <th className="py-3 px-3 text-center w-10 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
-                    <input
-                      type="checkbox"
-                      checked={isAllFilteredSelected}
-                      onChange={handleToggleSelectAll}
-                      className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                  </th>
+                  {/* Checkbox (관리자 모드 전용) */}
+                  {!isTeacherView && (
+                    <th className="py-3 px-3 text-center w-10 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
+                      <input
+                        type="checkbox"
+                        checked={isAllFilteredSelected}
+                        onChange={handleToggleSelectAll}
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </th>
+                  )}
                   {/* Index (연번: 고정 해제) */}
                   <th className="py-3 px-3 text-center w-12 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
                     연번
@@ -1455,16 +1507,22 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
+                    <td colSpan={(!isTeacherView ? 6 : 5) + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
                       <div className="inline-block w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
                       <p className="text-xs font-semibold whitespace-nowrap">참여자 서류 데이터를 집계하는 중입니다...</p>
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
-                      <p className="text-sm font-semibold whitespace-nowrap">검색 조건에 일치하는 대상자가 없습니다.</p>
-                      <p className="text-xs text-slate-400 mt-1 whitespace-nowrap">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
+                    <td colSpan={(!isTeacherView ? 6 : 5) + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
+                      <p className="text-sm font-semibold whitespace-nowrap">
+                        {isTeacherView
+                          ? `${teacherFilter} 선생님의 담당 참여자 내역이 없습니다.`
+                          : '검색 조건에 일치하는 대상자가 없습니다.'}
+                      </p>
+                      {!isTeacherView && (
+                        <p className="text-xs text-slate-400 mt-1 whitespace-nowrap">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
+                      )}
                     </td>
                   </tr>
                 ) : (
@@ -1486,15 +1544,17 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         key={s.name}
                         className={`group transition whitespace-nowrap ${isSelected ? 'bg-blue-50/60' : 'hover:bg-slate-50/80 bg-white'}`}
                       >
-                        {/* Checkbox (연번과 함께 스크롤) */}
-                        <td className="py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => handleToggleStudent(s.name)}
-                            className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                          />
-                        </td>
+                        {/* Checkbox (관리자 모드 전용) */}
+                        {!isTeacherView && (
+                          <td className="py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleToggleStudent(s.name)}
+                              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            />
+                          </td>
+                        )}
 
                         {/* Index (연번: 고정 해제) */}
                         <td className="py-2.5 px-3 text-center text-slate-400 text-xs font-medium border-b border-slate-100 whitespace-nowrap shrink-0">

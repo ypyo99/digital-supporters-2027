@@ -3309,7 +3309,19 @@ export default function MainApp({
 
             <MenuGroup title="대상자">
               <MenuRow
-                onClick={onNavigateToStudentFormsAdmin}
+                disabled={!selectedTeam || !currentUser}
+                onClick={() => {
+                  if (!selectedTeam || !currentUser) {
+                    setErrorMessage("팀과 선생님을 먼저 선택해주세요.");
+                    setTimeout(() => setErrorMessage(""), 3000);
+                    return;
+                  }
+                  onNavigateToStudentFormsAdmin({
+                    team: selectedTeam,
+                    teacher: currentUser,
+                    isAdminMode: false
+                  });
+                }}
                 icon={<IconDocumentCheck />}
                 chipColor="chip-blue"
                 label={
@@ -3317,7 +3329,7 @@ export default function MainApp({
                     참여자 서류 관리 (신청서·설문지)
                   </span>
                 }
-                desc="학생별 서류 작성 현황 파악 및 일괄 인쇄"
+                desc={(!selectedTeam || !currentUser) ? (errorMessage || "팀과 선생님을 먼저 선택하세요") : `${currentUser} 선생님 참여자 서류`}
               />
               <MenuRow
                 onClick={onNavigateToStudentSearch}
@@ -3372,7 +3384,7 @@ export default function MainApp({
                   <MenuRow
                     variant="admin"
                     chipColor="chip-emerald"
-                    onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin(); }}
+                    onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin({ isAdminMode: true }); }}
                     icon={<IconDocumentCheck />}
                     label={
                       <>
