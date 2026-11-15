@@ -939,7 +939,7 @@ export default function StudentFormsAdminApp({
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800">
 
       {/* TOP HEADER */}
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           {/* Left: Title */}
           <div className="flex items-center gap-2 min-w-0 shrink">
@@ -994,7 +994,9 @@ export default function StudentFormsAdminApp({
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-5 pb-12">
+      <main className={`flex-1 max-w-7xl w-full mx-auto ${
+        isTeacherView ? 'p-2 sm:p-4' : 'p-3 sm:p-6 space-y-5 pb-12'
+      }`}>
 
         {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
         {!isTeacherView && (
@@ -1442,7 +1444,11 @@ export default function StudentFormsAdminApp({
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto overscroll-x-contain">
+          <div className={`overflow-x-auto overscroll-x-contain overflow-y-auto ${
+            isTeacherView
+              ? 'max-h-[calc(100dvh-75px)] sm:max-h-[calc(100dvh-95px)]'
+              : 'max-h-[75vh]'
+          }`}>
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
@@ -1492,7 +1498,7 @@ export default function StudentFormsAdminApp({
                       onTouchStart={handleResizeStart}
                       onDoubleClick={handleResetWidth}
                       title="드래그하여 이름열 너비 조절 (더블클릭 시 130px로 초기화)"
-                      className={`absolute top-0 -right-2 bottom-0 w-4 cursor-col-resize flex items-center justify-center group touch-none z-40 select-none ${isResizingActive ? 'bg-blue-100/60' : 'hover:bg-blue-50/60'
+                      className={`absolute top-0 -right-2 bottom-0 w-4 cursor-col-resize flex items-center justify-center group touch-none z-30 select-none ${isResizingActive ? 'bg-blue-100/60' : 'hover:bg-blue-50/60'
                         }`}
                     >
                       <div
@@ -1501,23 +1507,23 @@ export default function StudentFormsAdminApp({
                       />
                     </div>
                     {isResizingActive && (
-                      <div className="absolute -top-7 right-0 bg-slate-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-50">
+                      <div className="absolute -top-7 right-0 bg-slate-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-40">
                         {nameColWidth}px
                       </div>
                     )}
                   </th>
-                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap">소속 팀</th>
-                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap">등록/수업일</th>
+                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap bg-slate-50">소속 팀</th>
+                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap bg-slate-50">등록/수업일</th>
                   {selectedDocTypes.has('app') && (
-                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">① 참여 신청서</th>
+                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">① 참여 신청서</th>
                   )}
                   {selectedDocTypes.has('pre') && (
-                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">② 사전 설문지</th>
+                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">② 사전 설문지</th>
                   )}
                   {selectedDocTypes.has('post') && (
-                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">③ 사후 설문지</th>
+                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">③ 사후 설문지</th>
                   )}
-                  <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">개별 출력</th>
+                  <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">개별 출력</th>
                 </tr>
               </thead>
               <tbody>
@@ -1731,7 +1737,7 @@ export default function StudentFormsAdminApp({
       {/* BATCH PRINT CONFIGURATION MODAL                                */}
       {/* ============================================================== */}
       {isPrintModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-fadeIn">
             {/* Modal Header */}
             <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
