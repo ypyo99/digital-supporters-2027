@@ -829,22 +829,29 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       margin-bottom: 0px;
     }
     #applicantTable th, #applicantTable td {
-      padding: 6.5px 8px;
+      padding: 6.5px 7px;
       font-size: 12px;
-      line-height: 1.3;
+      line-height: 1.35;
       border: 1px solid #111111;
+      word-break: keep-all;
     }
     #applicantTable th {
       background-color: #e5e7eb;
       font-weight: 700;
       text-align: center;
       color: #111111;
+      white-space: nowrap;
+      word-break: keep-all;
     }
     #applyRouteGrid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 4px 10px;
       font-size: 11.5px;
+      word-break: keep-all;
+    }
+    #applyRouteGrid div {
+      white-space: nowrap;
     }
     #hopeServiceList {
       display: flex;
@@ -854,29 +861,41 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     .service-item {
       display: flex;
       align-items: baseline;
-      gap: 6px;
+      flex-wrap: wrap;
+      gap: 2px 6px;
+      word-break: keep-all;
     }
     .service-item .service-name {
       font-size: 12px;
       font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .service-item .service-desc {
       font-size: 11px;
       color: #4b5563;
+      word-break: keep-all;
     }
     #hopeDaysList {
       display: flex;
-      gap: 16px;
+      flex-wrap: wrap;
+      gap: 8px 16px;
       font-size: 12px;
       font-weight: 600;
       padding: 2px 0;
     }
+    #hopeDaysList span {
+      white-space: nowrap;
+    }
     #hopeTimeList {
       display: flex;
-      flex-direction: row;
-      gap: 20px;
+      flex-wrap: wrap;
+      gap: 6px 20px;
       font-size: 12px;
       padding: 2px 0;
+    }
+    #hopeTimeList span {
+      white-space: nowrap;
     }
     #memoCell {
       height: 64px;
@@ -897,11 +916,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       font-size: 13px;
       font-weight: 700;
       margin-bottom: 4px;
+      word-break: keep-all;
     }
     .privacy-law {
       font-size: 10.5px;
       margin-bottom: 4px;
       color: #4b5563;
+      word-break: keep-all;
     }
     .privacy-table {
       width: 100%;
@@ -911,12 +932,15 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     .privacy-table th, .privacy-table td {
       padding: 4.5px 6px;
       font-size: 11px;
-      line-height: 1.25;
+      line-height: 1.3;
       border: 1px solid #111111;
+      word-break: keep-all;
     }
     .privacy-table th {
       background-color: #e5e7eb;
       font-weight: 700;
+      white-space: nowrap;
+      word-break: keep-all;
     }
     .consent-radios {
       display: flex;
@@ -927,10 +951,14 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       margin-top: 3px;
       margin-bottom: 4px;
     }
+    .consent-radios span {
+      white-space: nowrap;
+    }
     #portraitHeader {
       margin-top: 10px;
       margin-bottom: 3px;
       font-size: 13px;
+      word-break: keep-all;
     }
     #consentNotice {
       text-align: center;
@@ -939,6 +967,7 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       line-height: 1.35;
       color: #334155;
       font-weight: 600;
+      word-break: keep-all;
     }
     #signatureSection {
       margin-top: 0px;
@@ -952,6 +981,10 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       justify-content: center;
       gap: 8px;
       font-weight: 600;
+      white-space: nowrap;
+    }
+    #dateRow span {
+      white-space: nowrap;
     }
     #signerRow {
       display: flex;
@@ -960,6 +993,10 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       gap: 8px;
       font-size: 15px;
       padding-right: 12px;
+      word-break: keep-all;
+    }
+    #signerRow span {
+      white-space: nowrap;
     }
     #printFooterLogo {
       display: flex;
@@ -1337,14 +1374,45 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         height: auto !important;
         min-height: auto !important;
         max-height: none !important;
-        padding: 16px 12px !important;
+        padding: 14px 10px !important;
         gap: 14px !important;
         justify-content: flex-start !important;
       }
       .doc-page-survey {
         width: 100% !important;
         min-height: auto !important;
-        padding: 16px 12px !important;
+        padding: 14px 10px !important;
+      }
+
+      /* 모바일/스마트폰 화면에서 6열 테이블 비율 최적화 (첫번째 라벨열 줄바꿈 절대 방지) */
+      #applicantTable colgroup col:nth-child(1) { width: 70px !important; }
+      #applicantTable colgroup col:nth-child(2) { width: auto !important; }
+      #applicantTable colgroup col:nth-child(3) { width: 44px !important; }
+      #applicantTable colgroup col:nth-child(4) { width: auto !important; }
+      #applicantTable colgroup col:nth-child(5) { width: 68px !important; }
+      #applicantTable colgroup col:nth-child(6) { width: auto !important; }
+
+      #applicantTable th, #applicantTable td {
+        font-size: 11px !important;
+        padding: 5px 4px !important;
+      }
+      #applyRouteGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 3px 6px;
+        font-size: 10.5px;
+      }
+      .service-item .service-name {
+        font-size: 11px !important;
+      }
+      .service-item .service-desc {
+        font-size: 10px !important;
+      }
+    }
+
+    @media screen and (max-width: 440px) {
+      #applyRouteGrid {
+        grid-template-columns: 1fr;
+        gap: 3px;
       }
     }
 
