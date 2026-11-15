@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <style>
         /* 웹 폰트 적용 */
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
         body {
             font-family: 'Pretendard', sans-serif;
             background-color: #f3f4f6;
@@ -16,7 +18,8 @@
         }
 
         /* 입력 필드 기본 스타일 */
-        input[type="text"], textarea {
+        input[type="text"],
+        textarea {
             width: 100%;
             padding: 4px 8px;
             outline: none;
@@ -24,16 +27,22 @@
         }
 
         @media screen {
-            input[type="text"], textarea {
-                background-color: #e0f2fe !important; /* 화면 입력칸 하늘색 배경 */
+
+            input[type="text"],
+            textarea {
+                background-color: #e0f2fe !important;
+                /* 화면 입력칸 하늘색 배경 */
             }
-            
-            input[type="text"]:focus, textarea:focus {
-                background-color: #bae6fd !important; /* 포커스 시 진한 하늘색 */
+
+            input[type="text"]:focus,
+            textarea:focus {
+                background-color: #bae6fd !important;
+                /* 포커스 시 진한 하늘색 */
             }
-            
+
             canvas#signaturePad {
-                background-color: #e0f2fe !important; /* 서명칸 하늘색 배경 */
+                background-color: #e0f2fe !important;
+                /* 서명칸 하늘색 배경 */
             }
         }
 
@@ -51,13 +60,17 @@
             border-collapse: collapse;
             table-layout: fixed;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #111;
             padding: 8px;
             vertical-align: middle;
         }
+
         th {
-            background-color: #e5e7eb; /* PC 테이블 헤더 배경 (Gray-200) */
+            background-color: #e5e7eb;
+            /* PC 테이블 헤더 배경 (Gray-200) */
             font-weight: 600;
             text-align: center;
         }
@@ -68,14 +81,17 @@
                 padding: 0 !important;
                 background-color: #ffffff;
             }
+
             .page-container {
                 border: none !important;
                 box-shadow: none !important;
                 padding: 1.25rem 1rem !important;
             }
+
             #docTitle {
                 margin-bottom: 1.5rem !important;
             }
+
             #docTitle .title-project {
                 display: block !important;
                 white-space: nowrap !important;
@@ -85,6 +101,7 @@
                 color: #111827 !important;
                 line-height: 1.35 !important;
             }
+
             #docTitle .title-main {
                 display: block !important;
                 white-space: nowrap !important;
@@ -92,24 +109,35 @@
                 letter-spacing: -0.025em !important;
                 line-height: 1.3 !important;
             }
-            table, thead, tbody, tr, th, td {
+
+            table,
+            thead,
+            tbody,
+            tr,
+            th,
+            td {
                 display: block;
                 width: 100% !important;
             }
-            table { border: none !important; }
-            
+
+            table {
+                border: none !important;
+            }
+
             /* 메인 테이블 모바일 카드 형태 */
-            .page-container > table > tbody > tr {
+            .page-container>table>tbody>tr {
                 display: flex;
                 flex-direction: column;
                 margin-bottom: 1.25rem;
                 border: 1px solid #cbd5e1 !important;
                 border-radius: 0.75rem;
-                box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
                 overflow: hidden;
             }
-            .page-container > table > tbody > tr > th {
-                background-color: #e2e8f0; /* 모바일 항목 제목 배경 (Slate-200) */
+
+            .page-container>table>tbody>tr>th {
+                background-color: #e2e8f0;
+                /* 모바일 항목 제목 배경 (Slate-200) */
                 border: none !important;
                 border-bottom: 1px solid #cbd5e1 !important;
                 text-align: left;
@@ -118,42 +146,60 @@
                 font-weight: 700;
                 color: #1e293b;
             }
-            .page-container > table > tbody > tr > th:not(:first-child) {
+
+            .page-container>table>tbody>tr>th:not(:first-child) {
                 border-top: 1px solid #cbd5e1 !important;
             }
-            .page-container > table > tbody > tr > td {
+
+            .page-container>table>tbody>tr>td {
                 border: none !important;
                 border-bottom: 1px solid #e2e8f0 !important;
                 padding: 1.25rem !important;
                 text-align: left !important;
             }
-            .page-container > table > tbody > tr > td:last-child {
+
+            .page-container>table>tbody>tr>td:last-child {
                 border-bottom: none !important;
             }
 
             /* 요소 넘침 방지 및 터치 최적화 */
-            .page-container > table .whitespace-nowrap { white-space: normal !important; }
-            input[type="text"].inline-input { 
+            .page-container>table .whitespace-nowrap {
+                white-space: normal !important;
+            }
+
+            input[type="text"].inline-input {
                 max-width: 100%;
             }
 
             /* 터치하기 편하도록 체크박스, 라디오 크기 확대 */
-            input[type="checkbox"], input[type="radio"] {
+            input[type="checkbox"],
+            input[type="radio"] {
                 width: 1.25rem;
                 height: 1.25rem;
             }
-            .form-checkbox, .form-radio {
+
+            .form-checkbox,
+            .form-radio {
                 margin-top: 0.125rem;
             }
-            
+
             /* 개인정보 수집 및 이용 동의 모바일 최적화 */
-            .bg-gray-50 table tr { margin-bottom: 0; border: none !important; box-shadow: none; }
-            .bg-gray-50 thead { display: none; }
+            .bg-gray-50 table tr {
+                margin-bottom: 0;
+                border: none !important;
+                box-shadow: none;
+            }
+
+            .bg-gray-50 thead {
+                display: none;
+            }
+
             .bg-gray-50 tbody td {
                 padding: 0.5rem 0 !important;
                 border-bottom: 1px dashed #e5e7eb !important;
                 text-align: left !important;
             }
+
             .bg-gray-50 tbody td:before {
                 display: block;
                 font-weight: 600;
@@ -161,10 +207,22 @@
                 font-size: 0.875rem;
                 margin-bottom: 0.25rem;
             }
-            .privacy-item-1:before { content: "항목 :"; }
-            .privacy-item-2:before { content: "목적 :"; }
-            .privacy-item-3:before { content: "이용 및 보유기간 :"; }
-            .privacy-item-3 { border-bottom: none !important; }
+
+            .privacy-item-1:before {
+                content: "항목 :";
+            }
+
+            .privacy-item-2:before {
+                content: "목적 :";
+            }
+
+            .privacy-item-3:before {
+                content: "이용 및 보유기간 :";
+            }
+
+            .privacy-item-3 {
+                border-bottom: none !important;
+            }
 
             /* 하단 서명란 모바일 최적화 */
             canvas#signaturePad {
@@ -181,7 +239,9 @@
         }
 
         @media print {
-            html, body {
+
+            html,
+            body {
                 background-color: #ffffff !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -231,11 +291,13 @@
                 margin-bottom: 0px !important;
                 line-height: 1.35 !important;
             }
+
             #docTitle .title-project {
                 font-size: 15px !important;
                 font-weight: 600 !important;
                 color: #111111 !important;
             }
+
             #docTitle .title-main {
                 font-size: 24px !important;
                 font-weight: 800 !important;
@@ -255,7 +317,8 @@
                 width: 100% !important;
             }
 
-            #applicantTable th, #applicantTable td {
+            #applicantTable th,
+            #applicantTable td {
                 padding: 6.5px 8px !important;
                 font-size: 12px !important;
                 line-height: 1.3 !important;
@@ -278,12 +341,15 @@
             #hopeServiceList {
                 gap: 5px !important;
             }
+
             .service-item .service-br {
                 display: none !important;
             }
+
             .service-item .service-name {
                 font-size: 12px !important;
             }
+
             .service-item .service-desc {
                 display: inline !important;
                 font-size: 11px !important;
@@ -297,12 +363,14 @@
                 font-size: 12px !important;
                 padding: 2px 0 !important;
             }
+
             #hopeTimeList {
                 flex-direction: row !important;
                 gap: 20px !important;
                 font-size: 12px !important;
                 padding: 2px 0 !important;
             }
+
             #hopeTimeList input.inline-input {
                 width: 130px !important;
                 font-size: 12px !important;
@@ -313,6 +381,7 @@
                 height: 64px !important;
                 padding: 6px 8px !important;
             }
+
             #memoCell textarea {
                 height: 52px !important;
                 font-size: 11.5px !important;
@@ -327,45 +396,55 @@
                 border: 1px solid #111111 !important;
                 background-color: transparent !important;
             }
+
             #privacyInner {
                 padding: 12px 14px !important;
                 border: none !important;
                 background-color: transparent !important;
             }
+
             .privacy-head {
                 font-size: 13px !important;
                 font-weight: 700 !important;
                 margin-bottom: 4px !important;
             }
+
             .privacy-law {
                 font-size: 10.5px !important;
                 margin-bottom: 4px !important;
                 color: #4b5563 !important;
             }
+
             .privacy-table {
                 margin-bottom: 5px !important;
                 width: 100% !important;
             }
-            .privacy-table th, .privacy-table td {
+
+            .privacy-table th,
+            .privacy-table td {
                 padding: 4.5px 6px !important;
                 font-size: 11px !important;
                 line-height: 1.25 !important;
                 border: 1px solid #111111 !important;
             }
+
             .privacy-table th {
                 background-color: #e5e7eb !important;
             }
+
             .consent-radios {
                 margin-top: 3px !important;
                 margin-bottom: 4px !important;
                 gap: 16px !important;
                 font-size: 11.5px !important;
             }
+
             #portraitHeader {
                 margin-top: 10px !important;
                 margin-bottom: 3px !important;
                 font-size: 13px !important;
             }
+
             #consentNotice {
                 margin-top: 8px !important;
                 font-size: 10.5px !important;
@@ -377,20 +456,24 @@
                 margin-top: 0px !important;
                 font-size: 14.5px !important;
             }
+
             #dateRow {
                 margin-bottom: 12px !important;
                 font-size: 15px !important;
                 gap: 8px !important;
             }
+
             #dateRow input {
                 font-size: 15px !important;
                 width: 36px !important;
                 padding: 0 2px !important;
                 text-align: center !important;
             }
+
             #dateRow input#signYear {
                 width: 56px !important;
             }
+
             #signerRow {
                 padding-bottom: 0 !important;
                 margin-bottom: 0 !important;
@@ -398,6 +481,7 @@
                 font-size: 15px !important;
                 gap: 8px !important;
             }
+
             #signerRow input {
                 font-size: 15px !important;
                 width: 100px !important;
@@ -411,32 +495,42 @@
                 margin-bottom: 0px !important;
                 gap: 12px !important;
             }
+
             #printFooterLogo img {
                 width: 38px !important;
                 height: 38px !important;
             }
+
             #printFooterLogo .org-sub {
                 font-size: 11.5px !important;
             }
+
             #printFooterLogo .org-title {
                 font-size: 18px !important;
                 font-weight: 800 !important;
             }
 
             /* 6. 공통 폼 컨트롤 스타일 */
-            input, textarea, canvas {
+            input,
+            textarea,
+            canvas {
                 border: none !important;
                 background-color: transparent !important;
                 background: transparent !important;
                 color: #111111 !important;
                 outline: none !important;
             }
+
             input[type="text"] {
                 font-size: 12px !important;
             }
-            .inline-input, input.inline-input, input[type="text"].inline-input {
+
+            .inline-input,
+            input.inline-input,
+            input[type="text"].inline-input {
                 border-bottom: 1px solid #111111 !important;
             }
+
             canvas#signaturePad {
                 width: 175px !important;
                 height: 48px !important;
@@ -444,40 +538,53 @@
                 border-bottom: 1px solid #111111 !important;
                 background-color: transparent !important;
             }
-            input[type="checkbox"], input[type="radio"] {
+
+            input[type="checkbox"],
+            input[type="radio"] {
                 width: 14px !important;
                 height: 14px !important;
             }
+
             /* 인쇄 시 미입력 플레이스홀더 텍스트 숨김 (손글씨용 빈칸) */
-            input::placeholder, textarea::placeholder {
+            input::placeholder,
+            textarea::placeholder {
                 color: transparent !important;
             }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body class="p-4 md:p-8">
 
     <!-- 플로팅 작업 버튼 그룹 (중앙 정렬: 저장하기 & 인쇄하기 & 닫기, 인쇄 시 숨김) -->
     <div class="print-hide fixed bottom-6 left-1/2 -translate-x-1/2 sm:bottom-8 flex items-center gap-2 sm:gap-3 z-50">
-        <button id="btnSave" type="button" onclick="handleSave()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-emerald-500 whitespace-nowrap">
-            <svg id="saveIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        <button id="btnSave" type="button" onclick="handleSave()"
+            class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-emerald-500 whitespace-nowrap">
+            <svg id="saveIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>
             <span id="saveBtnText">저장</span>
         </button>
 
-        <button id="btnPrint" type="button" onclick="handlePrint()" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-blue-500 whitespace-nowrap">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        <button id="btnPrint" type="button" onclick="handlePrint()"
+            class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-2.5 px-3.5 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-blue-500 whitespace-nowrap">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-6 4h4" />
             </svg>
             <span class="hidden sm:inline">PDF 저장 / 인쇄</span>
             <span class="sm:hidden">PDF 저장</span>
         </button>
 
-        <button type="button" onclick="handleClose()" class="bg-gray-700 hover:bg-gray-800 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-gray-600 whitespace-nowrap">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button type="button" onclick="handleClose()"
+            class="bg-gray-700 hover:bg-gray-800 active:scale-95 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-6 rounded-full shadow-xl transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer text-sm sm:text-base border border-gray-600 whitespace-nowrap">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
             <span>닫기</span>
@@ -486,18 +593,24 @@
 
     <!-- 문서 컨테이너 -->
     <div class="page-container max-w-4xl mx-auto bg-white p-4 sm:p-8 md:p-12 shadow-xl border border-gray-200">
-        
+
         <!-- 신청서 조회 상태 알림 배너 (인쇄 시 숨김) -->
-        <div id="loadStatusBanner" class="hidden print-hide mb-5 p-3 sm:p-4 rounded-xl text-sm sm:text-base font-semibold flex items-center justify-between shadow-sm border"></div>
+        <div id="loadStatusBanner"
+            class="hidden print-hide mb-5 p-3 sm:p-4 rounded-xl text-sm sm:text-base font-semibold flex items-center justify-between shadow-sm border">
+        </div>
 
         <!-- 제목 -->
         <h1 id="docTitle" class="text-center mb-6 md:mb-8 leading-tight">
-            <span class="title-project block text-base sm:text-lg md:text-xl font-bold text-gray-900 tracking-tight whitespace-nowrap">2027년 노인일자리 및 사회활동지원사업(역량활용)</span>
-            <span class="title-main block text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2 tracking-tight whitespace-nowrap">프로그램 참여 신청서</span>
+            <span
+                class="title-project block text-base sm:text-lg md:text-xl font-bold text-gray-900 tracking-tight whitespace-nowrap">2027년
+                노인일자리 및 사회활동지원사업(역량활용)</span>
+            <span
+                class="title-main block text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2 tracking-tight whitespace-nowrap">프로그램
+                참여 신청서</span>
         </h1>
 
         <div id="applicantSubTitle" class="text-sm font-semibold mb-2">프로그램 참여 신청자 정보</div>
-        
+
         <!-- 1. 신청자 정보 테이블 -->
         <table id="applicantTable" class="mb-8">
             <colgroup>
@@ -525,12 +638,14 @@
                         </label>
                     </td>
                     <th colspan="1" class="text-sm px-1 leading-tight">연락처<br class="hidden md:block">(휴대폰)</th>
-                    <td colspan="1"><input type="text" id="applicantPhone" value="010-" placeholder="010-0000-0000" maxlength="13"></td>
+                    <td colspan="1"><input type="text" id="applicantPhone" value="010-" placeholder="010-0000-0000"
+                            maxlength="13"></td>
                 </tr>
                 <!-- 주소 -->
                 <tr>
                     <th>주 소</th>
-                    <td colspan="5"><input type="text" id="applicantAddress" value="서울시 성동구 " placeholder="상세주소를 입력해주세요"></td>
+                    <td colspan="5"><input type="text" id="applicantAddress" value="서울시 성동구 "
+                            placeholder="상세주소를 입력해주세요"></td>
                 </tr>
                 <!-- 신청경로 -->
                 <tr>
@@ -538,32 +653,40 @@
                     <td colspan="5" class="py-3">
                         <div id="applyRouteGrid" class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="apply_route" value="성동구치매안심센터 소개" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="성동구치매안심센터 소개"
+                                    class="form-checkbox h-4 w-4">
                                 <span class="ml-2">성동구치매안심센터 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="apply_route" value="성동정신건강복지센터 소개" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="성동정신건강복지센터 소개"
+                                    class="form-checkbox h-4 w-4">
                                 <span class="ml-2">성동정신건강복지센터 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="apply_route" value="대한노인회 소개" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="대한노인회 소개"
+                                    class="form-checkbox h-4 w-4">
                                 <span class="ml-2">대한노인회 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="apply_route" value="복지관 소개" class="form-checkbox h-4 w-4" checked>
+                                <input type="checkbox" name="apply_route" value="복지관 소개" class="form-checkbox h-4 w-4"
+                                    checked>
                                 <span class="ml-2">복지관 소개</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="apply_route" value="생활지원사 소개" class="form-checkbox h-4 w-4">
-                                <span class="ml-2 whitespace-nowrap">생활지원사 소개(<input type="text" id="routeHelperDetail" class="inline-input">)</span>
+                                <input type="checkbox" name="apply_route" value="생활지원사 소개"
+                                    class="form-checkbox h-4 w-4">
+                                <span class="ml-2 whitespace-nowrap">생활지원사 소개(<input type="text" id="routeHelperDetail"
+                                        class="inline-input">)</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="apply_route" value="지인 소개(가족,친구,이웃 등)" class="form-checkbox h-4 w-4">
+                                <input type="checkbox" name="apply_route" value="지인 소개(가족,친구,이웃 등)"
+                                    class="form-checkbox h-4 w-4">
                                 <span class="ml-2">지인 소개(가족,친구,이웃 등)</span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer">
                                 <input type="checkbox" name="apply_route" value="기타" class="form-checkbox h-4 w-4">
-                                <span class="ml-2 whitespace-nowrap">기타(<input type="text" id="routeOtherDetail" class="inline-input" style="width: 120px;">)</span>
+                                <span class="ml-2 whitespace-nowrap">기타(<input type="text" id="routeOtherDetail"
+                                        class="inline-input" style="width: 120px;">)</span>
                             </label>
                         </div>
                     </td>
@@ -575,16 +698,19 @@
                         <div id="hopeServiceList" class="flex flex-col gap-3 text-sm">
                             <label class="cursor-pointer service-item">
                                 <div class="flex items-start">
-                                    <input type="checkbox" name="hope_service" value="마음이음 프로그램" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
+                                    <input type="checkbox" name="hope_service" value="마음이음 프로그램"
+                                        class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
                                     <div>
                                         <span class="font-bold service-name">마음이음 프로그램</span><br class="service-br">
-                                        <span class="text-gray-600 service-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을 지원)</span>
+                                        <span class="text-gray-600 service-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을
+                                            지원)</span>
                                     </div>
                                 </div>
                             </label>
                             <label class="cursor-pointer service-item">
                                 <div class="flex items-start">
-                                    <input type="checkbox" name="hope_service" value="기억돌봄 프로그램" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
+                                    <input type="checkbox" name="hope_service" value="기억돌봄 프로그램"
+                                        class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0">
                                     <div>
                                         <span class="font-bold service-name">기억돌봄 프로그램</span><br class="service-br">
                                         <span class="text-gray-600 service-desc">(인지활동 프로그램 운영을 통해 치매 예방 지원)</span>
@@ -593,10 +719,13 @@
                             </label>
                             <label class="cursor-pointer service-item">
                                 <div class="flex items-start">
-                                    <input type="checkbox" name="hope_service" value="스마트폰 프로그램(1:1 맞춤형)" class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0" checked>
+                                    <input type="checkbox" name="hope_service" value="스마트폰 프로그램(1:1 맞춤형)"
+                                        class="form-checkbox h-4 w-4 mt-1 mr-2 flex-shrink-0" checked>
                                     <div>
-                                        <span class="font-bold service-name">스마트폰 프로그램(1:1 맞춤형)</span><br class="service-br">
-                                        <span class="text-gray-600 service-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소 지원)</span>
+                                        <span class="font-bold service-name">스마트폰 프로그램(1:1 맞춤형)</span><br
+                                            class="service-br">
+                                        <span class="text-gray-600 service-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소
+                                            지원)</span>
                                     </div>
                                 </div>
                             </label>
@@ -608,11 +737,21 @@
                     <th>희망요일</th>
                     <td colspan="5" class="py-3">
                         <div id="hopeDaysList" class="flex flex-wrap gap-4 md:gap-6 text-sm">
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="월" class="form-checkbox h-4 w-4"><span class="ml-2">월</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="화" class="form-checkbox h-4 w-4"><span class="ml-2">화</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="수" class="form-checkbox h-4 w-4"><span class="ml-2">수</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="목" class="form-checkbox h-4 w-4"><span class="ml-2">목</span></label>
-                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox" name="hope_days" value="금" class="form-checkbox h-4 w-4"><span class="ml-2">금</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    name="hope_days" value="월" class="form-checkbox h-4 w-4"><span
+                                    class="ml-2">월</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    name="hope_days" value="화" class="form-checkbox h-4 w-4"><span
+                                    class="ml-2">화</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    name="hope_days" value="수" class="form-checkbox h-4 w-4"><span
+                                    class="ml-2">수</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    name="hope_days" value="목" class="form-checkbox h-4 w-4"><span
+                                    class="ml-2">목</span></label>
+                            <label class="inline-flex items-center cursor-pointer"><input type="checkbox"
+                                    name="hope_days" value="금" class="form-checkbox h-4 w-4"><span
+                                    class="ml-2">금</span></label>
                         </div>
                     </td>
                 </tr>
@@ -622,12 +761,16 @@
                     <td colspan="5" class="py-3">
                         <div id="hopeTimeList" class="flex flex-col md:flex-row gap-4 md:gap-8 text-sm">
                             <label class="inline-flex items-center cursor-pointer whitespace-nowrap">
-                                <input type="checkbox" id="hopeTimeMorningCheck" name="hope_time_morning_check" class="form-checkbox h-4 w-4">
-                                <span class="ml-2">오전: <input type="text" id="hopeTimeMorning" class="inline-input" style="width: 150px;" placeholder="예: 09:00~12:00"></span>
+                                <input type="checkbox" id="hopeTimeMorningCheck" name="hope_time_morning_check"
+                                    class="form-checkbox h-4 w-4">
+                                <span class="ml-2">오전: <input type="text" id="hopeTimeMorning" class="inline-input"
+                                        style="width: 150px;" placeholder="예: 09:00~12:00"></span>
                             </label>
                             <label class="inline-flex items-center cursor-pointer whitespace-nowrap">
-                                <input type="checkbox" id="hopeTimeAfternoonCheck" name="hope_time_afternoon_check" class="form-checkbox h-4 w-4">
-                                <span class="ml-2">오후: <input type="text" id="hopeTimeAfternoon" class="inline-input" style="width: 150px;" placeholder="예: 13:00~16:00"></span>
+                                <input type="checkbox" id="hopeTimeAfternoonCheck" name="hope_time_afternoon_check"
+                                    class="form-checkbox h-4 w-4">
+                                <span class="ml-2">오후: <input type="text" id="hopeTimeAfternoon" class="inline-input"
+                                        style="width: 150px;" placeholder="예: 13:00~16:00"></span>
                             </label>
                         </div>
                     </td>
@@ -637,7 +780,9 @@
                     <th>비 고</th>
                     <td id="memoCell" colspan="5" class="h-20 align-top">
                         <div class="relative h-full w-full">
-                            <textarea id="applicantMemo" class="w-full h-full p-2 resize-none bg-transparent outline-none text-sm placeholder-gray-400" placeholder="ex.) 귀가 잘 안들림, 시력이 좋지 않음, 한글을 모름 등"></textarea>
+                            <textarea id="applicantMemo"
+                                class="w-full h-full p-2 resize-none bg-transparent outline-none text-sm placeholder-gray-400"
+                                placeholder="ex.) 귀가 잘 안들림, 시력이 좋지 않음, 한글을 모름 등"></textarea>
                         </div>
                     </td>
                 </tr>
@@ -649,7 +794,7 @@
             <div id="privacyInner" class="border border-gray-800 p-4 bg-white">
                 <div class="font-bold text-base mb-2 privacy-head">■ [필수] 개인정보 수집 및 이용 동의</div>
                 <div class="text-sm mb-2 text-gray-700 privacy-law">관련 법규 : 개인정보 보호법 제15조, 제22조, 제23조</div>
-                
+
                 <table class="text-sm mb-3 privacy-table">
                     <colgroup>
                         <col style="width: 30%;">
@@ -683,7 +828,7 @@
                 </div>
 
                 <div id="portraitHeader" class="font-bold text-base mb-2 mt-6 privacy-head">■ [선택] 초상권 활용 동의</div>
-                
+
                 <table class="text-sm mb-3 privacy-table">
                     <colgroup>
                         <col style="width: 30%;">
@@ -700,7 +845,8 @@
                     <tbody>
                         <tr>
                             <td class="text-center privacy-item-1">프로그램 참여 사진, 동영상</td>
-                            <td class="text-center privacy-item-2">복지관 홈페이지 게재, 유튜브,<br class="hidden md:block">홍보물 제작 등</td>
+                            <td class="text-center privacy-item-2">복지관 홈페이지 게재, 유튜브,<br class="hidden md:block">홍보물 제작 등
+                            </td>
                             <td class="text-center privacy-item-3">사용 목적<br class="hidden md:block">종료 시까지</td>
                         </tr>
                     </tbody>
@@ -726,20 +872,27 @@
         <!-- 하단 서명란 -->
         <div id="signatureSection" class="mt-12 text-center text-lg">
             <div id="dateRow" class="mb-8 flex justify-center items-center gap-1.5 md:gap-3">
-                <input type="text" id="signYear" class="inline-input text-center text-lg !w-[65px] md:!w-[75px]" placeholder="년도"><span>년</span>
-                <input type="text" id="signMonth" class="inline-input text-center text-lg !w-[40px] md:!w-[48px]" placeholder="월"><span>월</span>
-                <input type="text" id="signDay" class="inline-input text-center text-lg !w-[40px] md:!w-[48px]" placeholder="일"><span>일</span>
+                <input type="text" id="signYear" class="inline-input text-center text-lg !w-[65px] md:!w-[75px]"
+                    placeholder="년도"><span>년</span>
+                <input type="text" id="signMonth" class="inline-input text-center text-lg !w-[40px] md:!w-[48px]"
+                    placeholder="월"><span>월</span>
+                <input type="text" id="signDay" class="inline-input text-center text-lg !w-[40px] md:!w-[48px]"
+                    placeholder="일"><span>일</span>
             </div>
-            
+
             <div id="signerRow" class="flex justify-center md:justify-end items-end md:mr-8 gap-2 flex-wrap pb-8">
                 <span class="mb-1">신청자 :</span>
                 <!-- 키보드 입력용 이름 칸 -->
-                <input type="text" id="signerName" class="inline-input text-center text-lg !w-[100px] md:!w-[120px]" placeholder="이름 입력">
+                <input type="text" id="signerName" class="inline-input text-center text-lg !w-[100px] md:!w-[120px]"
+                    placeholder="이름 입력">
                 <!-- 마우스/터치 서명용 캔버스 (높이 50% 확대 및 배경색 적용) -->
                 <div class="relative inline-block">
-                    <canvas id="signaturePad" width="240" height="75" class="border-b border-gray-500 cursor-crosshair touch-none"></canvas>
+                    <canvas id="signaturePad" width="240" height="75"
+                        class="border-b border-gray-500 cursor-crosshair touch-none"></canvas>
                     <div class="absolute top-full left-0 w-full flex justify-center mt-1">
-                        <button type="button" id="clearSignature" class="text-xs text-gray-500 print-hide hover:text-gray-900 border border-gray-300 rounded px-2 py-0.5 bg-gray-50 active:bg-gray-200 whitespace-nowrap">서명 지우기</button>
+                        <button type="button" id="clearSignature"
+                            class="text-xs text-gray-500 print-hide hover:text-gray-900 border border-gray-300 rounded px-2 py-0.5 bg-gray-50 active:bg-gray-200 whitespace-nowrap">서명
+                            지우기</button>
                     </div>
                 </div>
                 <span class="text-gray-500 text-base mb-1">(서명)</span>
@@ -748,7 +901,8 @@
 
         <!-- 로고 및 기관명 영역 -->
         <div class="mt-16 flex justify-center items-center gap-3 print-hide">
-             <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-11 h-11 object-contain" onerror="this.style.display='none'">
+            <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-11 h-11 object-contain"
+                onerror="this.style.display='none'">
             <div class="text-center">
                 <div class="text-xs text-gray-500 tracking-wider">사회복지법인 서울가톨릭사회복지회</div>
                 <div class="text-xl font-bold text-gray-800 tracking-tight">시립성동노인종합복지관</div>
@@ -756,9 +910,10 @@
         </div>
         <!-- 인쇄용 로고 (텍스트 및 이미지) -->
         <div id="printFooterLogo" class="hidden print:flex mt-16 justify-center items-center gap-3">
-             <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-12 h-12 object-contain">
-             <div class="text-center">
-                <div id="printLogoSub" class="text-sm font-semibold tracking-wider text-gray-700 org-sub">사회복지법인 서울가톨릭사회복지회</div>
+            <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" class="w-12 h-12 object-contain">
+            <div class="text-center">
+                <div id="printLogoSub" class="text-sm font-semibold tracking-wider text-gray-700 org-sub">사회복지법인
+                    서울가톨릭사회복지회</div>
                 <div id="printLogoTitle" class="text-2xl font-bold tracking-tight org-title">시립성동노인종합복지관</div>
             </div>
         </div>
@@ -817,7 +972,7 @@
             const coords = getCoordinates(e);
             ctx.beginPath();
             ctx.moveTo(coords.x, coords.y);
-            if (e.type && e.type.includes('touch')) e.preventDefault(); 
+            if (e.type && e.type.includes('touch')) e.preventDefault();
         }
 
         function draw(e) {
@@ -887,7 +1042,7 @@
             const banner = document.getElementById('loadStatusBanner');
             if (!banner) return;
             banner.className = 'print-hide mb-5 p-3.5 sm:p-4 rounded-xl text-sm sm:text-base font-semibold flex items-center justify-between shadow-sm transition-all ';
-            
+
             if (type === 'loading') {
                 banner.className += 'bg-blue-50 border-blue-200 text-blue-900 animate-pulse';
                 banner.innerHTML = `<div class="flex items-start gap-2.5"><svg class="animate-spin h-5 w-5 text-blue-600 shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg><div class="leading-snug">${message}</div></div>`;
@@ -1042,7 +1197,7 @@
             if (otherDetail) otherDetail.value = '';
             document.querySelectorAll('input[name="hope_service"]').forEach(cb => cb.checked = (cb.value === '스마트폰 프로그램(1:1 맞춤형)'));
             document.querySelectorAll('input[name="hope_days"]').forEach(cb => cb.checked = false);
-            
+
             const mCheck = document.getElementById('hopeTimeMorningCheck');
             const mInput = document.getElementById('hopeTimeMorning');
             const aCheck = document.getElementById('hopeTimeAfternoonCheck');
@@ -1100,7 +1255,7 @@
                 try {
                     const localBackup = JSON.parse(localStorage.getItem('application_forms_backup') || '[]');
                     row = localBackup.find(item => item.applicant_name === cleanName) || null;
-                } catch (e) {}
+                } catch (e) { }
             }
 
             if (row) {
@@ -1108,7 +1263,7 @@
                 populateFormData(row);
                 updatePrintTitle();
                 const dateDisplay = row.sign_date || (row.created_at ? row.created_at.slice(0, 10) : '');
-                const msg = dateDisplay 
+                const msg = dateDisplay
                     ? `<div>[${cleanName}] 님의 신청서를 불러왔습니다.</div><div class="text-xs sm:text-sm text-emerald-700 font-medium mt-1">(저장일: ${dateDisplay})</div>`
                     : `<div>[${cleanName}] 님의 신청서를 불러왔습니다.</div>`;
                 showStatusBanner('success', msg, true);
@@ -1322,7 +1477,7 @@
                         });
                         ch.close();
                     }
-                } catch (e) {}
+                } catch (e) { }
 
                 if (!supabaseClient) {
                     throw new Error('Supabase 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
@@ -1386,4 +1541,5 @@
         });
     </script>
 </body>
+
 </html>

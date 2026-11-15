@@ -994,461 +994,459 @@ export default function StudentFormsAdminApp({
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className={`flex-1 max-w-7xl w-full mx-auto ${
-        isTeacherView ? 'p-2 sm:p-4' : 'p-3 sm:p-6 space-y-5 pb-12'
-      }`}>
+      <main className={`flex-1 max-w-7xl w-full mx-auto ${isTeacherView ? 'p-2 sm:p-4' : 'p-3 sm:p-6 space-y-5 pb-12'
+        }`}>
 
         {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
         {!isTeacherView && (
           <>
             {/* 1. KPI SUMMARY DASHBOARD CARDS */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
-          {/* Total Students */}
-          <div
-            onClick={handleResetStatusFilter}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${!isCustomStatusFilterActive
-                ? "bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm"
-                : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
-              }`}
-          >
-            <div className="text-xs font-bold text-slate-600">
-              {teacherFilter !== "전체"
-                ? `${teacherFilter} 선생님 대상자`
-                : teamFilter === "전체"
-                  ? "전체 대상자"
-                  : `${teamFilter} 대상자`}
-            </div>
-            <div className="text-2xl font-black mt-1 text-slate-900">
-              {stats.total}
-              <span className="text-sm font-normal ml-0.5 text-slate-500">
-                명
-              </span>
-            </div>
-            <div className="text-[11px] mt-0.5 text-blue-600 font-medium">
-              {teacherFilter !== "전체"
-                ? `클릭 시 ${teacherFilter} 선생님 전체 보기`
-                : teamFilter === "전체"
-                  ? "클릭 시 전체 보기"
-                  : `클릭 시 ${teamFilter} 전체 보기`}
-            </div>
-          </div>
-
-          {/* Application Status */}
-          <div
-            onClick={() => {
-              setFilterSubmitted(false);
-              setFilterUnsubmitted(true);
-              setSelectedDocTypes(new Set(['app']));
-              setDocMatchMode('or');
-            }}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app'))
-                ? "bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500 ring-offset-2 shadow-md"
-                : "bg-white border-slate-200 text-slate-800 hover:border-blue-300 hover:shadow-xs"
-              }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-blue-600"}`}>
-                신청서 작성
-              </span>
-              <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
+              {/* Total Students */}
+              <div
+                onClick={handleResetStatusFilter}
+                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${!isCustomStatusFilterActive
+                  ? "bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm"
+                  : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
                   }`}
               >
-                {stats.appPct}%
-              </span>
-            </div>
-            <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-slate-900"}`}>
-              {stats.appCount}
-              <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-blue-100" : "text-slate-500"}`}>
-                / {stats.total}명
-              </span>
-            </div>
-            <div
-              className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-amber-200" : "text-rose-500"
-                }`}
-            >
-              미작성: {stats.total - stats.appCount}명
-            </div>
-          </div>
+                <div className="text-xs font-bold text-slate-600">
+                  {teacherFilter !== "전체"
+                    ? `${teacherFilter} 선생님 대상자`
+                    : teamFilter === "전체"
+                      ? "전체 대상자"
+                      : `${teamFilter} 대상자`}
+                </div>
+                <div className="text-2xl font-black mt-1 text-slate-900">
+                  {stats.total}
+                  <span className="text-sm font-normal ml-0.5 text-slate-500">
+                    명
+                  </span>
+                </div>
+                <div className="text-[11px] mt-0.5 text-blue-600 font-medium">
+                  {teacherFilter !== "전체"
+                    ? `클릭 시 ${teacherFilter} 선생님 전체 보기`
+                    : teamFilter === "전체"
+                      ? "클릭 시 전체 보기"
+                      : `클릭 시 ${teamFilter} 전체 보기`}
+                </div>
+              </div>
 
-          {/* Pre-Survey Status */}
-          <div
-            onClick={() => {
-              setFilterSubmitted(false);
-              setFilterUnsubmitted(true);
-              setSelectedDocTypes(new Set(['pre']));
-              setDocMatchMode('or');
-            }}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre'))
-                ? "bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500 ring-offset-2 shadow-md"
-                : "bg-white border-slate-200 text-slate-800 hover:border-indigo-300 hover:shadow-xs"
-              }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-indigo-600"}`}>
-                사전설문 작성
-              </span>
-              <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
-                  }`}
-              >
-                {stats.prePct}%
-              </span>
-            </div>
-            <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-slate-900"}`}>
-              {stats.preCount}
-              <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-indigo-100" : "text-slate-500"}`}>
-                / {stats.total}명
-              </span>
-            </div>
-            <div
-              className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-amber-200" : "text-rose-500"
-                }`}
-            >
-              미작성: {stats.total - stats.preCount}명
-            </div>
-          </div>
-
-          {/* Post-Survey Status */}
-          <div
-            onClick={() => {
-              setFilterSubmitted(false);
-              setFilterUnsubmitted(true);
-              setSelectedDocTypes(new Set(['post']));
-              setDocMatchMode('or');
-            }}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post'))
-                ? "bg-purple-600 text-white border-purple-600 ring-2 ring-purple-500 ring-offset-2 shadow-md"
-                : "bg-white border-slate-200 text-slate-800 hover:border-purple-300 hover:shadow-xs"
-              }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-purple-600"}`}>
-                사후설문 작성
-              </span>
-              <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
-                  }`}
-              >
-                {stats.postPct}%
-              </span>
-            </div>
-            <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-slate-900"}`}>
-              {stats.postCount}
-              <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-purple-100" : "text-slate-500"}`}>
-                / {stats.total}명
-              </span>
-            </div>
-            <div
-              className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-amber-200" : "text-rose-500"
-                }`}
-            >
-              미작성: {stats.total - stats.postCount}명
-            </div>
-          </div>
-
-          {/* All Completed */}
-          <div
-            onClick={() => {
-              setFilterSubmitted(true);
-              setFilterUnsubmitted(false);
-              setSelectedDocTypes(new Set(['app', 'pre', 'post']));
-              setDocMatchMode('and');
-            }}
-            className={`col-span-2 sm:col-span-1 p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and')
-                ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500 ring-offset-2 shadow-md"
-                : "bg-white border-slate-200 text-slate-800 hover:border-emerald-300 hover:shadow-xs"
-              }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className={`text-xs font-bold ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-emerald-700"}`}>
-                3종 완결
-              </span>
-              <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
-                  }`}
-              >
-                {stats.allPct}%
-              </span>
-            </div>
-            <div className={`text-2xl font-black mt-1 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-slate-900"}`}>
-              {stats.allCount}
-              <span className={`text-sm font-normal ml-1 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"}`}>
-                / {stats.total}명
-              </span>
-            </div>
-            <div
-              className={`text-[11px] font-semibold mt-0.5 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"
-                }`}
-            >
-              신청서+사전+사후 완료
-            </div>
-          </div>
-        </div>
-
-        {/* 2. FILTER & SEARCH CONTROL BAR */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
-          {/* Row 1: Team Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-            <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">소속 팀:</span>
-            {['전체', '1팀', '2팀', '3팀', '취업팀'].map(team => (
-              <button
-                key={team}
-                type="button"
+              {/* Application Status */}
+              <div
                 onClick={() => {
-                  setTeamFilter(team);
-                  setTeacherFilter('전체');
+                  setFilterSubmitted(false);
+                  setFilterUnsubmitted(true);
+                  setSelectedDocTypes(new Set(['app']));
+                  setDocMatchMode('or');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${teamFilter === team
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app'))
+                  ? "bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500 ring-offset-2 shadow-md"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-blue-300 hover:shadow-xs"
                   }`}
               >
-                {team}
-              </button>
-            ))}
-          </div>
-
-          {/* Row 2: Teacher Filter (팀선택 아래줄) */}
-          <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
-            <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">선생님:</span>
-            <select
-              value={teacherFilter}
-              onChange={(e) => handleTeacherChange(e.target.value)}
-              disabled={teamFilter === '전체'}
-              className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${teamFilter === '전체'
-                  ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                  : teacherFilter !== '전체'
-                    ? 'bg-blue-50 border-blue-400 text-blue-800 shadow-2xs'
-                    : 'bg-white border-slate-300 text-slate-800 hover:border-blue-400'
-                }`}
-            >
-              <option value="전체">
-                {teamFilter === '전체'
-                  ? '팀을 먼저 선택하세요'
-                  : `${teamFilter} 전체 선생님 (${availableTeachers.length}명)`}
-              </option>
-              {availableTeachers.map(t => (
-                <option key={t} value={t}>
-                  {t} 선생님
-                </option>
-              ))}
-            </select>
-            {teamFilter !== '전체' && teacherFilter !== '전체' && (
-              <button
-                type="button"
-                onClick={() => setTeacherFilter('전체')}
-                className="text-[11px] text-slate-400 hover:text-rose-500 underline font-semibold cursor-pointer ml-1"
-                title="선생님 선택 해제"
-              >
-                해제
-              </button>
-            )}
-          </div>
-
-          {/* Middle Box: 2-Dimensional Multi-Select Document Status Filter */}
-          <div className="bg-slate-50/90 p-3 rounded-xl border border-slate-200/80 space-y-2.5">
-            {/* Row 1: 작성 구분 */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">작성 구분:</span>
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => toggleSubmissionFilter('submitted')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${filterSubmitted
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                  title={filterSubmitted ? "클릭 시 작성 완료 해제 (OFF)" : "클릭 시 작성 완료 선택 (ON)"}
-                >
-                  <span>{filterSubmitted ? '✓ ' : ''}작성 완료</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleSubmissionFilter('unsubmitted')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${filterUnsubmitted
-                      ? 'bg-rose-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                  title={filterUnsubmitted ? "클릭 시 미작성 해제 (OFF)" : "클릭 시 미작성 선택 (ON)"}
-                >
-                  <span>{filterUnsubmitted ? '✓ ' : ''}미작성</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Row 2: 대상 서류 */}
-            <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pt-2 border-t border-slate-200/60 pb-0.5">
-              <span className="text-xs font-bold text-slate-700 shrink-0 mr-1 whitespace-nowrap">대상 서류:</span>
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs whitespace-nowrap shrink-0">
-                <button
-                  type="button"
-                  onClick={() => toggleDocType('app')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('app')
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                  title={selectedDocTypes.has('app') ? "클릭 시 신청서 해제 (OFF)" : "클릭 시 신청서 선택 (ON)"}
-                >
-                  <span>{selectedDocTypes.has('app') ? '✓ ' : ''}참여 신청서</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleDocType('pre')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('pre')
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                  title={selectedDocTypes.has('pre') ? "클릭 시 사전설문 해제 (OFF)" : "클릭 시 사전설문 선택 (ON)"}
-                >
-                  <span>{selectedDocTypes.has('pre') ? '✓ ' : ''}사전 설문지</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleDocType('post')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('post')
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                    }`}
-                  title={selectedDocTypes.has('post') ? "클릭 시 사후설문 해제 (OFF)" : "클릭 시 사후설문 선택 (ON)"}
-                >
-                  <span>{selectedDocTypes.has('post') ? '✓ ' : ''}사후 설문지</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Date Range Picker (등록 기간 선택) */}
-          <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-0.5">
-              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1 whitespace-nowrap">등록 기간:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  setDatePreset('');
-                }}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 shrink-0"
-              />
-              <span className="text-slate-400 text-xs shrink-0">~</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  setDatePreset('');
-                }}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 shrink-0"
-              />
-            </div>
-
-            {/* Quick Date Presets (선택된 버튼 파란색 배경 표시) */}
-            <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap pb-0.5">
-              {[
-                { id: 'all', label: '전체' },
-                { id: 'today', label: '오늘' },
-                { id: 'thisWeek', label: '이번주' },
-                { id: 'thisMonth', label: '이번달' },
-              ].map(p => {
-                const isSelected = datePreset === p.id || (p.id === 'all' && !startDate && !endDate);
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => handleDatePreset(p.id)}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none whitespace-nowrap shrink-0 ${isSelected
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-blue-600"}`}>
+                    신청서 작성
+                  </span>
+                  <span
+                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
                       }`}
                   >
-                    {p.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                    {stats.appPct}%
+                  </span>
+                </div>
+                <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-slate-900"}`}>
+                  {stats.appCount}
+                  <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-blue-100" : "text-slate-500"}`}>
+                    / {stats.total}명
+                  </span>
+                </div>
+                <div
+                  className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-amber-200" : "text-rose-500"
+                    }`}
+                >
+                  미작성: {stats.total - stats.appCount}명
+                </div>
+              </div>
 
-          {/* Search Input (등록일자 기간 아래로 이동) */}
-          <div className="relative pt-1">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="학생 이름 또는 초성 검색 (예: 권미희, ㄱㅁㅎ)"
-              className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 transition shadow-2xs"
-            />
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={() => setSearchTerm('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+              {/* Pre-Survey Status */}
+              <div
+                onClick={() => {
+                  setFilterSubmitted(false);
+                  setFilterUnsubmitted(true);
+                  setSelectedDocTypes(new Set(['pre']));
+                  setDocMatchMode('or');
+                }}
+                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre'))
+                  ? "bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500 ring-offset-2 shadow-md"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-indigo-300 hover:shadow-xs"
+                  }`}
               >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-indigo-600"}`}>
+                    사전설문 작성
+                  </span>
+                  <span
+                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
+                      }`}
+                  >
+                    {stats.prePct}%
+                  </span>
+                </div>
+                <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-slate-900"}`}>
+                  {stats.preCount}
+                  <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-indigo-100" : "text-slate-500"}`}>
+                    / {stats.total}명
+                  </span>
+                </div>
+                <div
+                  className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-amber-200" : "text-rose-500"
+                    }`}
+                >
+                  미작성: {stats.total - stats.preCount}명
+                </div>
+              </div>
 
-        {/* 3. TABLE TOOLBAR (Selection Summary & Action Buttons) */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
-            <label className="inline-flex items-center cursor-pointer select-none whitespace-nowrap shrink-0">
-              <input
-                type="checkbox"
-                checked={isAllFilteredSelected}
-                onChange={handleToggleSelectAll}
-                className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-              />
-              <span className="ml-2 text-xs font-bold text-slate-700 whitespace-nowrap">현재 목록 전체 선택 ({filteredStudents.length}명)</span>
-            </label>
-            {selectedStudentNames.size > 0 && (
-              <span className="text-xs bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
-                선택됨: {selectedStudentNames.size}명
-              </span>
-            )}
-          </div>
+              {/* Post-Survey Status */}
+              <div
+                onClick={() => {
+                  setFilterSubmitted(false);
+                  setFilterUnsubmitted(true);
+                  setSelectedDocTypes(new Set(['post']));
+                  setDocMatchMode('or');
+                }}
+                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post'))
+                  ? "bg-purple-600 text-white border-purple-600 ring-2 ring-purple-500 ring-offset-2 shadow-md"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-purple-300 hover:shadow-xs"
+                  }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-purple-600"}`}>
+                    사후설문 작성
+                  </span>
+                  <span
+                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
+                      }`}
+                  >
+                    {stats.postPct}%
+                  </span>
+                </div>
+                <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-slate-900"}`}>
+                  {stats.postCount}
+                  <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-purple-100" : "text-slate-500"}`}>
+                    / {stats.total}명
+                  </span>
+                </div>
+                <div
+                  className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-amber-200" : "text-rose-500"
+                    }`}
+                >
+                  미작성: {stats.total - stats.postCount}명
+                </div>
+              </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
-            {/* Selected Students Batch Print */}
-            <button
-              type="button"
-              onClick={() => handleOpenPrintModal('selected')}
-              disabled={selectedStudentNames.size === 0}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0 ${selectedStudentNames.size > 0
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                }`}
-              title="선택한 학생들의 서류를 하나의 PDF/인쇄물로 일괄 출력합니다"
-            >
-              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-              </svg>
-              <span className="whitespace-nowrap">선택 학생 일괄 인쇄 ({selectedStudentNames.size}명)</span>
-            </button>
+              {/* All Completed */}
+              <div
+                onClick={() => {
+                  setFilterSubmitted(true);
+                  setFilterUnsubmitted(false);
+                  setSelectedDocTypes(new Set(['app', 'pre', 'post']));
+                  setDocMatchMode('and');
+                }}
+                className={`col-span-2 sm:col-span-1 p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and')
+                  ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500 ring-offset-2 shadow-md"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-emerald-300 hover:shadow-xs"
+                  }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-bold ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-emerald-700"}`}>
+                    3종 완결
+                  </span>
+                  <span
+                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
+                      }`}
+                  >
+                    {stats.allPct}%
+                  </span>
+                </div>
+                <div className={`text-2xl font-black mt-1 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-slate-900"}`}>
+                  {stats.allCount}
+                  <span className={`text-sm font-normal ml-1 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"}`}>
+                    / {stats.total}명
+                  </span>
+                </div>
+                <div
+                  className={`text-[11px] font-semibold mt-0.5 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"
+                    }`}
+                >
+                  신청서+사전+사후 완료
+                </div>
+              </div>
+            </div>
 
-            {/* Filtered All Batch Print */}
-            <button
-              type="button"
-              onClick={() => handleOpenPrintModal('filtered')}
-              disabled={filteredStudents.length === 0}
-              className="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0"
-              title="현재 검색 및 기간 필터에 나타난 전체 학생의 서류를 일괄 인쇄합니다"
-            >
-              <span className="whitespace-nowrap">기간/검색결과 전체 인쇄 ({filteredStudents.length}명)</span>
-            </button>
-          </div>
-        </div>
-      </>
-    )}
+            {/* 2. FILTER & SEARCH CONTROL BAR */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
+              {/* Row 1: Team Tabs */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">소속 팀:</span>
+                {['전체', '1팀', '2팀', '3팀', '취업팀'].map(team => (
+                  <button
+                    key={team}
+                    type="button"
+                    onClick={() => {
+                      setTeamFilter(team);
+                      setTeacherFilter('전체');
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${teamFilter === team
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                      }`}
+                  >
+                    {team}
+                  </button>
+                ))}
+              </div>
+
+              {/* Row 2: Teacher Filter (팀선택 아래줄) */}
+              <div className="flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">선생님:</span>
+                <select
+                  value={teacherFilter}
+                  onChange={(e) => handleTeacherChange(e.target.value)}
+                  disabled={teamFilter === '전체'}
+                  className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${teamFilter === '전체'
+                    ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                    : teacherFilter !== '전체'
+                      ? 'bg-blue-50 border-blue-400 text-blue-800 shadow-2xs'
+                      : 'bg-white border-slate-300 text-slate-800 hover:border-blue-400'
+                    }`}
+                >
+                  <option value="전체">
+                    {teamFilter === '전체'
+                      ? '팀을 먼저 선택하세요'
+                      : `${teamFilter} 전체 선생님 (${availableTeachers.length}명)`}
+                  </option>
+                  {availableTeachers.map(t => (
+                    <option key={t} value={t}>
+                      {t} 선생님
+                    </option>
+                  ))}
+                </select>
+                {teamFilter !== '전체' && teacherFilter !== '전체' && (
+                  <button
+                    type="button"
+                    onClick={() => setTeacherFilter('전체')}
+                    className="text-[11px] text-slate-400 hover:text-rose-500 underline font-semibold cursor-pointer ml-1"
+                    title="선생님 선택 해제"
+                  >
+                    해제
+                  </button>
+                )}
+              </div>
+
+              {/* Middle Box: 2-Dimensional Multi-Select Document Status Filter */}
+              <div className="bg-slate-50/90 p-3 rounded-xl border border-slate-200/80 space-y-2.5">
+                {/* Row 1: 작성 구분 */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">작성 구분:</span>
+                  <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => toggleSubmissionFilter('submitted')}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${filterSubmitted
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                        }`}
+                      title={filterSubmitted ? "클릭 시 작성 완료 해제 (OFF)" : "클릭 시 작성 완료 선택 (ON)"}
+                    >
+                      <span>{filterSubmitted ? '✓ ' : ''}작성 완료</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleSubmissionFilter('unsubmitted')}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${filterUnsubmitted
+                        ? 'bg-rose-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                        }`}
+                      title={filterUnsubmitted ? "클릭 시 미작성 해제 (OFF)" : "클릭 시 미작성 선택 (ON)"}
+                    >
+                      <span>{filterUnsubmitted ? '✓ ' : ''}미작성</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Row 2: 대상 서류 */}
+                <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pt-2 border-t border-slate-200/60 pb-0.5">
+                  <span className="text-xs font-bold text-slate-700 shrink-0 mr-1 whitespace-nowrap">대상 서류:</span>
+                  <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs whitespace-nowrap shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => toggleDocType('app')}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('app')
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                        }`}
+                      title={selectedDocTypes.has('app') ? "클릭 시 신청서 해제 (OFF)" : "클릭 시 신청서 선택 (ON)"}
+                    >
+                      <span>{selectedDocTypes.has('app') ? '✓ ' : ''}참여 신청서</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleDocType('pre')}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('pre')
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                        }`}
+                      title={selectedDocTypes.has('pre') ? "클릭 시 사전설문 해제 (OFF)" : "클릭 시 사전설문 선택 (ON)"}
+                    >
+                      <span>{selectedDocTypes.has('pre') ? '✓ ' : ''}사전 설문지</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleDocType('post')}
+                      className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('post')
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                        }`}
+                      title={selectedDocTypes.has('post') ? "클릭 시 사후설문 해제 (OFF)" : "클릭 시 사후설문 선택 (ON)"}
+                    >
+                      <span>{selectedDocTypes.has('post') ? '✓ ' : ''}사후 설문지</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Date Range Picker (등록 기간 선택) */}
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-0.5">
+                  <span className="text-xs font-bold text-slate-500 shrink-0 mr-1 whitespace-nowrap">등록 기간:</span>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      setDatePreset('');
+                    }}
+                    className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 shrink-0"
+                  />
+                  <span className="text-slate-400 text-xs shrink-0">~</span>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                      setDatePreset('');
+                    }}
+                    className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 shrink-0"
+                  />
+                </div>
+
+                {/* Quick Date Presets (선택된 버튼 파란색 배경 표시) */}
+                <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap pb-0.5">
+                  {[
+                    { id: 'all', label: '전체' },
+                    { id: 'today', label: '오늘' },
+                    { id: 'thisWeek', label: '이번주' },
+                    { id: 'thisMonth', label: '이번달' },
+                  ].map(p => {
+                    const isSelected = datePreset === p.id || (p.id === 'all' && !startDate && !endDate);
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => handleDatePreset(p.id)}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none whitespace-nowrap shrink-0 ${isSelected
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                          }`}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Search Input (등록일자 기간 아래로 이동) */}
+              <div className="relative pt-1">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="학생 이름 또는 초성 검색 (예: 권미희, ㄱㅁㅎ)"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-3 pr-8 py-2 text-xs font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 transition shadow-2xs"
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* 3. TABLE TOOLBAR (Selection Summary & Action Buttons) */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
+              <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
+                <label className="inline-flex items-center cursor-pointer select-none whitespace-nowrap shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={isAllFilteredSelected}
+                    onChange={handleToggleSelectAll}
+                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <span className="ml-2 text-xs font-bold text-slate-700 whitespace-nowrap">현재 목록 전체 선택 ({filteredStudents.length}명)</span>
+                </label>
+                {selectedStudentNames.size > 0 && (
+                  <span className="text-xs bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                    선택됨: {selectedStudentNames.size}명
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
+                {/* Selected Students Batch Print */}
+                <button
+                  type="button"
+                  onClick={() => handleOpenPrintModal('selected')}
+                  disabled={selectedStudentNames.size === 0}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0 ${selectedStudentNames.size > 0
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    }`}
+                  title="선택한 학생들의 서류를 하나의 PDF/인쇄물로 일괄 출력합니다"
+                >
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span className="whitespace-nowrap">선택 학생 일괄 인쇄 ({selectedStudentNames.size}명)</span>
+                </button>
+
+                {/* Filtered All Batch Print */}
+                <button
+                  type="button"
+                  onClick={() => handleOpenPrintModal('filtered')}
+                  disabled={filteredStudents.length === 0}
+                  className="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0"
+                  title="현재 검색 및 기간 필터에 나타난 전체 학생의 서류를 일괄 인쇄합니다"
+                >
+                  <span className="whitespace-nowrap">기간/검색결과 전체 인쇄 ({filteredStudents.length}명)</span>
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className={`overflow-x-auto overscroll-x-contain overflow-y-auto ${
-            isTeacherView
-              ? 'max-h-[calc(100dvh-75px)] sm:max-h-[calc(100dvh-95px)]'
-              : 'max-h-[75vh]'
-          }`}>
+          <div className={`overflow-x-auto overscroll-x-contain overflow-y-auto ${isTeacherView
+            ? 'max-h-[calc(100dvh-75px)] sm:max-h-[calc(100dvh-95px)]'
+            : 'max-h-[75vh]'
+            }`}>
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
@@ -1569,9 +1567,8 @@ export default function StudentFormsAdminApp({
                         {/* Checkbox (관리자 모드 전용) */}
                         {!isTeacherView && (
                           <td
-                            className={`sticky left-0 z-20 py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100 border-r border-slate-100 ${
-                              isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                            }`}
+                            className={`sticky left-0 z-20 py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100 border-r border-slate-100 ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                              }`}
                             style={{ width: '40px', minWidth: '40px', maxWidth: '40px' }}
                           >
                             <input
@@ -1585,9 +1582,8 @@ export default function StudentFormsAdminApp({
 
                         {/* Index (연번: 고정) */}
                         <td
-                          className={`sticky z-20 py-2.5 px-3 text-center text-slate-500 text-xs font-bold border-b border-slate-100 border-r border-slate-100 whitespace-nowrap shrink-0 select-none ${
-                            isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                          }`}
+                          className={`sticky z-20 py-2.5 px-3 text-center text-slate-500 text-xs font-bold border-b border-slate-100 border-r border-slate-100 whitespace-nowrap shrink-0 select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                            }`}
                           style={{
                             left: `${!isTeacherView ? 40 : 0}px`,
                             width: '48px',
@@ -1601,9 +1597,8 @@ export default function StudentFormsAdminApp({
                         {/* Sticky Student Name (학생 성명 고정 & 너비 조절 연동) */}
                         <td
                           onClick={() => handleToggleStudent(s.name)}
-                          className={`sticky z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${
-                            isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                          }`}
+                          className={`sticky z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                            }`}
                           style={{
                             left: `${(!isTeacherView ? 40 : 0) + 48}px`,
                             width: `${nameColWidth}px`,
@@ -1714,8 +1709,8 @@ export default function StudentFormsAdminApp({
                             disabled={!hasAnyCompletedDoc}
                             onClick={() => handlePrintSingleStudentAll(s)}
                             className={`px-2 py-1 rounded text-xs font-bold transition whitespace-nowrap shrink-0 ${hasAnyCompletedDoc
-                                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs'
-                                : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed'
+                              ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs'
+                              : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed'
                               }`}
                             title={hasAnyCompletedDoc ? "선택된 대상 서류 인쇄/PDF 저장" : "작성 완료된 대상 서류가 없습니다 (미작성 서류는 인쇄 불가)"}
                           >
