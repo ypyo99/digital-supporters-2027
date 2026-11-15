@@ -594,58 +594,125 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(8px);
       color: #ffffff;
-      padding: 12px 24px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    @media (min-width: 768px) {
+      .top-action-bar {
+        padding: 10px 24px;
+      }
+    }
+    .top-action-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .top-action-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-    .top-action-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
+      gap: 8px;
+      width: 100%;
     }
     .top-action-title {
       font-weight: 800;
-      font-size: 16px;
+      font-size: 13px;
       color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.01em;
     }
-    .top-action-notice {
-      font-size: 12px;
-      color: #94a3b8;
+    @media (min-width: 768px) {
+      .top-action-title {
+        font-size: 16px;
+      }
+    }
+    .top-action-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .top-action-title-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .top-action-buttons {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) {
+      .top-action-buttons {
+        gap: 10px;
+      }
     }
     .btn-print {
       background: #2563eb;
       color: #ffffff;
       border: none;
-      padding: 8px 18px;
-      font-size: 14px;
+      padding: 6px 10px;
+      font-size: 12px;
       font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
-      transition: background 0.15s;
+      gap: 5px;
+      white-space: nowrap !important;
+      flex-shrink: 0;
+      line-height: 1;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
+    .btn-print:active { transform: scale(0.97); }
     .btn-print:hover { background: #1d4ed8; }
     .btn-close {
       background: #475569;
       color: #ffffff;
       border: none;
-      padding: 8px 14px;
-      font-size: 14px;
+      padding: 6px 10px;
+      font-size: 12px;
       font-weight: 600;
       border-radius: 8px;
       cursor: pointer;
+      white-space: nowrap !important;
+      flex-shrink: 0;
+      line-height: 1;
+      transition: background 0.15s, transform 0.1s;
     }
+    .btn-close:active { transform: scale(0.97); }
     .btn-close:hover { background: #334155; }
+    @media (min-width: 768px) {
+      .btn-print {
+        padding: 8px 16px;
+        font-size: 14px;
+        gap: 6px;
+      }
+      .btn-close {
+        padding: 8px 14px;
+        font-size: 14px;
+      }
+    }
+    .top-action-notice {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+    @media (min-width: 768px) {
+      .top-action-notice {
+        font-size: 12px;
+      }
+    }
 
     /* Screen View Container */
     .print-doc-container-screen {
@@ -1399,16 +1466,23 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
 </head>
 <body>
   <div class="top-action-bar">
-    <div class="top-action-info">
-      <span class="top-action-title">🖨️ ${escapeHtml(title)}</span>
-      <span class="top-action-notice">💡 인쇄 창에서 대상을 [PDF로 저장]으로 선택하시면 하나의 깔끔한 PDF 문서로 일괄 저장됩니다.</span>
-    </div>
-    <div class="top-action-buttons">
-      <button class="btn-print" onclick="window.print()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-        <span>인쇄 / PDF 저장</span>
-      </button>
-      <button class="btn-close" onclick="window.close()">창 닫기</button>
+    <div class="top-action-container">
+      <div class="top-action-row">
+        <div class="top-action-title">
+          <span class="top-action-icon">🖨️</span>
+          <span class="top-action-title-text">${escapeHtml(title)}</span>
+        </div>
+        <div class="top-action-buttons">
+          <button class="btn-print" onclick="window.print()" title="인쇄 또는 PDF로 저장">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>인쇄 / PDF 저장</span>
+          </button>
+          <button class="btn-close" onclick="window.close()" title="창 닫기">창 닫기</button>
+        </div>
+      </div>
+      <div class="top-action-notice">
+        💡 인쇄 창에서 대상을 [PDF로 저장]으로 선택하시면 하나의 깔끔한 PDF 문서로 일괄 저장됩니다.
+      </div>
     </div>
   </div>
 

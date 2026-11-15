@@ -723,15 +723,15 @@ export default function StudentFormsAdminApp({
     const docLabels = [];
     if (selectedDocTypes.has('app') && s.app) {
       html += renderApplicationFormHtml(s.app, s.name, false);
-      docLabels.push('1)신청서');
+      docLabels.push('신청서');
     }
     if (selectedDocTypes.has('pre') && s.preSurvey) {
       html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
-      docLabels.push('2)사전');
+      docLabels.push('사전');
     }
     if (selectedDocTypes.has('post') && s.postSurvey) {
       html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
-      docLabels.push('3)사후');
+      docLabels.push('사후');
     }
 
     executeBatchPrint(html, `${s.name}_참여자서류(${docLabels.join('+')})`);
