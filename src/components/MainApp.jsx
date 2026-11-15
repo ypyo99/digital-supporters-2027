@@ -3249,17 +3249,10 @@ export default function MainApp({
                     <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
                     {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
                   </label>
-                  <div className="flex gap-2">
-                    <select className={`flex-1 select-refined min-w-0 h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
-                      <option value="">선생님을 선택하세요</option>
-                      {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
-                    </select>
-
-                    <AnimatedRefreshButton
-                      onClick={() => fetchTeachersFromSheet(selectedTeam)}
-                      isFetching={isFetchingTeachers}
-                    />
-                  </div>
+                  <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
+                    <option value="">선생님을 선택하세요</option>
+                    {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
+                  </select>
                 </div>
               )}
 
