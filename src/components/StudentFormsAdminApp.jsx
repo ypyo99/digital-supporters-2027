@@ -975,45 +975,48 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
       {/* TOP HEADER */}
       <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onNavigateBack}
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer flex items-center gap-1 font-bold text-sm"
-              title="메인 화면으로 돌아가기"
-            >
-              <ChevronLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">메인으로</span>
-            </button>
-            <div className="h-5 w-px bg-slate-300"></div>
-            <div>
-              <h1 className="text-base sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                <span>📋 참여자 서류 관리 및 일괄 인쇄</span>
-                <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">담당복지사용</span>
-              </h1>
-            </div>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+          {/* Left: Title */}
+          <div className="flex items-center gap-1.5 min-w-0 shrink">
+            <h1 className="text-sm sm:text-xl font-extrabold text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+              <span>📋</span>
+              <span className="hidden md:inline">참여자 서류 관리 및 일괄 인쇄</span>
+              <span className="md:hidden">서류 관리</span>
+              <span className="text-[10px] sm:text-xs bg-emerald-100 text-emerald-800 font-bold px-1.5 sm:px-2 py-0.5 rounded-full shrink-0">
+                담당복지사용
+              </span>
+            </h1>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Right: Actions */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               type="button"
               onClick={() => loadData(true)}
               disabled={refreshing || loading}
-              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="p-1.5 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
               title="최신 서류 작성 데이터 다시 불러오기"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">새로고침</span>
+              <span className="hidden lg:inline">새로고침</span>
             </button>
             <button
               type="button"
               onClick={handleExportExcel}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="p-1.5 sm:px-2.5 sm:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-xs shrink-0"
               title="현재 목록 엑셀 파일로 다운로드"
             >
               <DownloadIcon className="w-3.5 h-3.5 text-white" />
-              <span className="hidden sm:inline">엑셀 다운로드</span>
+              <span className="hidden lg:inline">엑셀</span>
+            </button>
+            <button
+              type="button"
+              onClick={onNavigateBack}
+              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0"
+              title="메인 화면(처음)으로 돌아가기"
+            >
+              <Home className="w-3.5 h-3.5 text-white" />
+              <span>처음으로</span>
             </button>
           </div>
         </div>
