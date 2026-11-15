@@ -655,24 +655,3 @@ input[type="date"].opacity-0::-webkit-calendar-picker-indicator {
 *::-webkit-scrollbar-track {
   background: transparent;
 }
-
-/* 화면 하단 고정 가로 스크롤바 전용 스타일 */
-.bottom-floating-scrollbar {
-  scrollbar-width: auto;
-  scrollbar-color: #94a3b8 #f1f5f9;
-}
-.bottom-floating-scrollbar::-webkit-scrollbar {
-  height: 12px;
-}
-.bottom-floating-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 9999px;
-}
-.bottom-floating-scrollbar::-webkit-scrollbar-thumb {
-  background: #94a3b8;
-  border-radius: 9999px;
-  border: 2px solid #f1f5f9;
-}
-.bottom-floating-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}

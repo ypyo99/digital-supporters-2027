@@ -899,77 +899,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     setSavedItem('sungdong_forms_name_col_width', 130);
   }, []);
 
-  // -------------------------------------------------------------
-  // 화면 하단 고정 가로 스크롤바 및 테이블 스크롤 동기화 로직
-  // -------------------------------------------------------------
-  const tableContainerRef = useRef(null);
-  const bottomScrollRef = useRef(null);
-  const isSyncingFromTable = useRef(false);
-  const isSyncingFromBottom = useRef(false);
-
-  const [scrollMetrics, setScrollMetrics] = useState({ scrollWidth: 0, clientWidth: 0 });
-  const isScrollable = scrollMetrics.scrollWidth > scrollMetrics.clientWidth + 5;
-
-  const updateScrollMetrics = useCallback(() => {
-    if (tableContainerRef.current) {
-      const { scrollWidth, clientWidth } = tableContainerRef.current;
-      setScrollMetrics({ scrollWidth, clientWidth });
-    }
-  }, []);
-
-  useEffect(() => {
-    updateScrollMetrics();
-    const el = tableContainerRef.current;
-    if (!el) return;
-
-    let observer;
-    if (typeof ResizeObserver !== 'undefined') {
-      observer = new ResizeObserver(() => {
-        updateScrollMetrics();
-      });
-      observer.observe(el);
-    }
-
-    const handleWindowResize = () => updateScrollMetrics();
-    window.addEventListener('resize', handleWindowResize);
-
-    return () => {
-      if (observer) observer.disconnect();
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, [updateScrollMetrics, filteredStudents.length, selectedDocTypes, nameColWidth]);
-
-  // Synchronize scroll from table to bottom bar
-  const handleTableScroll = useCallback(() => {
-    if (isSyncingFromBottom.current) {
-      isSyncingFromBottom.current = false;
-      return;
-    }
-    if (tableContainerRef.current && bottomScrollRef.current) {
-      isSyncingFromTable.current = true;
-      bottomScrollRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
-    }
-  }, []);
-
-  // Synchronize scroll from bottom bar to table
-  const handleBottomScroll = useCallback(() => {
-    if (isSyncingFromTable.current) {
-      isSyncingFromTable.current = false;
-      return;
-    }
-    if (tableContainerRef.current && bottomScrollRef.current) {
-      isSyncingFromBottom.current = true;
-      tableContainerRef.current.scrollLeft = bottomScrollRef.current.scrollLeft;
-    }
-  }, []);
-
-  // Sync position whenever isScrollable toggles on
-  useEffect(() => {
-    if (isScrollable && bottomScrollRef.current && tableContainerRef.current) {
-      bottomScrollRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
-    }
-  }, [isScrollable]);
-
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800">
 
@@ -1023,7 +952,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className={`flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-5 ${isScrollable ? 'pb-24 sm:pb-28' : 'pb-8'}`}>
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-5 pb-12">
 
         {/* 1. KPI SUMMARY DASHBOARD CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
@@ -1466,11 +1395,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div
-            ref={tableContainerRef}
-            onScroll={handleTableScroll}
-            className="overflow-x-auto overscroll-x-contain"
-          >
+          <div className="overflow-x-auto overscroll-x-contain">
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
@@ -1707,34 +1632,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         </div>
 
       </main>
-
-      {/* 화면 하단 고정 좌우 스크롤바 바 */}
-      {isScrollable && (
-        <aside
-          aria-label="가로 스크롤 컨트롤러"
-          className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-300 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-4 py-2"
-        >
-          <div className="max-w-7xl mx-auto flex flex-col gap-1">
-            <div className="flex items-center justify-between text-xs text-slate-600 font-bold select-none px-1">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
-                <span className="text-blue-900">화면 하단 좌우 스크롤바</span>
-                <span className="text-slate-400 font-normal text-[11px]">(이름열 고정됨)</span>
-              </span>
-              <span className="text-[11px] text-slate-400 hidden sm:inline-block">
-                ◀ 바를 좌우로 드래그하거나 스크롤하여 전체 서류 항목을 확인하세요 ▶
-              </span>
-            </div>
-            <div
-              ref={bottomScrollRef}
-              onScroll={handleBottomScroll}
-              className="bottom-floating-scrollbar w-full overflow-x-scroll overscroll-x-contain cursor-ew-resize py-0.5"
-            >
-              <div style={{ width: `${scrollMetrics.scrollWidth}px`, height: '4px' }} />
-            </div>
-          </div>
-        </aside>
-      )}
 
       {/* ============================================================== */}
       {/* BATCH PRINT CONFIGURATION MODAL                                */}
