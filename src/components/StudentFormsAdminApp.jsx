@@ -117,7 +117,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             appRecords.push(item);
           }
         });
-      } catch (e) {}
+      } catch (e) { }
 
       const appMap = new Map();
       appRecords.forEach(r => {
@@ -149,7 +149,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             preRecords.push(item);
           }
         });
-      } catch (e) {}
+      } catch (e) { }
 
       const preMap = new Map();
       preRecords.forEach(r => {
@@ -181,7 +181,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             postRecords.push(item);
           }
         });
-      } catch (e) {}
+      } catch (e) { }
 
       const postMap = new Map();
       postRecords.forEach(r => {
@@ -322,7 +322,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           loadData(true);
         };
       }
-    } catch (e) {}
+    } catch (e) { }
 
     return () => {
       if (channel) channel.close();
@@ -1030,11 +1030,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           {/* Total Students */}
           <div
             onClick={handleResetStatusFilter}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              !isCustomStatusFilterActive
+            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${!isCustomStatusFilterActive
                 ? "bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm"
                 : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
-            }`}
+              }`}
           >
             <div className="text-xs font-bold text-slate-600">
               {teacherFilter !== "전체"
@@ -1066,20 +1065,18 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               setSelectedDocTypes(new Set(['app']));
               setDocMatchMode('or');
             }}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app'))
+            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app'))
                 ? "bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500 ring-offset-2 shadow-md"
                 : "bg-white border-slate-200 text-slate-800 hover:border-blue-300 hover:shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between">
               <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-blue-600"}`}>
                 신청서 작성
               </span>
               <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
-                  (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
-                }`}
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
+                  }`}
               >
                 {stats.appPct}%
               </span>
@@ -1091,9 +1088,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               </span>
             </div>
             <div
-              className={`text-[11px] font-bold mt-0.5 ${
-                (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-amber-200" : "text-rose-500"
-              }`}
+              className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-amber-200" : "text-rose-500"
+                }`}
             >
               미작성: {stats.total - stats.appCount}명
             </div>
@@ -1107,20 +1103,18 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               setSelectedDocTypes(new Set(['pre']));
               setDocMatchMode('or');
             }}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre'))
+            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre'))
                 ? "bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500 ring-offset-2 shadow-md"
                 : "bg-white border-slate-200 text-slate-800 hover:border-indigo-300 hover:shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between">
               <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-indigo-600"}`}>
                 사전설문 작성
               </span>
               <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
-                  (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
-                }`}
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
+                  }`}
               >
                 {stats.prePct}%
               </span>
@@ -1132,9 +1126,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               </span>
             </div>
             <div
-              className={`text-[11px] font-bold mt-0.5 ${
-                (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-amber-200" : "text-rose-500"
-              }`}
+              className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-amber-200" : "text-rose-500"
+                }`}
             >
               미작성: {stats.total - stats.preCount}명
             </div>
@@ -1148,20 +1141,18 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               setSelectedDocTypes(new Set(['post']));
               setDocMatchMode('or');
             }}
-            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post'))
+            className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post'))
                 ? "bg-purple-600 text-white border-purple-600 ring-2 ring-purple-500 ring-offset-2 shadow-md"
                 : "bg-white border-slate-200 text-slate-800 hover:border-purple-300 hover:shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between">
               <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-purple-600"}`}>
                 사후설문 작성
               </span>
               <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
-                  (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
-                }`}
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
+                  }`}
               >
                 {stats.postPct}%
               </span>
@@ -1173,9 +1164,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               </span>
             </div>
             <div
-              className={`text-[11px] font-bold mt-0.5 ${
-                (!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-amber-200" : "text-rose-500"
-              }`}
+              className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-amber-200" : "text-rose-500"
+                }`}
             >
               미작성: {stats.total - stats.postCount}명
             </div>
@@ -1189,20 +1179,18 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               setSelectedDocTypes(new Set(['app', 'pre', 'post']));
               setDocMatchMode('and');
             }}
-            className={`col-span-2 sm:col-span-1 p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              (filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and')
+            className={`col-span-2 sm:col-span-1 p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and')
                 ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500 ring-offset-2 shadow-md"
                 : "bg-white border-slate-200 text-slate-800 hover:border-emerald-300 hover:shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between">
               <span className={`text-xs font-bold ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-emerald-700"}`}>
                 3종 완결
               </span>
               <span
-                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
-                  (filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
-                }`}
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
+                  }`}
               >
                 {stats.allPct}%
               </span>
@@ -1214,9 +1202,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               </span>
             </div>
             <div
-              className={`text-[11px] font-semibold mt-0.5 ${
-                (filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"
-              }`}
+              className={`text-[11px] font-semibold mt-0.5 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"
+                }`}
             >
               신청서+사전+사후 완료
             </div>
@@ -1236,11 +1223,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   setTeamFilter(team);
                   setTeacherFilter('전체');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
-                  teamFilter === team
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${teamFilter === team
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 {team}
               </button>
@@ -1254,13 +1240,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               value={teacherFilter}
               onChange={(e) => handleTeacherChange(e.target.value)}
               disabled={teamFilter === '전체'}
-              className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${
-                teamFilter === '전체'
+              className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${teamFilter === '전체'
                   ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
                   : teacherFilter !== '전체'
                     ? 'bg-blue-50 border-blue-400 text-blue-800 shadow-2xs'
                     : 'bg-white border-slate-300 text-slate-800 hover:border-blue-400'
-              }`}
+                }`}
             >
               <option value="전체">
                 {teamFilter === '전체'
@@ -1294,11 +1279,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleSubmissionFilter('submitted')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                    filterSubmitted
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${filterSubmitted
                       ? 'bg-blue-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                  }`}
+                    }`}
                   title={filterSubmitted ? "클릭 시 작성 완료 해제 (OFF)" : "클릭 시 작성 완료 선택 (ON)"}
                 >
                   <span>{filterSubmitted ? '✓ ' : ''}작성 완료</span>
@@ -1306,11 +1290,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleSubmissionFilter('unsubmitted')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
-                    filterUnsubmitted
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${filterUnsubmitted
                       ? 'bg-rose-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                  }`}
+                    }`}
                   title={filterUnsubmitted ? "클릭 시 미작성 해제 (OFF)" : "클릭 시 미작성 선택 (ON)"}
                 >
                   <span>{filterUnsubmitted ? '✓ ' : ''}미작성</span>
@@ -1325,11 +1308,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleDocType('app')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${
-                    selectedDocTypes.has('app')
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('app')
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                  }`}
+                    }`}
                   title={selectedDocTypes.has('app') ? "클릭 시 신청서 해제 (OFF)" : "클릭 시 신청서 선택 (ON)"}
                 >
                   <span>{selectedDocTypes.has('app') ? '✓ ' : ''}참여 신청서</span>
@@ -1337,11 +1319,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleDocType('pre')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${
-                    selectedDocTypes.has('pre')
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('pre')
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                  }`}
+                    }`}
                   title={selectedDocTypes.has('pre') ? "클릭 시 사전설문 해제 (OFF)" : "클릭 시 사전설문 선택 (ON)"}
                 >
                   <span>{selectedDocTypes.has('pre') ? '✓ ' : ''}사전 설문지</span>
@@ -1349,11 +1330,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleDocType('post')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${
-                    selectedDocTypes.has('post')
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${selectedDocTypes.has('post')
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
-                  }`}
+                    }`}
                   title={selectedDocTypes.has('post') ? "클릭 시 사후설문 해제 (OFF)" : "클릭 시 사후설문 선택 (ON)"}
                 >
                   <span>{selectedDocTypes.has('post') ? '✓ ' : ''}사후 설문지</span>
@@ -1401,11 +1381,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     key={p.id}
                     type="button"
                     onClick={() => handleDatePreset(p.id)}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none whitespace-nowrap shrink-0 ${
-                      isSelected
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none whitespace-nowrap shrink-0 ${isSelected
                         ? 'bg-blue-600 text-white shadow-xs'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                    }`}
+                      }`}
                   >
                     {p.label}
                   </button>
@@ -1460,11 +1439,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               type="button"
               onClick={() => handleOpenPrintModal('selected')}
               disabled={selectedStudentNames.size === 0}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0 ${
-                selectedStudentNames.size > 0
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0 ${selectedStudentNames.size > 0
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
+                }`}
               title="선택한 학생들의 서류를 하나의 PDF/인쇄물로 일괄 출력합니다"
             >
               <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1524,14 +1502,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                       onTouchStart={handleResizeStart}
                       onDoubleClick={handleResetWidth}
                       title="드래그하여 이름열 너비 조절 (더블클릭 시 130px로 초기화)"
-                      className={`absolute top-0 -right-2 bottom-0 w-4 cursor-col-resize flex items-center justify-center group touch-none z-40 select-none ${
-                        isResizingActive ? 'bg-blue-100/60' : 'hover:bg-blue-50/60'
-                      }`}
+                      className={`absolute top-0 -right-2 bottom-0 w-4 cursor-col-resize flex items-center justify-center group touch-none z-40 select-none ${isResizingActive ? 'bg-blue-100/60' : 'hover:bg-blue-50/60'
+                        }`}
                     >
                       <div
-                        className={`w-[2.5px] h-4 rounded-full transition-colors ${
-                          isResizingActive ? 'bg-blue-600 h-6' : 'bg-slate-300 group-hover:bg-blue-500'
-                        }`}
+                        className={`w-[2.5px] h-4 rounded-full transition-colors ${isResizingActive ? 'bg-blue-600 h-6' : 'bg-slate-300 group-hover:bg-blue-500'
+                          }`}
                       />
                     </div>
                     {isResizingActive && (
@@ -1606,9 +1582,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         {/* Sticky Student Name (학생 성명만 고정 & 너비 조절 연동) */}
                         <td
                           onClick={() => handleToggleStudent(s.name)}
-                          className={`sticky left-0 z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${
-                            isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                          }`}
+                          className={`sticky left-0 z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                            }`}
                           style={{ width: `${nameColWidth}px`, minWidth: `${nameColWidth}px`, maxWidth: `${nameColWidth}px` }}
                           title={`${s.name} (클릭 시 선택 토글)`}
                         >
@@ -1713,11 +1688,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                             type="button"
                             disabled={!hasAnyCompletedDoc}
                             onClick={() => handlePrintSingleStudentAll(s)}
-                            className={`px-2 py-1 rounded text-xs font-bold transition whitespace-nowrap shrink-0 ${
-                              hasAnyCompletedDoc
+                            className={`px-2 py-1 rounded text-xs font-bold transition whitespace-nowrap shrink-0 ${hasAnyCompletedDoc
                                 ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs'
                                 : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed'
-                            }`}
+                              }`}
                             title={hasAnyCompletedDoc ? "선택된 대상 서류 인쇄/PDF 저장" : "작성 완료된 대상 서류가 없습니다 (미작성 서류는 인쇄 불가)"}
                           >
                             🖨️ 인쇄
