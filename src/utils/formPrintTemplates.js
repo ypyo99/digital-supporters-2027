@@ -669,37 +669,37 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     }
     #docTitle {
       text-align: center;
-      margin-bottom: 12px;
-      line-height: 1.3;
+      margin-bottom: 0px;
+      line-height: 1.35;
     }
     #docTitle .title-project {
       display: block;
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 600;
       color: #111111;
     }
     #docTitle .title-main {
       display: block;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       color: #111111;
-      margin-top: 2px;
+      margin-top: 4px;
     }
     #applicantSubTitle {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 13.5px;
+      font-weight: 700;
       margin-bottom: 4px;
       color: #111111;
     }
     #applicantTable {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 10px;
+      margin-bottom: 0px;
     }
     #applicantTable th, #applicantTable td {
-      padding: 5px 8px;
-      font-size: 11.5px;
-      line-height: 1.25;
+      padding: 6.5px 8px;
+      font-size: 12px;
+      line-height: 1.3;
       border: 1px solid #111111;
     }
     #applicantTable th {
@@ -712,7 +712,7 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 4px 10px;
-      font-size: 11px;
+      font-size: 11.5px;
     }
     #hopeServiceList {
       display: flex;
@@ -725,17 +725,17 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       gap: 6px;
     }
     .service-item .service-name {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
     }
     .service-item .service-desc {
-      font-size: 10.5px;
+      font-size: 11px;
       color: #4b5563;
     }
     #hopeDaysList {
       display: flex;
       gap: 16px;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
       padding: 2px 0;
     }
@@ -743,31 +743,31 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       display: flex;
       flex-direction: row;
       gap: 20px;
-      font-size: 11.5px;
+      font-size: 12px;
       padding: 2px 0;
     }
     #memoCell {
-      height: 52px;
-      padding: 4px 8px;
-      font-size: 11px;
-      line-height: 1.25;
+      height: 64px;
+      padding: 6px 8px;
+      font-size: 11.5px;
+      line-height: 1.3;
     }
     #privacyContainer {
-      margin-top: 10px;
+      margin-top: 0px;
       border: 1px solid #111111;
       background-color: transparent;
       padding: 0;
     }
     #privacyInner {
-      padding: 10px 14px;
+      padding: 12px 14px;
     }
     .privacy-head {
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
     .privacy-law {
-      font-size: 10px;
+      font-size: 10.5px;
       margin-bottom: 4px;
       color: #4b5563;
     }
@@ -777,9 +777,9 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       margin-bottom: 5px;
     }
     .privacy-table th, .privacy-table td {
-      padding: 3.5px 6px;
-      font-size: 10.5px;
-      line-height: 1.2;
+      padding: 4.5px 6px;
+      font-size: 11px;
+      line-height: 1.25;
       border: 1px solid #111111;
     }
     .privacy-table th {
@@ -790,65 +790,65 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       display: flex;
       justify-content: flex-end;
       gap: 16px;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
-      margin-top: 2px;
+      margin-top: 3px;
       margin-bottom: 4px;
     }
     #portraitHeader {
-      margin-top: 8px;
-      margin-bottom: 2px;
-      font-size: 12.5px;
+      margin-top: 10px;
+      margin-bottom: 3px;
+      font-size: 13px;
     }
     #consentNotice {
       text-align: center;
-      margin-top: 6px;
-      font-size: 10px;
-      line-height: 1.3;
+      margin-top: 8px;
+      font-size: 10.5px;
+      line-height: 1.35;
       color: #334155;
       font-weight: 600;
     }
     #signatureSection {
-      margin-top: 18px;
-      font-size: 14px;
+      margin-top: 0px;
+      font-size: 14.5px;
       text-align: center;
     }
     #dateRow {
       margin-bottom: 12px;
-      font-size: 14px;
+      font-size: 15px;
       display: flex;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
       font-weight: 600;
     }
     #signerRow {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      gap: 6px;
-      font-size: 14px;
+      gap: 8px;
+      font-size: 15px;
       padding-right: 12px;
     }
     #printFooterLogo {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-top: 16px;
+      gap: 12px;
+      margin-top: 0px;
       margin-bottom: 0px;
     }
     #printFooterLogo img {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       object-fit: contain;
     }
     #printFooterLogo .org-sub {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
       color: #475569;
     }
     #printFooterLogo .org-title {
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 800;
       color: #0f172a;
     }
@@ -1203,8 +1203,9 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         display: block !important;
       }
 
-      /* Application Form Exact Print Overrides */
+      /* Application Form Exact Print Overrides - 100% Exactly 1 Page Full-Height */
       .doc-page-app {
+        box-sizing: border-box !important;
         box-shadow: none !important;
         border: none !important;
         border-radius: 0 !important;
@@ -1212,6 +1213,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         padding: 0 !important;
         max-width: 100% !important;
         width: 100% !important;
+        height: 275mm !important;
+        min-height: 275mm !important;
+        max-height: 275mm !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        overflow: hidden !important;
         page-break-after: always !important;
         break-after: page !important;
         page-break-inside: avoid !important;
@@ -1220,6 +1228,133 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       .doc-page-app * {
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+      }
+      .doc-page-app #docTitle {
+        margin-bottom: 0px !important;
+        line-height: 1.35 !important;
+      }
+      .doc-page-app #docTitle .title-project {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+      }
+      .doc-page-app #docTitle .title-main {
+        font-size: 24px !important;
+        font-weight: 800 !important;
+        margin-top: 4px !important;
+      }
+      .doc-page-app #applicantSubTitle {
+        font-size: 13.5px !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px !important;
+      }
+      .doc-page-app #applicantTable {
+        margin-bottom: 0px !important;
+        width: 100% !important;
+      }
+      .doc-page-app #applicantTable th, .doc-page-app #applicantTable td {
+        padding: 6.5px 8px !important;
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+        border: 1px solid #111111 !important;
+      }
+      .doc-page-app #applyRouteGrid {
+        gap: 4px 10px !important;
+        font-size: 11.5px !important;
+      }
+      .doc-page-app #hopeServiceList {
+        gap: 5px !important;
+      }
+      .doc-page-app .service-item .service-name {
+        font-size: 12px !important;
+      }
+      .doc-page-app .service-item .service-desc {
+        font-size: 11px !important;
+      }
+      .doc-page-app #hopeDaysList {
+        gap: 16px !important;
+        font-size: 12px !important;
+      }
+      .doc-page-app #hopeTimeList {
+        gap: 20px !important;
+        font-size: 12px !important;
+      }
+      .doc-page-app #memoCell {
+        height: 64px !important;
+        padding: 6px 8px !important;
+        font-size: 11.5px !important;
+        line-height: 1.3 !important;
+      }
+      .doc-page-app #privacyContainer {
+        margin-top: 0px !important;
+        border: 1px solid #111111 !important;
+        background-color: transparent !important;
+        padding: 0 !important;
+      }
+      .doc-page-app #privacyInner {
+        padding: 12px 14px !important;
+      }
+      .doc-page-app .privacy-head {
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        margin-bottom: 4px !important;
+      }
+      .doc-page-app .privacy-law {
+        font-size: 10.5px !important;
+        margin-bottom: 4px !important;
+      }
+      .doc-page-app .privacy-table {
+        margin-bottom: 5px !important;
+        width: 100% !important;
+      }
+      .doc-page-app .privacy-table th, .doc-page-app .privacy-table td {
+        padding: 4.5px 6px !important;
+        font-size: 11px !important;
+        line-height: 1.25 !important;
+        border: 1px solid #111111 !important;
+      }
+      .doc-page-app .consent-radios {
+        margin-top: 3px !important;
+        margin-bottom: 4px !important;
+        gap: 16px !important;
+        font-size: 11.5px !important;
+      }
+      .doc-page-app #portraitHeader {
+        margin-top: 10px !important;
+        margin-bottom: 3px !important;
+        font-size: 13px !important;
+      }
+      .doc-page-app #consentNotice {
+        margin-top: 8px !important;
+        font-size: 10.5px !important;
+        line-height: 1.35 !important;
+      }
+      .doc-page-app #signatureSection {
+        margin-top: 0px !important;
+        font-size: 14.5px !important;
+      }
+      .doc-page-app #dateRow {
+        margin-bottom: 12px !important;
+        font-size: 15px !important;
+      }
+      .doc-page-app #signerRow {
+        font-size: 15px !important;
+      }
+      .doc-page-app #printFooterLogo {
+        display: flex !important;
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+        gap: 12px !important;
+      }
+      .doc-page-app #printFooterLogo img {
+        width: 38px !important;
+        height: 38px !important;
+      }
+      .doc-page-app #printFooterLogo .org-sub {
+        font-size: 11.5px !important;
+      }
+      .doc-page-app #printFooterLogo .org-title {
+        font-size: 18px !important;
+        font-weight: 800 !important;
       }
 
       /* Survey Form Exact Print Overrides */
