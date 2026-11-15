@@ -591,15 +591,15 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       position: sticky;
       top: 0;
       z-index: 9999;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(10px);
       color: #ffffff;
-      padding: 8px 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      padding: 10px 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
     @media (min-width: 768px) {
       .top-action-bar {
-        padding: 10px 24px;
+        padding: 12px 24px;
       }
     }
     .top-action-container {
@@ -607,24 +607,37 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
     }
-    .top-action-row {
+    @media (min-width: 768px) {
+      .top-action-container {
+        gap: 6px;
+      }
+    }
+    /* Mobile: Column layout (Title on top, Buttons below) */
+    /* Desktop: Row layout (Title left, Buttons right) */
+    .top-action-main {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
       gap: 8px;
       width: 100%;
     }
+    @media (min-width: 768px) {
+      .top-action-main {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+    }
     .top-action-title {
       font-weight: 800;
-      font-size: 13px;
+      font-size: 16px;
       color: #38bdf8;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       min-width: 0;
-      flex: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -632,12 +645,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     }
     @media (min-width: 768px) {
       .top-action-title {
-        font-size: 16px;
+        font-size: 17px;
+        flex: 1;
       }
     }
     .top-action-icon {
       flex-shrink: 0;
-      font-size: 14px;
+      font-size: 18px;
     }
     .top-action-title-text {
       white-space: nowrap;
@@ -647,70 +661,88 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     .top-action-buttons {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
+      gap: 8px;
+      width: 100%;
     }
     @media (min-width: 768px) {
       .top-action-buttons {
+        width: auto;
         gap: 10px;
+        flex-shrink: 0;
       }
     }
     .btn-print {
+      flex: 1;
+      min-height: 44px;
       background: #2563eb;
       color: #ffffff;
       border: none;
-      padding: 6px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 15px;
+      font-weight: 800;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: center;
+      gap: 7px;
       white-space: nowrap !important;
-      flex-shrink: 0;
       line-height: 1;
       transition: background 0.15s, transform 0.1s;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
     }
     .btn-print:active { transform: scale(0.97); }
     .btn-print:hover { background: #1d4ed8; }
+    .btn-print svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+    }
     .btn-close {
+      min-height: 44px;
       background: #475569;
       color: #ffffff;
       border: none;
-      padding: 6px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 10px;
       cursor: pointer;
       white-space: nowrap !important;
       flex-shrink: 0;
       line-height: 1;
       transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
     .btn-close:active { transform: scale(0.97); }
     .btn-close:hover { background: #334155; }
     @media (min-width: 768px) {
       .btn-print {
-        padding: 8px 16px;
-        font-size: 14px;
-        gap: 6px;
+        flex: initial;
+        min-height: 40px;
+        padding: 9px 20px;
+        font-size: 15px;
       }
       .btn-close {
-        padding: 8px 14px;
+        min-height: 40px;
+        padding: 9px 16px;
         font-size: 14px;
       }
     }
     .top-action-notice {
-      font-size: 11px;
-      color: #94a3b8;
-      line-height: 1.35;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.4;
       word-break: keep-all;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
     @media (min-width: 768px) {
       .top-action-notice {
-        font-size: 12px;
+        font-size: 13px;
+        padding: 6px 12px;
       }
     }
 
@@ -1467,21 +1499,21 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
 <body>
   <div class="top-action-bar">
     <div class="top-action-container">
-      <div class="top-action-row">
+      <div class="top-action-main">
         <div class="top-action-title">
           <span class="top-action-icon">🖨️</span>
           <span class="top-action-title-text">${escapeHtml(title)}</span>
         </div>
         <div class="top-action-buttons">
           <button class="btn-print" onclick="window.print()" title="인쇄 또는 PDF로 저장">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
             <span>인쇄 / PDF 저장</span>
           </button>
           <button class="btn-close" onclick="window.close()" title="창 닫기">창 닫기</button>
         </div>
       </div>
       <div class="top-action-notice">
-        💡 인쇄 창에서 대상을 [PDF로 저장]으로 선택하시면 하나의 깔끔한 PDF 문서로 일괄 저장됩니다.
+        💡 인쇄 창에서 대상을 <strong>[PDF로 저장]</strong>으로 선택하시면 하나의 깔끔한 PDF 문서로 일괄 저장됩니다.
       </div>
     </div>
   </div>
