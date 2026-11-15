@@ -3232,7 +3232,7 @@ export default function MainApp({
             </div>
 
             {/* 팀/선생님 선택 및 일지 작성하기 박스 */}
-            <div className="bg-white border-[3px] border-blue-600 rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-[0_4px_12px_-2px_rgba(37,99,235,0.12),0_2px_6px_0_rgba(0,0,0,0.04)] flex flex-col gap-3 sm:gap-3.5 w-full">
+            <div className="bg-white border-2 border-blue-500 rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-[0_4px_16px_-4px_rgba(59,130,246,0.14),0_2px_6px_-1px_rgba(0,0,0,0.04)] flex flex-col gap-3 sm:gap-3.5 w-full">
               <div className="w-full">
                 <label className="flex items-center gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
                 <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
