@@ -1179,13 +1179,13 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             </div>
 
             {/* Row 2: 대상 서류 */}
-            <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-200/60">
-              <span className="text-xs font-bold text-slate-700 shrink-0 mr-1">대상 서류:</span>
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs flex-wrap">
+            <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pt-2 border-t border-slate-200/60 pb-0.5">
+              <span className="text-xs font-bold text-slate-700 shrink-0 mr-1 whitespace-nowrap">대상 서류:</span>
+              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs whitespace-nowrap shrink-0">
                 <button
                   type="button"
                   onClick={() => toggleDocType('app')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${
                     selectedDocTypes.has('app')
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
@@ -1197,7 +1197,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleDocType('pre')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${
                     selectedDocTypes.has('pre')
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
@@ -1209,7 +1209,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => toggleDocType('post')}
-                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none whitespace-nowrap shrink-0 ${
                     selectedDocTypes.has('post')
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
@@ -1224,8 +1224,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
           {/* Date Range Picker (등록 기간 선택) */}
           <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">등록 기간:</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-0.5">
+              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1 whitespace-nowrap">등록 기간:</span>
               <input
                 type="date"
                 value={startDate}
@@ -1233,9 +1233,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   setStartDate(e.target.value);
                   setDatePreset('');
                 }}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
+                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 shrink-0"
               />
-              <span className="text-slate-400 text-xs">~</span>
+              <span className="text-slate-400 text-xs shrink-0">~</span>
               <input
                 type="date"
                 value={endDate}
@@ -1243,12 +1243,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   setEndDate(e.target.value);
                   setDatePreset('');
                 }}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
+                className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500 shrink-0"
               />
             </div>
 
             {/* Quick Date Presets (선택된 버튼 파란색 배경 표시) */}
-            <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap pb-0.5">
               {[
                 { id: 'all', label: '전체' },
                 { id: 'today', label: '오늘' },
@@ -1261,7 +1261,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     key={p.id}
                     type="button"
                     onClick={() => handleDatePreset(p.id)}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none ${
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none whitespace-nowrap shrink-0 ${
                       isSelected
                         ? 'bg-blue-600 text-white shadow-xs'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
@@ -1297,40 +1297,40 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
         {/* 3. TABLE TOOLBAR (Selection Summary & Action Buttons) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-3">
-            <label className="inline-flex items-center cursor-pointer select-none">
+          <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
+            <label className="inline-flex items-center cursor-pointer select-none whitespace-nowrap shrink-0">
               <input
                 type="checkbox"
                 checked={isAllFilteredSelected}
                 onChange={handleToggleSelectAll}
                 className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
-              <span className="ml-2 text-xs font-bold text-slate-700">현재 목록 전체 선택 ({filteredStudents.length}명)</span>
+              <span className="ml-2 text-xs font-bold text-slate-700 whitespace-nowrap">현재 목록 전체 선택 ({filteredStudents.length}명)</span>
             </label>
             {selectedStudentNames.size > 0 && (
-              <span className="text-xs bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-full">
+              <span className="text-xs bg-blue-100 text-blue-800 font-extrabold px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
                 선택됨: {selectedStudentNames.size}명
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-0.5 sm:pb-0">
             {/* Selected Students Batch Print */}
             <button
               type="button"
               onClick={() => handleOpenPrintModal('selected')}
               disabled={selectedStudentNames.size === 0}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0 ${
                 selectedStudentNames.size > 0
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
               title="선택한 학생들의 서류를 하나의 PDF/인쇄물로 일괄 출력합니다"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
-              <span>선택 학생 일괄 인쇄 ({selectedStudentNames.size}명)</span>
+              <span className="whitespace-nowrap">선택 학생 일괄 인쇄 ({selectedStudentNames.size}명)</span>
             </button>
 
             {/* Filtered All Batch Print */}
@@ -1338,21 +1338,21 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               type="button"
               onClick={() => handleOpenPrintModal('filtered')}
               disabled={filteredStudents.length === 0}
-              className="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer whitespace-nowrap shrink-0"
               title="현재 검색 및 기간 필터에 나타난 전체 학생의 서류를 일괄 인쇄합니다"
             >
-              <span>기간/검색결과 전체 인쇄 ({filteredStudents.length}명)</span>
+              <span className="whitespace-nowrap">기간/검색결과 전체 인쇄 ({filteredStudents.length}명)</span>
             </button>
           </div>
         </div>
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs sm:text-sm">
+          <div className="overflow-x-auto overscroll-x-contain">
+            <table className="w-full min-w-max text-left border-collapse text-xs sm:text-sm whitespace-nowrap">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold">
-                  <th className="py-3 px-3 text-center w-10">
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold whitespace-nowrap">
+                  <th className="py-3 px-3 text-center w-10 whitespace-nowrap shrink-0">
                     <input
                       type="checkbox"
                       checked={isAllFilteredSelected}
@@ -1360,35 +1360,35 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                       className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </th>
-                  <th className="py-3 px-3 text-center w-12">연번</th>
-                  <th className="py-3 px-3">학생 성명</th>
-                  <th className="py-3 px-3">소속 팀</th>
-                  <th className="py-3 px-3">등록/수업일</th>
+                  <th className="py-3 px-3 text-center w-12 whitespace-nowrap shrink-0">연번</th>
+                  <th className="py-3 px-3 whitespace-nowrap">학생 성명</th>
+                  <th className="py-3 px-3 whitespace-nowrap">소속 팀</th>
+                  <th className="py-3 px-3 whitespace-nowrap">등록/수업일</th>
                   {selectedDocTypes.has('app') && (
-                    <th className="py-3 px-3 text-center">① 참여 신청서</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">① 참여 신청서</th>
                   )}
                   {selectedDocTypes.has('pre') && (
-                    <th className="py-3 px-3 text-center">② 사전 설문지</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">② 사전 설문지</th>
                   )}
                   {selectedDocTypes.has('post') && (
-                    <th className="py-3 px-3 text-center">③ 사후 설문지</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">③ 사후 설문지</th>
                   )}
-                  <th className="py-3 px-3 text-center">개별 출력</th>
+                  <th className="py-3 px-3 text-center whitespace-nowrap">개별 출력</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
+                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap">
                       <div className="inline-block w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
-                      <p className="text-xs font-semibold">참여자 서류 데이터를 집계하는 중입니다...</p>
+                      <p className="text-xs font-semibold whitespace-nowrap">참여자 서류 데이터를 집계하는 중입니다...</p>
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
-                      <p className="text-sm font-semibold">검색 조건에 일치하는 대상자가 없습니다.</p>
-                      <p className="text-xs text-slate-400 mt-1">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
+                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap">
+                      <p className="text-sm font-semibold whitespace-nowrap">검색 조건에 일치하는 대상자가 없습니다.</p>
+                      <p className="text-xs text-slate-400 mt-1 whitespace-nowrap">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
                     </td>
                   </tr>
                 ) : (
@@ -1408,10 +1408,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     return (
                       <tr
                         key={s.name}
-                        className={`transition hover:bg-slate-50/80 ${isSelected ? 'bg-blue-50/40' : ''}`}
+                        className={`transition hover:bg-slate-50/80 whitespace-nowrap ${isSelected ? 'bg-blue-50/40' : ''}`}
                       >
                         {/* Checkbox */}
-                        <td className="py-2.5 px-3 text-center">
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap shrink-0">
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -1421,46 +1421,46 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         </td>
 
                         {/* Index */}
-                        <td className="py-2.5 px-3 text-center text-slate-400 text-xs font-medium">
+                        <td className="py-2.5 px-3 text-center text-slate-400 text-xs font-medium whitespace-nowrap shrink-0">
                           {idx + 1}
                         </td>
 
                         {/* Student Name */}
-                        <td className="py-2.5 px-3">
-                          <div className="font-extrabold text-slate-900 text-sm">{s.name}</div>
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <div className="font-extrabold text-slate-900 text-sm whitespace-nowrap">{s.name}</div>
                         </td>
 
                         {/* Team */}
-                        <td className="py-2.5 px-3">
-                          <div className="font-semibold text-slate-800 text-xs">{s.team}</div>
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <div className="font-semibold text-slate-800 text-xs whitespace-nowrap">{s.team}</div>
                         </td>
 
                         {/* Registration Date / Last Lesson */}
-                        <td className="py-2.5 px-3 text-xs text-slate-600">
-                          <div>{s.regDate || s.lastDate || '-'}</div>
+                        <td className="py-2.5 px-3 text-xs text-slate-600 whitespace-nowrap">
+                          <div className="whitespace-nowrap">{s.regDate || s.lastDate || '-'}</div>
                         </td>
 
                         {/* 1. Application Form Status Button */}
                         {selectedDocTypes.has('app') && (
-                          <td className="py-2.5 px-3 text-center">
+                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
                             {s.isAppSubmitted ? (
                               <button
                                 type="button"
                                 onClick={() => window.open(appUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title={`신청서 열기 및 수정 (${s.app?.sign_date || s.app?.created_at?.slice(0, 10) || '완료'})`}
                               >
-                                <span>✅ 완료</span>
+                                <span className="whitespace-nowrap">✅ 완료</span>
                               </button>
                             ) : (
                               <button
                                 type="button"
                                 onClick={() => window.open(appUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="클릭하여 새 신청서 작성"
                               >
-                                <span>❌ 미작성</span>
-                                <span className="text-[10px] text-blue-600 font-bold ml-0.5">+작성</span>
+                                <span className="whitespace-nowrap">❌ 미작성</span>
+                                <span className="text-[10px] text-blue-600 font-bold ml-0.5 whitespace-nowrap">+작성</span>
                               </button>
                             )}
                           </td>
@@ -1468,26 +1468,26 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
                         {/* 2. Pre-Survey Status Button */}
                         {selectedDocTypes.has('pre') && (
-                          <td className="py-2.5 px-3 text-center">
+                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
                             {s.isPreSubmitted ? (
                               <button
                                 type="button"
                                 onClick={() => window.open(preUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs border border-indigo-200 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs border border-indigo-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="사전설문지 열기 및 수정"
                               >
-                                <span>✅ 완료</span>
-                                <span className="text-[10px] text-indigo-600 font-bold">({s.preSurvey.score_total ?? 0}점)</span>
+                                <span className="whitespace-nowrap">✅ 완료</span>
+                                <span className="text-[10px] text-indigo-600 font-bold whitespace-nowrap">({s.preSurvey.score_total ?? 0}점)</span>
                               </button>
                             ) : (
                               <button
                                 type="button"
                                 onClick={() => window.open(preUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="클릭하여 새 사전설문지 작성"
                               >
-                                <span>❌ 미작성</span>
-                                <span className="text-[10px] text-indigo-600 font-bold ml-0.5">+작성</span>
+                                <span className="whitespace-nowrap">❌ 미작성</span>
+                                <span className="text-[10px] text-indigo-600 font-bold ml-0.5 whitespace-nowrap">+작성</span>
                               </button>
                             )}
                           </td>
@@ -1495,38 +1495,38 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
                         {/* 3. Post-Survey Status Button */}
                         {selectedDocTypes.has('post') && (
-                          <td className="py-2.5 px-3 text-center">
+                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
                             {s.isPostSubmitted ? (
                               <button
                                 type="button"
                                 onClick={() => window.open(postUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs border border-purple-200 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs border border-purple-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="사후설문지 열기 및 수정"
                               >
-                                <span>✅ 완료</span>
-                                <span className="text-[10px] text-purple-600 font-bold">({s.postSurvey.score_total ?? 0}점)</span>
+                                <span className="whitespace-nowrap">✅ 완료</span>
+                                <span className="text-[10px] text-purple-600 font-bold whitespace-nowrap">({s.postSurvey.score_total ?? 0}점)</span>
                               </button>
                             ) : (
                               <button
                                 type="button"
                                 onClick={() => window.open(postUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-50 hover:text-purple-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-50 hover:text-purple-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="클릭하여 새 사후설문지 작성"
                               >
-                                <span>❌ 미작성</span>
-                                <span className="text-[10px] text-purple-700 font-bold ml-0.5">+작성</span>
+                                <span className="whitespace-nowrap">❌ 미작성</span>
+                                <span className="text-[10px] text-purple-700 font-bold ml-0.5 whitespace-nowrap">+작성</span>
                               </button>
                             )}
                           </td>
                         )}
 
                         {/* Single Print Action */}
-                        <td className="py-2.5 px-3 text-center">
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
                           <button
                             type="button"
                             disabled={!hasAnyCompletedDoc}
                             onClick={() => handlePrintSingleStudentAll(s)}
-                            className={`px-2 py-1 rounded text-xs font-bold transition ${
+                            className={`px-2 py-1 rounded text-xs font-bold transition whitespace-nowrap shrink-0 ${
                               hasAnyCompletedDoc
                                 ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs'
                                 : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed'
