@@ -3312,7 +3312,11 @@ export default function MainApp({
                 onClick={onNavigateToStudentFormsAdmin}
                 icon={<IconDocumentCheck />}
                 chipColor="chip-blue"
-                label="참여자 서류 관리 (신청서·설문지)"
+                label={
+                  <>
+                    참여자 서류 관리 <span className="inline-block whitespace-nowrap">(신청서·설문지)</span>
+                  </>
+                }
                 desc="학생별 서류 작성 현황 파악 및 일괄 인쇄"
               />
               <MenuRow
@@ -3370,7 +3374,12 @@ export default function MainApp({
                     chipColor="chip-emerald"
                     onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin(); }}
                     icon={<IconDocumentCheck />}
-                    label="참여자 서류 관리 (신청서·설문지 일괄출력)"
+                    label={
+                      <>
+                        참여자 서류 관리<br />
+                        <span className="whitespace-nowrap">(신청서·설문지 일괄출력)</span>
+                      </>
+                    }
                   />
                   <MenuRow
                     variant="admin"
