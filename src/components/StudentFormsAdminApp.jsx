@@ -646,30 +646,56 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       return;
     }
 
-    let html = '';
-    const docLabels = [];
-
-    // 1. Application Form (작성 완료된 경우만 인쇄)
+    const activeDocs = [];
     if (selectedDocTypes.has('app') && s.app) {
-      html += renderApplicationFormHtml(s.app, s.name, false);
-      docLabels.push('신청서');
+      activeDocs.push({ type: 'app', label: '1)신청서' });
     }
-
-    // 2. Pre-Survey Form (작성 완료된 경우만 인쇄)
     if (selectedDocTypes.has('pre') && s.preSurvey) {
-      html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
-      docLabels.push('사전설문');
+      activeDocs.push({ type: 'pre', label: '2)사전설문' });
     }
-
-    // 3. Post-Survey Form (작성 완료된 경우만 인쇄)
     if (selectedDocTypes.has('post') && s.postSurvey) {
-      html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
-      docLabels.push('사후설문');
+      activeDocs.push({ type: 'post', label: '3)사후설문' });
     }
 
-    if (!html) {
+    if (activeDocs.length === 0) {
       alert(`${s.name} 학생은 선택된 대상 서류 중 작성 완료된 서류가 없습니다.\n(미작성 서류는 인쇄되지 않습니다)`);
       return;
+    }
+
+    // 대상 서류가 단 1건인 경우: '근무일지 입력' 화면과 100% 동일하게 해당 원본 폼을 열고 자동 인쇄 실행
+    if (activeDocs.length === 1) {
+      const doc = activeDocs[0];
+      if (doc.type === 'app') {
+        const url = `/application_form.html?name=${encodeURIComponent(s.name)}&autoPrint=true`;
+        window.open(url, '_blank');
+        return;
+      }
+      if (doc.type === 'pre') {
+        const url = `/survey_form.html?type=pre&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}&autoPrint=true`;
+        window.open(url, '_blank');
+        return;
+      }
+      if (doc.type === 'post') {
+        const url = `/survey_form.html?type=post&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}&autoPrint=true`;
+        window.open(url, '_blank');
+        return;
+      }
+    }
+
+    // 2건 이상인 경우: '근무일지 입력'과 100% 동일한 서식 및 A4 규격으로 일괄 인쇄 창 호출
+    let html = '';
+    const docLabels = [];
+    if (selectedDocTypes.has('app') && s.app) {
+      html += renderApplicationFormHtml(s.app, s.name, false);
+      docLabels.push('1)신청서');
+    }
+    if (selectedDocTypes.has('pre') && s.preSurvey) {
+      html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
+      docLabels.push('2)사전');
+    }
+    if (selectedDocTypes.has('post') && s.postSurvey) {
+      html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
+      docLabels.push('3)사후');
     }
 
     executeBatchPrint(html, `${s.name}_참여자서류(${docLabels.join('+')})`);

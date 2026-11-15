@@ -1,15 +1,24 @@
 // ==============================================================
 // 2027년 역량활용사업 참여신청서 및 사전/사후설문지 일괄 인쇄 템플릿
+// (public/application_form.html 및 public/survey_form.html 과 100% 동일한 페이지 포맷/스타일)
 // ==============================================================
 
-const QUESTIONS = [
+export const SCALE_OPTIONS = [
+  { value: 1, label: '전혀 그렇지 않다', displayHtml: '전혀 그렇지<br>않다' },
+  { value: 2, label: '별로 그렇지 않다', displayHtml: '별로 그렇지<br>않다' },
+  { value: 3, label: '보통이다', displayHtml: '보통이다' },
+  { value: 4, label: '그렇다', displayHtml: '그렇다' },
+  { value: 5, label: '매우 그렇다', displayHtml: '매우 그렇다' }
+];
+
+export const QUESTIONS = [
   { id: 1, domain: 'awareness', domainTitle: '디지털 인식', text: '나는 새로운 디지털 기기에 두려움 없이 잘 적응하는 편이다.' },
   { id: 2, domain: 'awareness', domainTitle: '디지털 인식', text: '나는 새로운 디지털 기기를 적극적으로 이용해 보는 편이다.' },
   { id: 3, domain: 'awareness', domainTitle: '디지털 인식', text: '나는 익숙하지 않은 디지털 기기를 사용할 때도 편안하다.' },
   { id: 4, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰에서 화면/소리/보안/알림/와이파이 등 환경설정을 할 수 있다.' },
-  { id: 5, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰이나 컴퓨터에서 필요한 앱이나 프로그램을 설치하고 삭제할 수 있다.' },
-  { id: 6, domain: 'usage', domainTitle: '디지털 이용', text: '나는 필요한 정보를 인터넷 검색을 통해 찾을 수 있다.' },
-  { id: 7, domain: 'usage', domainTitle: '디지털 이용', text: '나는 유튜브 등 동영상 플랫폼에서 원하는 영상을 검색하고 시청할 수 있다.' },
+  { id: 5, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰으로 사진을 찍고, 저장할 수 있다.' },
+  { id: 6, domain: 'usage', domainTitle: '디지털 이용', text: '나는 스마트폰에서 필요한 앱을 검색, 설치, 삭제 할 수 있다.' },
+  { id: 7, domain: 'usage', domainTitle: '디지털 이용', text: '나는 필요한 정보를 인터넷이나 앱으로 검색할 수 있다.' },
   { id: 8, domain: 'usage', domainTitle: '디지털 이용', text: '병원·식당·기차 등을 모바일로 예약할 수 있다.' },
   { id: 9, domain: 'usage', domainTitle: '디지털 이용', text: '나는 송금, 간편결제 등 디지털 금융 서비스를 사용할 수 있다.' },
   { id: 10, domain: 'communication', domainTitle: '디지털 소통', text: '나는 메신저(카카오톡, 문자 등)을 활용하여 대화를 나누거나 사진, 파일 등을 전송할 수 있다.' },
@@ -20,15 +29,14 @@ const QUESTIONS = [
   { id: 15, domain: 'citizenship', domainTitle: '디지털 시민성', text: '나는 스팸, 스미싱, 보이스피싱 등 사이버 범죄에 대응하는 방법(신고 등)을 알고 있다.' }
 ];
 
-const DOMAIN_SECTIONS = [
+export const DOMAIN_SECTIONS = [
   {
     key: 'awareness',
     title: '■ 디지털 인식',
     desc: '(핵심변화: 디지털에 대한 두려움 감소 및 자신감 향상)',
     range: '1번 ~ 3번 문항',
-    headerBg: '#1e293b',
-    badgeBg: '#334155',
-    badgeColor: '#f1f5f9',
+    headerClass: 'print-header-awareness',
+    badgeClass: 'print-badge-awareness',
     qIds: [1, 2, 3],
     page: 1
   },
@@ -37,9 +45,8 @@ const DOMAIN_SECTIONS = [
     title: '■ 디지털 이용',
     desc: '(핵심변화: 생활 속 디지털 활용 능력 향상)',
     range: '4번 ~ 9번 문항',
-    headerBg: '#1e3a8a',
-    badgeBg: '#1d4ed8',
-    badgeColor: '#eff6ff',
+    headerClass: 'print-header-usage',
+    badgeClass: 'print-badge-usage',
     qIds: [4, 5, 6, 7, 8, 9],
     page: 1
   },
@@ -48,9 +55,8 @@ const DOMAIN_SECTIONS = [
     title: '■ 디지털 소통',
     desc: '(핵심변화: 가족·사회와의 소통 확대)',
     range: '10번 ~ 12번 문항',
-    headerBg: '#312e81',
-    badgeBg: '#3730a3',
-    badgeColor: '#e0e7ff',
+    headerClass: 'print-header-communication',
+    badgeClass: 'print-badge-communication',
     qIds: [10, 11, 12],
     page: 2
   },
@@ -59,9 +65,8 @@ const DOMAIN_SECTIONS = [
     title: '■ 디지털 시민성',
     desc: '(핵심변화: 안전한 디지털 사용 습관 형성)',
     range: '13번 ~ 15번 문항',
-    headerBg: '#134e4a',
-    badgeBg: '#115e59',
-    badgeColor: '#ccfbf1',
+    headerClass: 'print-header-citizenship',
+    badgeClass: 'print-badge-citizenship',
     qIds: [13, 14, 15],
     page: 2
   }
@@ -78,7 +83,7 @@ function escapeHtml(str) {
 }
 
 // -------------------------------------------------------------
-// 1. 참여 신청서 HTML 렌더러 (1페이지 완결형)
+// 1. 참여 신청서 HTML 렌더러 (1페이지 완결형, application_form.html 과 동일 서식)
 // -------------------------------------------------------------
 export function renderApplicationFormHtml(app, studentName, isBlank = false) {
   const name = isBlank ? (studentName || '') : (app?.applicant_name || studentName || '');
@@ -109,36 +114,36 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
   const check = (condition) => condition ? '☑' : '☐';
 
   return `
-    <div class="print-page app-form-page">
-      <!-- Header -->
-      <div class="app-header">
-        <div class="app-title-sub">2027년 노인일자리 및 사회활동지원사업(역량활용)</div>
-        <div class="app-title-main">프로그램 참여 신청서</div>
-      </div>
+    <div class="doc-page-app page-container">
+      <!-- Title -->
+      <h1 id="docTitle">
+        <span class="title-project">2027년 노인일자리 및 사회활동지원사업(역량활용)</span>
+        <span class="title-main">프로그램 참여 신청서</span>
+      </h1>
 
-      <div class="app-section-title">■ 프로그램 참여 신청자 정보</div>
+      <div id="applicantSubTitle">프로그램 참여 신청자 정보</div>
 
       <!-- Applicant Info Table -->
-      <table class="app-table">
+      <table id="applicantTable">
         <colgroup>
-          <col style="width: 14%;">
+          <col style="width: 12%;">
           <col style="width: 23%;">
-          <col style="width: 13%;">
-          <col style="width: 17%;">
-          <col style="width: 13%;">
+          <col style="width: 12%;">
+          <col style="width: 18%;">
+          <col style="width: 15%;">
           <col style="width: 20%;">
         </colgroup>
         <tbody>
           <tr>
             <th>성 명</th>
-            <td class="font-bold text-center">${escapeHtml(name)}</td>
+            <td style="font-weight: 700; text-align: center;">${escapeHtml(name)}</td>
             <th>성 별</th>
-            <td class="text-center">
-              <span class="inline-check">${check(gender === '남')} 남</span>
-              <span class="inline-check ml-4">${check(gender === '여')} 여</span>
+            <td style="text-align: center;">
+              <span>${check(gender === '남')} 남</span>
+              <span style="margin-left: 12px;">${check(gender === '여')} 여</span>
             </td>
-            <th>연락처(휴대폰)</th>
-            <td class="text-center font-bold">${escapeHtml(phone)}</td>
+            <th>연락처<br>(휴대폰)</th>
+            <td style="font-weight: 700; text-align: center;">${escapeHtml(phone)}</td>
           </tr>
           <tr>
             <th>주 소</th>
@@ -146,8 +151,8 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
           </tr>
           <tr>
             <th>신청경로</th>
-            <td colspan="5" class="py-2">
-              <div class="grid-2col">
+            <td colspan="5">
+              <div id="applyRouteGrid">
                 <div>${check(applyRoutes.some(r => r.includes('치매안심센터')))} 성동구치매안심센터 소개</div>
                 <div>${check(applyRoutes.some(r => r.includes('정신건강복지센터')))} 성동정신건강복지센터 소개</div>
                 <div>${check(applyRoutes.some(r => r.includes('대한노인회')))} 대한노인회 소개</div>
@@ -160,28 +165,22 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
           </tr>
           <tr>
             <th>희망서비스</th>
-            <td colspan="5" class="py-2">
-              <div class="service-list">
-                <div class="service-row">
+            <td colspan="5">
+              <div id="hopeServiceList">
+                <div class="service-item">
                   <span>${check(hopeServices.some(s => s.includes('마음이음')))}</span>
-                  <div>
-                    <strong>마음이음 프로그램</strong>
-                    <span class="text-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을 지원)</span>
-                  </div>
+                  <span class="service-name">마음이음 프로그램</span>
+                  <span class="service-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을 지원)</span>
                 </div>
-                <div class="service-row">
+                <div class="service-item">
                   <span>${check(hopeServices.some(s => s.includes('기억돌봄')))}</span>
-                  <div>
-                    <strong>기억돌봄 프로그램</strong>
-                    <span class="text-desc">(인지활동 프로그램 운영을 통해 치매 예방 지원)</span>
-                  </div>
+                  <span class="service-name">기억돌봄 프로그램</span>
+                  <span class="service-desc">(인지활동 프로그램 운영을 통해 치매 예방 지원)</span>
                 </div>
-                <div class="service-row">
+                <div class="service-item">
                   <span>${check(hopeServices.some(s => s.includes('스마트폰')))}</span>
-                  <div>
-                    <strong>스마트폰 프로그램(1:1 맞춤형)</strong>
-                    <span class="text-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소 지원)</span>
-                  </div>
+                  <span class="service-name">스마트폰 프로그램(1:1 맞춤형)</span>
+                  <span class="service-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소 지원)</span>
                 </div>
               </div>
             </td>
@@ -189,7 +188,7 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
           <tr>
             <th>희망요일</th>
             <td colspan="5">
-              <div class="days-row">
+              <div id="hopeDaysList">
                 <span>${check(hopeDays.includes('월'))} 월</span>
                 <span>${check(hopeDays.includes('화'))} 화</span>
                 <span>${check(hopeDays.includes('수'))} 수</span>
@@ -201,85 +200,100 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
           <tr>
             <th>희망시간</th>
             <td colspan="5">
-              <div class="time-row">
+              <div id="hopeTimeList">
                 <span>${check(hopeTime?.morning_check || Boolean(hopeTime?.morning))} 오전: ${escapeHtml(hopeTime?.morning || '09:00~12:00')}</span>
-                <span class="ml-6">${check(hopeTime?.afternoon_check || Boolean(hopeTime?.afternoon))} 오후: ${escapeHtml(hopeTime?.afternoon || '13:00~16:00')}</span>
+                <span>${check(hopeTime?.afternoon_check || Boolean(hopeTime?.afternoon))} 오후: ${escapeHtml(hopeTime?.afternoon || '13:00~16:00')}</span>
               </div>
             </td>
           </tr>
           <tr>
             <th>비 고</th>
-            <td colspan="5" style="height: 48px; vertical-align: top;">
-              ${escapeHtml(memo)}
+            <td id="memoCell" colspan="5" style="vertical-align: top;">
+              <div>${escapeHtml(memo)}</div>
             </td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Consent Box -->
-      <div class="consent-box">
-        <div class="consent-head">■ [필수] 개인정보 수집 및 이용 동의 <span class="consent-law">(개인정보 보호법 제15조, 제22조, 제23조)</span></div>
-        <table class="consent-table">
-          <tr>
-            <th style="width: 32%;">항목</th>
-            <th style="width: 44%;">목적</th>
-            <th style="width: 24%;">이용 및 보유기간</th>
-          </tr>
-          <tr>
-            <td class="text-center">성명, 연락처, 주소</td>
-            <td class="text-center">프로그램 신청자 확인</td>
-            <td class="text-center">신청일로부터 5년</td>
-          </tr>
-        </table>
-        <div class="consent-check-row">
-          <span>${check(privacyConsent)} 동의함</span>
-          <span class="ml-6">${check(!privacyConsent)} 동의하지 않음</span>
-        </div>
+      <!-- Privacy Container -->
+      <div id="privacyContainer">
+        <div id="privacyInner">
+          <div class="privacy-head">■ [필수] 개인정보 수집 및 이용 동의</div>
+          <div class="privacy-law">관련 법규 : 개인정보 보호법 제15조, 제22조, 제23조</div>
+          <table class="privacy-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">항목</th>
+                <th style="width: 40%;">목적</th>
+                <th style="width: 30%;">이용 및 보유기간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align: center;">성명, 연락처, 주소</td>
+                <td style="text-align: center;">프로그램 신청자 확인</td>
+                <td style="text-align: center;">신청일로부터 5년</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="consent-radios">
+            <span>${check(privacyConsent)} 동의함</span>
+            <span>${check(!privacyConsent)} 동의하지 않음</span>
+          </div>
 
-        <div class="consent-head mt-3">■ [선택] 초상권 활용 동의</div>
-        <table class="consent-table">
-          <tr>
-            <th style="width: 32%;">항목</th>
-            <th style="width: 44%;">목적</th>
-            <th style="width: 24%;">이용 및 보유기간</th>
-          </tr>
-          <tr>
-            <td class="text-center">프로그램 참여 사진, 동영상</td>
-            <td class="text-center">복지관 홈페이지 게재, 유튜브, 홍보물 제작 등</td>
-            <td class="text-center">사용 목적 종료 시까지</td>
-          </tr>
-        </table>
-        <div class="consent-check-row">
-          <span>${check(portraitConsent)} 동의함</span>
-          <span class="ml-6">${check(!portraitConsent)} 동의하지 않음</span>
-        </div>
+          <div id="portraitHeader" class="privacy-head">■ [선택] 초상권 활용 동의</div>
+          <table class="privacy-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">항목</th>
+                <th style="width: 40%;">목적</th>
+                <th style="width: 30%;">이용 및 보유기간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align: center;">프로그램 참여 사진, 동영상</td>
+                <td style="text-align: center;">복지관 홈페이지 게재, 유튜브, 홍보물 제작 등</td>
+                <td style="text-align: center;">사용 목적 종료 시까지</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="consent-radios">
+            <span>${check(portraitConsent)} 동의함</span>
+            <span>${check(!portraitConsent)} 동의하지 않음</span>
+          </div>
 
-        <div class="consent-notice">
-          ※ 개인정보 수집·이용 동의, 초상권 활용 동의를 거부할 권리가 있으며, 거부 시 프로그램 참여가 제한될 수 있습니다.
+          <div id="consentNotice">
+            ※ 개인정보 수집 및 이용 동의, 초상권 활용 동의를 거부할 권리가 있으며,<br>
+            동의 거부 시에 프로그램 참여가 제한될 수 있습니다.
+          </div>
         </div>
       </div>
 
       <!-- Signature Section -->
-      <div class="app-sign-section">
-        <div class="app-sign-date">
-          <strong>${year || '2027'}</strong>년 <strong>${month || '&nbsp;&nbsp;'}</strong>월 <strong>${day || '&nbsp;&nbsp;'}</strong>일
+      <div id="signatureSection">
+        <div id="dateRow">
+          <span>${year || '2027'} 년</span>
+          <span>${month || '&nbsp;&nbsp;'} 월</span>
+          <span>${day || '&nbsp;&nbsp;'} 일</span>
         </div>
-        <div class="app-sign-row">
+        <div id="signerRow">
           <span>신청자 : </span>
-          <span class="signer-name font-bold">${escapeHtml(signerName)}</span>
-          <span class="sig-wrapper">
-            ${signatureData ? `<img src="${signatureData}" class="sig-img" alt="서명">` : '<span class="sig-blank"></span>'}
-            <span class="sig-label">(서명/인)</span>
-          </span>
+          <span style="font-weight: 700; margin-right: 6px;">${escapeHtml(signerName)}</span>
+          ${signatureData
+            ? `<img src="${signatureData}" style="height: 38px; max-width: 130px; object-fit: contain; vertical-align: middle; border-bottom: 1px solid #111;" alt="서명">`
+            : `<span style="display: inline-block; width: 90px; border-bottom: 1px solid #111; height: 24px;"></span>`
+          }
+          <span style="color: #64748b; font-size: 13px; margin-left: 4px;">(서명)</span>
         </div>
       </div>
 
-      <!-- Footer Org -->
-      <div class="app-footer">
-        <img src="${origin}/Logo_of_Seoul.jpg" class="app-footer-logo" alt="서울시 로고" onerror="this.style.display='none'">
-        <div>
-          <div class="app-footer-sub">사회복지법인 서울가톨릭사회복지회</div>
-          <div class="app-footer-title">시립성동노인종합복지관 귀중</div>
+      <!-- Print Footer Logo -->
+      <div id="printFooterLogo">
+        <img src="${origin}/Logo_of_Seoul.jpg" alt="서울시 로고" onerror="this.style.display='none'">
+        <div style="text-align: left;">
+          <div id="printLogoSub" class="org-sub">사회복지법인 서울가톨릭사회복지회</div>
+          <div id="printLogoTitle" class="org-title">시립성동노인종합복지관</div>
         </div>
       </div>
     </div>
@@ -287,7 +301,7 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
 }
 
 // -------------------------------------------------------------
-// 2. 설문조사지 HTML 렌더러 (사전 / 사후, 2페이지)
+// 2. 설문조사지 HTML 렌더러 (사전 / 사후, 2페이지 완결형, survey_form.html 과 동일 서식)
 // -------------------------------------------------------------
 export function renderSurveyFormHtml(survey, studentName, type = 'pre', isBlank = false, preSurvey = null) {
   const isPost = type === 'post';
@@ -323,211 +337,225 @@ export function renderSurveyFormHtml(survey, studentName, type = 'pre', isBlank 
   const avgCitizenship = (scoreCitizenship / 3).toFixed(1);
   const avgTotal = (totalScore / 15).toFixed(1);
 
-  // Pre-Post Comparison metrics (for post survey)
-  let preAnswers = preSurvey?.answers || {};
-  let preTotal = 0;
-  let preAwareness = 0, preUsage = 0, preCommunication = 0, preCitizenship = 0;
-  const hasPreData = isPost && !isBlank && preSurvey && preSurvey.answers;
-  if (hasPreData) {
-    for (let i = 1; i <= 15; i++) {
-      const v = Number(preAnswers[`q${i}`]) || 0;
-      preTotal += v;
-      if (i <= 3) preAwareness += v;
-      else if (i <= 9) preUsage += v;
-      else if (i <= 12) preCommunication += v;
-      else preCitizenship += v;
+  // Comparison metrics for Post Survey
+  const preAnswers = preSurvey?.answers || {};
+  let comparison = null;
+  if (isPost) {
+    let preTotal = 0, preAw = 0, preUs = 0, preCom = 0, preCit = 0;
+    const hasPre = !isBlank && Boolean(preSurvey && preSurvey.answers);
+    if (hasPre) {
+      for (let i = 1; i <= 15; i++) {
+        const v = Number(preAnswers[`q${i}`]) || 0;
+        preTotal += v;
+        if (i <= 3) preAw += v;
+        else if (i <= 9) preUs += v;
+        else if (i <= 12) preCom += v;
+        else preCit += v;
+      }
     }
-  }
-  const preDateStr = preSurvey?.survey_date || (preSurvey?.created_at ? preSurvey.created_at.slice(0, 10) : '');
+    const preDateStr = preSurvey?.survey_date || preSurvey?.surveyDate || (preSurvey?.created_at ? preSurvey.created_at.slice(0, 10) : '');
+    
+    const domains = [
+      { key: 'awareness', title: '디지털 인식', range: '1~3번', maxScore: 15, preScore: preAw, preAvg: (preAw/3).toFixed(1), postScore: scoreAwareness, postAvg: avgAwareness, diff: scoreAwareness - preAw, diffAvg: ((scoreAwareness - preAw)/3).toFixed(2) },
+      { key: 'usage', title: '디지털 이용', range: '4~9번', maxScore: 30, preScore: preUs, preAvg: (preUs/6).toFixed(1), postScore: scoreUsage, postAvg: avgUsage, diff: scoreUsage - preUs, diffAvg: ((scoreUsage - preUs)/6).toFixed(2) },
+      { key: 'communication', title: '디지털 소통', range: '10~12번', maxScore: 15, preScore: preCom, preAvg: (preCom/3).toFixed(1), postScore: scoreCommunication, postAvg: avgCommunication, diff: scoreCommunication - preCom, diffAvg: ((scoreCommunication - preCom)/3).toFixed(2) },
+      { key: 'citizenship', title: '디지털 시민성', range: '13~15번', maxScore: 15, preScore: preCit, preAvg: (preCit/3).toFixed(1), postScore: scoreCitizenship, postAvg: avgCitizenship, diff: scoreCitizenship - preCit, diffAvg: ((scoreCitizenship - preCit)/3).toFixed(2) },
+    ];
+    const totalDiff = totalScore - preTotal;
+    const growthRate = preTotal > 0 ? ((totalDiff / preTotal) * 100).toFixed(1) : '0.0';
+    const sortedDomains = [...domains].sort((a, b) => b.diff - a.diff);
+    const bestDomain = sortedDomains[0];
 
-  const renderQuestionRow = (q) => {
-    const val = Number(answers[`q${q.id}`]) || 0;
+    comparison = {
+      hasPreData: hasPre,
+      preDateStr,
+      preTotal,
+      preAvgTotal: (preTotal / 15).toFixed(1),
+      totalDiff,
+      growthRate,
+      bestDomain,
+      domains
+    };
+  }
+
+  const renderDomain = (domainDef) => {
+    const isPage2Start = domainDef.key === 'communication';
     return `
-      <div class="survey-q-item">
-        <div class="survey-q-head">
-          <span class="survey-q-badge">${q.id}</span>
-          <span class="survey-q-text">${escapeHtml(q.text)}</span>
+      <section class="print-section ${isPage2Start ? 'print-page-break' : ''}">
+        <div class="print-section-header ${domainDef.headerClass}">
+          <div class="print-section-title-wrap">
+            <span class="print-section-title">${domainDef.title}</span>
+            <span class="print-section-desc">${domainDef.desc}</span>
+          </div>
+          <span class="print-section-badge ${domainDef.badgeClass}">${domainDef.range}</span>
         </div>
-        <div class="survey-options-grid">
-          ${[1, 2, 3, 4, 5].map(score => {
-            const isSelected = !isBlank && val === score;
-            const labels = ['전혀 아님', '별로 아님', '보통이다', '그렇다', '매우 그렇다'];
+        <div class="print-section-body">
+          ${domainDef.qIds.map(qId => {
+            const q = QUESTIONS.find(item => item.id === qId);
+            const val = Number(answers[`q${q.id}`]) || 0;
             return `
-              <div class="survey-opt-box ${isSelected ? 'selected' : ''}">
-                <span class="survey-opt-num ${isSelected ? 'selected' : ''}">${score}</span>
-                <span class="survey-opt-label">${labels[score - 1]}</span>
+              <div class="print-q-item">
+                <div class="print-q-head">
+                  <span class="print-q-badge">${q.id}</span>
+                  <p class="print-q-text">${q.text}</p>
+                </div>
+                <div class="print-options-grid">
+                  ${SCALE_OPTIONS.map(opt => {
+                    const isSelected = !isBlank && val === opt.value;
+                    return `
+                      <div class="print-scale-btn ${isSelected ? 'selected' : ''}">
+                        <span class="score-num">${opt.value}</span>
+                        <span class="score-label">${opt.displayHtml || opt.label}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
               </div>
             `;
           }).join('')}
         </div>
-      </div>
-    `;
-  };
-
-  const renderDomainCard = (sec) => {
-    return `
-      <div class="survey-sec-card">
-        <div class="survey-sec-head" style="background-color: ${sec.headerBg};">
-          <div class="survey-sec-title">${sec.title}</div>
-          <div class="survey-sec-desc">${sec.desc}</div>
-        </div>
-        <div class="survey-sec-body">
-          ${QUESTIONS.filter(q => sec.qIds.includes(q.id)).map(q => renderQuestionRow(q)).join('')}
-        </div>
-      </div>
+      </section>
     `;
   };
 
   return `
-    <!-- PAGE 1: Header, Scores, Domain 1 & 2 -->
-    <div class="print-page survey-form-page">
-      <div class="survey-header">
-        <div class="survey-header-title">2027년 역량활용사업 1:1 디지털 교육 설문조사지 (${typeLabel})</div>
-        <div class="survey-header-sub">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
+    <div class="doc-page-survey print-doc-container">
+      <!-- Header Title -->
+      <div class="print-header">
+        <h2>2027년 역량활용사업 1:1 디지털 교육 설문조사지(${typeLabel})</h2>
+        <div class="print-subtitle">사회복지법인 서울가톨릭사회복지회 시립성동노인종합복지관</div>
       </div>
 
-      <!-- Respondent Table -->
-      <table class="survey-resp-table">
+      <!-- Respondent Info Table -->
+      <table class="print-respondent-table">
         <tr>
           <th style="width: 14%;">조사일자</th>
-          <td style="width: 20%; font-weight: bold;">${escapeHtml(surveyDate || '2027-&nbsp;&nbsp;-&nbsp;&nbsp;')}</td>
-          <th style="width: 18%;">참여자(성명)</th>
-          <td style="width: 22%; font-weight: bold;">${escapeHtml(participantName)}</td>
+          <td style="width: 20%; font-weight: bold;">${escapeHtml(surveyDate)}</td>
+          <th style="width: 20%;">참여자(성명)</th>
+          <td style="width: 20%; font-weight: bold;">${escapeHtml(participantName)}</td>
           <th style="width: 13%;">조사자</th>
           <td style="width: 13%; font-weight: bold;">${escapeHtml(surveyorName)}</td>
         </tr>
       </table>
 
-      <!-- Domain Scores Bar -->
-      <div class="survey-score-banner">
-        <div class="survey-domain-boxes">
-          <div class="survey-domain-box border-blue">
-            <div class="title text-blue">디지털 인식</div>
-            <div class="score">${isBlank ? '-' : `${scoreAwareness}점`} <span class="sub">(${isBlank ? '-' : avgAwareness}/5)</span></div>
+      <!-- Domain Scores Summary + Total -->
+      <div>
+        <div class="print-domain-grid">
+          <div class="print-domain-card">
+            <div class="print-domain-title text-blue-900">디지털 인식</div>
+            <div class="print-domain-score text-blue-700">${scoreAwareness}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${avgAwareness}/5)</span></div>
           </div>
-          <div class="survey-domain-box border-green">
-            <div class="title text-green">디지털 이용</div>
-            <div class="score">${isBlank ? '-' : `${scoreUsage}점`} <span class="sub">(${isBlank ? '-' : avgUsage}/5)</span></div>
+          <div class="print-domain-card">
+            <div class="print-domain-title text-emerald-900">디지털 이용</div>
+            <div class="print-domain-score text-emerald-700">${scoreUsage}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${avgUsage}/5)</span></div>
           </div>
-          <div class="survey-domain-box border-indigo">
-            <div class="title text-indigo">디지털 소통</div>
-            <div class="score">${isBlank ? '-' : `${scoreCommunication}점`} <span class="sub">(${isBlank ? '-' : avgCommunication}/5)</span></div>
+          <div class="print-domain-card">
+            <div class="print-domain-title text-indigo-900">디지털 소통</div>
+            <div class="print-domain-score text-indigo-700">${scoreCommunication}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${avgCommunication}/5)</span></div>
           </div>
-          <div class="survey-domain-box border-teal">
-            <div class="title text-teal">디지털 시민성</div>
-            <div class="score">${isBlank ? '-' : `${scoreCitizenship}점`} <span class="sub">(${isBlank ? '-' : avgCitizenship}/5)</span></div>
+          <div class="print-domain-card">
+            <div class="print-domain-title text-teal-900">디지털 시민성</div>
+            <div class="print-domain-score text-teal-700">${scoreCitizenship}점 <span style="font-size: 10.5px; font-weight: normal; color: #64748b;">(${avgCitizenship}/5)</span></div>
           </div>
         </div>
-        <div class="survey-total-bar">
-          총점 : <strong>${isBlank ? '-' : totalScore}</strong> / 75점 (평균 ${isBlank ? '-' : avgTotal}점)
+        <div class="print-total-score-bar">
+          총점: <span class="print-total-score-num">${totalScore}</span> / 75점 (평균 ${avgTotal}점)
         </div>
       </div>
 
-      <!-- 5-Point Scale Legend -->
-      <div class="survey-scale-legend">
-        <span>[5단계 응답 기준]</span>
-        <span>① 전혀 그렇지 않다</span>
-        <span>② 별로 그렇지 않다</span>
-        <span>③ 보통이다</span>
-        <span>④ 그렇다</span>
-        <span>⑤ 매우 그렇다</span>
-      </div>
+      <!-- Page 1 Domains (Domain 1: 인식 & Domain 2: 이용) -->
+      ${DOMAIN_SECTIONS.filter(d => d.page === 1).map(renderDomain).join('')}
 
-      <!-- Page 1 Domains (Domain 1, Domain 2) -->
-      ${DOMAIN_SECTIONS.filter(s => s.page === 1).map(s => renderDomainCard(s)).join('')}
+      <!-- Page 2 Domains (Domain 3: 소통 & Domain 4: 시민성, page-break at Domain 3) -->
+      ${DOMAIN_SECTIONS.filter(d => d.page === 2).map(renderDomain).join('')}
 
-      <div class="survey-page-num">- 1 -</div>
-    </div>
-
-    <!-- PAGE 2: Domain 3, 4, Feedback/Comparison, Footer -->
-    <div class="print-page survey-form-page">
-      <div class="survey-header-small">
-        <span>2027년 1:1 디지털 교육 설문조사지 (${typeLabel})</span>
-        <span class="font-bold">참여자 : ${escapeHtml(participantName)}</span>
-      </div>
-
-      <!-- Page 2 Domains (Domain 3, Domain 4) -->
-      ${DOMAIN_SECTIONS.filter(s => s.page === 2).map(s => renderDomainCard(s)).join('')}
-
-      <!-- Post-Survey Analysis or Pre-Survey Feedback -->
-      ${isPost ? `
-        <div class="survey-feedback-box">
-          <div class="feedback-title flex-between">
+      <!-- Feedback / Comparison Section (Page 2) -->
+      ${isPost && comparison ? `
+        <div class="print-feedback-section">
+          <div class="print-feedback-title" style="display: flex; justify-content: space-between; align-items: center;">
             <span>■ 사전 · 사후 디지털 역량 변화 분석 (교육 효과성 평가)</span>
-            ${hasPreData ? `<span class="text-blue text-xs font-normal">사전: ${escapeHtml(preDateStr)} ➔ 사후: ${escapeHtml(surveyDate)}</span>` : ''}
+            ${comparison.hasPreData ? `
+              <span style="font-size: 10px; font-weight: normal; color: #1e40af;">
+                사전조사: ${escapeHtml(comparison.preDateStr)} ➔ 사후조사: ${escapeHtml(surveyDate)}
+              </span>
+            ` : ''}
           </div>
-          <table class="survey-analysis-table">
+          <div class="print-feedback-desc">
+            사전 및 사후 설문조사의 4대 영역별 점수 변화 및 종합 성장도를 분석한 결과입니다.
+          </div>
+
+          <table class="print-analysis-table">
             <thead>
               <tr>
-                <th style="text-align: left;">평가 영역</th>
-                <th>사전 점수</th>
-                <th>사후 점수</th>
-                <th>점수 증감</th>
-                <th>평균 평점</th>
+                <th style="width: 26%; text-align: left; padding-left: 8px;">평가 영역</th>
+                <th style="width: 17%;">사전 점수</th>
+                <th style="width: 17%;">사후 점수</th>
+                <th style="width: 20%;">점수 증감</th>
+                <th style="width: 20%;">평균 평점</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td style="text-align: left; font-weight: bold;">디지털 인식 (1~3번)</td>
-                <td>${hasPreData ? `${preAwareness}점` : '-'}</td>
-                <td class="font-bold text-blue">${isBlank ? '-' : `${scoreAwareness}점`}</td>
-                <td class="font-bold">${hasPreData ? (scoreAwareness >= preAwareness ? `▲ +${scoreAwareness - preAwareness}` : `▼ ${scoreAwareness - preAwareness}`) : '-'}</td>
-                <td>${hasPreData ? `${(preAwareness/3).toFixed(1)} ➔ ${avgAwareness}` : `${avgAwareness}점`}</td>
-              </tr>
-              <tr>
-                <td style="text-align: left; font-weight: bold;">디지털 이용 (4~9번)</td>
-                <td>${hasPreData ? `${preUsage}점` : '-'}</td>
-                <td class="font-bold text-blue">${isBlank ? '-' : `${scoreUsage}점`}</td>
-                <td class="font-bold">${hasPreData ? (scoreUsage >= preUsage ? `▲ +${scoreUsage - preUsage}` : `▼ ${scoreUsage - preUsage}`) : '-'}</td>
-                <td>${hasPreData ? `${(preUsage/6).toFixed(1)} ➔ ${avgUsage}` : `${avgUsage}점`}</td>
-              </tr>
-              <tr>
-                <td style="text-align: left; font-weight: bold;">디지털 소통 (10~12번)</td>
-                <td>${hasPreData ? `${preCommunication}점` : '-'}</td>
-                <td class="font-bold text-blue">${isBlank ? '-' : `${scoreCommunication}점`}</td>
-                <td class="font-bold">${hasPreData ? (scoreCommunication >= preCommunication ? `▲ +${scoreCommunication - preCommunication}` : `▼ ${scoreCommunication - preCommunication}`) : '-'}</td>
-                <td>${hasPreData ? `${(preCommunication/3).toFixed(1)} ➔ ${avgCommunication}` : `${avgCommunication}점`}</td>
-              </tr>
-              <tr>
-                <td style="text-align: left; font-weight: bold;">디지털 시민성 (13~15번)</td>
-                <td>${hasPreData ? `${preCitizenship}점` : '-'}</td>
-                <td class="font-bold text-blue">${isBlank ? '-' : `${scoreCitizenship}점`}</td>
-                <td class="font-bold">${hasPreData ? (scoreCitizenship >= preCitizenship ? `▲ +${scoreCitizenship - preCitizenship}` : `▼ ${scoreCitizenship - preCitizenship}`) : '-'}</td>
-                <td>${hasPreData ? `${(preCitizenship/3).toFixed(1)} ➔ ${avgCitizenship}` : `${avgCitizenship}점`}</td>
-              </tr>
-              <tr class="total-row">
-                <td style="text-align: left; font-weight: 800; color: #1e3a8a;">종합 총점 / 평균</td>
-                <td>${hasPreData ? `${preTotal}점` : '-'}</td>
-                <td class="font-black text-blue" style="font-size: 13px;">${isBlank ? '-' : `${totalScore}점`}</td>
-                <td class="font-black text-green">${hasPreData ? `▲ +${totalScore - preTotal}점` : '-'}</td>
-                <td class="font-bold">${hasPreData ? `${(preTotal/15).toFixed(1)} ➔ ${avgTotal}` : `${avgTotal}점`}</td>
+              ${comparison.domains.map(d => `
+                <tr>
+                  <td style="text-align: left; padding-left: 8px; font-weight: 600;">
+                    ${d.title} <span style="font-size: 8.5px; color: #64748b; font-weight: normal;">(${d.range})</span>
+                  </td>
+                  <td>${comparison.hasPreData ? `${d.preScore}점` : '-'}</td>
+                  <td style="font-weight: 700;">${d.postScore}점</td>
+                  <td style="font-weight: 700; ${d.diff > 0 ? 'color: #1d4ed8;' : d.diff < 0 ? 'color: #dc2626;' : 'color: #64748b;'}">
+                    ${comparison.hasPreData ? (d.diff > 0 ? `▲ +${d.diff}점` : d.diff < 0 ? `▼ ${d.diff}점` : '0점') : '-'}
+                  </td>
+                  <td>${d.postAvg} / 5.0</td>
+                </tr>
+              `).join('')}
+              <tr style="background-color: #eff6ff; font-weight: 800;">
+                <td style="text-align: left; padding-left: 8px;">종합 합계 (총점)</td>
+                <td>${comparison.hasPreData ? `${comparison.preTotal}점` : '-'}</td>
+                <td style="color: #1d4ed8;">${totalScore}점</td>
+                <td style="${comparison.totalDiff > 0 ? 'color: #1d4ed8;' : comparison.totalDiff < 0 ? 'color: #dc2626;' : 'color: #64748b;'}">
+                  ${comparison.hasPreData ? (comparison.totalDiff > 0 ? `▲ +${comparison.totalDiff}점 (+${comparison.growthRate}%)` : comparison.totalDiff < 0 ? `▼ ${comparison.totalDiff}점` : '0점') : '-'}
+                </td>
+                <td style="color: #1d4ed8;">${avgTotal} / 5.0</td>
               </tr>
             </tbody>
           </table>
 
-          <div class="feedback-subhead">■ 강사 종합 소견 및 특이사항</div>
-          <div class="feedback-content-box">${escapeHtml(feedback) || '(작성된 소견 없음)'}</div>
+          <div class="print-analysis-summary-box" style="font-size: 10px; color: #1e3a8a;">
+            💡 <strong>종합 분석:</strong> ${(() => {
+              if (!comparison.hasPreData) return `${participantName} 어르신의 사후 평가 총점은 ${totalScore}점(평균 ${avgTotal}점/5.0점)입니다.`;
+              if (comparison.totalDiff > 0) {
+                return `1:1 맞춤형 디지털 교육을 통해 ${participantName} 어르신의 디지털 역량 총점이 사전 대비 +${comparison.totalDiff}점 향상(+${comparison.growthRate}%)되었습니다. 특히 [${comparison.bestDomain.title}] 영역에서 가장 두드러진 역량 향상을 나타냈습니다.`;
+              } else if (comparison.totalDiff === 0) {
+                return `사전 조사 점수(${comparison.preTotal}점)와 동일한 역량 수준(${totalScore}점)을 유지하고 계십니다.`;
+              } else {
+                return `사후 평가 총점은 ${totalScore}점(사전 ${comparison.preTotal}점, ${comparison.totalDiff}점)으로 집계되었습니다.`;
+              }
+            })()}
+            ${feedback ? `<div style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed #cbd5e1; font-size: 9.5px; color: #1e293b;"><strong>[강사 종합 소견]:</strong> ${escapeHtml(feedback)}</div>` : ''}
+          </div>
         </div>
       ` : `
-        <div class="survey-feedback-box">
-          <div class="feedback-title">■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분</div>
-          <div class="feedback-content-box">${escapeHtml(feedback) || '(자유 작성 희망사항 없음)'}</div>
+        <div class="print-feedback-section">
+          <div class="print-feedback-title">
+            ■ 이번 교육을 통해 배우고 싶은 내용이나 희망하는 부분을 자유롭게 작성해 주세요.
+          </div>
+          <div class="print-feedback-desc">
+            (예: 스마트폰으로 버스/지하철 길찾기, 카카오페이 송금하기, 사진 예쁘게 편집해서 가족에게 보내기 등)
+          </div>
+          <div class="print-feedback-content-box">
+            ${escapeHtml(feedback || '(작성된 희망사항이 없습니다.)')}
+          </div>
         </div>
       `}
 
-      <!-- Footer -->
-      <div class="survey-footer">
-        <div class="ref-note">※ 설문지 문항참고: 어르신 맞춤형 디지털 역량 진단도구 개발연구(2022.10. / 길혜자_충북대) ※</div>
-        <div class="footer-org">
-          <img src="${origin}/Logo_of_Seoul.jpg" class="footer-logo" alt="서울시 로고" onerror="this.style.display='none'">
-          <div class="footer-text">
-            <div class="footer-sub">사회복지법인 서울가톨릭사회복지회</div>
-            <div class="footer-title">시립성동노인종합복지관</div>
-          </div>
+      <!-- Footer (Page 2) -->
+      <div class="print-footer">
+        <img src="${origin}/Logo_of_Seoul.jpg" alt="서울시 로고" class="print-footer-logo" onerror="this.style.display='none'">
+        <div class="print-footer-text">
+          <div class="print-footer-sub">사회복지법인 서울가톨릭사회복지회</div>
+          <div class="print-footer-title">시립성동노인종합복지관</div>
         </div>
       </div>
-
-      <div class="survey-page-num">- 2 -</div>
     </div>
   `;
 }
@@ -558,7 +586,7 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Action Bar (Screen Only) */
+    /* Screen Top Action Bar */
     .top-action-bar {
       position: sticky;
       top: 0;
@@ -619,386 +647,364 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     }
     .btn-close:hover { background: #334155; }
 
-    /* Screen Preview Paper Sheet */
-    .print-doc-container {
-      max-width: 210mm;
-      margin: 20px auto 40px auto;
+    /* Screen View Container */
+    .print-doc-container-screen {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
-    .print-page {
+    /* Common Styles for Application Form (Mirrors application_form.html) */
+    .page-container {
       background: #ffffff;
-      width: 210mm;
-      min-height: 297mm;
-      margin: 0 auto 20px auto;
-      padding: 12mm 14mm;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-      border-radius: 2px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      page-break-after: always;
-      break-after: page;
-    }
-
-    /* Print Page Rules */
-    @page {
-      size: A4 portrait;
-      margin: 10mm 12mm 10mm 12mm;
-    }
-
-    @media print {
-      body {
-        background: #ffffff !important;
-      }
-      .top-action-bar {
-        display: none !important;
-      }
-      .print-doc-container {
-        margin: 0 !important;
-        max-width: 100% !important;
-        width: 100% !important;
-      }
-      .print-page {
-        margin: 0 !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        width: 100% !important;
-        min-height: 100% !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-    }
-
-    /* ========================================================= */
-    /* APPLICATION FORM STYLES                                  */
-    /* ========================================================= */
-    .app-header {
-      text-align: center;
-      margin-bottom: 12px;
-      line-height: 1.3;
-    }
-    .app-title-sub {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #334155;
-    }
-    .app-title-main {
-      font-size: 22px;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.02em;
-      margin-top: 2px;
-    }
-    .app-section-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 6px;
-    }
-    .app-table {
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      padding: 32px 36px;
+      color: #111111;
       width: 100%;
-      border-collapse: collapse;
-      border: 1.5px solid #1e293b;
-      margin-bottom: 10px;
-      font-size: 11px;
     }
-    .app-table th, .app-table td {
-      border: 1px solid #1e293b;
-      padding: 5px 8px;
-      line-height: 1.3;
-    }
-    .app-table th {
-      background-color: #f1f5f9;
-      font-weight: 700;
-      color: #0f172a;
+    #docTitle {
       text-align: center;
-    }
-    .grid-2col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3px 12px;
-      font-size: 10.5px;
-    }
-    .service-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 10.5px;
-    }
-    .service-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-    }
-    .text-desc {
-      color: #475569;
-      font-size: 9.5px;
-      display: block;
-    }
-    .days-row {
-      display: flex;
-      gap: 18px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .time-row {
-      display: flex;
-      font-size: 11px;
-    }
-    .consent-box {
-      border: 1.5px solid #1e293b;
-      padding: 8px 10px;
-      background: #fafafa;
-      margin-bottom: 10px;
-    }
-    .consent-head {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-    .consent-law {
-      font-size: 10px;
-      font-weight: normal;
-      color: #64748b;
-    }
-    .consent-table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #cbd5e1;
-      margin-bottom: 5px;
-      font-size: 10px;
-    }
-    .consent-table th, .consent-table td {
-      border: 1px solid #cbd5e1;
-      padding: 3px 6px;
-    }
-    .consent-table th {
-      background: #f1f5f9;
-      font-weight: 700;
-    }
-    .consent-check-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 20px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .consent-notice {
-      text-align: center;
-      font-size: 9.5px;
-      color: #475569;
-      margin-top: 6px;
+      margin-bottom: 16px;
       line-height: 1.35;
     }
-    .app-sign-section {
+    #docTitle .title-project {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111111;
+    }
+    #docTitle .title-main {
+      display: block;
+      font-size: 23px;
+      font-weight: 800;
+      color: #111111;
+      margin-top: 3px;
+    }
+    #applicantSubTitle {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #111111;
+    }
+    #applicantTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+    }
+    #applicantTable th, #applicantTable td {
+      padding: 6px 8px;
+      font-size: 12px;
+      line-height: 1.3;
+      border: 1px solid #111111;
+    }
+    #applicantTable th {
+      background-color: #e5e7eb;
+      font-weight: 700;
       text-align: center;
-      margin-top: 10px;
-      margin-bottom: 12px;
+      color: #111111;
     }
-    .app-sign-date {
-      font-size: 14px;
-      margin-bottom: 8px;
+    #applyRouteGrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px 12px;
+      font-size: 11.5px;
     }
-    .app-sign-row {
+    #hopeServiceList {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .service-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .service-item .service-name {
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .service-item .service-desc {
+      font-size: 11px;
+      color: #4b5563;
+    }
+    #hopeDaysList {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    #hopeTimeList {
+      display: flex;
+      flex-direction: row;
+      gap: 24px;
+      font-size: 12px;
+    }
+    #memoCell {
+      height: 64px;
+      padding: 5px 8px;
+      font-size: 11.5px;
+      line-height: 1.3;
+    }
+    #privacyContainer {
+      margin-top: 12px;
+      border: 1px solid #111111;
+      background-color: transparent;
+      padding: 0;
+    }
+    #privacyInner {
+      padding: 12px 16px;
+    }
+    .privacy-head {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .privacy-law {
+      font-size: 10.5px;
+      margin-bottom: 5px;
+      color: #4b5563;
+    }
+    .privacy-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 6px;
+    }
+    .privacy-table th, .privacy-table td {
+      padding: 4px 6px;
+      font-size: 11px;
+      line-height: 1.25;
+      border: 1px solid #111111;
+    }
+    .privacy-table th {
+      background-color: #e5e7eb;
+      font-weight: 700;
+    }
+    .consent-radios {
+      display: flex;
+      justify-content: flex-end;
+      gap: 18px;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-top: 3px;
+      margin-bottom: 6px;
+    }
+    #portraitHeader {
+      margin-top: 12px;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+    #consentNotice {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 10.5px;
+      line-height: 1.35;
+      color: #334155;
+      font-weight: 600;
+    }
+    #signatureSection {
+      margin-top: 24px;
+      font-size: 14.5px;
+      text-align: center;
+    }
+    #dateRow {
+      margin-bottom: 16px;
+      font-size: 14.5px;
+      display: flex;
       justify-content: center;
       gap: 8px;
-      font-size: 14px;
+      font-weight: 600;
     }
-    .signer-name {
-      font-size: 15px;
-      min-width: 60px;
-      display: inline-block;
-      text-align: center;
-    }
-    .sig-wrapper {
-      position: relative;
-      display: inline-flex;
+    #signerRow {
+      display: flex;
+      justify-content: flex-end;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
+      font-size: 14.5px;
+      padding-right: 16px;
     }
-    .sig-img {
-      height: 38px;
-      max-width: 110px;
-      object-fit: contain;
-      vertical-align: middle;
-    }
-    .sig-blank {
-      width: 80px;
-      height: 28px;
-      display: inline-block;
-      border-bottom: 1px solid #94a3b8;
-    }
-    .sig-label {
-      font-size: 11px;
-      color: #64748b;
-    }
-    .app-footer {
+    #printFooterLogo {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding-top: 8px;
-      border-top: 1px solid #e2e8f0;
+      gap: 12px;
+      margin-top: 24px;
+      margin-bottom: 10px;
     }
-    .app-footer-logo {
-      width: 34px;
-      height: 34px;
+    #printFooterLogo img {
+      width: 38px;
+      height: 38px;
       object-fit: contain;
     }
-    .app-footer-sub {
-      font-size: 10.5px;
-      color: #64748b;
+    #printFooterLogo .org-sub {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
     }
-    .app-footer-title {
-      font-size: 16px;
+    #printFooterLogo .org-title {
+      font-size: 19px;
       font-weight: 800;
       color: #0f172a;
     }
 
-    /* ========================================================= */
-    /* SURVEY FORM STYLES                                       */
-    /* ========================================================= */
-    .survey-header {
+    /* Common Styles for Survey Form (Mirrors survey_form.html) */
+    .print-doc-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      color: #0f172a;
+      width: 100%;
+    }
+    .print-header {
       text-align: center;
       border-bottom: 2px solid #0f172a;
-      padding-bottom: 6px;
-      margin-bottom: 8px;
+      padding-top: 6px;
+      padding-bottom: 5px;
+      margin-bottom: 2px;
     }
-    .survey-header-title {
-      font-size: 18px;
+    .print-header h2 {
+      font-size: 19px;
       font-weight: 900;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin: 0;
       color: #0f172a;
-      letter-spacing: -0.02em;
     }
-    .survey-header-sub {
+    .print-header .print-subtitle {
       font-size: 10.5px;
       color: #475569;
-      margin-top: 2px;
+      margin-top: 3px;
     }
-    .survey-header-small {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: #475569;
-      border-bottom: 1.5px solid #0f172a;
-      padding-bottom: 4px;
-      margin-bottom: 8px;
-    }
-    .survey-resp-table {
+    .print-respondent-table {
       width: 100%;
       border-collapse: collapse;
       border: 1.5px solid #0f172a;
-      font-size: 11px;
-      margin-bottom: 8px;
+      font-size: 12.5px;
     }
-    .survey-resp-table th, .survey-resp-table td {
+    .print-respondent-table th, .print-respondent-table td {
       border: 1px solid #0f172a;
-      padding: 5px 6px;
+      padding: 8px 8px;
       text-align: center;
+      vertical-align: middle;
+      line-height: 1.35;
     }
-    .survey-resp-table th {
+    .print-respondent-table th {
       background-color: #f1f5f9;
       font-weight: 700;
+      color: #0f172a;
     }
-    .survey-score-banner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+    .print-respondent-table td {
+      font-weight: 700;
+      color: #0f172a;
     }
-    .survey-domain-boxes {
-      display: flex;
+    .print-domain-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 6px;
+      text-align: center;
     }
-    .survey-domain-box {
+    .print-domain-card {
       border: 1px solid #cbd5e1;
       border-radius: 6px;
-      padding: 4px 8px;
-      text-align: center;
-      background: #f8fafc;
-      min-width: 82px;
+      padding: 4px 3px;
+      background-color: #f8fafc;
     }
-    .survey-domain-box .title {
-      font-size: 9.5px;
+    .print-domain-title {
+      font-size: 10px;
       font-weight: 700;
     }
-    .survey-domain-box .score {
+    .print-domain-score {
       font-size: 12px;
       font-weight: 800;
+      margin-top: 1px;
     }
-    .survey-domain-box .sub {
-      font-size: 9px;
-      font-weight: normal;
-      color: #64748b;
-    }
-    .survey-total-bar {
-      font-size: 11.5px;
-      font-weight: 700;
+    .print-total-score-bar {
       text-align: right;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 3px;
     }
-    .survey-scale-legend {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 6px;
-      padding: 4px 10px;
+    .print-total-score-num {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #1d4ed8;
+    }
+    .print-section {
+      margin-bottom: 8px;
+    }
+    .print-section-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      font-size: 9.5px;
-      font-weight: 600;
-      color: #1e40af;
-      margin-bottom: 8px;
-    }
-    .survey-sec-card {
-      margin-bottom: 8px;
-    }
-    .survey-sec-head {
+      padding: 6px 12px;
+      border-radius: 8px 8px 0 0;
       color: #ffffff;
-      padding: 4px 10px;
-      border-radius: 6px 6px 0 0;
+    }
+    .print-section-title-wrap {
       display: flex;
       align-items: baseline;
-      gap: 8px;
+      gap: 6px;
     }
-    .survey-sec-title {
-      font-size: 12px;
+    .print-section-title {
+      font-size: 12.5px;
       font-weight: 700;
+      color: #ffffff;
     }
-    .survey-sec-desc {
+    .print-section-desc {
+      font-size: 10px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .print-section-badge {
       font-size: 9.5px;
-      opacity: 0.9;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      white-space: nowrap;
     }
-    .survey-sec-body {
+    .print-header-awareness { background-color: #1e293b; }
+    .print-badge-awareness { background-color: #334155; color: #f1f5f9; }
+    .print-header-usage { background-color: #1e3a8a; }
+    .print-badge-usage { background-color: #1d4ed8; color: #eff6ff; }
+    .print-header-communication { background-color: #312e81; }
+    .print-badge-communication { background-color: #3730a3; color: #e0e7ff; }
+    .print-header-citizenship { background-color: #134e4a; }
+    .print-badge-citizenship { background-color: #115e59; color: #ccfbf1; }
+
+    .print-section-body {
       border: 1.2px solid #cbd5e1;
       border-top: none;
-      border-radius: 0 0 6px 6px;
-      background: #ffffff;
+      border-radius: 0 0 8px 8px;
+      background-color: #ffffff;
     }
-    .survey-q-item {
-      padding: 5px 8px;
+    .print-q-item {
+      padding: 7px 10px;
       border-bottom: 1px solid #e2e8f0;
     }
-    .survey-q-item:last-child {
+    .print-q-item:last-child {
       border-bottom: none;
     }
-    .survey-q-head {
+    .print-q-head {
       display: flex;
       align-items: flex-start;
       gap: 6px;
-      margin-bottom: 3px;
+      margin-bottom: 5px;
     }
-    .survey-q-badge {
-      width: 17px;
-      height: 17px;
+    .print-q-badge {
+      width: 18px;
+      height: 18px;
       border-radius: 9999px;
-      background: #dbeafe;
-      color: #1d4ed8;
+      background-color: #dbeafe;
+      color: #1e40af;
       font-size: 10px;
       font-weight: 800;
       display: flex;
@@ -1007,173 +1013,258 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       flex-shrink: 0;
       margin-top: 1px;
     }
-    .survey-q-text {
-      font-size: 11px;
+    .print-q-text {
+      font-size: 11.5px;
       font-weight: 600;
       color: #0f172a;
-      line-height: 1.3;
+      line-height: 1.35;
+      margin: 0;
     }
-    .survey-options-grid {
+    .print-options-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 4px;
+      gap: 5px;
+      width: 100%;
     }
-    .survey-opt-box {
-      border: 1px solid #cbd5e1;
-      border-radius: 5px;
-      padding: 2px 2px;
-      text-align: center;
-      background: #ffffff;
+    .print-scale-btn {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 34px;
+      border: 1.2px solid #cbd5e1;
+      border-radius: 7px;
+      background-color: #ffffff;
+      padding: 4px 2px 3px 2px;
+      height: 44px;
+      box-sizing: border-box;
     }
-    .survey-opt-box.selected {
+    .print-scale-btn.selected {
+      background-color: #ffffff;
       border: 2px solid #1d4ed8;
-      background: #ffffff;
     }
-    .survey-opt-num {
-      width: 15px;
-      height: 15px;
-      border-radius: 9999px;
-      background: #f1f5f9;
-      color: #64748b;
-      font-size: 9px;
-      font-weight: 700;
+    .print-scale-btn .score-num {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 1px;
+      width: 18px;
+      height: 18px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      background-color: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 3px;
+      flex-shrink: 0;
     }
-    .survey-opt-num.selected {
-      background: #1d4ed8;
+    .print-scale-btn.selected .score-num {
+      background-color: #1d4ed8;
       color: #ffffff;
+      border: 1px solid #1d4ed8;
       font-weight: 900;
     }
-    .survey-opt-label {
-      font-size: 8px;
+    .print-scale-btn .score-label {
+      font-size: 8.5px;
+      font-weight: 500;
+      line-height: 1.15;
+      text-align: center;
       color: #64748b;
-      white-space: nowrap;
+      word-break: keep-all;
     }
-    .survey-opt-box.selected .survey-opt-label {
+    .print-scale-btn.selected .score-label {
       color: #1d4ed8;
-      font-weight: 700;
+      font-weight: 800;
     }
-    .survey-feedback-box {
+    .print-feedback-section {
       border: 1.2px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 6px 10px;
-      background: #ffffff;
-      margin-top: 6px;
+      border-radius: 8px;
+      padding: 10px 12px;
+      background-color: #ffffff;
+      margin-top: 8px;
     }
-    .feedback-title {
-      font-size: 11px;
+    .print-feedback-title {
+      font-size: 11.5px;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 4px;
-    }
-    .feedback-subhead {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: #1e293b;
-      margin-top: 6px;
       margin-bottom: 3px;
     }
-    .feedback-content-box {
-      background: #f8fafc;
+    .print-feedback-desc {
+      font-size: 9.5px;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .print-feedback-content-box {
+      background-color: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 10px;
-      color: #334155;
-      min-height: 36px;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #1e293b;
+      min-height: 160px;
+      line-height: 1.4;
       white-space: pre-wrap;
     }
-    .survey-analysis-table {
+    .print-analysis-table {
       width: 100%;
       border-collapse: collapse;
-      border: 1px solid #cbd5e1;
+      margin-top: 6px;
+      margin-bottom: 6px;
       font-size: 9.5px;
       text-align: center;
-      margin-bottom: 4px;
     }
-    .survey-analysis-table th, .survey-analysis-table td {
+    .print-analysis-table th, .print-analysis-table td {
       border: 1px solid #cbd5e1;
-      padding: 3px 5px;
+      padding: 3.5px 5px;
     }
-    .survey-analysis-table th {
-      background: #f1f5f9;
+    .print-analysis-table th {
+      background-color: #f1f5f9;
+      color: #1e293b;
       font-weight: 700;
     }
-    .survey-analysis-table tr.total-row {
-      background: #eff6ff;
-      font-weight: 700;
+    .print-analysis-summary-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      line-height: 1.4;
     }
-    .survey-footer {
+    .print-footer {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding-top: 6px;
-      border-top: 1px solid #e2e8f0;
-      margin-top: 6px;
+      gap: 12px;
+      text-align: center;
+      padding-top: 20px;
+      padding-bottom: 8px;
     }
-    .ref-note {
-      font-size: 8.5px;
-      color: #64748b;
-    }
-    .footer-org {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .footer-logo {
-      width: 26px;
-      height: 26px;
+    .print-footer-logo {
+      width: 36px;
+      height: 36px;
       object-fit: contain;
+      flex-shrink: 0;
     }
-    .footer-text {
+    .print-footer-text {
       text-align: left;
+      line-height: 1.25;
     }
-    .footer-sub {
-      font-size: 9px;
+    .print-footer-sub {
+      font-size: 11px;
+      font-weight: 500;
       color: #64748b;
     }
-    .footer-title {
-      font-size: 13.5px;
+    .print-footer-title {
+      font-size: 17px;
       font-weight: 800;
       color: #0f172a;
     }
-    .survey-page-num {
-      text-align: center;
-      font-size: 9px;
-      color: #94a3b8;
-      margin-top: 4px;
-    }
 
     /* Colors */
-    .text-blue { color: #1d4ed8; }
-    .text-green { color: #047857; }
-    .text-indigo { color: #4338ca; }
-    .text-teal { color: #0f766e; }
-    .border-blue { border-color: #93c5fd; }
-    .border-green { border-color: #a7f3d0; }
-    .border-indigo { border-color: #c7d2fe; }
-    .border-teal { border-color: #99f6e4; }
-    .font-bold { font-weight: 700; }
-    .font-black { font-weight: 900; }
-    .text-center { text-align: center; }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .text-blue-900 { color: #1e3a8a; }
+    .text-blue-700 { color: #1d4ed8; }
+    .text-emerald-900 { color: #064e3b; }
+    .text-emerald-700 { color: #047857; }
+    .text-indigo-900 { color: #312e81; }
+    .text-indigo-700 { color: #4338ca; }
+    .text-teal-900 { color: #134e4a; }
+    .text-teal-700 { color: #0f766e; }
+
+    /* ========================================================= */
+    /* EXACT PRINT MEDIA RULES (Mirrors application & survey)    */
+    /* ========================================================= */
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+
+    @media print {
+      html, body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        font-family: 'Pretendard', 'Noto Sans KR', sans-serif !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color: #111111 !important;
+      }
+
+      .top-action-bar, .print-hide {
+        display: none !important;
+      }
+
+      .print-doc-container-screen {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+      }
+
+      /* Application Form Exact Print Overrides */
+      .doc-page-app {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .doc-page-app * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Survey Form Exact Print Overrides */
+      .doc-page-survey {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .print-page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+        padding-top: 6px !important;
+      }
+      .print-respondent-table {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-domain-grid {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-section {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-feedback-section {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-footer {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="top-action-bar">
     <div class="top-action-info">
       <span class="top-action-title">🖨️ ${escapeHtml(title)}</span>
-      <span class="top-action-notice">💡 인쇄 창에서 대상을 [PDF로 저장]으로 선택하시면 하나의 PDF 문서로 일괄 저장됩니다.</span>
+      <span class="top-action-notice">💡 인쇄 창에서 대상을 [PDF로 저장]으로 선택하시면 하나의 깔끔한 PDF 문서로 일괄 저장됩니다.</span>
     </div>
     <div class="top-action-buttons">
       <button class="btn-print" onclick="window.print()">
@@ -1184,13 +1275,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     </div>
   </div>
 
-  <div class="print-doc-container">
+  <div class="print-doc-container-screen">
     ${renderedPagesHtml}
   </div>
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // Small timeout to allow images/fonts to render
+      // Small timeout to allow images/fonts to render before print dialog
       setTimeout(() => {
         window.print();
       }, 500);

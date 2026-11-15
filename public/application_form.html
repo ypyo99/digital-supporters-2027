@@ -1105,6 +1105,13 @@
                 updatePrintTitle();
                 showStatusBanner('info', `[${cleanName}] 님의 기존 저장된 신청서가 없습니다. 새 신청서를 입력해주세요.`);
             }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('autoPrint') === 'true') {
+                setTimeout(() => {
+                    handlePrint();
+                }, 500);
+            }
         }
 
         // 성명 입력 시 하단 신청자 이름 자동 동기화

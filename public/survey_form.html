@@ -1872,6 +1872,12 @@
         if (participantInput) participantInput.value = nameParam;
         await loadExistingSurvey(nameParam);
       }
+
+      if (urlParams.get('autoPrint') === 'true') {
+        setTimeout(() => {
+          handlePrintSurvey();
+        }, 500);
+      }
     });
 
     function initSurveyTypeUI() {
