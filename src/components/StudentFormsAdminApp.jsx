@@ -866,26 +866,26 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             onClick={handleResetStatusFilter}
             className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
               !isCustomStatusFilterActive
-                ? "bg-slate-900 text-white border-slate-900 ring-2 ring-slate-800 ring-offset-2 shadow-md"
-                : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 hover:shadow-xs"
+                ? "bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm"
+                : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
             }`}
           >
-            <div className={`text-xs font-semibold ${!isCustomStatusFilterActive ? "text-slate-200" : "text-slate-500"}`}>
+            <div className="text-xs font-bold text-slate-600">
               {teacherFilter !== "전체"
-                ? `${teacherFilter} 강사 대상자`
+                ? `${teacherFilter} 선생님 대상자`
                 : teamFilter === "전체"
                   ? "전체 대상자"
                   : `${teamFilter} 대상자`}
             </div>
-            <div className={`text-2xl font-black mt-1 ${!isCustomStatusFilterActive ? "text-white" : "text-slate-900"}`}>
+            <div className="text-2xl font-black mt-1 text-slate-900">
               {stats.total}
-              <span className={`text-sm font-normal ml-0.5 ${!isCustomStatusFilterActive ? "text-slate-300" : "text-slate-500"}`}>
+              <span className="text-sm font-normal ml-0.5 text-slate-500">
                 명
               </span>
             </div>
-            <div className={`text-[11px] mt-0.5 ${!isCustomStatusFilterActive ? "text-slate-300 font-medium" : "text-slate-400"}`}>
+            <div className="text-[11px] mt-0.5 text-blue-600 font-medium">
               {teacherFilter !== "전체"
-                ? `클릭 시 ${teacherFilter} 강사 전체 보기`
+                ? `클릭 시 ${teacherFilter} 선생님 전체 보기`
                 : teamFilter === "전체"
                   ? "클릭 시 전체 보기"
                   : `클릭 시 ${teamFilter} 전체 보기`}
