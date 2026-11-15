@@ -831,6 +831,75 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
   };
 
   // -------------------------------------------------------------
+  // 학생 성명 열 너비 조절 및 로컬 스토리지 유지 로직
+  // -------------------------------------------------------------
+  const [nameColWidth, setNameColWidth] = useState(() => {
+    try {
+      const saved = Number(getSavedItem('sungdong_forms_name_col_width', 130));
+      return (!isNaN(saved) && saved >= 70 && saved <= 400) ? saved : 130;
+    } catch (e) {
+      return 130;
+    }
+  });
+
+  const isResizingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(130);
+  const latestWidthRef = useRef(nameColWidth);
+  latestWidthRef.current = nameColWidth;
+
+  const [isResizingActive, setIsResizingActive] = useState(false);
+
+  const handleResizeStart = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isResizingRef.current = true;
+    setIsResizingActive(true);
+
+    const clientX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+    startXRef.current = clientX;
+    startWidthRef.current = latestWidthRef.current;
+
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const handleMove = (moveEvent) => {
+      if (!isResizingRef.current) return;
+      const curX = moveEvent.type.startsWith('touch') ? moveEvent.touches[0].clientX : moveEvent.clientX;
+      const delta = curX - startXRef.current;
+      const nextWidth = Math.max(70, Math.min(400, Math.round(startWidthRef.current + delta)));
+      latestWidthRef.current = nextWidth;
+      setNameColWidth(nextWidth);
+    };
+
+    const handleEnd = () => {
+      if (!isResizingRef.current) return;
+      isResizingRef.current = false;
+      setIsResizingActive(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleEnd);
+      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('touchend', handleEnd);
+
+      setSavedItem('sungdong_forms_name_col_width', latestWidthRef.current);
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+    window.addEventListener('touchmove', handleMove, { passive: false });
+    window.addEventListener('touchend', handleEnd);
+  }, []);
+
+  const handleResetWidth = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setNameColWidth(130);
+    setSavedItem('sungdong_forms_name_col_width', 130);
+  }, []);
+
+  // -------------------------------------------------------------
   // 화면 하단 고정 가로 스크롤바 및 테이블 스크롤 동기화 로직
   // -------------------------------------------------------------
   const tableContainerRef = useRef(null);
@@ -868,7 +937,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       if (observer) observer.disconnect();
       window.removeEventListener('resize', handleWindowResize);
     };
-  }, [updateScrollMetrics, filteredStudents.length, selectedDocTypes]);
+  }, [updateScrollMetrics, filteredStudents.length, selectedDocTypes, nameColWidth]);
 
   // Synchronize scroll from table to bottom bar
   const handleTableScroll = useCallback(() => {
@@ -1427,8 +1496,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
-                  {/* Sticky Checkbox */}
-                  <th className="sticky left-0 z-30 bg-slate-50 py-3 px-3 text-center w-[42px] min-w-[42px] max-w-[42px] border-b border-slate-200 whitespace-nowrap shrink-0">
+                  {/* Checkbox (연번과 함께 스크롤) */}
+                  <th className="py-3 px-3 text-center w-10 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
                     <input
                       type="checkbox"
                       checked={isAllFilteredSelected}
@@ -1436,13 +1505,40 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                       className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </th>
-                  {/* Sticky Index */}
-                  <th className="sticky left-[42px] z-30 bg-slate-50 py-3 px-3 text-center w-[46px] min-w-[46px] max-w-[46px] border-b border-slate-200 whitespace-nowrap shrink-0">
+                  {/* Index (연번: 고정 해제) */}
+                  <th className="py-3 px-3 text-center w-12 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
                     연번
                   </th>
-                  {/* Sticky Student Name */}
-                  <th className="sticky left-[88px] z-30 bg-slate-50 py-3 px-3 whitespace-nowrap min-w-[100px] border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)]">
-                    학생 성명
+                  {/* Sticky Student Name (학생 성명만 고정 & 너비 조절 가능) */}
+                  <th
+                    className="sticky left-0 z-30 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
+                    style={{ width: `${nameColWidth}px`, minWidth: `${nameColWidth}px`, maxWidth: `${nameColWidth}px` }}
+                  >
+                    <div className="flex items-center justify-between pr-1">
+                      <span className="font-bold text-slate-800">학생 성명</span>
+                      <span className="text-[10px] text-slate-400 font-normal" title="너비 조절 가능">↔</span>
+                    </div>
+                    {/* Resizer Handle */}
+                    <div
+                      onMouseDown={handleResizeStart}
+                      onTouchStart={handleResizeStart}
+                      onDoubleClick={handleResetWidth}
+                      title="드래그하여 이름열 너비 조절 (더블클릭 시 130px로 초기화)"
+                      className={`absolute top-0 -right-2 bottom-0 w-4 cursor-col-resize flex items-center justify-center group touch-none z-40 select-none ${
+                        isResizingActive ? 'bg-blue-100/60' : 'hover:bg-blue-50/60'
+                      }`}
+                    >
+                      <div
+                        className={`w-[2.5px] h-4 rounded-full transition-colors ${
+                          isResizingActive ? 'bg-blue-600 h-6' : 'bg-slate-300 group-hover:bg-blue-500'
+                        }`}
+                      />
+                    </div>
+                    {isResizingActive && (
+                      <div className="absolute -top-7 right-0 bg-slate-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow pointer-events-none whitespace-nowrap z-50">
+                        {nameColWidth}px
+                      </div>
+                    )}
                   </th>
                   <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap">소속 팀</th>
                   <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap">등록/수업일</th>
@@ -1492,10 +1588,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         key={s.name}
                         className={`group transition whitespace-nowrap ${isSelected ? 'bg-blue-50/60' : 'hover:bg-slate-50/80 bg-white'}`}
                       >
-                        {/* Sticky Checkbox */}
-                        <td className={`sticky left-0 z-20 w-[42px] min-w-[42px] max-w-[42px] py-2.5 px-3 text-center border-b border-slate-100 whitespace-nowrap shrink-0 transition-colors ${
-                          isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                        }`}>
+                        {/* Checkbox (연번과 함께 스크롤) */}
+                        <td className="py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100">
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -1504,18 +1598,23 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                           />
                         </td>
 
-                        {/* Sticky Index */}
-                        <td className={`sticky left-[42px] z-20 w-[46px] min-w-[46px] max-w-[46px] py-2.5 px-3 text-center text-slate-400 text-xs font-medium border-b border-slate-100 whitespace-nowrap shrink-0 transition-colors ${
-                          isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                        }`}>
+                        {/* Index (연번: 고정 해제) */}
+                        <td className="py-2.5 px-3 text-center text-slate-400 text-xs font-medium border-b border-slate-100 whitespace-nowrap shrink-0">
                           {idx + 1}
                         </td>
 
-                        {/* Sticky Student Name */}
-                        <td className={`sticky left-[88px] z-20 min-w-[100px] py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors ${
-                          isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                        }`}>
-                          <div className="font-extrabold text-slate-900 text-sm whitespace-nowrap">{s.name}</div>
+                        {/* Sticky Student Name (학생 성명만 고정 & 너비 조절 연동) */}
+                        <td
+                          onClick={() => handleToggleStudent(s.name)}
+                          className={`sticky left-0 z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${
+                            isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                          }`}
+                          style={{ width: `${nameColWidth}px`, minWidth: `${nameColWidth}px`, maxWidth: `${nameColWidth}px` }}
+                          title={`${s.name} (클릭 시 선택 토글)`}
+                        >
+                          <div className="font-extrabold text-slate-900 text-sm truncate">
+                            {s.name}
+                          </div>
                         </td>
 
                         {/* Team */}
