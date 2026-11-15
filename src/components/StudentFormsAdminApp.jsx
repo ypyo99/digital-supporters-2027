@@ -74,7 +74,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
   const [includeApp, setIncludeApp] = useState(true);
   const [includePre, setIncludePre] = useState(true);
   const [includePost, setIncludePost] = useState(true);
-  const [printMode, setPrintMode] = useState('completed_only'); // 'completed_only' | 'include_blank'
   const [isPrinting, setIsPrinting] = useState(false);
 
   // -------------------------------------------------------------
@@ -604,42 +603,27 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       let printCount = 0;
 
       for (const s of targetStudents) {
-        // 1. Application Form
-        if (canPrintApp) {
-          if (s.app) {
-            combinedPagesHtml += renderApplicationFormHtml(s.app, s.name, false);
-            printCount++;
-          } else if (printMode === 'include_blank') {
-            combinedPagesHtml += renderApplicationFormHtml(null, s.name, true);
-            printCount++;
-          }
+        // 1. Application Form (작성 완료된 경우만 인쇄, 미작성 시 제외)
+        if (canPrintApp && s.app) {
+          combinedPagesHtml += renderApplicationFormHtml(s.app, s.name, false);
+          printCount++;
         }
 
-        // 2. Pre-Survey Form
-        if (canPrintPre) {
-          if (s.preSurvey) {
-            combinedPagesHtml += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
-            printCount++;
-          } else if (printMode === 'include_blank') {
-            combinedPagesHtml += renderSurveyFormHtml(null, s.name, 'pre', true, null);
-            printCount++;
-          }
+        // 2. Pre-Survey Form (작성 완료된 경우만 인쇄, 미작성 시 제외)
+        if (canPrintPre && s.preSurvey) {
+          combinedPagesHtml += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
+          printCount++;
         }
 
-        // 3. Post-Survey Form
-        if (canPrintPost) {
-          if (s.postSurvey) {
-            combinedPagesHtml += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
-            printCount++;
-          } else if (printMode === 'include_blank') {
-            combinedPagesHtml += renderSurveyFormHtml(null, s.name, 'post', true, s.preSurvey);
-            printCount++;
-          }
+        // 3. Post-Survey Form (작성 완료된 경우만 인쇄, 미작성 시 제외)
+        if (canPrintPost && s.postSurvey) {
+          combinedPagesHtml += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
+          printCount++;
         }
       }
 
       if (!combinedPagesHtml) {
-        alert('선택한 조건에 해당하는 작성 완료된 서류가 없습니다.\n(미작성자 빈 양식을 함께 출력하시려면 "미작성자 빈 양식 포함"을 선택해주세요)');
+        alert('선택한 조건에 해당하는 작성 완료된 서류가 없습니다.');
         setIsPrinting(false);
         return;
       }
@@ -655,7 +639,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     }
   };
 
-  // Single student print: 대상 서류에서 선택한 서류만 인쇄
+  // Single student print: 대상 서류에서 작성 완료된 서류만 인쇄 (미작성 시 인쇄 제외)
   const handlePrintSingleStudentAll = (s) => {
     if (selectedDocTypes.size === 0) {
       alert('출력할 대상 서류를 최소 1개 이상 선택해주세요.');
@@ -665,35 +649,26 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     let html = '';
     const docLabels = [];
 
-    if (selectedDocTypes.has('app')) {
-      if (s.app) {
-        html += renderApplicationFormHtml(s.app, s.name, false);
-      } else {
-        html += renderApplicationFormHtml(null, s.name, true);
-      }
+    // 1. Application Form (작성 완료된 경우만 인쇄)
+    if (selectedDocTypes.has('app') && s.app) {
+      html += renderApplicationFormHtml(s.app, s.name, false);
       docLabels.push('신청서');
     }
 
-    if (selectedDocTypes.has('pre')) {
-      if (s.preSurvey) {
-        html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
-      } else {
-        html += renderSurveyFormHtml(null, s.name, 'pre', true, null);
-      }
+    // 2. Pre-Survey Form (작성 완료된 경우만 인쇄)
+    if (selectedDocTypes.has('pre') && s.preSurvey) {
+      html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
       docLabels.push('사전설문');
     }
 
-    if (selectedDocTypes.has('post')) {
-      if (s.postSurvey) {
-        html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
-      } else {
-        html += renderSurveyFormHtml(null, s.name, 'post', true, s.preSurvey);
-      }
+    // 3. Post-Survey Form (작성 완료된 경우만 인쇄)
+    if (selectedDocTypes.has('post') && s.postSurvey) {
+      html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
       docLabels.push('사후설문');
     }
 
     if (!html) {
-      alert('출력할 대상 서류가 없습니다.');
+      alert(`${s.name} 학생은 선택된 대상 서류 중 작성 완료된 서류가 없습니다.\n(미작성 서류는 인쇄되지 않습니다)`);
       return;
     }
 
@@ -1397,6 +1372,13 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     const preUrl = `/survey_form.html?type=pre&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}`;
                     const postUrl = `/survey_form.html?type=post&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}`;
 
+                    // 대상 서류 중 작성 완료된 서류가 1건이라도 있는지 확인 (미작성 서류는 인쇄 불가)
+                    const hasAnyCompletedDoc = (
+                      (selectedDocTypes.has('app') && Boolean(s.app)) ||
+                      (selectedDocTypes.has('pre') && Boolean(s.preSurvey)) ||
+                      (selectedDocTypes.has('post') && Boolean(s.postSurvey))
+                    );
+
                     return (
                       <tr
                         key={s.name}
@@ -1520,9 +1502,14 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         <td className="py-2.5 px-3 text-center">
                           <button
                             type="button"
+                            disabled={!hasAnyCompletedDoc}
                             onClick={() => handlePrintSingleStudentAll(s)}
-                            className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
-                            title="선택된 대상 서류 인쇄/PDF 저장"
+                            className={`px-2 py-1 rounded text-xs font-bold transition ${
+                              hasAnyCompletedDoc
+                                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs'
+                                : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed'
+                            }`}
+                            title={hasAnyCompletedDoc ? "선택된 대상 서류 인쇄/PDF 저장" : "작성 완료된 대상 서류가 없습니다 (미작성 서류는 인쇄 불가)"}
                           >
                             🖨️ 인쇄
                           </button>
@@ -1625,39 +1612,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                 </div>
               </div>
 
-              {/* 3. Print Mode Selection */}
-              <div>
-                <div className="font-bold text-slate-800 mb-2">3. 미작성 서류 처리 방식</div>
-                <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                    <input
-                      type="radio"
-                      name="printMode"
-                      value="completed_only"
-                      checked={printMode === 'completed_only'}
-                      onChange={() => setPrintMode('completed_only')}
-                      className="mt-0.5 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <div>
-                      <div className="font-bold text-slate-800">작성 완료된 정식 서류만 인쇄 (권장)</div>
-                      <div className="text-slate-500 text-xs">서명과 답변이 기재된 실제 완료 서류만 모아서 깔끔하게 출력합니다.</div>
-                    </div>
-                  </label>
-                  <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                    <input
-                      type="radio"
-                      name="printMode"
-                      value="include_blank"
-                      checked={printMode === 'include_blank'}
-                      onChange={() => setPrintMode('include_blank')}
-                      className="mt-0.5 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <div>
-                      <div className="font-bold text-slate-800">미작성자도 학생 이름이 채워진 빈 양식으로 인쇄</div>
-                      <div className="text-slate-500 text-xs">현장 수업 배포용으로, 미작성 서류도 학생 성명이 인쇄된 빈 서식으로 함께 출력합니다.</div>
-                    </div>
-                  </label>
-                </div>
+              {/* 3. Completed Only Notice */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900 leading-relaxed">
+                ✅ <strong>작성 완료된 서류만 인쇄</strong>: 미작성된 서류는 자동으로 인쇄에서 제외되며, 작성이 완료된 서류만 연속 페이지로 출력합니다.
               </div>
 
               {/* Notice Tip */}
