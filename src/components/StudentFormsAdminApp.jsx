@@ -1448,7 +1448,10 @@ export default function StudentFormsAdminApp({
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
                   {/* Checkbox (관리자 모드 전용) */}
                   {!isTeacherView && (
-                    <th className="py-3 px-3 text-center w-10 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
+                    <th
+                      className="sticky left-0 z-30 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
+                      style={{ width: '40px', minWidth: '40px', maxWidth: '40px' }}
+                    >
                       <input
                         type="checkbox"
                         checked={isAllFilteredSelected}
@@ -1457,14 +1460,27 @@ export default function StudentFormsAdminApp({
                       />
                     </th>
                   )}
-                  {/* Index (연번: 고정 해제) */}
-                  <th className="py-3 px-3 text-center w-12 whitespace-nowrap shrink-0 border-b border-slate-200 bg-slate-50">
+                  {/* Index (연번: 고정) */}
+                  <th
+                    className="sticky z-30 bg-slate-50 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200"
+                    style={{
+                      left: `${!isTeacherView ? 40 : 0}px`,
+                      width: '48px',
+                      minWidth: '48px',
+                      maxWidth: '48px'
+                    }}
+                  >
                     연번
                   </th>
-                  {/* Sticky Student Name (학생 성명만 고정 & 너비 조절 가능) */}
+                  {/* Sticky Student Name (학생 성명 고정 & 너비 조절 가능) */}
                   <th
-                    className="sticky left-0 z-30 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
-                    style={{ width: `${nameColWidth}px`, minWidth: `${nameColWidth}px`, maxWidth: `${nameColWidth}px` }}
+                    className="sticky z-30 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
+                    style={{
+                      left: `${(!isTeacherView ? 40 : 0) + 48}px`,
+                      width: `${nameColWidth}px`,
+                      minWidth: `${nameColWidth}px`,
+                      maxWidth: `${nameColWidth}px`
+                    }}
                   >
                     <div className="flex items-center justify-between pr-1">
                       <span className="font-bold text-slate-800">학생 성명</span>
@@ -1546,7 +1562,12 @@ export default function StudentFormsAdminApp({
                       >
                         {/* Checkbox (관리자 모드 전용) */}
                         {!isTeacherView && (
-                          <td className="py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100">
+                          <td
+                            className={`sticky left-0 z-20 py-2.5 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-100 border-r border-slate-100 ${
+                              isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                            }`}
+                            style={{ width: '40px', minWidth: '40px', maxWidth: '40px' }}
+                          >
                             <input
                               type="checkbox"
                               checked={isSelected}
@@ -1556,17 +1577,33 @@ export default function StudentFormsAdminApp({
                           </td>
                         )}
 
-                        {/* Index (연번: 고정 해제) */}
-                        <td className="py-2.5 px-3 text-center text-slate-400 text-xs font-medium border-b border-slate-100 whitespace-nowrap shrink-0">
+                        {/* Index (연번: 고정) */}
+                        <td
+                          className={`sticky z-20 py-2.5 px-3 text-center text-slate-500 text-xs font-bold border-b border-slate-100 border-r border-slate-100 whitespace-nowrap shrink-0 select-none ${
+                            isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                          }`}
+                          style={{
+                            left: `${!isTeacherView ? 40 : 0}px`,
+                            width: '48px',
+                            minWidth: '48px',
+                            maxWidth: '48px'
+                          }}
+                        >
                           {idx + 1}
                         </td>
 
-                        {/* Sticky Student Name (학생 성명만 고정 & 너비 조절 연동) */}
+                        {/* Sticky Student Name (학생 성명 고정 & 너비 조절 연동) */}
                         <td
                           onClick={() => handleToggleStudent(s.name)}
-                          className={`sticky left-0 z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
-                            }`}
-                          style={{ width: `${nameColWidth}px`, minWidth: `${nameColWidth}px`, maxWidth: `${nameColWidth}px` }}
+                          className={`sticky z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${
+                            isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                          }`}
+                          style={{
+                            left: `${(!isTeacherView ? 40 : 0) + 48}px`,
+                            width: `${nameColWidth}px`,
+                            minWidth: `${nameColWidth}px`,
+                            maxWidth: `${nameColWidth}px`
+                          }}
                           title={`${s.name} (클릭 시 선택 토글)`}
                         >
                           <div className="font-extrabold text-slate-900 text-sm truncate">
