@@ -407,7 +407,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     }
   };
 
-  // 대상 서류 토글 (누를 때마다 단순 On/Off)
+  // 대상 서류 토글 (누를 때마다 단순 On/Off, 인쇄 대상 서류도 함께 동기화)
   const toggleDocType = (docKey) => {
     setSelectedDocTypes(prev => {
       const next = new Set(prev);
@@ -416,6 +416,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       } else {
         next.add(docKey);
       }
+      setIncludeApp(next.has('app'));
+      setIncludePre(next.has('pre'));
+      setIncludePost(next.has('post'));
       return next;
     });
   };
@@ -426,6 +429,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     setFilterUnsubmitted(true);
     setSelectedDocTypes(new Set(['app', 'pre', 'post']));
     setDocMatchMode('or');
+    setIncludeApp(true);
+    setIncludePre(true);
+    setIncludePost(true);
   };
 
   const isCustomStatusFilterActive = !(filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 3);
@@ -560,6 +566,14 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       alert('일괄 인쇄할 학생을 먼저 선택해주세요 (체크박스 선택).');
       return;
     }
+    if (selectedDocTypes.size === 0) {
+      alert('출력할 대상 서류를 최소 1개 이상 선택해주세요.');
+      return;
+    }
+    // 대상 서류에서 선택한 서류 상태를 인쇄 옵션 기본값으로 동기화
+    setIncludeApp(selectedDocTypes.has('app'));
+    setIncludePre(selectedDocTypes.has('pre'));
+    setIncludePost(selectedDocTypes.has('post'));
     setPrintScope(scope);
     setIsPrintModalOpen(true);
   };
@@ -574,8 +588,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       return;
     }
 
-    if (!includeApp && !includePre && !includePost) {
-      alert('인쇄할 서류(신청서, 사전설문지, 사후설문지 중 최소 1개)를 선택해주세요.');
+    const canPrintApp = includeApp && selectedDocTypes.has('app');
+    const canPrintPre = includePre && selectedDocTypes.has('pre');
+    const canPrintPost = includePost && selectedDocTypes.has('post');
+
+    if (!canPrintApp && !canPrintPre && !canPrintPost) {
+      alert('선택된 대상 서류 중 인쇄할 서류(신청서, 사전설문지, 사후설문지)를 최소 1개 선택해주세요.');
       return;
     }
 
@@ -587,7 +605,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
       for (const s of targetStudents) {
         // 1. Application Form
-        if (includeApp) {
+        if (canPrintApp) {
           if (s.app) {
             combinedPagesHtml += renderApplicationFormHtml(s.app, s.name, false);
             printCount++;
@@ -598,7 +616,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         }
 
         // 2. Pre-Survey Form
-        if (includePre) {
+        if (canPrintPre) {
           if (s.preSurvey) {
             combinedPagesHtml += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
             printCount++;
@@ -609,7 +627,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         }
 
         // 3. Post-Survey Form
-        if (includePost) {
+        if (canPrintPost) {
           if (s.postSurvey) {
             combinedPagesHtml += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
             printCount++;
@@ -637,20 +655,49 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     }
   };
 
-  // Single student 3-form print shortcut
+  // Single student print: 대상 서류에서 선택한 서류만 인쇄
   const handlePrintSingleStudentAll = (s) => {
+    if (selectedDocTypes.size === 0) {
+      alert('출력할 대상 서류를 최소 1개 이상 선택해주세요.');
+      return;
+    }
+
     let html = '';
-    let count = 0;
-    if (s.app) { html += renderApplicationFormHtml(s.app, s.name, false); count++; }
-    else { html += renderApplicationFormHtml(null, s.name, true); count++; }
+    const docLabels = [];
 
-    if (s.preSurvey) { html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null); count++; }
-    else { html += renderSurveyFormHtml(null, s.name, 'pre', true, null); count++; }
+    if (selectedDocTypes.has('app')) {
+      if (s.app) {
+        html += renderApplicationFormHtml(s.app, s.name, false);
+      } else {
+        html += renderApplicationFormHtml(null, s.name, true);
+      }
+      docLabels.push('신청서');
+    }
 
-    if (s.postSurvey) { html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey); count++; }
-    else { html += renderSurveyFormHtml(null, s.name, 'post', true, s.preSurvey); count++; }
+    if (selectedDocTypes.has('pre')) {
+      if (s.preSurvey) {
+        html += renderSurveyFormHtml(s.preSurvey, s.name, 'pre', false, null);
+      } else {
+        html += renderSurveyFormHtml(null, s.name, 'pre', true, null);
+      }
+      docLabels.push('사전설문');
+    }
 
-    executeBatchPrint(html, `${s.name}_참여자서류전체(3종)`);
+    if (selectedDocTypes.has('post')) {
+      if (s.postSurvey) {
+        html += renderSurveyFormHtml(s.postSurvey, s.name, 'post', false, s.preSurvey);
+      } else {
+        html += renderSurveyFormHtml(null, s.name, 'post', true, s.preSurvey);
+      }
+      docLabels.push('사후설문');
+    }
+
+    if (!html) {
+      alert('출력할 대상 서류가 없습니다.');
+      return;
+    }
+
+    executeBatchPrint(html, `${s.name}_참여자서류(${docLabels.join('+')})`);
   };
 
   // -------------------------------------------------------------
@@ -1316,9 +1363,15 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   <th className="py-3 px-3">학생 성명</th>
                   <th className="py-3 px-3">팀 / 강사</th>
                   <th className="py-3 px-3">등록/수업일</th>
-                  <th className="py-3 px-3 text-center">① 참여 신청서</th>
-                  <th className="py-3 px-3 text-center">② 사전 설문지</th>
-                  <th className="py-3 px-3 text-center">③ 사후 설문지</th>
+                  {selectedDocTypes.has('app') && (
+                    <th className="py-3 px-3 text-center">① 참여 신청서</th>
+                  )}
+                  {selectedDocTypes.has('pre') && (
+                    <th className="py-3 px-3 text-center">② 사전 설문지</th>
+                  )}
+                  {selectedDocTypes.has('post') && (
+                    <th className="py-3 px-3 text-center">③ 사후 설문지</th>
+                  )}
                   <th className="py-3 px-3 text-center">완결 여부</th>
                   <th className="py-3 px-3 text-center">개별 출력</th>
                 </tr>
@@ -1326,14 +1379,14 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td colSpan="10" className="py-12 text-center text-slate-400">
+                    <td colSpan={7 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
                       <div className="inline-block w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
                       <p className="text-xs font-semibold">참여자 서류 데이터를 집계하는 중입니다...</p>
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="py-12 text-center text-slate-400">
+                    <td colSpan={7 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
                       <p className="text-sm font-semibold">검색 조건에 일치하는 대상자가 없습니다.</p>
                       <p className="text-xs text-slate-400 mt-1">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
                     </td>
@@ -1344,6 +1397,13 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     const appUrl = `/application_form.html?name=${encodeURIComponent(s.name)}`;
                     const preUrl = `/survey_form.html?type=pre&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}`;
                     const postUrl = `/survey_form.html?type=post&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}`;
+
+                    const isSelectedDocsCompleted = selectedDocTypes.size > 0 && Array.from(selectedDocTypes).every(docKey => {
+                      if (docKey === 'app') return s.isAppSubmitted;
+                      if (docKey === 'pre') return s.isPreSubmitted;
+                      if (docKey === 'post') return s.isPostSubmitted;
+                      return false;
+                    });
 
                     return (
                       <tr
@@ -1384,85 +1444,101 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         </td>
 
                         {/* 1. Application Form Status Button */}
-                        <td className="py-2.5 px-3 text-center">
-                          {s.isAppSubmitted ? (
-                            <button
-                              type="button"
-                              onClick={() => window.open(appUrl, '_blank')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer"
-                              title="신청서 열기 및 수정"
-                            >
-                              <span>✅ 작성완료</span>
-                              <span className="text-[10px] text-emerald-600 font-normal">({s.app?.sign_date || s.app?.created_at?.slice(0, 10)})</span>
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => window.open(appUrl, '_blank')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
-                              title="클릭하여 새 신청서 작성"
-                            >
-                              <span>❌ 미작성</span>
-                              <span className="text-[10px] text-blue-600 font-bold ml-0.5">+작성</span>
-                            </button>
-                          )}
-                        </td>
+                        {selectedDocTypes.has('app') && (
+                          <td className="py-2.5 px-3 text-center">
+                            {s.isAppSubmitted ? (
+                              <button
+                                type="button"
+                                onClick={() => window.open(appUrl, '_blank')}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer"
+                                title="신청서 열기 및 수정"
+                              >
+                                <span>✅ 작성완료</span>
+                                <span className="text-[10px] text-emerald-600 font-normal">({s.app?.sign_date || s.app?.created_at?.slice(0, 10)})</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => window.open(appUrl, '_blank')}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
+                                title="클릭하여 새 신청서 작성"
+                              >
+                                <span>❌ 미작성</span>
+                                <span className="text-[10px] text-blue-600 font-bold ml-0.5">+작성</span>
+                              </button>
+                            )}
+                          </td>
+                        )}
 
                         {/* 2. Pre-Survey Status Button */}
-                        <td className="py-2.5 px-3 text-center">
-                          {s.isPreSubmitted ? (
-                            <button
-                              type="button"
-                              onClick={() => window.open(preUrl, '_blank')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs border border-indigo-200 transition cursor-pointer"
-                              title="사전설문지 열기 및 수정"
-                            >
-                              <span>✅ 완료</span>
-                              <span className="text-[10px] text-indigo-600 font-bold">({s.preSurvey.score_total ?? 0}점)</span>
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => window.open(preUrl, '_blank')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
-                              title="클릭하여 새 사전설문지 작성"
-                            >
-                              <span>❌ 미작성</span>
-                              <span className="text-[10px] text-indigo-600 font-bold ml-0.5">+작성</span>
-                            </button>
-                          )}
-                        </td>
+                        {selectedDocTypes.has('pre') && (
+                          <td className="py-2.5 px-3 text-center">
+                            {s.isPreSubmitted ? (
+                              <button
+                                type="button"
+                                onClick={() => window.open(preUrl, '_blank')}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs border border-indigo-200 transition cursor-pointer"
+                                title="사전설문지 열기 및 수정"
+                              >
+                                <span>✅ 완료</span>
+                                <span className="text-[10px] text-indigo-600 font-bold">({s.preSurvey.score_total ?? 0}점)</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => window.open(preUrl, '_blank')}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
+                                title="클릭하여 새 사전설문지 작성"
+                              >
+                                <span>❌ 미작성</span>
+                                <span className="text-[10px] text-indigo-600 font-bold ml-0.5">+작성</span>
+                              </button>
+                            )}
+                          </td>
+                        )}
 
                         {/* 3. Post-Survey Status Button */}
-                        <td className="py-2.5 px-3 text-center">
-                          {s.isPostSubmitted ? (
-                            <button
-                              type="button"
-                              onClick={() => window.open(postUrl, '_blank')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs border border-purple-200 transition cursor-pointer"
-                              title="사후설문지 열기 및 수정"
-                            >
-                              <span>✅ 완료</span>
-                              <span className="text-[10px] text-purple-600 font-bold">({s.postSurvey.score_total ?? 0}점)</span>
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => window.open(postUrl, '_blank')}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-50 hover:text-purple-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
-                              title="클릭하여 새 사후설문지 작성"
-                            >
-                              <span>❌ 미작성</span>
-                              <span className="text-[10px] text-purple-700 font-bold ml-0.5">+작성</span>
-                            </button>
-                          )}
-                        </td>
+                        {selectedDocTypes.has('post') && (
+                          <td className="py-2.5 px-3 text-center">
+                            {s.isPostSubmitted ? (
+                              <button
+                                type="button"
+                                onClick={() => window.open(postUrl, '_blank')}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs border border-purple-200 transition cursor-pointer"
+                                title="사후설문지 열기 및 수정"
+                              >
+                                <span>✅ 완료</span>
+                                <span className="text-[10px] text-purple-600 font-bold">({s.postSurvey.score_total ?? 0}점)</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => window.open(postUrl, '_blank')}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-50 hover:text-purple-700 font-semibold text-xs border border-slate-200 transition cursor-pointer"
+                                title="클릭하여 새 사후설문지 작성"
+                              >
+                                <span>❌ 미작성</span>
+                                <span className="text-[10px] text-purple-700 font-bold ml-0.5">+작성</span>
+                              </button>
+                            )}
+                          </td>
+                        )}
 
                         {/* All Completed Badge */}
                         <td className="py-2.5 px-3 text-center">
-                          {s.isAllSubmitted ? (
+                          {selectedDocTypes.size === 3 ? (
+                            s.isAllSubmitted ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
+                                ★ 3종 완결
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-slate-400 font-medium">
+                                미완결
+                              </span>
+                            )
+                          ) : isSelectedDocsCompleted ? (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
-                              ★ 3종 완결
+                              ★ {selectedDocTypes.size === 1 ? '작성 완료' : `${selectedDocTypes.size}종 완결`}
                             </span>
                           ) : (
                             <span className="text-[11px] text-slate-400 font-medium">
@@ -1477,7 +1553,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                             type="button"
                             onClick={() => handlePrintSingleStudentAll(s)}
                             className="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
-                            title="이 학생의 서류 3종 한 번에 인쇄/PDF 저장"
+                            title="선택된 대상 서류 인쇄/PDF 저장"
                           >
                             🖨️ 인쇄
                           </button>
@@ -1537,35 +1613,46 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
               {/* 2. Documents Selection */}
               <div>
-                <div className="font-bold text-slate-800 mb-2">2. 출력할 서류 종류 선택 (다중 선택 가능)</div>
+                <div className="font-bold text-slate-800 mb-2">2. 출력할 서류 종류 선택 (대상 서류 필터 연동)</div>
                 <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={includeApp}
-                      onChange={(e) => setIncludeApp(e.target.checked)}
-                      className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <span className="font-bold text-slate-800">📄 프로그램 참여 신청서 (1페이지)</span>
-                  </label>
-                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={includePre}
-                      onChange={(e) => setIncludePre(e.target.checked)}
-                      className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                    />
-                    <span className="font-bold text-slate-800">📋 1:1 디지털 교육 사전 설문조사지 (2페이지)</span>
-                  </label>
-                  <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={includePost}
-                      onChange={(e) => setIncludePost(e.target.checked)}
-                      className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer"
-                    />
-                    <span className="font-bold text-slate-800">📊 1:1 디지털 교육 사후 설문조사지 (2페이지, 비교분석 포함)</span>
-                  </label>
+                  {selectedDocTypes.has('app') && (
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={includeApp}
+                        onChange={(e) => setIncludeApp(e.target.checked)}
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <span className="font-bold text-slate-800">📄 프로그램 참여 신청서 (1페이지)</span>
+                    </label>
+                  )}
+                  {selectedDocTypes.has('pre') && (
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={includePre}
+                        onChange={(e) => setIncludePre(e.target.checked)}
+                        className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      />
+                      <span className="font-bold text-slate-800">📋 1:1 디지털 교육 사전 설문조사지 (2페이지)</span>
+                    </label>
+                  )}
+                  {selectedDocTypes.has('post') && (
+                    <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={includePost}
+                        onChange={(e) => setIncludePost(e.target.checked)}
+                        className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 cursor-pointer"
+                      />
+                      <span className="font-bold text-slate-800">📊 1:1 디지털 교육 사후 설문조사지 (2페이지, 비교분석 포함)</span>
+                    </label>
+                  )}
+                  {selectedDocTypes.size === 0 && (
+                    <div className="text-rose-500 font-bold text-xs py-1">
+                      상단 대상 서류에서 최소 1개 이상의 서류를 선택해주세요.
+                    </div>
+                  )}
                 </div>
               </div>
 
