@@ -7,7 +7,8 @@ import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
   setSavedItem,
-  getTeamTeacherNames
+  getTeamTeacherNames,
+  fetchAllTeachersFromDb
 } from '../utils/helpers';
 import {
   Home,
@@ -46,6 +47,8 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
   // Filter States
   const [teamFilter, setTeamFilter] = useState("전체");
+  const [teacherFilter, setTeacherFilter] = useState("전체");
+  const [dbTeachers, setDbTeachers] = useState([]);
   const [statusFilter, setStatusFilter] = useState("전체"); // '전체' | '모두완료' | '신청서미작성' | '사전미작성' | '사후미작성' | '미완료'
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -71,6 +74,16 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     else setLoading(true);
 
     try {
+      // 0. Fetch Teachers from DB
+      try {
+        const teachersList = await fetchAllTeachersFromDb();
+        if (teachersList && teachersList.length > 0) {
+          setDbTeachers(teachersList);
+        }
+      } catch (err) {
+        console.warn('teachers fetch error:', err);
+      }
+
       // 1. Fetch Application Forms
       let appRecords = [];
       try {
@@ -201,10 +214,13 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         names.forEach(name => {
           if (name.includes('보조강사') || name.includes('도선복지관')) return;
           if (!studentMap.has(name)) {
+            const tSet = new Set();
+            if (r.teacher) tSet.add(r.teacher);
             studentMap.set(name, {
               name,
               team: r.team || '1팀',
               teacher: r.teacher || '',
+              teachers: tSet,
               firstDate: r.log_date || '',
               lastDate: r.log_date || '',
               lessonCount: 1
@@ -213,9 +229,13 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             const cur = studentMap.get(name);
             cur.lessonCount++;
             if (!cur.team && r.team) cur.team = r.team;
-            if (!cur.teacher && r.teacher) cur.teacher = r.teacher;
+            if (r.teacher) cur.teachers.add(r.teacher);
+            if (r.log_date && (!cur.lastDate || r.log_date >= cur.lastDate)) {
+              cur.lastDate = r.log_date;
+              if (r.teacher) cur.teacher = r.teacher;
+              if (r.team) cur.team = r.team;
+            }
             if (r.log_date && (!cur.firstDate || r.log_date < cur.firstDate)) cur.firstDate = r.log_date;
-            if (r.log_date && (!cur.lastDate || r.log_date > cur.lastDate)) cur.lastDate = r.log_date;
           }
         });
       });
@@ -228,6 +248,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             name,
             team: '1팀',
             teacher: '-',
+            teachers: new Set(),
             firstDate: formDate || '',
             lastDate: formDate || '',
             lessonCount: 0
@@ -306,19 +327,25 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         return false;
       }
 
-      // 2. Status filter
+      // 2. Teacher filter
+      if (teacherFilter !== "전체") {
+        const matchesTeacher = s.teacher === teacherFilter || (s.teachers && s.teachers.has(teacherFilter));
+        if (!matchesTeacher) return false;
+      }
+
+      // 3. Status filter
       if (statusFilter === "모두완료" && !s.isAllSubmitted) return false;
       if (statusFilter === "신청서미작성" && s.isAppSubmitted) return false;
       if (statusFilter === "사전미작성" && s.isPreSubmitted) return false;
       if (statusFilter === "사후미작성" && s.isPostSubmitted) return false;
       if (statusFilter === "미완료" && s.isAllSubmitted) return false;
 
-      // 3. Date range filter (based on regDate or lastDate)
+      // 4. Date range filter (based on regDate or lastDate)
       const targetDate = s.regDate || s.lastDate;
       if (startDate && targetDate && targetDate < startDate) return false;
       if (endDate && targetDate && targetDate > endDate) return false;
 
-      // 4. Search filter (Name or Chosung)
+      // 5. Search filter (Name or Chosung)
       if (searchTerm.trim()) {
         const lowerSearch = searchTerm.toLowerCase().replace(/\s+/g, '');
         const cleanName = s.name.toLowerCase().replace(/\s+/g, '');
@@ -330,15 +357,72 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
       return true;
     });
-  }, [students, teamFilter, statusFilter, startDate, endDate, searchTerm]);
+  }, [students, teamFilter, teacherFilter, statusFilter, startDate, endDate, searchTerm]);
 
   // -------------------------------------------------------------
-  // KPI Statistics (소속 팀 선택 시 해당 팀 대상자 기준으로만 집계)
+  // Available Teachers for the selected team
+  // -------------------------------------------------------------
+  const availableTeachers = useMemo(() => {
+    const teacherSet = new Set();
+
+    // 1. From DB teachers
+    dbTeachers.forEach(t => {
+      if (t.is_active === false) return;
+      if (teamFilter === "전체" || t.team === teamFilter) {
+        if (t.name) teacherSet.add(t.name.trim());
+      }
+    });
+
+    // 2. From students (logs)
+    students.forEach(s => {
+      if (teamFilter === "전체" || s.team === teamFilter) {
+        if (s.teacher && s.teacher !== '-' && s.teacher !== '미배정') {
+          teacherSet.add(s.teacher.trim());
+        }
+        if (s.teachers) {
+          s.teachers.forEach(tName => {
+            if (tName && tName !== '-' && tName !== '미배정') {
+              teacherSet.add(tName.trim());
+            }
+          });
+        }
+      }
+    });
+
+    return Array.from(teacherSet).sort((a, b) => a.localeCompare(b, 'ko'));
+  }, [dbTeachers, students, teamFilter]);
+
+  const getTeacherTeam = useCallback((teacherName) => {
+    const dbT = dbTeachers.find(t => t.name === teacherName);
+    if (dbT?.team) return dbT.team;
+    const s = students.find(s => s.teacher === teacherName || (s.teachers && s.teachers.has(teacherName)));
+    return s?.team || '';
+  }, [dbTeachers, students]);
+
+  const handleTeacherChange = (teacherName) => {
+    setTeacherFilter(teacherName);
+    if (teacherName !== '전체' && teamFilter === '전체') {
+      const dbT = dbTeachers.find(t => t.name === teacherName);
+      if (dbT?.team) {
+        setTeamFilter(dbT.team);
+      } else {
+        const s = students.find(s => s.teacher === teacherName || (s.teachers && s.teachers.has(teacherName)));
+        if (s?.team) setTeamFilter(s.team);
+      }
+    }
+  };
+
+  // -------------------------------------------------------------
+  // KPI Statistics (소속 팀 및 담당 선생님 선택 시 해당 대상자 기준으로 집계)
   // -------------------------------------------------------------
   const stats = useMemo(() => {
-    const targetStudents = teamFilter === "전체"
+    let targetStudents = teamFilter === "전체"
       ? students
       : students.filter(s => s.team === teamFilter);
+
+    if (teacherFilter !== "전체") {
+      targetStudents = targetStudents.filter(s => s.teacher === teacherFilter || (s.teachers && s.teachers.has(teacherFilter)));
+    }
 
     const total = targetStudents.length;
     if (total === 0) return { total: 0, appCount: 0, preCount: 0, postCount: 0, allCount: 0, appPct: 0, prePct: 0, postPct: 0, allPct: 0 };
@@ -359,7 +443,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       postPct: total > 0 ? Math.round((postCount / total) * 100) : 0,
       allPct: total > 0 ? Math.round((allCount / total) * 100) : 0,
     };
-  }, [students, teamFilter]);
+  }, [students, teamFilter, teacherFilter]);
 
   // -------------------------------------------------------------
   // Checkbox Selection Handlers
@@ -539,7 +623,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       // Meta info row
       ws.mergeCells('A2:L2');
       const metaCell = ws.getCell('A2');
-      metaCell.value = `출력일시: ${new Date().toLocaleString('ko-KR')} | 총 대상자: ${filteredStudents.length}명 (신청서: ${stats.appCount}명, 사전: ${stats.preCount}명, 사후: ${stats.postCount}명, 3종완료: ${stats.allCount}명)`;
+      metaCell.value = `출력일시: ${new Date().toLocaleString('ko-KR')} | 필터: ${teamFilter}${teacherFilter !== '전체' ? ` (${teacherFilter} 선생님)` : ''} | 총 대상자: ${filteredStudents.length}명 (신청서: ${stats.appCount}명, 사전: ${stats.preCount}명, 사후: ${stats.postCount}명, 3종완료: ${stats.allCount}명)`;
       metaCell.font = { name: '맑은 고딕', size: 10, color: { argb: 'FF475569' } };
       metaCell.alignment = { horizontal: 'right', vertical: 'middle' };
       ws.getRow(2).height = 20;
@@ -702,7 +786,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             }`}
           >
             <div className={`text-xs font-semibold ${statusFilter === "전체" ? "text-slate-200" : "text-slate-500"}`}>
-              {teamFilter === "전체" ? "전체 대상자" : `${teamFilter} 대상자`}
+              {teacherFilter !== "전체"
+                ? `${teacherFilter} 강사 대상자`
+                : teamFilter === "전체"
+                  ? "전체 대상자"
+                  : `${teamFilter} 대상자`}
             </div>
             <div className={`text-2xl font-black mt-1 ${statusFilter === "전체" ? "text-white" : "text-slate-900"}`}>
               {stats.total}
@@ -711,7 +799,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               </span>
             </div>
             <div className={`text-[11px] mt-0.5 ${statusFilter === "전체" ? "text-slate-300 font-medium" : "text-slate-400"}`}>
-              {teamFilter === "전체" ? "클릭 시 전체 보기" : `클릭 시 ${teamFilter} 전체 보기`}
+              {teacherFilter !== "전체"
+                ? `클릭 시 ${teacherFilter} 강사 전체 보기`
+                : teamFilter === "전체"
+                  ? "클릭 시 전체 보기"
+                  : `클릭 시 ${teamFilter} 전체 보기`}
             </div>
           </div>
 
@@ -862,16 +954,19 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
         {/* 2. FILTER & SEARCH CONTROL BAR */}
         <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3.5">
-          {/* Top Row: Team Tabs & Status Filter */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          {/* Top Row: Team Tabs & Teacher Filter & Status Filter */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 pb-3">
             {/* Team Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
               <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">소속 팀:</span>
               {['전체', '1팀', '2팀', '3팀', '취업팀'].map(team => (
                 <button
                   key={team}
                   type="button"
-                  onClick={() => setTeamFilter(team)}
+                  onClick={() => {
+                    setTeamFilter(team);
+                    setTeacherFilter('전체');
+                  }}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
                     teamFilter === team
                       ? 'bg-blue-600 text-white shadow-xs'
@@ -883,21 +978,59 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               ))}
             </div>
 
-            {/* Status Dropdown / Chips */}
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-slate-500 shrink-0">작성 상태:</span>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 cursor-pointer"
-              >
-                <option value="전체">전체 상태 보기</option>
-                <option value="모두완료">✅ 3종 모두 완료</option>
-                <option value="신청서미작성">⚠️ 신청서 미작성</option>
-                <option value="사전미작성">⚠️ 사전설문 미작성</option>
-                <option value="사후미작성">⚠️ 사후설문 미작성</option>
-                <option value="미완료">⏳ 1종 이상 미작성</option>
-              </select>
+            {/* Dropdowns: Teacher Filter & Status Filter */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Teacher Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-slate-500 shrink-0">담당 선생님:</span>
+                <select
+                  value={teacherFilter}
+                  onChange={(e) => handleTeacherChange(e.target.value)}
+                  className={`border rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer transition ${
+                    teacherFilter !== '전체'
+                      ? 'bg-blue-50 border-blue-400 text-blue-800'
+                      : 'bg-slate-50 border-slate-300 text-slate-800'
+                  }`}
+                >
+                  <option value="전체">
+                    {teamFilter === '전체'
+                      ? '전체 선생님'
+                      : `${teamFilter} 전체 선생님 (${availableTeachers.length}명)`}
+                  </option>
+                  {availableTeachers.map(t => (
+                    <option key={t} value={t}>
+                      {t} {teamFilter === '전체' ? `(${getTeacherTeam(t)})` : '선생님'}
+                    </option>
+                  ))}
+                </select>
+                {teacherFilter !== '전체' && (
+                  <button
+                    type="button"
+                    onClick={() => setTeacherFilter('전체')}
+                    className="text-[11px] text-slate-400 hover:text-rose-500 underline font-semibold cursor-pointer"
+                    title="선생님 선택 해제"
+                  >
+                    해제
+                  </button>
+                )}
+              </div>
+
+              {/* Status Dropdown */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-slate-500 shrink-0">작성 상태:</span>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                >
+                  <option value="전체">전체 상태 보기</option>
+                  <option value="모두완료">✅ 3종 모두 완료</option>
+                  <option value="신청서미작성">⚠️ 신청서 미작성</option>
+                  <option value="사전미작성">⚠️ 사전설문 미작성</option>
+                  <option value="사후미작성">⚠️ 사후설문 미작성</option>
+                  <option value="미완료">⏳ 1종 이상 미작성</option>
+                </select>
+              </div>
             </div>
           </div>
 
