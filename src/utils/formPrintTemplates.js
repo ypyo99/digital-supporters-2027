@@ -669,37 +669,37 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     }
     #docTitle {
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       line-height: 1.35;
     }
     #docTitle .title-project {
       display: block;
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 600;
       color: #111111;
     }
     #docTitle .title-main {
       display: block;
-      font-size: 23px;
+      font-size: 24px;
       font-weight: 800;
       color: #111111;
-      margin-top: 3px;
+      margin-top: 4px;
     }
     #applicantSubTitle {
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       color: #111111;
     }
     #applicantTable {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
     #applicantTable th, #applicantTable td {
-      padding: 6px 8px;
-      font-size: 12px;
-      line-height: 1.3;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      line-height: 1.35;
       border: 1px solid #111111;
     }
     #applicantTable th {
@@ -711,13 +711,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     #applyRouteGrid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 5px 12px;
-      font-size: 11.5px;
+      gap: 7px 14px;
+      font-size: 12px;
     }
     #hopeServiceList {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
     .service-item {
       display: flex;
@@ -725,59 +725,61 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       gap: 6px;
     }
     .service-item .service-name {
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
     }
     .service-item .service-desc {
-      font-size: 11px;
+      font-size: 11.5px;
       color: #4b5563;
     }
     #hopeDaysList {
       display: flex;
-      gap: 20px;
-      font-size: 12px;
+      gap: 22px;
+      font-size: 12.5px;
       font-weight: 600;
+      padding: 3px 0;
     }
     #hopeTimeList {
       display: flex;
       flex-direction: row;
-      gap: 24px;
-      font-size: 12px;
+      gap: 26px;
+      font-size: 12.5px;
+      padding: 3px 0;
     }
     #memoCell {
-      height: 64px;
-      padding: 5px 8px;
-      font-size: 11.5px;
-      line-height: 1.3;
+      height: 85px;
+      padding: 6px 10px;
+      font-size: 12px;
+      line-height: 1.35;
     }
     #privacyContainer {
-      margin-top: 12px;
+      margin-top: 16px;
       border: 1px solid #111111;
       background-color: transparent;
       padding: 0;
     }
     #privacyInner {
-      padding: 12px 16px;
+      padding: 14px 18px;
     }
     .privacy-head {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
     .privacy-law {
-      font-size: 10.5px;
-      margin-bottom: 5px;
+      font-size: 11px;
+      margin-bottom: 6px;
       color: #4b5563;
     }
     .privacy-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .privacy-table th, .privacy-table td {
-      padding: 4px 6px;
-      font-size: 11px;
-      line-height: 1.25;
+      padding: 5px 8px;
+      font-size: 11.5px;
+      line-height: 1.3;
       border: 1px solid #111111;
     }
     .privacy-table th {
@@ -787,33 +789,33 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     .consent-radios {
       display: flex;
       justify-content: flex-end;
-      gap: 18px;
-      font-size: 11.5px;
+      gap: 20px;
+      font-size: 12px;
       font-weight: 700;
-      margin-top: 3px;
-      margin-bottom: 6px;
+      margin-top: 4px;
+      margin-bottom: 8px;
     }
     #portraitHeader {
-      margin-top: 12px;
-      margin-bottom: 3px;
-      font-size: 13px;
+      margin-top: 14px;
+      margin-bottom: 4px;
+      font-size: 13.5px;
     }
     #consentNotice {
       text-align: center;
-      margin-top: 8px;
-      font-size: 10.5px;
-      line-height: 1.35;
+      margin-top: 10px;
+      font-size: 11px;
+      line-height: 1.4;
       color: #334155;
       font-weight: 600;
     }
     #signatureSection {
-      margin-top: 24px;
-      font-size: 14.5px;
+      margin-top: 36px;
+      font-size: 15.5px;
       text-align: center;
     }
     #dateRow {
-      margin-bottom: 16px;
-      font-size: 14.5px;
+      margin-bottom: 22px;
+      font-size: 15.5px;
       display: flex;
       justify-content: center;
       gap: 8px;
@@ -824,29 +826,29 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       justify-content: flex-end;
       align-items: center;
       gap: 8px;
-      font-size: 14.5px;
+      font-size: 15.5px;
       padding-right: 16px;
     }
     #printFooterLogo {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-top: 24px;
-      margin-bottom: 10px;
+      gap: 14px;
+      margin-top: 36px;
+      margin-bottom: 12px;
     }
     #printFooterLogo img {
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       object-fit: contain;
     }
     #printFooterLogo .org-sub {
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 600;
       color: #475569;
     }
     #printFooterLogo .org-title {
-      font-size: 19px;
+      font-size: 21px;
       font-weight: 800;
       color: #0f172a;
     }
