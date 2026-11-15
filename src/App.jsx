@@ -89,6 +89,45 @@ export default function App() {
     fetchAllTeachersFromDb();
   }, []);
 
+  // [전역 버전 체크 및 자동 최신화 로직]
+  // 어느 화면에 있든 새 버전이 배포되면 스마트폰/PC에서 즉시 감지하여 최신 코드로 자동 새로고침합니다.
+  useEffect(() => {
+    const checkVersion = async () => {
+      try {
+        const res = await fetch(`/version.json?t=${new Date().getTime()}`);
+        if (res.ok) {
+          const contentType = res.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const data = await res.json();
+            if (data && data.version) {
+              const serverVersion = Number(data.version);
+              const clientVersion = Number(import.meta.env.VITE_APP_VERSION);
+              if (clientVersion && serverVersion > clientVersion) {
+                console.log('새 버전이 배포되어 앱을 최신 상태로 갱신합니다.', { clientVersion, serverVersion });
+                window.location.reload(true);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('앱 버전 확인 오류:', err);
+      }
+    };
+
+    checkVersion();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkVersion();
+      }
+    };
+    window.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', checkVersion);
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', checkVersion);
+    };
+  }, []);
+
   const renderView = () => {
     if (currentView === 'classroom') {
       return (
