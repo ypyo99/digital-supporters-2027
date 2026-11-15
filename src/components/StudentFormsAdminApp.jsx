@@ -1629,7 +1629,7 @@ export default function StudentFormsAdminApp({
                               <button
                                 type="button"
                                 onClick={() => window.open(appUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer whitespace-nowrap shrink-0"
+                                className="inline-flex items-center justify-center gap-1 w-[96px] py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title={`신청서 열기 및 수정 (${s.app?.sign_date || s.app?.created_at?.slice(0, 10) || '완료'})`}
                               >
                                 <span className="whitespace-nowrap">✅ 완료</span>
@@ -1638,7 +1638,7 @@ export default function StudentFormsAdminApp({
                               <button
                                 type="button"
                                 onClick={() => window.open(appUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
+                                className="inline-flex items-center justify-center gap-1 w-[96px] py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="클릭하여 새 신청서 작성"
                               >
                                 <span className="whitespace-nowrap">❌ 미작성</span>
@@ -1655,7 +1655,7 @@ export default function StudentFormsAdminApp({
                               <button
                                 type="button"
                                 onClick={() => window.open(preUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs border border-indigo-200 transition cursor-pointer whitespace-nowrap shrink-0"
+                                className="inline-flex items-center justify-center gap-1 w-[96px] py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-xs border border-indigo-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="사전설문지 열기 및 수정"
                               >
                                 <span className="whitespace-nowrap">✅ 완료</span>
@@ -1665,7 +1665,7 @@ export default function StudentFormsAdminApp({
                               <button
                                 type="button"
                                 onClick={() => window.open(preUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
+                                className="inline-flex items-center justify-center gap-1 w-[96px] py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="클릭하여 새 사전설문지 작성"
                               >
                                 <span className="whitespace-nowrap">❌ 미작성</span>
@@ -1682,7 +1682,7 @@ export default function StudentFormsAdminApp({
                               <button
                                 type="button"
                                 onClick={() => window.open(postUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs border border-purple-200 transition cursor-pointer whitespace-nowrap shrink-0"
+                                className="inline-flex items-center justify-center gap-1 w-[96px] py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs border border-purple-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="사후설문지 열기 및 수정"
                               >
                                 <span className="whitespace-nowrap">✅ 완료</span>
@@ -1692,7 +1692,7 @@ export default function StudentFormsAdminApp({
                               <button
                                 type="button"
                                 onClick={() => window.open(postUrl, '_blank')}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-50 hover:text-purple-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
+                                className="inline-flex items-center justify-center gap-1 w-[96px] py-1 rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-50 hover:text-purple-700 font-semibold text-xs border border-slate-200 transition cursor-pointer whitespace-nowrap shrink-0"
                                 title="클릭하여 새 사후설문지 작성"
                               >
                                 <span className="whitespace-nowrap">❌ 미작성</span>
