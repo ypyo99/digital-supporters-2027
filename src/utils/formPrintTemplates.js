@@ -568,6 +568,7 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>${escapeHtml(title)}</title>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -594,12 +595,12 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       background: rgba(15, 23, 42, 0.96);
       backdrop-filter: blur(10px);
       color: #ffffff;
-      padding: 10px 14px;
+      padding: 12px 16px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
     @media (min-width: 768px) {
       .top-action-bar {
-        padding: 12px 24px;
+        padding: 14px 24px;
       }
     }
     .top-action-container {
@@ -607,11 +608,11 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
     @media (min-width: 768px) {
       .top-action-container {
-        gap: 6px;
+        gap: 8px;
       }
     }
     /* Mobile: Column layout (Title on top, Buttons below) */
@@ -619,7 +620,7 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     .top-action-main {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
     }
     @media (min-width: 768px) {
@@ -632,26 +633,24 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     }
     .top-action-title {
       font-weight: 800;
-      font-size: 16px;
+      font-size: 17px;
       color: #38bdf8;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       letter-spacing: -0.01em;
+      line-height: 1.3;
     }
     @media (min-width: 768px) {
       .top-action-title {
-        font-size: 17px;
+        font-size: 18px;
         flex: 1;
       }
     }
     .top-action-icon {
       flex-shrink: 0;
-      font-size: 18px;
+      font-size: 22px;
     }
     .top-action-title-text {
       white-space: nowrap;
@@ -667,93 +666,100 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     @media (min-width: 768px) {
       .top-action-buttons {
         width: auto;
-        gap: 10px;
+        gap: 12px;
         flex-shrink: 0;
       }
     }
     .btn-print {
       flex: 1;
-      min-height: 44px;
+      min-height: 48px;
       background: #2563eb;
       color: #ffffff;
       border: none;
-      padding: 10px 16px;
-      font-size: 15px;
+      padding: 10px 18px;
+      font-size: 16px;
       font-weight: 800;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
+      gap: 8px;
       white-space: nowrap !important;
       line-height: 1;
       transition: background 0.15s, transform 0.1s;
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
     }
     .btn-print:active { transform: scale(0.97); }
     .btn-print:hover { background: #1d4ed8; }
     .btn-print svg {
-      width: 19px;
-      height: 19px;
+      width: 22px;
+      height: 22px;
       flex-shrink: 0;
     }
     .btn-close {
-      min-height: 44px;
+      min-height: 48px;
       background: #475569;
       color: #ffffff;
       border: none;
-      padding: 10px 18px;
-      font-size: 14px;
+      padding: 10px 20px;
+      font-size: 15px;
       font-weight: 700;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       white-space: nowrap !important;
       flex-shrink: 0;
       line-height: 1;
       transition: background 0.15s, transform 0.1s;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
     .btn-close:active { transform: scale(0.97); }
     .btn-close:hover { background: #334155; }
     @media (min-width: 768px) {
       .btn-print {
         flex: initial;
-        min-height: 40px;
-        padding: 9px 20px;
+        min-height: 44px;
+        padding: 10px 22px;
         font-size: 15px;
       }
       .btn-close {
-        min-height: 40px;
-        padding: 9px 16px;
-        font-size: 14px;
+        min-height: 44px;
+        padding: 10px 18px;
+        font-size: 15px;
       }
     }
     .top-action-notice {
-      font-size: 12.5px;
+      font-size: 13px;
       color: #cbd5e1;
-      line-height: 1.4;
+      line-height: 1.45;
       word-break: keep-all;
-      background: rgba(255, 255, 255, 0.06);
-      padding: 7px 10px;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 8px 12px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     @media (min-width: 768px) {
       .top-action-notice {
-        font-size: 13px;
-        padding: 6px 12px;
+        font-size: 13.5px;
+        padding: 8px 14px;
       }
     }
 
     /* Screen View Container */
     .print-doc-container-screen {
       max-width: 900px;
-      margin: 20px auto;
-      padding: 0 16px;
+      margin: 16px auto 40px auto;
+      padding: 0 8px;
       display: flex;
       flex-direction: column;
       gap: 24px;
+      overflow-x: auto;
+    }
+    @media (min-width: 768px) {
+      .print-doc-container-screen {
+        margin: 24px auto 50px auto;
+        padding: 0 16px;
+      }
     }
 
     /* Common Styles for Application Form (Mirrors application_form.html - Strictly 1 Page) */
