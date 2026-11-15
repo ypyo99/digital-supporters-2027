@@ -1428,7 +1428,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         {/* Student Name */}
                         <td className="py-2.5 px-3">
                           <div className="font-extrabold text-slate-900 text-sm">{s.name}</div>
-                          <div className="text-[11px] text-slate-400">수업 {s.lessonCount}회차</div>
                         </td>
 
                         {/* Team */}
@@ -1439,7 +1438,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         {/* Registration Date / Last Lesson */}
                         <td className="py-2.5 px-3 text-xs text-slate-600">
                           <div>{s.regDate || s.lastDate || '-'}</div>
-                          <div className="text-[10px] text-slate-400">최근: {s.lastDate || '-'}</div>
                         </td>
 
                         {/* 1. Application Form Status Button */}
