@@ -1425,10 +1425,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                                 type="button"
                                 onClick={() => window.open(appUrl, '_blank')}
                                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 transition cursor-pointer"
-                                title="신청서 열기 및 수정"
+                                title={`신청서 열기 및 수정 (${s.app?.sign_date || s.app?.created_at?.slice(0, 10) || '완료'})`}
                               >
-                                <span>✅ 작성완료</span>
-                                <span className="text-[10px] text-emerald-600 font-normal">({s.app?.sign_date || s.app?.created_at?.slice(0, 10)})</span>
+                                <span>✅ 완료</span>
                               </button>
                             ) : (
                               <button
