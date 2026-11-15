@@ -692,72 +692,167 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           <div
             onClick={() => setStatusFilter("전체")}
             className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              statusFilter === "전체" ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-200 text-slate-800 hover:border-slate-300"
+              statusFilter === "전체"
+                ? "bg-slate-900 text-white border-slate-900 ring-2 ring-slate-800 ring-offset-2 shadow-md"
+                : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 hover:shadow-xs"
             }`}
           >
-            <div className="text-xs font-semibold opacity-80">전체 대상자</div>
-            <div className="text-2xl font-black mt-1">{stats.total}<span className="text-sm font-normal ml-0.5">명</span></div>
-            <div className="text-[11px] opacity-75 mt-0.5">클릭 시 전체 보기</div>
+            <div className={`text-xs font-semibold ${statusFilter === "전체" ? "text-slate-200" : "text-slate-500"}`}>
+              전체 대상자
+            </div>
+            <div className={`text-2xl font-black mt-1 ${statusFilter === "전체" ? "text-white" : "text-slate-900"}`}>
+              {stats.total}
+              <span className={`text-sm font-normal ml-0.5 ${statusFilter === "전체" ? "text-slate-300" : "text-slate-500"}`}>
+                명
+              </span>
+            </div>
+            <div className={`text-[11px] mt-0.5 ${statusFilter === "전체" ? "text-slate-300 font-medium" : "text-slate-400"}`}>
+              클릭 시 전체 보기
+            </div>
           </div>
 
           {/* Application Status */}
           <div
             onClick={() => setStatusFilter("신청서미작성")}
             className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              statusFilter === "신청서미작성" ? "bg-blue-700 text-white border-blue-700" : "bg-white border-slate-200 text-slate-800 hover:border-blue-300"
+              statusFilter === "신청서미작성"
+                ? "bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500 ring-offset-2 shadow-md"
+                : "bg-white border-slate-200 text-slate-800 hover:border-blue-300 hover:shadow-xs"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-blue-600">신청서 작성</span>
-              <span className="text-xs font-bold px-1.5 py-0.2 rounded bg-blue-50 text-blue-700">{stats.appPct}%</span>
+              <span className={`text-xs font-bold ${statusFilter === "신청서미작성" ? "text-white" : "text-blue-600"}`}>
+                신청서 작성
+              </span>
+              <span
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
+                  statusFilter === "신청서미작성" ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
+                }`}
+              >
+                {stats.appPct}%
+              </span>
             </div>
-            <div className="text-2xl font-black mt-1 text-blue-900">{stats.appCount}<span className="text-sm font-normal text-slate-500 ml-1">/ {stats.total}명</span></div>
-            <div className="text-[11px] text-rose-500 font-semibold mt-0.5">미작성: {stats.total - stats.appCount}명</div>
+            <div className={`text-2xl font-black mt-1 ${statusFilter === "신청서미작성" ? "text-white" : "text-slate-900"}`}>
+              {stats.appCount}
+              <span className={`text-sm font-normal ml-1 ${statusFilter === "신청서미작성" ? "text-blue-100" : "text-slate-500"}`}>
+                / {stats.total}명
+              </span>
+            </div>
+            <div
+              className={`text-[11px] font-bold mt-0.5 ${
+                statusFilter === "신청서미작성" ? "text-amber-200" : "text-rose-500"
+              }`}
+            >
+              미작성: {stats.total - stats.appCount}명
+            </div>
           </div>
 
           {/* Pre-Survey Status */}
           <div
             onClick={() => setStatusFilter("사전미작성")}
             className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              statusFilter === "사전미작성" ? "bg-indigo-700 text-white border-indigo-700" : "bg-white border-slate-200 text-slate-800 hover:border-indigo-300"
+              statusFilter === "사전미작성"
+                ? "bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500 ring-offset-2 shadow-md"
+                : "bg-white border-slate-200 text-slate-800 hover:border-indigo-300 hover:shadow-xs"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-indigo-600">사전설문 작성</span>
-              <span className="text-xs font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700">{stats.prePct}%</span>
+              <span className={`text-xs font-bold ${statusFilter === "사전미작성" ? "text-white" : "text-indigo-600"}`}>
+                사전설문 작성
+              </span>
+              <span
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
+                  statusFilter === "사전미작성" ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
+                }`}
+              >
+                {stats.prePct}%
+              </span>
             </div>
-            <div className="text-2xl font-black mt-1 text-indigo-900">{stats.preCount}<span className="text-sm font-normal text-slate-500 ml-1">/ {stats.total}명</span></div>
-            <div className="text-[11px] text-rose-500 font-semibold mt-0.5">미작성: {stats.total - stats.preCount}명</div>
+            <div className={`text-2xl font-black mt-1 ${statusFilter === "사전미작성" ? "text-white" : "text-slate-900"}`}>
+              {stats.preCount}
+              <span className={`text-sm font-normal ml-1 ${statusFilter === "사전미작성" ? "text-indigo-100" : "text-slate-500"}`}>
+                / {stats.total}명
+              </span>
+            </div>
+            <div
+              className={`text-[11px] font-bold mt-0.5 ${
+                statusFilter === "사전미작성" ? "text-amber-200" : "text-rose-500"
+              }`}
+            >
+              미작성: {stats.total - stats.preCount}명
+            </div>
           </div>
 
           {/* Post-Survey Status */}
           <div
             onClick={() => setStatusFilter("사후미작성")}
             className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              statusFilter === "사후미작성" ? "bg-purple-700 text-white border-purple-700" : "bg-white border-slate-200 text-slate-800 hover:border-purple-300"
+              statusFilter === "사후미작성"
+                ? "bg-purple-600 text-white border-purple-600 ring-2 ring-purple-500 ring-offset-2 shadow-md"
+                : "bg-white border-slate-200 text-slate-800 hover:border-purple-300 hover:shadow-xs"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-purple-700">사후설문 작성</span>
-              <span className="text-xs font-bold px-1.5 py-0.2 rounded bg-purple-50 text-purple-700">{stats.postPct}%</span>
+              <span className={`text-xs font-bold ${statusFilter === "사후미작성" ? "text-white" : "text-purple-600"}`}>
+                사후설문 작성
+              </span>
+              <span
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
+                  statusFilter === "사후미작성" ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
+                }`}
+              >
+                {stats.postPct}%
+              </span>
             </div>
-            <div className="text-2xl font-black mt-1 text-purple-950">{stats.postCount}<span className="text-sm font-normal text-slate-500 ml-1">/ {stats.total}명</span></div>
-            <div className="text-[11px] text-rose-500 font-semibold mt-0.5">미작성: {stats.total - stats.postCount}명</div>
+            <div className={`text-2xl font-black mt-1 ${statusFilter === "사후미작성" ? "text-white" : "text-slate-900"}`}>
+              {stats.postCount}
+              <span className={`text-sm font-normal ml-1 ${statusFilter === "사후미작성" ? "text-purple-100" : "text-slate-500"}`}>
+                / {stats.total}명
+              </span>
+            </div>
+            <div
+              className={`text-[11px] font-bold mt-0.5 ${
+                statusFilter === "사후미작성" ? "text-amber-200" : "text-rose-500"
+              }`}
+            >
+              미작성: {stats.total - stats.postCount}명
+            </div>
           </div>
 
           {/* All Completed */}
           <div
             onClick={() => setStatusFilter("모두완료")}
             className={`col-span-2 sm:col-span-1 p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${
-              statusFilter === "모두완료" ? "bg-emerald-700 text-white border-emerald-700" : "bg-white border-slate-200 text-slate-800 hover:border-emerald-300"
+              statusFilter === "모두완료"
+                ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500 ring-offset-2 shadow-md"
+                : "bg-white border-slate-200 text-slate-800 hover:border-emerald-300 hover:shadow-xs"
             }`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-emerald-700">3종 완결</span>
-              <span className="text-xs font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700">{stats.allPct}%</span>
+              <span className={`text-xs font-bold ${statusFilter === "모두완료" ? "text-white" : "text-emerald-700"}`}>
+                3종 완결
+              </span>
+              <span
+                className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${
+                  statusFilter === "모두완료" ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
+                }`}
+              >
+                {stats.allPct}%
+              </span>
             </div>
-            <div className="text-2xl font-black mt-1 text-emerald-950">{stats.allCount}<span className="text-sm font-normal text-slate-500 ml-1">/ {stats.total}명</span></div>
-            <div className="text-[11px] text-slate-500 font-semibold mt-0.5">신청서+사전+사후 완료</div>
+            <div className={`text-2xl font-black mt-1 ${statusFilter === "모두완료" ? "text-white" : "text-slate-900"}`}>
+              {stats.allCount}
+              <span className={`text-sm font-normal ml-1 ${statusFilter === "모두완료" ? "text-emerald-100" : "text-slate-500"}`}>
+                / {stats.total}명
+              </span>
+            </div>
+            <div
+              className={`text-[11px] font-semibold mt-0.5 ${
+                statusFilter === "모두완료" ? "text-emerald-100" : "text-slate-500"
+              }`}
+            >
+              신청서+사전+사후 완료
+            </div>
           </div>
         </div>
 
