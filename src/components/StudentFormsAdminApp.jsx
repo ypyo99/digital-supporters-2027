@@ -1336,7 +1336,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   </th>
                   <th className="py-3 px-3 text-center w-12">연번</th>
                   <th className="py-3 px-3">학생 성명</th>
-                  <th className="py-3 px-3">팀 / 강사</th>
+                  <th className="py-3 px-3">소속 팀</th>
                   <th className="py-3 px-3">등록/수업일</th>
                   {selectedDocTypes.has('app') && (
                     <th className="py-3 px-3 text-center">① 참여 신청서</th>
@@ -1405,10 +1405,9 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                           <div className="text-[11px] text-slate-400">수업 {s.lessonCount}회차</div>
                         </td>
 
-                        {/* Team / Teacher */}
+                        {/* Team */}
                         <td className="py-2.5 px-3">
                           <div className="font-semibold text-slate-800 text-xs">{s.team}</div>
-                          <div className="text-[11px] text-slate-500">강사: {s.teacher || '-'}</div>
                         </td>
 
                         {/* Registration Date / Last Lesson */}
