@@ -1372,21 +1372,20 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                   {selectedDocTypes.has('post') && (
                     <th className="py-3 px-3 text-center">③ 사후 설문지</th>
                   )}
-                  <th className="py-3 px-3 text-center">완결 여부</th>
                   <th className="py-3 px-3 text-center">개별 출력</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={7 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
+                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
                       <div className="inline-block w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
                       <p className="text-xs font-semibold">참여자 서류 데이터를 집계하는 중입니다...</p>
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={7 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
+                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400">
                       <p className="text-sm font-semibold">검색 조건에 일치하는 대상자가 없습니다.</p>
                       <p className="text-xs text-slate-400 mt-1">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
                     </td>
@@ -1397,13 +1396,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     const appUrl = `/application_form.html?name=${encodeURIComponent(s.name)}`;
                     const preUrl = `/survey_form.html?type=pre&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}`;
                     const postUrl = `/survey_form.html?type=post&name=${encodeURIComponent(s.name)}&surveyor=${encodeURIComponent(s.teacher || '')}`;
-
-                    const isSelectedDocsCompleted = selectedDocTypes.size > 0 && Array.from(selectedDocTypes).every(docKey => {
-                      if (docKey === 'app') return s.isAppSubmitted;
-                      if (docKey === 'pre') return s.isPreSubmitted;
-                      if (docKey === 'post') return s.isPostSubmitted;
-                      return false;
-                    });
 
                     return (
                       <tr
@@ -1523,29 +1515,6 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                             )}
                           </td>
                         )}
-
-                        {/* All Completed Badge */}
-                        <td className="py-2.5 px-3 text-center">
-                          {selectedDocTypes.size === 3 ? (
-                            s.isAllSubmitted ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
-                                ★ 3종 완결
-                              </span>
-                            ) : (
-                              <span className="text-[11px] text-slate-400 font-medium">
-                                미완결
-                              </span>
-                            )
-                          ) : isSelectedDocsCompleted ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
-                              ★ {selectedDocTypes.size === 1 ? '작성 완료' : `${selectedDocTypes.size}종 완결`}
-                            </span>
-                          ) : (
-                            <span className="text-[11px] text-slate-400 font-medium">
-                              미완결
-                            </span>
-                          )}
-                        </td>
 
                         {/* Single Print Action */}
                         <td className="py-2.5 px-3 text-center">
