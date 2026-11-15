@@ -128,20 +128,20 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
         <table id="applicantTable">
           <colgroup>
             <col style="width: 12%;">
-            <col style="width: 22%;">
-            <col style="width: 11%;">
+            <col style="width: 25%;">
+            <col style="width: 8%;">
+            <col style="width: 8%;">
             <col style="width: 18%;">
-            <col style="width: 17%;">
-            <col style="width: 20%;">
+            <col style="width: 29%;">
           </colgroup>
           <tbody>
             <tr>
               <th style="white-space: nowrap;">성 명</th>
               <td style="font-weight: 700; text-align: center; white-space: nowrap;">${escapeHtml(name)}</td>
               <th style="white-space: nowrap;">성 별</th>
-              <td style="text-align: center; white-space: nowrap;">
-                <span style="white-space: nowrap;">${check(gender === '남')} 남</span>
-                <span style="margin-left: 8px; white-space: nowrap;">${check(gender === '여')} 여</span>
+              <td class="gender-cell">
+                <div style="white-space: nowrap;">${check(gender === '남')} 남</div>
+                <div style="white-space: nowrap; margin-top: 2px;">${check(gender === '여')} 여</div>
               </td>
               <th style="white-space: nowrap;">연락처(휴대폰)</th>
               <td style="font-weight: 700; text-align: center; white-space: nowrap;">${escapeHtml(phone)}</td>
@@ -843,6 +843,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       white-space: nowrap;
       word-break: keep-all;
     }
+    #applicantTable .gender-cell {
+      padding: 2px 2px !important;
+      line-height: 1.2 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      font-size: 11px !important;
+    }
     #applyRouteGrid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1384,18 +1391,23 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         padding: 14px 10px !important;
       }
 
-      /* 모바일/스마트폰 화면에서 6열 테이블 비율 최적화 (첫번째 라벨열 및 모든 헤더 줄바꿈 절대 방지) */
-      #applicantTable colgroup col:nth-child(1) { width: 62px !important; }
+      /* 모바일/스마트폰 화면에서 6열 테이블 비율 최적화 (성별 남/여 2줄 및 필드폭 최소화) */
+      #applicantTable colgroup col:nth-child(1) { width: 56px !important; }
       #applicantTable colgroup col:nth-child(2) { width: auto !important; }
-      #applicantTable colgroup col:nth-child(3) { width: 42px !important; }
-      #applicantTable colgroup col:nth-child(4) { width: auto !important; }
-      #applicantTable colgroup col:nth-child(5) { width: 86px !important; }
+      #applicantTable colgroup col:nth-child(3) { width: 36px !important; }
+      #applicantTable colgroup col:nth-child(4) { width: 34px !important; }
+      #applicantTable colgroup col:nth-child(5) { width: 84px !important; }
       #applicantTable colgroup col:nth-child(6) { width: auto !important; }
 
       #applicantTable th, #applicantTable td {
         font-size: 11px !important;
         padding: 5px 3px !important;
         word-break: keep-all !important;
+      }
+      #applicantTable .gender-cell {
+        padding: 2px 1px !important;
+        font-size: 10px !important;
+        line-height: 1.15 !important;
       }
       #applicantTable th {
         white-space: nowrap !important;
@@ -1513,6 +1525,11 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       }
       .doc-page-app #applicantTable th {
         white-space: nowrap !important;
+      }
+      .doc-page-app #applicantTable .gender-cell {
+        padding: 2px 2px !important;
+        line-height: 1.2 !important;
+        font-size: 11px !important;
       }
       .doc-page-app #applyRouteGrid {
         gap: 4px 10px !important;

@@ -618,11 +618,11 @@
         <table id="applicantTable" class="mb-8">
             <colgroup>
                 <col style="width: 12%;">
-                <col style="width: 22%;">
-                <col style="width: 11%;">
+                <col style="width: 25%;">
+                <col style="width: 8%;">
+                <col style="width: 8%;">
                 <col style="width: 18%;">
-                <col style="width: 17%;">
-                <col style="width: 20%;">
+                <col style="width: 29%;">
             </colgroup>
             <tbody>
                 <!-- 성명, 성별, 연락처 -->
@@ -630,15 +630,17 @@
                     <th class="whitespace-nowrap">성 명</th>
                     <td><input type="text" id="applicantName" placeholder="이름 입력"></td>
                     <th class="whitespace-nowrap">성 별</th>
-                    <td class="text-left md:text-center whitespace-nowrap">
-                        <label class="inline-flex items-center cursor-pointer mr-6">
-                            <input type="radio" name="gender" value="남" class="form-radio h-4 w-4 text-blue-600">
-                            <span class="ml-1.5">남</span>
-                        </label>
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input type="radio" name="gender" value="여" class="form-radio h-4 w-4 text-blue-600">
-                            <span class="ml-1.5">여</span>
-                        </label>
+                    <td class="text-center whitespace-nowrap p-1">
+                        <div class="flex flex-col items-center justify-center gap-0.5">
+                            <label class="inline-flex items-center cursor-pointer leading-tight">
+                                <input type="radio" name="gender" value="남" class="form-radio h-3.5 w-3.5 text-blue-600">
+                                <span class="ml-1 text-xs">남</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer leading-tight">
+                                <input type="radio" name="gender" value="여" class="form-radio h-3.5 w-3.5 text-blue-600">
+                                <span class="ml-1 text-xs">여</span>
+                            </label>
+                        </div>
                     </td>
                     <th colspan="1" class="text-sm px-1 leading-tight whitespace-nowrap">연락처(휴대폰)</th>
                     <td colspan="1"><input type="text" id="applicantPhone" value="010-" placeholder="010-0000-0000"
