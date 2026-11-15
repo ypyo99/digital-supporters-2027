@@ -2,7 +2,7 @@
 // 담당복지사용 참여자 서류 관리 및 일괄 인쇄 (신청서·사전/사후설문지)
 // ==============================================================
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
@@ -830,6 +830,77 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     }
   };
 
+  // -------------------------------------------------------------
+  // 화면 하단 고정 가로 스크롤바 및 테이블 스크롤 동기화 로직
+  // -------------------------------------------------------------
+  const tableContainerRef = useRef(null);
+  const bottomScrollRef = useRef(null);
+  const isSyncingFromTable = useRef(false);
+  const isSyncingFromBottom = useRef(false);
+
+  const [scrollMetrics, setScrollMetrics] = useState({ scrollWidth: 0, clientWidth: 0 });
+  const isScrollable = scrollMetrics.scrollWidth > scrollMetrics.clientWidth + 5;
+
+  const updateScrollMetrics = useCallback(() => {
+    if (tableContainerRef.current) {
+      const { scrollWidth, clientWidth } = tableContainerRef.current;
+      setScrollMetrics({ scrollWidth, clientWidth });
+    }
+  }, []);
+
+  useEffect(() => {
+    updateScrollMetrics();
+    const el = tableContainerRef.current;
+    if (!el) return;
+
+    let observer;
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(() => {
+        updateScrollMetrics();
+      });
+      observer.observe(el);
+    }
+
+    const handleWindowResize = () => updateScrollMetrics();
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      if (observer) observer.disconnect();
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [updateScrollMetrics, filteredStudents.length, selectedDocTypes]);
+
+  // Synchronize scroll from table to bottom bar
+  const handleTableScroll = useCallback(() => {
+    if (isSyncingFromBottom.current) {
+      isSyncingFromBottom.current = false;
+      return;
+    }
+    if (tableContainerRef.current && bottomScrollRef.current) {
+      isSyncingFromTable.current = true;
+      bottomScrollRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
+    }
+  }, []);
+
+  // Synchronize scroll from bottom bar to table
+  const handleBottomScroll = useCallback(() => {
+    if (isSyncingFromTable.current) {
+      isSyncingFromTable.current = false;
+      return;
+    }
+    if (tableContainerRef.current && bottomScrollRef.current) {
+      isSyncingFromBottom.current = true;
+      tableContainerRef.current.scrollLeft = bottomScrollRef.current.scrollLeft;
+    }
+  }, []);
+
+  // Sync position whenever isScrollable toggles on
+  useEffect(() => {
+    if (isScrollable && bottomScrollRef.current && tableContainerRef.current) {
+      bottomScrollRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
+    }
+  }, [isScrollable]);
+
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800">
 
@@ -883,7 +954,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-5">
+      <main className={`flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-5 ${isScrollable ? 'pb-24 sm:pb-28' : 'pb-8'}`}>
 
         {/* 1. KPI SUMMARY DASHBOARD CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
@@ -1348,11 +1419,16 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto overscroll-x-contain">
-            <table className="w-full min-w-max text-left border-collapse text-xs sm:text-sm whitespace-nowrap">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold whitespace-nowrap">
-                  <th className="py-3 px-3 text-center w-10 whitespace-nowrap shrink-0">
+          <div
+            ref={tableContainerRef}
+            onScroll={handleTableScroll}
+            className="overflow-x-auto overscroll-x-contain"
+          >
+            <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
+              <thead className="sticky top-0 z-30 shadow-xs">
+                <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
+                  {/* Sticky Checkbox */}
+                  <th className="sticky left-0 z-30 bg-slate-50 py-3 px-3 text-center w-[42px] min-w-[42px] max-w-[42px] border-b border-slate-200 whitespace-nowrap shrink-0">
                     <input
                       type="checkbox"
                       checked={isAllFilteredSelected}
@@ -1360,33 +1436,39 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                       className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
                     />
                   </th>
-                  <th className="py-3 px-3 text-center w-12 whitespace-nowrap shrink-0">연번</th>
-                  <th className="py-3 px-3 whitespace-nowrap">학생 성명</th>
-                  <th className="py-3 px-3 whitespace-nowrap">소속 팀</th>
-                  <th className="py-3 px-3 whitespace-nowrap">등록/수업일</th>
+                  {/* Sticky Index */}
+                  <th className="sticky left-[42px] z-30 bg-slate-50 py-3 px-3 text-center w-[46px] min-w-[46px] max-w-[46px] border-b border-slate-200 whitespace-nowrap shrink-0">
+                    연번
+                  </th>
+                  {/* Sticky Student Name */}
+                  <th className="sticky left-[88px] z-30 bg-slate-50 py-3 px-3 whitespace-nowrap min-w-[100px] border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)]">
+                    학생 성명
+                  </th>
+                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap">소속 팀</th>
+                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap">등록/수업일</th>
                   {selectedDocTypes.has('app') && (
-                    <th className="py-3 px-3 text-center whitespace-nowrap">① 참여 신청서</th>
+                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">① 참여 신청서</th>
                   )}
                   {selectedDocTypes.has('pre') && (
-                    <th className="py-3 px-3 text-center whitespace-nowrap">② 사전 설문지</th>
+                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">② 사전 설문지</th>
                   )}
                   {selectedDocTypes.has('post') && (
-                    <th className="py-3 px-3 text-center whitespace-nowrap">③ 사후 설문지</th>
+                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">③ 사후 설문지</th>
                   )}
-                  <th className="py-3 px-3 text-center whitespace-nowrap">개별 출력</th>
+                  <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">개별 출력</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap">
+                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
                       <div className="inline-block w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
                       <p className="text-xs font-semibold whitespace-nowrap">참여자 서류 데이터를 집계하는 중입니다...</p>
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap">
+                    <td colSpan={6 + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
                       <p className="text-sm font-semibold whitespace-nowrap">검색 조건에 일치하는 대상자가 없습니다.</p>
                       <p className="text-xs text-slate-400 mt-1 whitespace-nowrap">팀이나 작성 상태, 기간 필터를 변경해보세요.</p>
                     </td>
@@ -1408,10 +1490,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                     return (
                       <tr
                         key={s.name}
-                        className={`transition hover:bg-slate-50/80 whitespace-nowrap ${isSelected ? 'bg-blue-50/40' : ''}`}
+                        className={`group transition whitespace-nowrap ${isSelected ? 'bg-blue-50/60' : 'hover:bg-slate-50/80 bg-white'}`}
                       >
-                        {/* Checkbox */}
-                        <td className="py-2.5 px-3 text-center whitespace-nowrap shrink-0">
+                        {/* Sticky Checkbox */}
+                        <td className={`sticky left-0 z-20 w-[42px] min-w-[42px] max-w-[42px] py-2.5 px-3 text-center border-b border-slate-100 whitespace-nowrap shrink-0 transition-colors ${
+                          isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                        }`}>
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -1420,29 +1504,33 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                           />
                         </td>
 
-                        {/* Index */}
-                        <td className="py-2.5 px-3 text-center text-slate-400 text-xs font-medium whitespace-nowrap shrink-0">
+                        {/* Sticky Index */}
+                        <td className={`sticky left-[42px] z-20 w-[46px] min-w-[46px] max-w-[46px] py-2.5 px-3 text-center text-slate-400 text-xs font-medium border-b border-slate-100 whitespace-nowrap shrink-0 transition-colors ${
+                          isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                        }`}>
                           {idx + 1}
                         </td>
 
-                        {/* Student Name */}
-                        <td className="py-2.5 px-3 whitespace-nowrap">
+                        {/* Sticky Student Name */}
+                        <td className={`sticky left-[88px] z-20 min-w-[100px] py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors ${
+                          isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                        }`}>
                           <div className="font-extrabold text-slate-900 text-sm whitespace-nowrap">{s.name}</div>
                         </td>
 
                         {/* Team */}
-                        <td className="py-2.5 px-3 whitespace-nowrap">
+                        <td className="py-2.5 px-3 border-b border-slate-100 whitespace-nowrap">
                           <div className="font-semibold text-slate-800 text-xs whitespace-nowrap">{s.team}</div>
                         </td>
 
                         {/* Registration Date / Last Lesson */}
-                        <td className="py-2.5 px-3 text-xs text-slate-600 whitespace-nowrap">
+                        <td className="py-2.5 px-3 border-b border-slate-100 text-xs text-slate-600 whitespace-nowrap">
                           <div className="whitespace-nowrap">{s.regDate || s.lastDate || '-'}</div>
                         </td>
 
                         {/* 1. Application Form Status Button */}
                         {selectedDocTypes.has('app') && (
-                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          <td className="py-2.5 px-3 border-b border-slate-100 text-center whitespace-nowrap">
                             {s.isAppSubmitted ? (
                               <button
                                 type="button"
@@ -1468,7 +1556,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
                         {/* 2. Pre-Survey Status Button */}
                         {selectedDocTypes.has('pre') && (
-                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          <td className="py-2.5 px-3 border-b border-slate-100 text-center whitespace-nowrap">
                             {s.isPreSubmitted ? (
                               <button
                                 type="button"
@@ -1495,7 +1583,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
                         {/* 3. Post-Survey Status Button */}
                         {selectedDocTypes.has('post') && (
-                          <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                          <td className="py-2.5 px-3 border-b border-slate-100 text-center whitespace-nowrap">
                             {s.isPostSubmitted ? (
                               <button
                                 type="button"
@@ -1521,7 +1609,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
                         )}
 
                         {/* Single Print Action */}
-                        <td className="py-2.5 px-3 text-center whitespace-nowrap">
+                        <td className="py-2.5 px-3 border-b border-slate-100 text-center whitespace-nowrap">
                           <button
                             type="button"
                             disabled={!hasAnyCompletedDoc}
@@ -1546,6 +1634,34 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
         </div>
 
       </main>
+
+      {/* 화면 하단 고정 좌우 스크롤바 바 */}
+      {isScrollable && (
+        <aside
+          aria-label="가로 스크롤 컨트롤러"
+          className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-300 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-4 py-2"
+        >
+          <div className="max-w-7xl mx-auto flex flex-col gap-1">
+            <div className="flex items-center justify-between text-xs text-slate-600 font-bold select-none px-1">
+              <span className="flex items-center gap-1.5">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
+                <span className="text-blue-900">화면 하단 좌우 스크롤바</span>
+                <span className="text-slate-400 font-normal text-[11px]">(이름열 고정됨)</span>
+              </span>
+              <span className="text-[11px] text-slate-400 hidden sm:inline-block">
+                ◀ 바를 좌우로 드래그하거나 스크롤하여 전체 서류 항목을 확인하세요 ▶
+              </span>
+            </div>
+            <div
+              ref={bottomScrollRef}
+              onScroll={handleBottomScroll}
+              className="bottom-floating-scrollbar w-full overflow-x-scroll overscroll-x-contain cursor-ew-resize py-0.5"
+            >
+              <div style={{ width: `${scrollMetrics.scrollWidth}px`, height: '4px' }} />
+            </div>
+          </div>
+        </aside>
+      )}
 
       {/* ============================================================== */}
       {/* BATCH PRINT CONFIGURATION MODAL                                */}

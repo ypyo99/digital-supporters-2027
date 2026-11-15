@@ -54,7 +54,11 @@ const LoadingFallback = () => (
 );
 
 export default function App() {
-  const [currentView, setCurrentView] = useState(() => getSessionItem('sungdong_current_view', 'main'));
+  const [currentView, setCurrentView] = useState(() => {
+    const urlView = new URLSearchParams(window.location.search).get('view');
+    if (urlView) return urlView;
+    return getSessionItem('sungdong_current_view', 'main');
+  });
   const [selectedTeamForSchedule, setSelectedTeamForSchedule] = useState(() => getSavedItem('sungdong_schedule_team', ''));
   const [selectedTeacherForWeekly, setSelectedTeacherForWeekly] = useState(() => getSavedItem('sungdong_weekly_teacher', ''));
   const [selectedNoticeForView, setSelectedNoticeForView] = useState(null);
