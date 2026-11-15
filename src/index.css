@@ -593,10 +593,10 @@ input[type="date"].opacity-0::-webkit-calendar-picker-indicator {
   transform: scale(0.95);
 }
 
-/* 파란색 테마용 '처음으로' 버튼 (화이트 헤더 호환) */
+/* 파란색 테마용 '처음으로' 버튼 (화이트 헤더 호환, MainApp 스타일과 100% 동일) */
 .hdr-btn-blue {
   color: #fff;
-  border-radius: 0.875rem;
+  border-radius: 0.5rem;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.38), 0 4px 12px -4px rgba(37, 99, 235, 0.45);
   transition: background .18s ease, transform .12s ease, box-shadow .18s ease;
@@ -607,7 +607,7 @@ input[type="date"].opacity-0::-webkit-calendar-picker-indicator {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), 0 6px 14px -4px rgba(37, 99, 235, 0.55);
 }
 .hdr-btn-blue:active {
-  transform: scale(0.94);
+  transform: scale(0.95);
 }
 
 /* 헤더 하단의 '담당자 로그인' / '다운로드' 알약 버튼 */

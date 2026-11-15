@@ -1012,11 +1012,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             <button
               type="button"
               onClick={onNavigateBack}
-              className="hdr-btn-blue text-xs flex flex-col items-center justify-center font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl shadow-md transition-all touch-manipulation shrink-0 cursor-pointer"
+              className="hdr-btn-blue text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation shrink-0 cursor-pointer"
               title="메인 화면(처음)으로 돌아가기"
             >
-              <Home className="w-4 h-4 sm:w-5 sm:h-5 mb-0.5 text-white stroke-[2.2]" />
-              <span className="text-[10px] sm:text-[11px] font-extrabold text-white leading-none">처음으로</span>
+              <Home className="w-5 h-5 mb-1" />
+              <span>처음으로</span>
             </button>
           </div>
         </div>
