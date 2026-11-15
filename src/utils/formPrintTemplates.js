@@ -121,99 +121,101 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
         <span class="title-main">프로그램 참여 신청서</span>
       </h1>
 
-      <div id="applicantSubTitle">프로그램 참여 신청자 정보</div>
+      <div id="applicantSection">
+        <div id="applicantSubTitle">프로그램 참여 신청자 정보</div>
 
-      <!-- Applicant Info Table -->
-      <table id="applicantTable">
-        <colgroup>
-          <col style="width: 12%;">
-          <col style="width: 23%;">
-          <col style="width: 12%;">
-          <col style="width: 18%;">
-          <col style="width: 15%;">
-          <col style="width: 20%;">
-        </colgroup>
-        <tbody>
-          <tr>
-            <th>성 명</th>
-            <td style="font-weight: 700; text-align: center;">${escapeHtml(name)}</td>
-            <th>성 별</th>
-            <td style="text-align: center;">
-              <span>${check(gender === '남')} 남</span>
-              <span style="margin-left: 12px;">${check(gender === '여')} 여</span>
-            </td>
-            <th>연락처<br>(휴대폰)</th>
-            <td style="font-weight: 700; text-align: center;">${escapeHtml(phone)}</td>
-          </tr>
-          <tr>
-            <th>주 소</th>
-            <td colspan="5">${escapeHtml(address)}</td>
-          </tr>
-          <tr>
-            <th>신청경로</th>
-            <td colspan="5">
-              <div id="applyRouteGrid">
-                <div>${check(applyRoutes.some(r => r.includes('치매안심센터')))} 성동구치매안심센터 소개</div>
-                <div>${check(applyRoutes.some(r => r.includes('정신건강복지센터')))} 성동정신건강복지센터 소개</div>
-                <div>${check(applyRoutes.some(r => r.includes('대한노인회')))} 대한노인회 소개</div>
-                <div>${check(applyRoutes.some(r => r.includes('복지관')))} 복지관 소개</div>
-                <div>${check(applyRoutes.some(r => r.includes('생활지원사')))} 생활지원사 소개</div>
-                <div>${check(applyRoutes.some(r => r.includes('지인')))} 지인 소개(가족,친구,이웃 등)</div>
-                <div>${check(applyRoutes.some(r => r.includes('기타')))} 기타</div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>희망서비스</th>
-            <td colspan="5">
-              <div id="hopeServiceList">
-                <div class="service-item">
-                  <span>${check(hopeServices.some(s => s.includes('마음이음')))}</span>
-                  <span class="service-name">마음이음 프로그램</span>
-                  <span class="service-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을 지원)</span>
+        <!-- Applicant Info Table -->
+        <table id="applicantTable">
+          <colgroup>
+            <col style="width: 12%;">
+            <col style="width: 23%;">
+            <col style="width: 12%;">
+            <col style="width: 18%;">
+            <col style="width: 15%;">
+            <col style="width: 20%;">
+          </colgroup>
+          <tbody>
+            <tr>
+              <th>성 명</th>
+              <td style="font-weight: 700; text-align: center;">${escapeHtml(name)}</td>
+              <th>성 별</th>
+              <td style="text-align: center;">
+                <span>${check(gender === '남')} 남</span>
+                <span style="margin-left: 12px;">${check(gender === '여')} 여</span>
+              </td>
+              <th>연락처<br>(휴대폰)</th>
+              <td style="font-weight: 700; text-align: center;">${escapeHtml(phone)}</td>
+            </tr>
+            <tr>
+              <th>주 소</th>
+              <td colspan="5">${escapeHtml(address)}</td>
+            </tr>
+            <tr>
+              <th>신청경로</th>
+              <td colspan="5">
+                <div id="applyRouteGrid">
+                  <div>${check(applyRoutes.some(r => r.includes('치매안심센터')))} 성동구치매안심센터 소개</div>
+                  <div>${check(applyRoutes.some(r => r.includes('정신건강복지센터')))} 성동정신건강복지센터 소개</div>
+                  <div>${check(applyRoutes.some(r => r.includes('대한노인회')))} 대한노인회 소개</div>
+                  <div>${check(applyRoutes.some(r => r.includes('복지관')))} 복지관 소개</div>
+                  <div>${check(applyRoutes.some(r => r.includes('생활지원사')))} 생활지원사 소개</div>
+                  <div>${check(applyRoutes.some(r => r.includes('지인')))} 지인 소개(가족,친구,이웃 등)</div>
+                  <div>${check(applyRoutes.some(r => r.includes('기타')))} 기타</div>
                 </div>
-                <div class="service-item">
-                  <span>${check(hopeServices.some(s => s.includes('기억돌봄')))}</span>
-                  <span class="service-name">기억돌봄 프로그램</span>
-                  <span class="service-desc">(인지활동 프로그램 운영을 통해 치매 예방 지원)</span>
+              </td>
+            </tr>
+            <tr>
+              <th>희망서비스</th>
+              <td colspan="5">
+                <div id="hopeServiceList">
+                  <div class="service-item">
+                    <span>${check(hopeServices.some(s => s.includes('마음이음')))}</span>
+                    <span class="service-name">마음이음 프로그램</span>
+                    <span class="service-desc">(정서적 지지와 소통 활동을 통해 고립감 해소 및 심리적 안정을 지원)</span>
+                  </div>
+                  <div class="service-item">
+                    <span>${check(hopeServices.some(s => s.includes('기억돌봄')))}</span>
+                    <span class="service-name">기억돌봄 프로그램</span>
+                    <span class="service-desc">(인지활동 프로그램 운영을 통해 치매 예방 지원)</span>
+                  </div>
+                  <div class="service-item">
+                    <span>${check(hopeServices.some(s => s.includes('스마트폰')))}</span>
+                    <span class="service-name">스마트폰 프로그램(1:1 맞춤형)</span>
+                    <span class="service-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소 지원)</span>
+                  </div>
                 </div>
-                <div class="service-item">
-                  <span>${check(hopeServices.some(s => s.includes('스마트폰')))}</span>
-                  <span class="service-name">스마트폰 프로그램(1:1 맞춤형)</span>
-                  <span class="service-desc">(디지털 기초교육을 통해 정보 접근성 향상 및 디지털 소외 해소 지원)</span>
+              </td>
+            </tr>
+            <tr>
+              <th>희망요일</th>
+              <td colspan="5">
+                <div id="hopeDaysList">
+                  <span>${check(hopeDays.includes('월'))} 월</span>
+                  <span>${check(hopeDays.includes('화'))} 화</span>
+                  <span>${check(hopeDays.includes('수'))} 수</span>
+                  <span>${check(hopeDays.includes('목'))} 목</span>
+                  <span>${check(hopeDays.includes('금'))} 금</span>
                 </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>희망요일</th>
-            <td colspan="5">
-              <div id="hopeDaysList">
-                <span>${check(hopeDays.includes('월'))} 월</span>
-                <span>${check(hopeDays.includes('화'))} 화</span>
-                <span>${check(hopeDays.includes('수'))} 수</span>
-                <span>${check(hopeDays.includes('목'))} 목</span>
-                <span>${check(hopeDays.includes('금'))} 금</span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>희망시간</th>
-            <td colspan="5">
-              <div id="hopeTimeList">
-                <span>${check(hopeTime?.morning_check || Boolean(hopeTime?.morning))} 오전: ${escapeHtml(hopeTime?.morning || '09:00~12:00')}</span>
-                <span>${check(hopeTime?.afternoon_check || Boolean(hopeTime?.afternoon))} 오후: ${escapeHtml(hopeTime?.afternoon || '13:00~16:00')}</span>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>비 고</th>
-            <td id="memoCell" colspan="5" style="vertical-align: top;">
-              <div>${escapeHtml(memo)}</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+            <tr>
+              <th>희망시간</th>
+              <td colspan="5">
+                <div id="hopeTimeList">
+                  <span>${check(hopeTime?.morning_check || Boolean(hopeTime?.morning))} 오전: ${escapeHtml(hopeTime?.morning || '09:00~12:00')}</span>
+                  <span>${check(hopeTime?.afternoon_check || Boolean(hopeTime?.afternoon))} 오후: ${escapeHtml(hopeTime?.afternoon || '13:00~16:00')}</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th>비 고</th>
+              <td id="memoCell" colspan="5" style="vertical-align: top;">
+                <div>${escapeHtml(memo)}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Privacy Container -->
       <div id="privacyContainer">
@@ -748,32 +750,54 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       }
     }
 
-    /* Screen View Container */
+    /* Screen View Container - Centers A4 sheets with comfortable paper drop shadows */
     .print-doc-container-screen {
-      max-width: 900px;
-      margin: 16px auto 40px auto;
-      padding: 0 8px;
+      width: 100%;
+      max-width: 220mm;
+      margin: 20px auto 60px auto;
+      padding: 0 10px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
-      overflow-x: auto;
+      gap: 36px;
+      align-items: center;
     }
     @media (min-width: 768px) {
       .print-doc-container-screen {
-        margin: 24px auto 50px auto;
+        margin: 28px auto 60px auto;
         padding: 0 16px;
       }
     }
 
-    /* Common Styles for Application Form (Mirrors application_form.html - Strictly 1 Page) */
-    .page-container {
+    /* Application Form - Screen View: Real A4 Paper dimensions (210mm x 297mm) perfectly filled top-to-bottom */
+    .doc-page-app {
+      width: 210mm;
+      max-width: 100%;
+      height: 297mm;
+      min-height: 297mm;
+      max-height: 297mm;
+      box-sizing: border-box;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 4px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      padding: 24px 32px;
+      border: 1px solid #cbd5e1;
+      border-radius: 2px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      padding: 10mm 12mm;
       color: #111111;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    #applicantSection {
       width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Generic page-container fallback */
+    .page-container {
+      box-sizing: border-box;
     }
     #docTitle {
       text-align: center;
@@ -961,18 +985,40 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       color: #0f172a;
     }
 
-    /* Common Styles for Survey Form (Mirrors survey_form.html) */
-    .print-doc-container {
+    /* Common Styles for Survey Form (Mirrors survey_form.html - Exact A4 sheet layout) */
+    .doc-page-survey {
+      width: 210mm;
+      max-width: 100%;
+      min-height: 297mm;
+      box-sizing: border-box;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 4px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      padding: 32px 36px;
+      border: 1px solid #cbd5e1;
+      border-radius: 2px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      padding: 10mm 12mm;
+      margin: 0 auto;
+      color: #0f172a;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      color: #0f172a;
-      width: 100%;
+    }
+    .print-doc-container {
+      box-sizing: border-box;
+    }
+    .doc-page-survey .print-page-break {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 2px dashed #94a3b8;
+      position: relative;
+    }
+    .doc-page-survey .print-page-break::before {
+      content: "--- 2페이지 (A4) ---";
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 10px;
     }
     .print-header {
       text-align: center;
@@ -1279,6 +1325,29 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
     .text-teal-900 { color: #134e4a; }
     .text-teal-700 { color: #0f766e; }
 
+    @media screen and (max-width: 820px) {
+      .print-doc-container-screen {
+        max-width: 100%;
+        padding: 0 4px;
+        margin: 12px auto 30px auto;
+        gap: 16px;
+      }
+      .doc-page-app {
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        padding: 16px 12px !important;
+        gap: 14px !important;
+        justify-content: flex-start !important;
+      }
+      .doc-page-survey {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 16px 12px !important;
+      }
+    }
+
     /* ========================================================= */
     /* EXACT PRINT MEDIA RULES (Mirrors application & survey)    */
     /* ========================================================= */
@@ -1481,6 +1550,11 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         page-break-before: always !important;
         break-before: page !important;
         padding-top: 6px !important;
+        margin-top: 0 !important;
+        border-top: none !important;
+      }
+      .doc-page-survey .print-page-break::before {
+        display: none !important;
       }
       .print-respondent-table {
         page-break-inside: avoid !important;
