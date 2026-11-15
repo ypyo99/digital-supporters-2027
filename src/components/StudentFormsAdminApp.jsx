@@ -333,16 +333,20 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
   }, [students, teamFilter, statusFilter, startDate, endDate, searchTerm]);
 
   // -------------------------------------------------------------
-  // KPI Statistics
+  // KPI Statistics (소속 팀 선택 시 해당 팀 대상자 기준으로만 집계)
   // -------------------------------------------------------------
   const stats = useMemo(() => {
-    const total = students.length;
+    const targetStudents = teamFilter === "전체"
+      ? students
+      : students.filter(s => s.team === teamFilter);
+
+    const total = targetStudents.length;
     if (total === 0) return { total: 0, appCount: 0, preCount: 0, postCount: 0, allCount: 0, appPct: 0, prePct: 0, postPct: 0, allPct: 0 };
 
-    const appCount = students.filter(s => s.isAppSubmitted).length;
-    const preCount = students.filter(s => s.isPreSubmitted).length;
-    const postCount = students.filter(s => s.isPostSubmitted).length;
-    const allCount = students.filter(s => s.isAllSubmitted).length;
+    const appCount = targetStudents.filter(s => s.isAppSubmitted).length;
+    const preCount = targetStudents.filter(s => s.isPreSubmitted).length;
+    const postCount = targetStudents.filter(s => s.isPostSubmitted).length;
+    const allCount = targetStudents.filter(s => s.isAllSubmitted).length;
 
     return {
       total,
@@ -350,12 +354,12 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       preCount,
       postCount,
       allCount,
-      appPct: Math.round((appCount / total) * 100),
-      prePct: Math.round((preCount / total) * 100),
-      postPct: Math.round((postCount / total) * 100),
-      allPct: Math.round((allCount / total) * 100),
+      appPct: total > 0 ? Math.round((appCount / total) * 100) : 0,
+      prePct: total > 0 ? Math.round((preCount / total) * 100) : 0,
+      postPct: total > 0 ? Math.round((postCount / total) * 100) : 0,
+      allPct: total > 0 ? Math.round((allCount / total) * 100) : 0,
     };
-  }, [students]);
+  }, [students, teamFilter]);
 
   // -------------------------------------------------------------
   // Checkbox Selection Handlers
@@ -698,7 +702,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             }`}
           >
             <div className={`text-xs font-semibold ${statusFilter === "전체" ? "text-slate-200" : "text-slate-500"}`}>
-              전체 대상자
+              {teamFilter === "전체" ? "전체 대상자" : `${teamFilter} 대상자`}
             </div>
             <div className={`text-2xl font-black mt-1 ${statusFilter === "전체" ? "text-white" : "text-slate-900"}`}>
               {stats.total}
@@ -707,7 +711,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               </span>
             </div>
             <div className={`text-[11px] mt-0.5 ${statusFilter === "전체" ? "text-slate-300 font-medium" : "text-slate-400"}`}>
-              클릭 시 전체 보기
+              {teamFilter === "전체" ? "클릭 시 전체 보기" : `클릭 시 ${teamFilter} 전체 보기`}
             </div>
           </div>
 
