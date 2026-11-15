@@ -347,16 +347,27 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
       // 3. Document Submission Status filter (2-dimensional multi-select)
       const isAllStatus = (filterSubmitted && filterUnsubmitted) || (!filterSubmitted && !filterUnsubmitted);
-      if (!isAllStatus) {
-        const activeDocs = selectedDocTypes.size > 0 ? Array.from(selectedDocTypes) : ['app', 'pre', 'post'];
+      // 3. Document Submission Status filter (2-dimensional multi-select)
+      // 둘 다 꺼져 있으면 아무것도 선택되지 않은 것이므로 목록 제외
+      if (!filterSubmitted && !filterUnsubmitted) {
+        return false;
+      }
+      // 서류가 하나도 선택되지 않은 경우 목록 제외
+      if (selectedDocTypes.size === 0) {
+        return false;
+      }
+
+      // 둘 중 하나만 켜진 경우에만 필터링 적용 (둘 다 켜져 있으면 전체 통과)
+      if (filterSubmitted !== filterUnsubmitted) {
+        const activeDocs = Array.from(selectedDocTypes);
         const docResults = activeDocs.map(docKey => {
           let isSubmitted = false;
           if (docKey === 'app') isSubmitted = s.isAppSubmitted;
           else if (docKey === 'pre') isSubmitted = s.isPreSubmitted;
           else if (docKey === 'post') isSubmitted = s.isPostSubmitted;
 
-          if (filterSubmitted && !filterUnsubmitted) return isSubmitted;
-          if (!filterSubmitted && filterUnsubmitted) return !isSubmitted;
+          if (filterSubmitted) return isSubmitted;
+          if (filterUnsubmitted) return !isSubmitted;
           return true;
         });
 
@@ -386,44 +397,26 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
     });
   }, [students, teamFilter, teacherFilter, filterSubmitted, filterUnsubmitted, selectedDocTypes, docMatchMode, startDate, endDate, searchTerm]);
 
-  // 작성 여부 토글 (작성 완료 / 미작성)
+  // 작성 여부 토글 (누를 때마다 단순 On/Off)
   const toggleSubmissionFilter = (type) => {
     if (type === 'submitted') {
-      if (filterSubmitted && !filterUnsubmitted) {
-        setFilterSubmitted(true);
-        setFilterUnsubmitted(true);
-      } else if (filterSubmitted && filterUnsubmitted) {
-        setFilterSubmitted(true);
-        setFilterUnsubmitted(false);
-      } else {
-        setFilterSubmitted(true);
-      }
+      setFilterSubmitted(prev => !prev);
     } else if (type === 'unsubmitted') {
-      if (!filterSubmitted && filterUnsubmitted) {
-        setFilterSubmitted(true);
-        setFilterUnsubmitted(true);
-      } else if (filterSubmitted && filterUnsubmitted) {
-        setFilterSubmitted(false);
-        setFilterUnsubmitted(true);
-      } else {
-        setFilterUnsubmitted(true);
-      }
+      setFilterUnsubmitted(prev => !prev);
     }
   };
 
-  // 대상 서류 토글 ('app', 'pre', 'post')
+  // 대상 서류 토글 (누를 때마다 단순 On/Off)
   const toggleDocType = (docKey) => {
-    const next = new Set(selectedDocTypes);
-    if (next.has(docKey)) {
-      next.delete(docKey);
-      if (next.size === 0) {
-        setSelectedDocTypes(new Set(['app', 'pre', 'post']));
-        return;
+    setSelectedDocTypes(prev => {
+      const next = new Set(prev);
+      if (next.has(docKey)) {
+        next.delete(docKey);
+      } else {
+        next.add(docKey);
       }
-    } else {
-      next.add(docKey);
-    }
-    setSelectedDocTypes(next);
+      return next;
+    });
   };
 
   // 작성 상태 필터 전체 초기화
@@ -1108,73 +1101,76 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
           {/* Middle Row: 2-Dimensional Multi-Select Document Status Filter */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/90 p-3 rounded-xl border border-slate-200/80">
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2.5">
-              {/* 1. 작성 여부 선택 (중복 선택 가능) */}
+              {/* 1. 작성 여부 선택 (중복 선택 가능, 클릭 시 ON/OFF 토글) */}
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold text-slate-700 shrink-0">작성 구분:</span>
                 <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
                   <button
                     type="button"
                     onClick={() => toggleSubmissionFilter('submitted')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
                       filterSubmitted
                         ? 'bg-blue-600 text-white shadow-xs'
-                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
                     }`}
-                    title="서류 작성 완료자 포함"
+                    title={filterSubmitted ? "클릭 시 작성 완료 해제 (OFF)" : "클릭 시 작성 완료 선택 (ON)"}
                   >
-                    <span>{filterSubmitted ? '✓' : ''} 작성 완료</span>
+                    <span>{filterSubmitted ? '✓ ' : ''}작성 완료</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => toggleSubmissionFilter('unsubmitted')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
                       filterUnsubmitted
                         ? 'bg-rose-600 text-white shadow-xs'
-                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
                     }`}
-                    title="서류 미작성자 포함"
+                    title={filterUnsubmitted ? "클릭 시 미작성 해제 (OFF)" : "클릭 시 미작성 선택 (ON)"}
                   >
-                    <span>{filterUnsubmitted ? '✓' : ''} 미작성</span>
+                    <span>{filterUnsubmitted ? '✓ ' : ''}미작성</span>
                   </button>
                 </div>
               </div>
 
-              {/* 2. 대상 서류 선택 (중복 선택 가능) */}
+              {/* 2. 대상 서류 선택 (중복 선택 가능, 클릭 시 ON/OFF 토글) */}
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold text-slate-700 shrink-0">대상 서류:</span>
                 <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 shadow-2xs">
                   <button
                     type="button"
                     onClick={() => toggleDocType('app')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
                       selectedDocTypes.has('app')
                         ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
                     }`}
+                    title={selectedDocTypes.has('app') ? "클릭 시 신청서 해제 (OFF)" : "클릭 시 신청서 선택 (ON)"}
                   >
-                    <span>{selectedDocTypes.has('app') ? '✓' : ''} 참여 신청서</span>
+                    <span>{selectedDocTypes.has('app') ? '✓ ' : ''}참여 신청서</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => toggleDocType('pre')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
                       selectedDocTypes.has('pre')
                         ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
                     }`}
+                    title={selectedDocTypes.has('pre') ? "클릭 시 사전설문 해제 (OFF)" : "클릭 시 사전설문 선택 (ON)"}
                   >
-                    <span>{selectedDocTypes.has('pre') ? '✓' : ''} 사전 설문지</span>
+                    <span>{selectedDocTypes.has('pre') ? '✓ ' : ''}사전 설문지</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => toggleDocType('post')}
-                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer flex items-center gap-1 select-none ${
                       selectedDocTypes.has('post')
                         ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                        : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
                     }`}
+                    title={selectedDocTypes.has('post') ? "클릭 시 사후설문 해제 (OFF)" : "클릭 시 사후설문 선택 (ON)"}
                   >
-                    <span>{selectedDocTypes.has('post') ? '✓' : ''} 사후 설문지</span>
+                    <span>{selectedDocTypes.has('post') ? '✓ ' : ''}사후 설문지</span>
                   </button>
                 </div>
               </div>
