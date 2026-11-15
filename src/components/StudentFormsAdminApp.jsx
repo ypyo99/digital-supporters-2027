@@ -63,6 +63,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [datePreset, setDatePreset] = useState('all'); // 'all' | 'today' | 'thisWeek' | 'thisMonth' | ''
 
   // Selection for Batch Print
   const [selectedStudentNames, setSelectedStudentNames] = useState(new Set());
@@ -525,6 +526,7 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
 
   // Preset Date Handlers
   const handleDatePreset = (preset) => {
+    setDatePreset(preset);
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -1179,48 +1181,48 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
               <input
                 type="date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  setDatePreset('');
+                }}
                 className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
               />
               <span className="text-slate-400 text-xs">~</span>
               <input
                 type="date"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                  setDatePreset('');
+                }}
                 className="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            {/* Quick Date Presets (등록일자 아래 줄) */}
+            {/* Quick Date Presets (선택된 버튼 파란색 배경 표시) */}
             <div className="flex items-center gap-1 flex-wrap">
-              <button
-                type="button"
-                onClick={() => handleDatePreset('all')}
-                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
-              >
-                전체
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDatePreset('today')}
-                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
-              >
-                오늘
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDatePreset('thisWeek')}
-                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
-              >
-                이번주
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDatePreset('thisMonth')}
-                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-[11px] font-semibold transition cursor-pointer"
-              >
-                이번달
-              </button>
+              {[
+                { id: 'all', label: '전체' },
+                { id: 'today', label: '오늘' },
+                { id: 'thisWeek', label: '이번주' },
+                { id: 'thisMonth', label: '이번달' },
+              ].map(p => {
+                const isSelected = datePreset === p.id || (p.id === 'all' && !startDate && !endDate);
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => handleDatePreset(p.id)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition cursor-pointer select-none ${
+                      isSelected
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
