@@ -128,23 +128,23 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
         <table id="applicantTable">
           <colgroup>
             <col style="width: 12%;">
-            <col style="width: 23%;">
-            <col style="width: 12%;">
+            <col style="width: 22%;">
+            <col style="width: 11%;">
             <col style="width: 18%;">
-            <col style="width: 15%;">
+            <col style="width: 17%;">
             <col style="width: 20%;">
           </colgroup>
           <tbody>
             <tr>
-              <th>성 명</th>
-              <td style="font-weight: 700; text-align: center;">${escapeHtml(name)}</td>
-              <th>성 별</th>
-              <td style="text-align: center;">
-                <span>${check(gender === '남')} 남</span>
-                <span style="margin-left: 12px;">${check(gender === '여')} 여</span>
+              <th style="white-space: nowrap;">성 명</th>
+              <td style="font-weight: 700; text-align: center; white-space: nowrap;">${escapeHtml(name)}</td>
+              <th style="white-space: nowrap;">성 별</th>
+              <td style="text-align: center; white-space: nowrap;">
+                <span style="white-space: nowrap;">${check(gender === '남')} 남</span>
+                <span style="margin-left: 8px; white-space: nowrap;">${check(gender === '여')} 여</span>
               </td>
-              <th>연락처<br>(휴대폰)</th>
-              <td style="font-weight: 700; text-align: center;">${escapeHtml(phone)}</td>
+              <th style="white-space: nowrap;">연락처(휴대폰)</th>
+              <td style="font-weight: 700; text-align: center; white-space: nowrap;">${escapeHtml(phone)}</td>
             </tr>
             <tr>
               <th>주 소</th>
@@ -1384,17 +1384,25 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         padding: 14px 10px !important;
       }
 
-      /* 모바일/스마트폰 화면에서 6열 테이블 비율 최적화 (첫번째 라벨열 줄바꿈 절대 방지) */
-      #applicantTable colgroup col:nth-child(1) { width: 70px !important; }
+      /* 모바일/스마트폰 화면에서 6열 테이블 비율 최적화 (첫번째 라벨열 및 모든 헤더 줄바꿈 절대 방지) */
+      #applicantTable colgroup col:nth-child(1) { width: 62px !important; }
       #applicantTable colgroup col:nth-child(2) { width: auto !important; }
-      #applicantTable colgroup col:nth-child(3) { width: 44px !important; }
+      #applicantTable colgroup col:nth-child(3) { width: 42px !important; }
       #applicantTable colgroup col:nth-child(4) { width: auto !important; }
-      #applicantTable colgroup col:nth-child(5) { width: 68px !important; }
+      #applicantTable colgroup col:nth-child(5) { width: 86px !important; }
       #applicantTable colgroup col:nth-child(6) { width: auto !important; }
 
       #applicantTable th, #applicantTable td {
         font-size: 11px !important;
-        padding: 5px 4px !important;
+        padding: 5px 3px !important;
+        word-break: keep-all !important;
+      }
+      #applicantTable th {
+        white-space: nowrap !important;
+      }
+      #applicantTable tr:first-child th,
+      #applicantTable tr:first-child td {
+        white-space: nowrap !important;
       }
       #applyRouteGrid {
         grid-template-columns: 1fr 1fr;
@@ -1501,6 +1509,10 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         font-size: 12px !important;
         line-height: 1.3 !important;
         border: 1px solid #111111 !important;
+        word-break: keep-all !important;
+      }
+      .doc-page-app #applicantTable th {
+        white-space: nowrap !important;
       }
       .doc-page-app #applyRouteGrid {
         gap: 4px 10px !important;
