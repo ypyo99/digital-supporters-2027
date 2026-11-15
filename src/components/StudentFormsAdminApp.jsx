@@ -906,14 +906,11 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
       <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           {/* Left: Title */}
-          <div className="flex items-center gap-1.5 min-w-0 shrink">
-            <h1 className="text-sm sm:text-xl font-extrabold text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
-              <span>📋</span>
+          <div className="flex items-center gap-2 min-w-0 shrink">
+            <h1 className="text-lg sm:text-2xl font-black text-slate-900 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap tracking-tight">
+              <span className="text-lg sm:text-2xl leading-none">📋</span>
               <span className="hidden md:inline">참여자 서류 관리 및 일괄 인쇄</span>
               <span className="md:hidden">서류 관리</span>
-              <span className="text-[10px] sm:text-xs bg-emerald-100 text-emerald-800 font-bold px-1.5 sm:px-2 py-0.5 rounded-full shrink-0">
-                담당복지사용
-              </span>
             </h1>
           </div>
 
