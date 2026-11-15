@@ -1209,10 +1209,10 @@ export default function StudentFormsAdminApp({ onNavigateBack }) {
             </div>
           </div>
 
-          {/* Date Range Picker (등록일자 기간별 선택) */}
+          {/* Date Range Picker (등록 기간 선택) */}
           <div className="flex flex-col gap-2 pt-2 border-t border-slate-100">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">등록일자 기간:</span>
+              <span className="text-xs font-bold text-slate-500 shrink-0 mr-1">등록 기간:</span>
               <input
                 type="date"
                 value={startDate}
