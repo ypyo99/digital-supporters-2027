@@ -3231,46 +3231,49 @@ export default function MainApp({
               </div>
             </div>
 
-            <div className="w-full">
-              <label className="flex items-center gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
-              <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
-                setSelectedTeam(e.target.value);
-                setCurrentUser("");
-              }}>
-                <option value="">팀을 선택하세요</option>
-                {teamList.map(team => <option key={team} value={team}>{team}</option>)}
-              </select>
-            </div>
-            {selectedTeam && (
-              <div>
-                <label className="text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight flex justify-between items-end">
-                  <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
-                  {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
-                </label>
-                <div className="flex gap-2">
-                  <select className={`flex-1 select-refined min-w-0 h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
-                    <option value="">선생님을 선택하세요</option>
-                    {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
-                  </select>
-
-                  <AnimatedRefreshButton
-                    onClick={() => fetchTeachersFromSheet(selectedTeam)}
-                    isFetching={isFetchingTeachers}
-                  />
-                </div>
+            {/* 팀/선생님 선택 및 일지 작성하기 박스 */}
+            <div className="bg-white border-[3px] border-blue-600 rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-[0_4px_12px_-2px_rgba(37,99,235,0.12),0_2px_6px_0_rgba(0,0,0,0.04)] flex flex-col gap-3 sm:gap-3.5 w-full">
+              <div className="w-full">
+                <label className="flex items-center gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
+                <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
+                  setSelectedTeam(e.target.value);
+                  setCurrentUser("");
+                }}>
+                  <option value="">팀을 선택하세요</option>
+                  {teamList.map(team => <option key={team} value={team}>{team}</option>)}
+                </select>
               </div>
-            )}
+              {selectedTeam && (
+                <div className="w-full">
+                  <label className="text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight flex justify-between items-end">
+                    <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
+                    {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
+                  </label>
+                  <div className="flex gap-2">
+                    <select className={`flex-1 select-refined min-w-0 h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
+                      <option value="">선생님을 선택하세요</option>
+                      {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
+                    </select>
 
-            <div className="pt-1 sm:pt-2 flex">
-              {!isLoginReady ? (
-                <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,21px)] tracking-tight font-extrabold text-slate-400 bg-slate-200/90 border border-slate-300 cursor-not-allowed select-none min-h-[58px] sm:min-h-[64px]">
-                  {isFetchingSchedule ? <><Clock className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2 animate-spin text-blue-600" /> 데이터 확인 중...</> : <><EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기</>}
+                    <AnimatedRefreshButton
+                      onClick={() => fetchTeachersFromSheet(selectedTeam)}
+                      isFetching={isFetchingTeachers}
+                    />
+                  </div>
                 </div>
-              ) : (
-                <button onClick={handleLogin} className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(18px,4.8vw,22px)] tracking-tight font-extrabold text-white bg-gradient-to-r from-blue-600 to-indigo-600 ring-1 ring-inset ring-blue-700/20 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/30 touch-manipulation min-h-[58px] sm:min-h-[64px]">
-                  <EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기
-                </button>
               )}
+
+              <div className="pt-0.5 sm:pt-1 flex">
+                {!isLoginReady ? (
+                  <div className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(17px,4.6vw,21px)] tracking-tight font-extrabold text-slate-400 bg-slate-200/90 border border-slate-300 cursor-not-allowed select-none min-h-[58px] sm:min-h-[64px]">
+                    {isFetchingSchedule ? <><Clock className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2 animate-spin text-blue-600" /> 데이터 확인 중...</> : <><EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기</>}
+                  </div>
+                ) : (
+                  <button onClick={handleLogin} className="flex-1 flex items-center justify-center w-full rounded-2xl text-[clamp(18px,4.8vw,22px)] tracking-tight font-extrabold text-white bg-gradient-to-r from-blue-600 to-indigo-600 ring-1 ring-inset ring-blue-700/20 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/30 touch-manipulation min-h-[58px] sm:min-h-[64px]">
+                    <EditIcon className="w-6 h-6 sm:w-8 sm:h-8 lg:w-7 lg:h-7 mr-2" /> 일지 작성하기
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
