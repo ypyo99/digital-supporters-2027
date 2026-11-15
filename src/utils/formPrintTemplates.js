@@ -128,11 +128,11 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
         <table id="applicantTable">
           <colgroup>
             <col style="width: 12%;">
-            <col style="width: 25%;">
-            <col style="width: 8%;">
-            <col style="width: 8%;">
+            <col style="width: 22%;">
+            <col style="width: 11%;">
             <col style="width: 18%;">
-            <col style="width: 29%;">
+            <col style="width: 17%;">
+            <col style="width: 20%;">
           </colgroup>
           <tbody>
             <tr>
@@ -140,8 +140,10 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
               <td style="font-weight: 700; text-align: center; white-space: nowrap;">${escapeHtml(name)}</td>
               <th style="white-space: nowrap;">성 별</th>
               <td class="gender-cell">
-                <div style="white-space: nowrap;">${check(gender === '남')} 남</div>
-                <div style="white-space: nowrap; margin-top: 2px;">${check(gender === '여')} 여</div>
+                <div class="gender-options">
+                  <span class="gender-opt">${check(gender === '남')} 남</span>
+                  <span class="gender-opt">${check(gender === '여')} 여</span>
+                </div>
               </td>
               <th style="white-space: nowrap;">연락처(휴대폰)</th>
               <td style="font-weight: 700; text-align: center; white-space: nowrap;">${escapeHtml(phone)}</td>
@@ -844,11 +846,22 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       word-break: keep-all;
     }
     #applicantTable .gender-cell {
-      padding: 2px 2px !important;
-      line-height: 1.2 !important;
-      text-align: center !important;
-      white-space: nowrap !important;
-      font-size: 11px !important;
+      padding: 6.5px 4px;
+      line-height: 1.35;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #applicantTable .gender-options {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    #applicantTable .gender-opt {
+      white-space: nowrap;
+      display: inline-block;
     }
     #applyRouteGrid {
       display: grid;
@@ -1409,6 +1422,16 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         font-size: 10px !important;
         line-height: 1.15 !important;
       }
+      #applicantTable .gender-options {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+      }
+      #applicantTable .gender-opt {
+        white-space: nowrap !important;
+      }
       #applicantTable th {
         white-space: nowrap !important;
       }
@@ -1516,6 +1539,13 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         margin-bottom: 0px !important;
         width: 100% !important;
       }
+      .doc-page-app #applicantTable colgroup col:nth-child(1) { width: 12% !important; }
+      .doc-page-app #applicantTable colgroup col:nth-child(2) { width: 22% !important; }
+      .doc-page-app #applicantTable colgroup col:nth-child(3) { width: 11% !important; }
+      .doc-page-app #applicantTable colgroup col:nth-child(4) { width: 18% !important; }
+      .doc-page-app #applicantTable colgroup col:nth-child(5) { width: 17% !important; }
+      .doc-page-app #applicantTable colgroup col:nth-child(6) { width: 20% !important; }
+
       .doc-page-app #applicantTable th, .doc-page-app #applicantTable td {
         padding: 6.5px 8px !important;
         font-size: 12px !important;
@@ -1527,9 +1557,22 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
         white-space: nowrap !important;
       }
       .doc-page-app #applicantTable .gender-cell {
-        padding: 2px 2px !important;
-        line-height: 1.2 !important;
-        font-size: 11px !important;
+        padding: 6.5px 4px !important;
+        line-height: 1.3 !important;
+        font-size: 12px !important;
+        white-space: nowrap !important;
+      }
+      .doc-page-app #applicantTable .gender-options {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 12px !important;
+        white-space: nowrap !important;
+      }
+      .doc-page-app #applicantTable .gender-opt {
+        white-space: nowrap !important;
+        display: inline-block !important;
       }
       .doc-page-app #applyRouteGrid {
         gap: 4px 10px !important;

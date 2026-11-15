@@ -320,6 +320,13 @@
                 width: 100% !important;
             }
 
+            #applicantTable colgroup col:nth-child(1) { width: 12% !important; }
+            #applicantTable colgroup col:nth-child(2) { width: 22% !important; }
+            #applicantTable colgroup col:nth-child(3) { width: 11% !important; }
+            #applicantTable colgroup col:nth-child(4) { width: 18% !important; }
+            #applicantTable colgroup col:nth-child(5) { width: 17% !important; }
+            #applicantTable colgroup col:nth-child(6) { width: 20% !important; }
+
             #applicantTable th,
             #applicantTable td {
                 padding: 6.5px 8px !important;
@@ -330,6 +337,16 @@
 
             #applicantTable th {
                 background-color: #e5e7eb !important;
+                white-space: nowrap !important;
+            }
+
+            #applicantTable .gender-options {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 12px !important;
+                white-space: nowrap !important;
             }
 
             /* 신청경로 그리드 */
@@ -618,11 +635,11 @@
         <table id="applicantTable" class="mb-8">
             <colgroup>
                 <col style="width: 12%;">
-                <col style="width: 25%;">
-                <col style="width: 8%;">
-                <col style="width: 8%;">
+                <col style="width: 22%;">
+                <col style="width: 11%;">
                 <col style="width: 18%;">
-                <col style="width: 29%;">
+                <col style="width: 17%;">
+                <col style="width: 20%;">
             </colgroup>
             <tbody>
                 <!-- 성명, 성별, 연락처 -->
@@ -631,12 +648,12 @@
                     <td><input type="text" id="applicantName" placeholder="이름 입력"></td>
                     <th class="whitespace-nowrap">성 별</th>
                     <td class="text-center whitespace-nowrap p-1">
-                        <div class="flex flex-col items-center justify-center gap-0.5">
-                            <label class="inline-flex items-center cursor-pointer leading-tight">
+                        <div class="gender-options flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-3">
+                            <label class="inline-flex items-center cursor-pointer leading-tight whitespace-nowrap">
                                 <input type="radio" name="gender" value="남" class="form-radio h-3.5 w-3.5 text-blue-600">
                                 <span class="ml-1 text-xs">남</span>
                             </label>
-                            <label class="inline-flex items-center cursor-pointer leading-tight">
+                            <label class="inline-flex items-center cursor-pointer leading-tight whitespace-nowrap">
                                 <input type="radio" name="gender" value="여" class="form-radio h-3.5 w-3.5 text-blue-600">
                                 <span class="ml-1 text-xs">여</span>
                             </label>
