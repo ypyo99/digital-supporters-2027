@@ -224,6 +224,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     setScheduleData([]);
     setNotice("");
     setAttendanceOverrides({}); // 날짜/팀 변경 시 오버라이드 초기화
+    setExpandedMemos({});
 
     try {
       const dateStr = getLocalDateString(displayDate);
@@ -578,6 +579,38 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  // 현재 일정 중 수업 내용 메모가 있는 모든 행의 고유 키 목록
+  const memoRowKeys = useMemo(() => {
+    const keys = [];
+    scheduleData.forEach(row => {
+      const studentStr = (row.student || "").trim();
+      const isUnassigned = !studentStr || studentStr === "-" || studentStr.includes("자체학습") || studentStr.includes("대상자발굴");
+      const rawStatus = (row.status || "").trim();
+      const hasMemo = rawStatus && rawStatus !== '-' && rawStatus !== '출석' && rawStatus !== '1' && rawStatus.length > 2;
+      if (!isUnassigned && hasMemo) {
+        keys.push(`${row.teacher}_${row.time}`);
+      }
+    });
+    return Array.from(new Set(keys));
+  }, [scheduleData]);
+
+  // 모든 수업 메모가 펼쳐져 있는지 여부
+  const isAllExpanded = memoRowKeys.length > 0 && memoRowKeys.every(k => !!expandedMemos[k]);
+
+  // 전체 수업 내용 보기 / 수업 내용 접기 일괄 토글
+  const handleToggleAllMemos = () => {
+    if (memoRowKeys.length === 0) return;
+    if (isAllExpanded) {
+      setExpandedMemos({});
+    } else {
+      const next = {};
+      memoRowKeys.forEach(k => {
+        next[k] = true;
+      });
+      setExpandedMemos(next);
+    }
   };
 
   // 학생별 출결 상태 판정
@@ -1033,21 +1066,39 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 </p>
               </div>
 
-              {/* 2. 회차 색상 범례 (대비 개선) */}
-              <div className="flex items-center gap-1.5 sm:gap-2 px-1 flex-wrap text-xs sm:text-sm">
-                <span className="font-bold text-slate-600 dark:text-slate-400 mr-1 text-[13px]">회차 색상</span>
-                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
-                  1–6
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs">
-                  7–9
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-indigo-950 text-white shadow-2xs">
-                  10–14
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
-                  15 이상
-                </span>
+              {/* 2. 회차 색상 범례 및 우측 전체 수업 내용 토글 버튼 */}
+              <div className="flex items-center justify-between gap-1.5 px-1 py-0.5 flex-wrap">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs sm:text-sm">
+                  <span className="font-bold text-slate-600 dark:text-slate-400 mr-1 text-[13px] whitespace-nowrap">회차 색상</span>
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
+                    1–6
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs">
+                    7–9
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-indigo-950 text-white shadow-2xs">
+                    10–14
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
+                    15 이상
+                  </span>
+                </div>
+
+                {/* 우측 끝: 전체 수업 내용 보기 / 수업 내용 접기 토글버튼 */}
+                <button
+                  type="button"
+                  onClick={handleToggleAllMemos}
+                  disabled={memoRowKeys.length === 0}
+                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[12px] sm:text-[12.5px] font-extrabold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${
+                    memoRowKeys.length === 0
+                      ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
+                      : 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95'
+                  }`}
+                  title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
+                >
+                  <span>{isAllExpanded ? '수업 내용 접기' : '수업 내용 보기'}</span>
+                  <span className="text-[10px] leading-none">{isAllExpanded ? '▴' : '▾'}</span>
+                </button>
               </div>
 
               {/* 3. 조별 & 선생님별 카드 목록 */}
