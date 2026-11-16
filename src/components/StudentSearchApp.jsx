@@ -390,12 +390,12 @@ export default function StudentSearchApp({ onNavigateBack }) {
       <div className="flex-1 flex flex-col pb-4">
         <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-2">
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-2.5 sm:px-4 md:px-6 py-2 sm:py-2.5">
-              <div className="flex items-center justify-between gap-1 sm:gap-2 w-full flex-nowrap">
-                <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-3 md:px-6 py-2.5">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-xs shrink-0">
                     {['전체', '1팀', '2팀', '3팀', '취업팀'].map(t => (
-                      <button key={t} onClick={() => { setTeamFilter(t); setTeacherFilter("전체"); }} className={`px-1 min-[360px]:px-1.5 sm:px-2.5 md:px-4 py-1 md:py-1.5 border-r border-gray-300 text-[11px] min-[360px]:text-[12px] sm:text-[13px] md:text-base font-bold tracking-tighter transition last:border-r-0 whitespace-nowrap ${teamFilter === t ? 'bg-[#2b5ce6] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                      <button key={t} onClick={() => { setTeamFilter(t); setTeacherFilter("전체"); }} className={`px-1.5 min-[360px]:px-2 sm:px-3 md:px-4 py-1 md:py-1.5 border-r border-gray-300 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-semibold tracking-tighter transition last:border-r-0 whitespace-nowrap ${teamFilter === t ? 'bg-[#2b5ce6] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
                         {t}
                       </button>
                     ))}
@@ -403,7 +403,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                   <select
                     value={teacherFilter}
                     onChange={(e) => setTeacherFilter(e.target.value)}
-                    className="bg-white border border-gray-300 rounded-lg px-1.5 min-[360px]:px-2 py-0.5 md:py-1 text-[11px] min-[360px]:text-[12px] sm:text-[13px] md:text-base font-bold text-gray-700 shadow-xs outline-none focus:ring-2 focus:ring-teal-400 w-fit shrink-0 self-stretch transition-all"
+                    className="bg-white border border-gray-300 rounded-lg px-2 py-0.5 md:py-1 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-bold text-gray-700 shadow-xs outline-none focus:ring-2 focus:ring-teal-400 w-fit shrink-0 self-stretch transition-all"
                   >
                     <option value="전체">선생님 선택</option>
                     {(() => {
@@ -421,8 +421,8 @@ export default function StudentSearchApp({ onNavigateBack }) {
                     })()}
                   </select>
                 </div>
-                <div className="flex items-center shrink-0 ml-auto pl-1">
-                  <p className="text-white font-extrabold text-[12px] min-[360px]:text-[13px] sm:text-[15px] md:text-lg tracking-tight whitespace-nowrap">
+                <div className="flex justify-end">
+                  <p className="text-teal-100 text-[12px] md:text-base whitespace-nowrap">
                     대상자 ({filteredNames.length}명)
                   </p>
                 </div>
