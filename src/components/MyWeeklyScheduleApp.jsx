@@ -9,7 +9,7 @@ import {
   getGlobalTeachersList,
   getTeacherGroup
 } from '../utils/helpers';
-import { User, MainCalendarIcon, Home, Clock } from './Icons';
+import { User, Home, Clock } from './Icons';
 
 const hasIndependentKeyword = (str, keywords) => {
   if (!str) return false;
@@ -677,10 +677,6 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
       <main className="flex-1 flex flex-col w-full mx-auto p-3 sm:p-5 lg:p-8">
         <div className="bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 flex flex-col flex-1 overflow-hidden">
           <div className="shrink-0 bg-white px-4 sm:px-6 pt-5 pb-4 shadow-sm relative z-10 flex flex-col items-center border-b border-gray-100">
-            <h2 className="text-[18px] sm:text-2xl font-black text-gray-900 mb-4 flex items-center gap-2">
-              <MainCalendarIcon className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" />
-              나의 주간 일정 보기
-            </h2>
             <div className="flex items-center gap-2 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto">
               <button onClick={() => changeWeek(-1)} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center border-2 border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 text-gray-700 shrink-0 transition-all touch-manipulation">
                 <svg className="w-7 h-7 md:w-8 md:h-8" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
