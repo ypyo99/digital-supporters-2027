@@ -1079,7 +1079,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
             <div className="space-y-4 animate-fadeIn">
 
               {/* 1. 출석 확인 카드 & 진행 막대 */}
-              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-4.5 shadow-sm">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100 tracking-tight">
                     출석 확인
@@ -1437,7 +1437,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 <h3 className="font-extrabold text-[18px] sm:text-[19px] text-slate-900 dark:text-slate-100 mb-3 tracking-tight">
                   오늘의 인사이트
                 </h3>
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4.5 sm:p-5 shadow-sm divide-y divide-slate-100 dark:divide-slate-700/60">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm divide-y divide-slate-200 dark:divide-slate-700">
                   {factualInsights.map((insight, idx) => (
                     <div key={idx} className={`${idx > 0 ? 'pt-3.5' : ''} ${idx < factualInsights.length - 1 ? 'pb-3.5' : ''}`}>
                       <p className="text-[15.5px] sm:text-[16.5px] font-semibold text-slate-800 dark:text-slate-100 leading-relaxed break-keep mb-1">
