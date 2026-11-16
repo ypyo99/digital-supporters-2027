@@ -943,13 +943,6 @@ export default function StudentFormsAdminApp({
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           {/* Left: Title */}
           <div className="flex items-center gap-2 min-w-0 shrink">
-            <h1 className="text-lg sm:text-2xl font-black text-slate-900 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap tracking-tight">
-              <span className="text-lg sm:text-2xl leading-none">📋</span>
-              <span className="hidden md:inline">
-                {isTeacherView ? '참여자 서류 관리' : '참여자 서류 관리 및 일괄 인쇄'}
-              </span>
-              <span className="md:hidden">서류 관리</span>
-            </h1>
             {isTeacherView && teacherFilter && teacherFilter !== "전체" && (
               <span className="text-xs sm:text-sm font-extrabold bg-blue-50 text-blue-700 border border-blue-200 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl shrink-0 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
