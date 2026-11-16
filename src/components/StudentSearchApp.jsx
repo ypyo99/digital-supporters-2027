@@ -582,9 +582,17 @@ export default function StudentSearchApp({ onNavigateBack }) {
                               <span className="font-extrabold text-[16px] md:text-[18px] text-gray-900 whitespace-nowrap">{rec.dateStr}</span>
                               <span className="text-[15px] md:text-[17px] text-[#2563eb] font-extrabold bg-[#eff6ff] px-2.5 py-0.5 rounded-lg border border-[#bfdbfe] whitespace-nowrap">{rec.name}</span>
                               <span className="text-[14px] md:text-[16px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 whitespace-nowrap">{rec.team}</span>
-                              <span className="text-[14px] md:text-[16px] text-gray-500 font-bold whitespace-nowrap">({rec.teacher} 선생님)</span>
-                              <span className="text-[14px] md:text-[16px] text-gray-500 font-medium whitespace-nowrap">📍 {rec.location}</span>
                             </div>
+                            {(rec.teacher || rec.location) && (
+                              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                {rec.teacher && (
+                                  <span className="text-[14px] md:text-[16px] text-gray-600 font-bold whitespace-nowrap">({rec.teacher} 선생님)</span>
+                                )}
+                                {rec.location && (
+                                  <span className="text-[14px] md:text-[16px] text-gray-500 font-medium whitespace-nowrap">📍 {rec.location}</span>
+                                )}
+                              </div>
+                            )}
                             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                               {rec.attendanceTag ? (
                                 <span className={`text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full ${rec.attendanceTag.includes('선생님휴가') ? 'bg-gray-400 text-white border border-gray-500' : isAbsent ? 'bg-red-100 text-red-700 border border-red-300' : isCanceled ? 'bg-orange-300 text-white border border-orange-400' : 'bg-blue-100 text-blue-700 border border-blue-300'}`}>
