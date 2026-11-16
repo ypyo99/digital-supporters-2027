@@ -390,7 +390,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
       <div className="flex-1 flex flex-col pb-4">
         <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-2">
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-3 md:px-6 py-2.5">
+            <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-3 md:px-6 py-2.5">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-xs shrink-0">
