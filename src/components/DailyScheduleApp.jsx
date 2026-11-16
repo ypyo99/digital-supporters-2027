@@ -1137,20 +1137,20 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 </div>
               </div>
 
-              {/* 2. 회차 색상 범례 및 우측 전체 수업 내용 토글 버튼 */}
-              <div className="flex items-center justify-between gap-1.5 px-1 py-0.5 flex-wrap">
-                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs sm:text-sm">
-                  <span className="font-bold text-slate-600 dark:text-slate-400 mr-1 text-[13px] whitespace-nowrap">회차 색상</span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
+              {/* 2. 회차 색상 범례 및 우측 전체 수업 내용 토글 버튼 (모바일에서도 항상 한 줄 유지) */}
+              <div className="flex items-center justify-between gap-1 px-0.5 sm:px-1 py-0.5">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm shrink-0">
+                  <span className="font-bold text-slate-600 dark:text-slate-400 mr-0.5 sm:mr-1 text-[11.5px] sm:text-[13px] whitespace-nowrap shrink-0">회차 색상</span>
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap shrink-0">
                     1–6
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs">
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs whitespace-nowrap shrink-0">
                     7–9
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-indigo-950 text-white shadow-2xs">
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-indigo-950 text-white shadow-2xs whitespace-nowrap shrink-0">
                     10–14
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs whitespace-nowrap shrink-0">
                     15 이상
                   </span>
                 </div>
@@ -1160,7 +1160,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[12px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
+                  className={`shrink-0 inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
                       : 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95'
                     }`}
