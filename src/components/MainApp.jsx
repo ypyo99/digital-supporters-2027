@@ -3306,6 +3306,13 @@ export default function MainApp({
 
             <MenuGroup title="대상자">
               <MenuRow
+                onClick={onNavigateToStudentSearch}
+                icon={<IconSearchUser />}
+                chipColor="chip-amber"
+                label="대상자 검색"
+                desc="이름·초성으로 수업 기록 찾기"
+              />
+              <MenuRow
                 onClick={() => {
                   if (!selectedTeam || !currentUser) {
                     alert("팀과 선생님을 먼저 선택해주세요.");
@@ -3325,13 +3332,6 @@ export default function MainApp({
                   </span>
                 }
                 desc="학생별 서류 작성 현황 파악"
-              />
-              <MenuRow
-                onClick={onNavigateToStudentSearch}
-                icon={<IconSearchUser />}
-                chipColor="chip-amber"
-                label="대상자 검색"
-                desc="이름·초성으로 수업 기록 찾기"
               />
               <MenuRow
                 href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
