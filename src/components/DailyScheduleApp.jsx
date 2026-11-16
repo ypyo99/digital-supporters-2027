@@ -1220,7 +1220,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                       return (
                         <div
                           key={teacher.teacherName}
-                          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+                          className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-400 dark:border-slate-500 shadow-sm overflow-hidden"
                         >
                           {/* 선생님 카드 헤더 */}
                           <div className="bg-blue-600 text-white px-4 py-2.5 font-black text-[17px] sm:text-[18px] tracking-tight">
