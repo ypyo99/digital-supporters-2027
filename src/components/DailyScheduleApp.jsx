@@ -1248,14 +1248,14 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                               return (
                                 <div
                                   key={idx}
-                                  className={`p-3.5 sm:p-4 flex items-center justify-between gap-3 transition-colors ${!isUnassigned && getRowAttendance(row, names[0]) === 'attended'
+                                  className={`p-3 sm:p-3.5 transition-colors ${!isUnassigned && getRowAttendance(row, names[0]) === 'attended'
                                       ? 'border-l-4 border-l-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10'
                                       : ''
                                     }`}
                                 >
-                                  {/* 좌측: 시간대 & 학생 정보 */}
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3">
+                                  {/* 상단 라인: 시간대, 학생명, 회차 배지 및 우측 끝 출결 토글 버튼 */}
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap min-w-0 flex-1">
                                       {/* 시간대 */}
                                       <span className="font-extrabold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
                                         {startTime}
@@ -1295,68 +1295,68 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                       )}
                                     </div>
 
-                                    {/* 긴 수업 메모: 접기/펼치기 */}
-                                    {!isUnassigned && hasMemo && (
-                                      <div className="mt-1.5 pl-15">
-                                        <button
-                                          type="button"
-                                          onClick={() => toggleMemo(rowKey)}
-                                          className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation"
-                                        >
-                                          {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
-                                        </button>
-                                        {isExpanded && (
-                                          <div className="mt-1.5 p-2.5 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn">
-                                            {rawStatus}
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
+                                    {/* 우측 끝: 출결 상태 토글 버튼 (회차와 같은 라인 우측 끝) */}
+                                    {!isUnassigned && (
+                                      <div className="shrink-0 ml-1.5">
+                                        {(() => {
+                                          const att = getRowAttendance(row, names[0]);
+                                          let btnClass = '';
+                                          let btnLabel = '';
 
-                                    {/* 취업팀 서명 이미지 (있을 경우) */}
-                                    {row.location && (row.location.startsWith('http') || row.location.startsWith('data:')) && (
-                                      <div className="mt-2 pl-15">
-                                        <img
-                                          src={getDirectImageUrl(row.location)}
-                                          alt="서명"
-                                          className="h-12 w-auto object-contain rounded border border-slate-200 bg-white p-0.5"
-                                        />
+                                          if (att === 'attended') {
+                                            btnClass = 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+                                            btnLabel = '✓ 출석';
+                                          } else if (att === 'absent') {
+                                            btnClass = 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700';
+                                            btnLabel = '결석';
+                                          } else if (att === 'vacation') {
+                                            btnClass = 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700';
+                                            btnLabel = '휴가';
+                                          } else {
+                                            btnClass = 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600';
+                                            btnLabel = '확인 전';
+                                          }
+
+                                          return (
+                                            <button
+                                              type="button"
+                                              onClick={() => handleToggleAttendance(row, names[0])}
+                                              className={`min-h-[38px] sm:min-h-[42px] min-w-[78px] sm:min-w-[82px] px-3 sm:px-3.5 py-1.5 sm:py-2 text-[14.5px] sm:text-[15.5px] font-bold rounded-xl shadow-2xs transition-all active:scale-95 touch-manipulation flex items-center justify-center ${btnClass}`}
+                                            >
+                                              {btnLabel}
+                                            </button>
+                                          );
+                                        })()}
                                       </div>
                                     )}
                                   </div>
 
-                                  {/* 우측: 출결 상태 토글 버튼 (44px 이상) */}
-                                  {!isUnassigned && (
-                                    <div className="shrink-0">
-                                      {(() => {
-                                        const att = getRowAttendance(row, names[0]);
-                                        let btnClass = '';
-                                        let btnLabel = '';
+                                  {/* 하단: 긴 수업 메모 접기/펼치기 및 내용 (가로 전체 너비 사용) */}
+                                  {!isUnassigned && hasMemo && (
+                                    <div className="mt-1.5 pl-0 sm:pl-14">
+                                      <button
+                                        type="button"
+                                        onClick={() => toggleMemo(rowKey)}
+                                        className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation"
+                                      >
+                                        {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
+                                      </button>
+                                      {isExpanded && (
+                                        <div className="mt-1.5 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn w-full">
+                                          {rawStatus}
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
 
-                                        if (att === 'attended') {
-                                          btnClass = 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
-                                          btnLabel = '✓ 출석';
-                                        } else if (att === 'absent') {
-                                          btnClass = 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700';
-                                          btnLabel = '결석';
-                                        } else if (att === 'vacation') {
-                                          btnClass = 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700';
-                                          btnLabel = '휴가';
-                                        } else {
-                                          btnClass = 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600';
-                                          btnLabel = '확인 전';
-                                        }
-
-                                        return (
-                                          <button
-                                            type="button"
-                                            onClick={() => handleToggleAttendance(row, names[0])}
-                                            className={`min-h-[44px] min-w-[82px] px-3.5 py-2 text-[15px] sm:text-[16px] font-bold rounded-xl shadow-2xs transition-all active:scale-95 touch-manipulation flex items-center justify-center ${btnClass}`}
-                                          >
-                                            {btnLabel}
-                                          </button>
-                                        );
-                                      })()}
+                                  {/* 취업팀 서명 이미지 (있을 경우) */}
+                                  {row.location && (row.location.startsWith('http') || row.location.startsWith('data:')) && (
+                                    <div className="mt-2 pl-0 sm:pl-14">
+                                      <img
+                                        src={getDirectImageUrl(row.location)}
+                                        alt="서명"
+                                        className="h-12 w-auto object-contain rounded border border-slate-200 bg-white p-0.5"
+                                      />
                                     </div>
                                   )}
                                 </div>
