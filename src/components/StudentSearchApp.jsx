@@ -494,7 +494,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                           지우기
                         </button>
                       </div>
-                      <div className="flex flex-wrap gap-1.5 items-center justify-center">
+                      <div className="flex flex-wrap gap-1.5 items-center justify-start px-0.5">
                         {recentSearches.map(name => (
                           <button
                             key={name}
