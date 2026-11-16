@@ -1409,58 +1409,62 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
               {/* 1. 2x2 통계 카드 */}
               <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {/* 오늘 수업 */}
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
-                  <span className="text-[24px] sm:text-[28px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                <div className="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200/90 dark:border-blue-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
+                  <span className="text-[22px] sm:text-[25px] font-black text-blue-950 dark:text-blue-100 leading-tight">
                     {stats.totalStudents}명
                   </span>
-                  <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-blue-700 dark:text-blue-300 mt-0.5">
                     오늘 수업
                   </span>
                 </div>
 
                 {/* 출석 */}
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
-                  <span className="text-[24px] sm:text-[28px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                <div className="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/90 dark:border-emerald-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
+                  <span className="text-[22px] sm:text-[25px] font-black text-emerald-950 dark:text-emerald-100 leading-tight">
                     {stats.attendedCount}명
                   </span>
-                  <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">
                     출석
                   </span>
                 </div>
 
                 {/* 결석 · 휴가 */}
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
-                  <span className="text-[24px] sm:text-[28px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                <div className="bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/90 dark:border-rose-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
+                  <span className="text-[22px] sm:text-[25px] font-black text-rose-950 dark:text-rose-100 leading-tight">
                     {stats.absentCount} · {stats.vacationCount}
                   </span>
-                  <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-rose-700 dark:text-rose-300 mt-0.5">
                     결석 · 휴가
                   </span>
                 </div>
 
                 {/* 출석률 / 미확인 (집계 중) */}
-                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
+                <div className={`rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center ${
+                  stats.unconfirmedCount > 0
+                    ? 'bg-slate-100/90 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600'
+                    : 'bg-indigo-50/90 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800'
+                }`}>
                   {stats.unconfirmedCount > 0 ? (
                     <>
-                      <span className="text-[24px] sm:text-[28px] font-black text-slate-800 dark:text-slate-100 leading-tight">
+                      <span className="text-[22px] sm:text-[25px] font-black text-slate-900 dark:text-slate-100 leading-tight">
                         {stats.unconfirmedCount}명
                       </span>
-                      <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
                         확인 전 (집계 중)
                       </span>
-                      <span className="text-[11.5px] sm:text-[12px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
+                      <span className="text-[11px] sm:text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 leading-none">
                         진행 {stats.checkedCount}/{stats.totalStudents}명 ({stats.currentPercent}%)
                       </span>
                     </>
                   ) : (
                     <>
-                      <span className="text-[24px] sm:text-[28px] font-black text-blue-600 dark:text-blue-400 leading-tight">
+                      <span className="text-[22px] sm:text-[25px] font-black text-indigo-700 dark:text-indigo-300 leading-tight">
                         {stats.finalRate}%
                       </span>
-                      <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-indigo-800 dark:text-indigo-300 mt-0.5">
                         출석률
                       </span>
-                      <span className="text-[11.5px] sm:text-[12px] font-medium text-emerald-600 dark:text-emerald-400 mt-0.5">
+                      <span className="text-[11px] sm:text-[11.5px] font-medium text-indigo-600 dark:text-indigo-400 mt-0.5 leading-none">
                         전원 확인 완료 ({stats.attendedCount}/{stats.totalStudents}명)
                       </span>
                     </>
