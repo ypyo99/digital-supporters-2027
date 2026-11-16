@@ -297,8 +297,12 @@ export default function StudentSearchApp({ onNavigateBack }) {
 
       if (memoMatch) {
         currentSession = parseInt(memoMatch[1], 10);
-        r.computedSession = `${currentSession}회차`;
-        keys.forEach(k => countedDates.add(k)); // 명시적 회차가 있을 때도 중복 카운트 방지를 위해 등록
+        if (isAbsentOrCanceled || attTag.includes("결석") || attTag.includes("선생님휴가")) {
+          r.computedSession = "";
+        } else {
+          r.computedSession = `${currentSession}회차`;
+          keys.forEach(k => countedDates.add(k)); // 명시적 회차가 있을 때도 중복 카운트 방지를 위해 등록
+        }
       } else {
         if (isAttended) {
           // 해당 날짜(키들 중 하나라도)에 아직 출석 처리(회차 증가)를 안 했다면 증가
@@ -309,19 +313,8 @@ export default function StudentSearchApp({ onNavigateBack }) {
           keys.forEach(k => countedDates.add(k));
           r.computedSession = `${currentSession}회차`;
         } else {
-          // 결석/빈 기록인 경우
-          const willBeAttended = keys.some(k => attendedKeys.has(k));
-          if (willBeAttended) {
-            // 같은 키들에 출석 기록이 있다면, 이 기록에서는 회차를 표시하지 않음
-            r.computedSession = "";
-          } else {
-            // 출석 기록이 아예 없는 순수 결석/휴강일인 경우 누적 회차 표시
-            if (currentSession > 0) {
-              r.computedSession = `${currentSession}회차`;
-            } else {
-              r.computedSession = "";
-            }
-          }
+          // 결석 또는 선생님휴가 등 미출석인 경우 회차 표시하지 않음
+          r.computedSession = "";
         }
       }
 
@@ -604,7 +597,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                                   미확인
                                 </span>
                               )}
-                              {rec.computedSession && (
+                              {rec.computedSession && !isAbsent && !rec.attendanceTag?.includes('선생님휴가') && !rec.attendanceTag?.includes('결석') && (
                                 <span className="text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-300 whitespace-nowrap">
                                   {rec.computedSession}
                                 </span>
