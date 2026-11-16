@@ -3326,11 +3326,7 @@ export default function MainApp({
                 }}
                 icon={<IconDocumentCheck />}
                 chipColor="chip-blue"
-                label={
-                  <span className="whitespace-nowrap text-[15px] min-[375px]:text-[16px] min-[390px]:text-[17px] sm:text-inherit tracking-tight">
-                    참여자 서류 관리 (신청서·설문지)
-                  </span>
-                }
+                label="참여자 서류 관리 (신청서·설문지)"
                 desc="학생별 서류 작성 현황 파악"
               />
               <MenuRow
