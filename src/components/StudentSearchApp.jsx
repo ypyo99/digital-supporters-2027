@@ -582,6 +582,20 @@ export default function StudentSearchApp({ onNavigateBack }) {
                               <span className="font-extrabold text-[16px] md:text-[18px] text-gray-900 whitespace-nowrap">{rec.dateStr}</span>
                               <span className="text-[15px] md:text-[17px] text-[#2563eb] font-extrabold bg-[#eff6ff] px-2.5 py-0.5 rounded-lg border border-[#bfdbfe] whitespace-nowrap">{rec.name}</span>
                               <span className="text-[14px] md:text-[16px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 whitespace-nowrap">{rec.team}</span>
+                              {rec.attendanceTag ? (
+                                <span className={`text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${rec.attendanceTag.includes('선생님휴가') ? 'bg-gray-400 text-white border border-gray-500' : isAbsent ? 'bg-red-100 text-red-700 border border-red-300' : isCanceled ? 'bg-orange-300 text-white border border-orange-400' : 'bg-blue-100 text-blue-700 border border-blue-300'}`}>
+                                  {rec.attendanceTag}
+                                </span>
+                              ) : (
+                                <span className="text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full bg-gray-600 text-white border border-gray-700 whitespace-nowrap">
+                                  미확인
+                                </span>
+                              )}
+                              {rec.computedSession && !isAbsent && !rec.attendanceTag?.includes('선생님휴가') && !rec.attendanceTag?.includes('결석') && (
+                                <span className="text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-300 whitespace-nowrap">
+                                  {rec.computedSession}
+                                </span>
+                              )}
                             </div>
                             {(rec.teacher || rec.location) && (
                               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -593,25 +607,11 @@ export default function StudentSearchApp({ onNavigateBack }) {
                                 )}
                               </div>
                             )}
-                            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                              {rec.attendanceTag ? (
-                                <span className={`text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full ${rec.attendanceTag.includes('선생님휴가') ? 'bg-gray-400 text-white border border-gray-500' : isAbsent ? 'bg-red-100 text-red-700 border border-red-300' : isCanceled ? 'bg-orange-300 text-white border border-orange-400' : 'bg-blue-100 text-blue-700 border border-blue-300'}`}>
-                                  {rec.attendanceTag}
-                                </span>
-                              ) : (
-                                <span className="text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full bg-gray-600 text-white border border-gray-700">
-                                  미확인
-                                </span>
-                              )}
-                              {rec.computedSession && !isAbsent && !rec.attendanceTag?.includes('선생님휴가') && !rec.attendanceTag?.includes('결석') && (
-                                <span className="text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-300 whitespace-nowrap">
-                                  {rec.computedSession}
-                                </span>
-                              )}
-                              {rec.memo && (
-                                <span className="text-[14px] md:text-[16px] text-gray-700 font-medium">💬 {rec.memo}</span>
-                              )}
-                            </div>
+                            {rec.memo && (
+                              <div className="mt-1.5">
+                                <span className="text-[14px] md:text-[16px] text-gray-700 font-medium break-words">💬 {rec.memo}</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
