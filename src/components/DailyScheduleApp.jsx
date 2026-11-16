@@ -189,9 +189,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   // 수업 내용 메모 접기/펼치기 상태 관리
   const [expandedMemos, setExpandedMemos] = useState({});
 
-  // 사용자가 버튼을 눌러 변경한 출결 상태 오버라이드 맵
-  const [attendanceOverrides, setAttendanceOverrides] = useState({});
-
   const [currentDisplayDate, setCurrentDisplayDate] = useState(() => {
     try {
       const savedDate = window.sessionStorage.getItem('sungdong_daily_schedule_date');
@@ -688,11 +685,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
   // 학생별 출결 상태 판정
   const getRowAttendance = useCallback((row, studentName) => {
-    const rowKey = `${row.teacher}_${row.time}_${studentName || row.student}`;
-    if (attendanceOverrides[rowKey]) {
-      return attendanceOverrides[rowKey];
-    }
-
     const s = (row.status || "").trim();
     if (!s || s === "-") return 'unconfirmed';
 
@@ -706,23 +698,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       return 'attended';
     }
     return 'unconfirmed';
-  }, [attendanceOverrides]);
-
-  // 출결 상태 토글 (확인 전 -> 출석 -> 결석 -> 확인 전)
-  const handleToggleAttendance = (row, studentName) => {
-    const rowKey = `${row.teacher}_${row.time}_${studentName || row.student}`;
-    const current = getRowAttendance(row, studentName);
-    let next = 'attended';
-    if (current === 'unconfirmed') next = 'attended';
-    else if (current === 'attended') next = 'absent';
-    else if (current === 'absent') next = 'unconfirmed';
-    else if (current === 'vacation') next = 'attended';
-
-    setAttendanceOverrides(prev => ({
-      ...prev,
-      [rowKey]: next
-    }));
-  };
+  }, []);
 
   // 통계 계산
   const stats = useMemo(() => {
@@ -1123,7 +1099,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 </div>
 
                 {/* 4개 출결 상태 통계 박스 */}
-                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center mb-2.5">
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
                   <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl py-2 flex flex-col items-center justify-center">
                     <span className="text-[20px] font-black text-emerald-800 dark:text-emerald-400 leading-tight">
                       {stats.attendedCount}
@@ -1160,10 +1136,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                     </span>
                   </div>
                 </div>
-
-                <p className="text-[12.5px] sm:text-[13px] font-medium text-slate-500 dark:text-slate-400 text-center tracking-tight">
-                  오른쪽 버튼을 누르면 확인 전 → 출석 → 결석 순으로 바뀌어요.
-                </p>
               </div>
 
               {/* 2. 회차 색상 범례 및 우측 전체 수업 내용 토글 버튼 */}
@@ -1357,13 +1329,11 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                           }
 
                                           return (
-                                            <button
-                                              type="button"
-                                              onClick={() => handleToggleAttendance(row, names[0])}
-                                              className={`min-h-[38px] sm:min-h-[40px] min-w-[78px] sm:min-w-[82px] px-3 sm:px-3.5 py-1.5 sm:py-2 text-[14.5px] sm:text-[15.5px] font-bold rounded-xl shadow-2xs transition-all active:scale-95 touch-manipulation flex items-center justify-center ${btnClass}`}
+                                            <div
+                                              className={`min-h-[38px] sm:min-h-[40px] min-w-[78px] sm:min-w-[82px] px-3 sm:px-3.5 py-1.5 sm:py-2 text-[14.5px] sm:text-[15.5px] font-bold rounded-xl shadow-2xs select-none flex items-center justify-center cursor-default ${btnClass}`}
                                             >
                                               {btnLabel}
-                                            </button>
+                                            </div>
                                           );
                                         })()}
                                       </div>
