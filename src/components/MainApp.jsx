@@ -462,7 +462,7 @@ export default function MainApp({
           fetchFormSubmissionStatus();
         };
       }
-    } catch (e) {}
+    } catch (e) { }
 
     window.addEventListener('focus', handleFocus);
     window.addEventListener('storage', handleStorage);
@@ -3326,14 +3326,14 @@ export default function MainApp({
                 }}
                 icon={<IconDocumentCheck />}
                 chipColor="chip-blue"
-                label="참여자 서류 관리 (신청서·설문지)"
+                label="참여자 서류 관리"
                 desc="학생별 서류 작성 현황 파악"
               />
               <MenuRow
                 href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
                 icon={<IconPeople />}
                 chipColor="chip-teal"
-                label="수업 희망자 및 기타 참여자 관리"
+                label="수업 희망자 관리"
                 desc="구글 시트에서 열립니다"
               />
             </MenuGroup>
@@ -3377,8 +3377,7 @@ export default function MainApp({
                     icon={<IconDocumentCheck />}
                     label={
                       <>
-                        참여자 서류 관리<br />
-                        <span className="whitespace-nowrap">(신청서·설문지 일괄출력)</span>
+                        참여자 서류 관리ㆍ인쇄<br />
                       </>
                     }
                   />
@@ -3394,7 +3393,7 @@ export default function MainApp({
                     chipColor="chip-rose"
                     onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
                     icon={<IconCalendarStar />}
-                    label="공휴일/휴무일 관리"
+                    label="공휴일ㆍ휴무일 관리"
                   />
                   <MenuRow
                     variant="admin"
@@ -3518,44 +3517,44 @@ export default function MainApp({
             </h2>
             <div className="contents">
               <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
-              <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md sm:max-w-xl mx-auto">
-                <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
-                  <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
-                </button>
+                <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md sm:max-w-xl mx-auto">
+                  <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
+                  </button>
 
-                <div className={`flex-1 h-11 sm:h-12 relative flex items-center justify-center ring-1 ring-blue-200 bg-white rounded-xl text-center shadow-sm overflow-hidden transition-all hover:ring-blue-300`}>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={handleDateChange}
-                    disabled={isDataLoading}
-                    onClick={(e) => {
-                      try {
-                        if (!isDataLoading && e.target.showPicker) e.target.showPicker();
-                      } catch (err) { }
-                    }}
-                    min={minDate || undefined}
-                    max={maxDate || undefined}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
-                    title="달력 열기"
-                  />
-                  <div className={`flex items-center justify-center pointer-events-none relative z-0 ${isDataLoading ? 'opacity-50' : ''} -translate-y-[1px] whitespace-nowrap px-1`}>
-                    <span className={`font-extrabold text-[#1e3a8a] text-[15px] min-[360px]:text-[17px] sm:text-[20px] tracking-tighter whitespace-nowrap`}>{parseInt(date.substring(5, 7), 10)}/{parseInt(date.substring(8, 10), 10)}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-1 sm:mx-1.5 w-4 h-4 sm:w-5 sm:h-5 shrink-0">
-                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                      <line x1="16" x2="16" y1="2" y2="6" />
-                      <line x1="8" x2="8" y1="2" y2="6" />
-                      <line x1="3" x2="21" y1="10" y2="10" />
-                    </svg>
-                    <span className={`font-extrabold text-[#1e3a8a] text-[15px] min-[360px]:text-[17px] sm:text-[20px] tracking-tighter whitespace-nowrap shrink-0`}>({getDayName(date)})</span>
+                  <div className={`flex-1 h-11 sm:h-12 relative flex items-center justify-center ring-1 ring-blue-200 bg-white rounded-xl text-center shadow-sm overflow-hidden transition-all hover:ring-blue-300`}>
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={handleDateChange}
+                      disabled={isDataLoading}
+                      onClick={(e) => {
+                        try {
+                          if (!isDataLoading && e.target.showPicker) e.target.showPicker();
+                        } catch (err) { }
+                      }}
+                      min={minDate || undefined}
+                      max={maxDate || undefined}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
+                      title="달력 열기"
+                    />
+                    <div className={`flex items-center justify-center pointer-events-none relative z-0 ${isDataLoading ? 'opacity-50' : ''} -translate-y-[1px] whitespace-nowrap px-1`}>
+                      <span className={`font-extrabold text-[#1e3a8a] text-[15px] min-[360px]:text-[17px] sm:text-[20px] tracking-tighter whitespace-nowrap`}>{parseInt(date.substring(5, 7), 10)}/{parseInt(date.substring(8, 10), 10)}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-1 sm:mx-1.5 w-4 h-4 sm:w-5 sm:h-5 shrink-0">
+                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                        <line x1="16" x2="16" y1="2" y2="6" />
+                        <line x1="8" x2="8" y1="2" y2="6" />
+                        <line x1="3" x2="21" y1="10" y2="10" />
+                      </svg>
+                      <span className={`font-extrabold text-[#1e3a8a] text-[15px] min-[360px]:text-[17px] sm:text-[20px] tracking-tighter whitespace-nowrap shrink-0`}>({getDayName(date)})</span>
+                    </div>
                   </div>
-                </div>
 
-                <button type="button" onClick={handleTodayClick} disabled={isDataLoading} className={`text-[14px] sm:text-[15px] px-3 sm:px-4 h-11 sm:h-12 rounded-xl font-bold flex items-center justify-center active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation whitespace-nowrap shrink-0 transition-all ${date === getLocalDateString(new Date()) ? 'bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200' : 'bg-blue-600 text-white shadow-sm shadow-blue-600/30 hover:bg-blue-700'}`}>오늘</button>
-                <button type="button" onClick={handleNextDay} disabled={isDataLoading} aria-label="다음 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
-                  <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
-                </button>
-              </div>
+                  <button type="button" onClick={handleTodayClick} disabled={isDataLoading} className={`text-[14px] sm:text-[15px] px-3 sm:px-4 h-11 sm:h-12 rounded-xl font-bold flex items-center justify-center active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation whitespace-nowrap shrink-0 transition-all ${date === getLocalDateString(new Date()) ? 'bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200' : 'bg-blue-600 text-white shadow-sm shadow-blue-600/30 hover:bg-blue-700'}`}>오늘</button>
+                  <button type="button" onClick={handleNextDay} disabled={isDataLoading} aria-label="다음 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
+                  </button>
+                </div>
               </div>
               {errorMessage && <div className="text-red-600 font-bold text-base text-center pb-2">{errorMessage}</div>}
 
@@ -3839,7 +3838,7 @@ export default function MainApp({
                                                   className={`${isAppSubmitted
                                                     ? 'bg-blue-600 hover:bg-blue-700 text-white ring-1 ring-inset ring-blue-700'
                                                     : 'bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200'
-                                                  } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                                    } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
                                                   <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isAppSubmitted ? 'text-white' : 'text-blue-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -3860,7 +3859,7 @@ export default function MainApp({
                                                   className={`${isPreSubmitted
                                                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-1 ring-inset ring-indigo-700'
                                                     : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200'
-                                                  } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                                    } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
                                                   <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPreSubmitted ? 'text-white' : 'text-indigo-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -3880,7 +3879,7 @@ export default function MainApp({
                                                   className={`${isPostSubmitted
                                                     ? 'bg-purple-700 hover:bg-purple-800 text-white ring-1 ring-inset ring-purple-800'
                                                     : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
-                                                  } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                                    } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                                 >
                                                   <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPostSubmitted ? 'text-white' : 'text-purple-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -3917,7 +3916,7 @@ export default function MainApp({
                                           className={`${isAppSubmitted
                                             ? 'bg-blue-600 hover:bg-blue-700 text-white ring-1 ring-inset ring-blue-700'
                                             : 'bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200'
-                                          } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                            } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >
                                           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isAppSubmitted ? 'text-white' : 'text-blue-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -3938,7 +3937,7 @@ export default function MainApp({
                                           className={`${isPreSubmitted
                                             ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-1 ring-inset ring-indigo-700'
                                             : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200'
-                                          } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                            } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >
                                           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPreSubmitted ? 'text-white' : 'text-indigo-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -3958,7 +3957,7 @@ export default function MainApp({
                                           className={`${isPostSubmitted
                                             ? 'bg-purple-700 hover:bg-purple-800 text-white ring-1 ring-inset ring-purple-800'
                                             : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
-                                          } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                            } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
                                         >
                                           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPostSubmitted ? 'text-white' : 'text-purple-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2h2" />
