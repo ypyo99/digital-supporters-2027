@@ -1,6 +1,5 @@
 // 팀 별 오늘 일정 보기
 
-
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import {
@@ -18,7 +17,7 @@ import {
 } from '../utils/helpers';
 import { Home, LucideCalendar, Clock, BookOpen, Sparkles } from './Icons';
 
-// 문자열 내에 콤마나 슬래시로 구분된 특정 키워드가 정확히 일치하는지 검사하는 유틸리티 함수입니다.
+// 문자열 내에 콤마나 슬래시로 구분된 특정 키워드가 정확히 일치하는지 검사하는 유틸리티 함수
 const hasIndependentKeyword = (str, keywords) => {
   if (!str) return false;
   const tokens = str.split(/[,/]+/).map(t => t.trim());
@@ -44,285 +43,78 @@ const mapShiftToOfficial = (team, teacherName, originalShift) => {
 
 const checkIsCanceled = (status) => {
   if (!status) return false;
-
-  // 텍스트를 콤마(,)나 슬래시(/)로 분리합니다.
   const tokens = status.split(/[,/]+/).map(t => t.trim());
-
-  // 취소, 종료 단어는 첫 번째 또는 두 번째 단어로 온 경우만 인정합니다.
   const isFirstWord = tokens[0] === "취소" || tokens[0] === "종료";
   const isSecondWord = tokens.length > 1 && (tokens[1] === "취소" || tokens[1] === "종료");
-
   return isFirstWord || isSecondWord;
 };
 
-// =====================================================================
-// ✨ 교육 요약 & 인사이트 컴포넌트
-// =====================================================================
-function SummarySection({ data, date, team, onTouchStart, onTouchEnd }) {
-  const contents = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    return data
-      .filter(row => row.status && row.status.length > 2 && !/^\d+$/.test(row.status) && !row.status.includes("복지관으로 이동"))
-      .map(row => ({
-        teacher: row.teacher,
-        content: row.status,
-        student: row.student
-      }));
-  }, [data]);
-
-  const themes = [
-    { name: 'AI & 스마트 도구', keywords: ['Gemini', 'AI', 'GPT', '제미나이', '구글렌즈', '클로바', '챗지피티', '챗GPT', '인공지능', '이미지', '파파고', '번역', '음성인식', '스마트렌즈', '빅스비', '시리', '챗봇'], icon: '✨', color: 'bg-indigo-50 text-indigo-700 border-indigo-100', baseInsight: '최신 AI 도구 활용이 두드러졌습니다. 단순 검색을 넘어 이미지 생성 및 문제 해결 단계로 교육이 고도화되고 있습니다.' },
-    { name: '기기 & 보안 설정', keywords: ['와이파이', '블루투스', '화면', '소리', '벨소리', '알림', '글자', '업데이트', '비밀번호', '잠금', '보안', '용량', '배터리', '설정', '스미싱', '보이스피싱', '스팸', '바이러스', '백신'], icon: '⚙️', color: 'bg-gray-50 text-gray-700 border-gray-200', baseInsight: '스마트폰 기본 설정 및 보안 교육이 진행되어, 어르신들의 안전하고 편리한 스마트폰 사용 환경이 마련되었습니다.' },
-    { name: '교통 & 이동', keywords: ['지도', '카카오T', '카카오티', '택시', '코레일', '따릉이', 'SRT', '고속버스', '길찾기', '내비게이션', '지하철', '버스', '성공버스', '노선', '승차권', '티켓', '기차', '예매'], icon: '🚲', color: 'bg-green-50 text-green-700 border-green-100', baseInsight: '교통 앱 활용 교육을 통해 어르신들의 이동 편의성과 자립적인 외출 능력이 크게 향상되었습니다.' },
-    { name: '금융 & 결제', keywords: ['페이', '이체', '은행', '지로', '보험', '증권', '토스', '카드', '서울페이', '제로페이', '카카오페이', '삼성페이', '네이버페이', '계좌', '송금', '환전'], icon: '💰', color: 'bg-yellow-50 text-yellow-700 border-yellow-100', baseInsight: '모바일 금융 및 간편 결제 교육이 진행되었습니다. 안전한 디지털 금융 활용을 위한 보안 주의사항도 함께 강조되었습니다.' },
-    { name: '소셜 & 커뮤니케이션', keywords: ['카카오톡', '카톡', '메시지', 'SMS', '문자', '이메일', '페이스톡', '밴드', '인스타그램', '페이스북', '유선', '연락처', '전화', '단톡방', '오픈채팅'], icon: '💬', color: 'bg-blue-50 text-blue-700 border-blue-100', baseInsight: '다양한 메신저와 SNS 활용법이 중점적으로 다루어져 어르신들의 온라인 소통 창구가 넓어졌습니다.' },
-    { name: '미디어 & 콘텐츠', keywords: ['유튜브', '유트브', '사진', '영상', '편집', '갤러리', '숏츠', '릴스', '틱톡', '키네마스터', 'VITA', '캡처', '촬영', '음악', '멜론', '라디오', '팟캐스트'], icon: '🎥', color: 'bg-red-50 text-red-700 border-red-100', baseInsight: '사진/영상 촬영 및 편집 교육을 통해 디지털 콘텐츠 창작에 대한 높은 흥미와 성취감을 보였습니다.' },
-    { name: '쇼핑 & 배달', keywords: ['배민', '배달의민족', '요기요', '쿠팡', '당근', '당근마켓', '중고나라', '쇼핑', '마트', '장보기', '이마트', '홈플러스', 'G마켓', '11번가', '주문', '키오스크', '무인'], icon: '🛒', color: 'bg-orange-50 text-orange-700 border-orange-100', baseInsight: '비대면 쇼핑, 배달 앱 및 키오스크 활용 교육이 이루어져 일상생활의 디지털 자립도가 높아졌습니다.' },
-    { name: '공공행정 & 의료', keywords: ['성공버스', '정부24', '손목닥터', '9988', '홈택스', '주민등록', '증명서', '민원', '국세청', '보조금', '복지로', 'PASS', '패스', '모바일신분증', '병원', '약국', '건강', '만보기', '혈압', '진료', '똑닥', '예방'], icon: '🏥', color: 'bg-teal-50 text-teal-700 border-teal-100', baseInsight: '공공 서비스 앱과 의료/건강 관리 앱 교육이 진행되어, 생활에 필수적인 디지털 행정 및 건강 관리 역량이 강화되었습니다.' }
-  ];
-
-  const categorized = useMemo(() => {
-    return themes.map(theme => {
-      const matched = contents.filter(c => theme.keywords.some(k => c.content.toLowerCase().includes(k.toLowerCase())));
-      return { ...theme, items: matched };
-    }).filter(t => t.items.length > 0);
-  }, [contents]);
-
-  const uncategorized = useMemo(() => {
-    return contents.filter(c => !themes.some(theme => theme.keywords.some(k => c.content.toLowerCase().includes(k.toLowerCase()))));
-  }, [contents]);
-
-  const attendanceStats = useMemo(() => {
-    if (!data || data.length === 0) return null;
-    let total = 0, attended = 0, absent = 0, canceled = 0, vacation = 0;
-    const absentReasons = [];
-
-    data.forEach(row => {
-      const studentStr = (row.student || "").trim();
-      if (!studentStr || studentStr === "-" || studentStr.includes("자체학습") || studentStr.includes("대상자발굴")) return;
-
-      const statusStr = (row.status || "").trim();
-      if (statusStr.includes("복지관으로 이동")) return;
-
-      const studentNames = studentStr.split(/[/,]/).map(s => s.trim()).filter(Boolean);
-      const statusParts = statusStr.includes('/') ? statusStr.split('/') : [statusStr];
-
-      const isShowHeadcount = (studentStr.includes("보조강사") || studentStr.includes("경로당")) && studentNames.length < 2;
-
-      studentNames.forEach((name, idx) => {
-        const isAssistant = name.includes("보조강사");
-        if (isAssistant && !statusStr) return;
-
-        let studentStatus = (statusParts.length > idx) ? statusParts[idx].trim() : statusParts[0].trim();
-
-        let headcount = 1;
-        if (isShowHeadcount) {
-          const hcMatch = studentStatus.match(/^(\d+)/);
-          if (hcMatch) {
-            headcount = parseInt(hcMatch[1], 10);
-          }
-        }
-
-        total += headcount;
-
-        const hasAttendanceMark = hasIndependentKeyword(studentStatus, ["1", "출석"]);
-
-        if (studentStatus.includes("결석")) {
-          absent += headcount;
-          if (studentStatus.includes("병원") || studentStatus.includes("진료")) absentReasons.push("병원 진료");
-          else if (studentStatus.includes("행사") || studentStatus.includes("일정") || studentStatus.includes("집안")) absentReasons.push("개인 일정");
-          else if (studentStatus.includes("여행")) absentReasons.push("여행");
-        } else if (studentStatus.includes("휴가") || studentStatus.includes("선생님휴가")) {
-          vacation += headcount;
-        } else if (checkIsCanceled(studentStatus)) {
-          canceled += headcount;
-          if (hasAttendanceMark) {
-            attended += headcount;
-          }
-        } else if (studentStatus) {
-          const isAttended = isAssistant || /^[1-9]\d*/.test(studentStatus) || studentStatus.length > 2 || studentStatus === "1" || studentStatus === "출석";
-          if (isAttended) attended += headcount;
-        }
-      });
-    });
-
-    const rate = total > 0 ? Math.round((attended / total) * 100) : 0;
-    return { total, attended, absent, canceled, vacation, rate, absentReasons: [...new Set(absentReasons)] };
-  }, [data]);
-
-  const dynamicInsights = useMemo(() => {
-    const insights = [];
-
-    if (attendanceStats) {
-      if (attendanceStats.rate >= 90) {
-        insights.push(`오늘 **${team}**은 **${attendanceStats.rate}%**의 높은 참여율을 기록하며 교육 열기가 매우 높았습니다.`);
-      } else if (attendanceStats.rate < 70 && attendanceStats.absent > 0) {
-        const reasons = attendanceStats.absentReasons.length > 0 ? attendanceStats.absentReasons.join(', ') : '개인 일정';
-        insights.push(`오늘은 **${reasons}** 등의 사유로 결석이 다소 발생했으나, 출석하신 어르신들은 밀도 높은 1:1 맞춤형 수업을 진행했습니다.`);
-      }
-    }
-
-    const sorted = [...categorized].sort((a, b) => b.items.length - a.items.length);
-    if (sorted.length > 0) {
-      const top = sorted[0];
-      const foundKeywords = [];
-      top.items.forEach(item => {
-        top.keywords.forEach(kw => {
-          if (item.content.toLowerCase().includes(kw.toLowerCase()) && !foundKeywords.includes(kw)) {
-            foundKeywords.push(kw);
-          }
-        });
-      });
-
-      let themeText = `**[${top.name}]** 분야가 오늘 교육의 핵심이었습니다. `;
-      if (foundKeywords.length > 0) {
-        themeText += `특히 **${foundKeywords.slice(0, 3).join(', ')}** 등에 대한 실질적인 활용법 교육이 활발히 이루어졌습니다. `;
-      }
-      themeText += top.baseInsight;
-      insights.push(themeText);
-    }
-
-    if (sorted.length >= 2) {
-      const name1 = sorted[0].name;
-      const name2 = sorted[1].name;
-      const getParticle = (name) => {
-        if (name.includes('설정') || name.includes('이동') || name.includes('커뮤니케이션') || name.includes('배달')) return '과';
-        return '와';
-      };
-      const particle = getParticle(name1);
-      insights.push(`**${name1}**${particle} **${name2}** 등 여러 영역을 넘나드는 복합적인 디지털 교육이 진행되어 어르신들의 종합적인 활용 능력이 강화되었습니다.`);
-    }
-
-    const allContent = contents.map(c => c.content).join(' ');
-    if (allContent.includes('키오스크') && (allContent.includes('페이') || allContent.includes('이체'))) {
-      insights.push(`실생활 결제와 직결되는 **키오스크 및 금융 앱** 연계 교육이 진행되어 어르신들의 독립적인 일상생활 수행 능력이 크게 향상될 것으로 기대됩니다.`);
-    }
-    if (allContent.includes('Gemini') || allContent.includes('제미나이') || allContent.includes('AI')) {
-      insights.push(`**생성형 AI(Gemini 등)**를 활용한 최첨단 교육이 시도되어, 어르신들이 최신 디지털 트렌드에 발맞추어 나가는 모습이 인상적입니다.`);
-    }
-
-    if (attendanceStats && attendanceStats.attended === 0) {
-      return ["입력된 학습 관련 데이터가 없습니다."];
-    }
-
-    return insights.length > 0 ? insights : ["현재 기록된 데이터로 보아 기초 디지털 역량 강화에 집중하고 있는 시기입니다."];
-  }, [categorized, attendanceStats, team, contents]);
-
-  if (contents.length === 0 && (!attendanceStats || attendanceStats.total === 0)) {
-    return (
-      <div className="mt-6 sm:mt-8 bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 p-6 sm:p-10 text-center animate-fadeIn">
-        <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gray-50 rounded-full mb-4 sm:mb-6">
-          <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 text-gray-200" />
-        </div>
-        <h3 className="text-lg sm:text-xl font-bold text-gray-400 mb-2">오늘 기록된 상세 교육 내용이 없습니다.</h3>
-        <p className="text-gray-400 text-sm sm:text-base">서포터즈들의 활동 기록이 입력되면 AI 기반 요약이 자동으로 생성됩니다.</p>
-      </div>
-    );
+// 회차 배지 스타일 (대비 개선 및 범례 일치)
+const getSessionBadgeStyle = (count) => {
+  if (count >= 15) {
+    return 'bg-amber-100 text-amber-950 border border-amber-300 font-bold';
+  } else if (count >= 10) {
+    return 'bg-indigo-950 text-white font-bold';
+  } else if (count >= 7) {
+    return 'bg-purple-100 text-purple-900 border border-purple-200 font-bold';
+  } else {
+    return 'bg-slate-200 text-slate-800 font-bold';
   }
+};
 
-  return (
-    <div className="mt-6 sm:mt-8 animate-fadeIn mb-0" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="bg-white/20 p-2 sm:p-2.5 rounded-xl backdrop-blur-sm shrink-0">
-              <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-            </div>
-            <div>
-              <h3 className="text-white font-black text-lg sm:text-xl leading-tight">오늘의 교육 요약 & 인사이트</h3>
-              <p className="text-blue-100 text-xs sm:text-sm font-medium opacity-90">{team} 활동 보고</p>
-            </div>
-          </div>
-          <div className="self-start sm:self-auto bg-blue-500/30 px-3 py-1 rounded-full border border-white/20 text-white text-xs font-bold uppercase tracking-wider">
-            AI Analytics
-          </div>
-        </div>
+// 핵심 교육 테마 분류 정의
+const THEMES = [
+  {
+    name: 'AI·스마트 도구',
+    keywords: ['Gemini', 'AI', 'GPT', '제미나이', '구글렌즈', '클로바', '챗지피티', '챗GPT', '인공지능', '이미지', '파파고', '번역', '음성인식', '스마트렌즈', '빅스비', '시리', '챗봇'],
+    icon: '✨'
+  },
+  {
+    name: '금융·결제',
+    keywords: ['페이', '이체', '은행', '지로', '보험', '증권', '토스', '카드', '서울페이', '제로페이', '카카오페이', '삼성페이', '네이버페이', '계좌', '송금', '환전'],
+    icon: '💰'
+  },
+  {
+    name: '소통',
+    keywords: ['카카오톡', '카톡', '메시지', 'SMS', '문자', '이메일', '페이스톡', '밴드', '인스타그램', '페이스북', '유선', '연락처', '전화', '단톡방', '오픈채팅'],
+    icon: '💬'
+  },
+  {
+    name: '미디어',
+    keywords: ['유튜브', '유트브', '사진', '영상', '편집', '갤러리', '숏츠', '릴스', '틱톡', '키네마스터', 'VITA', '캡처', '촬영', '음악', '멜론', '라디오', '팟캐스트'],
+    icon: '🎥'
+  },
+  {
+    name: '기기·보안',
+    keywords: ['와이파이', '블루투스', '화면', '소리', '벨소리', '알림', '글자', '업데이트', '비밀번호', '잠금', '보안', '용량', '배터리', '설정', '스미싱', '보이스피싱', '스팸', '바이러스', '백신'],
+    icon: '⚙️'
+  },
+  {
+    name: '교통·이동',
+    keywords: ['지도', '카카오T', '카카오티', '택시', '코레일', '따릉이', 'SRT', '고속버스', '길찾기', '내비게이션', '지하철', '버스', '성공버스', '노선', '승차권', '티켓', '기차', '예매'],
+    icon: '🚲'
+  },
+  {
+    name: '쇼핑·배달',
+    keywords: ['배민', '배달의민족', '요기요', '쿠팡', '당근', '당근마켓', '중고나라', '쇼핑', '마트', '장보기', '이마트', '홈플러스', 'G마켓', '11번가', '주문', '키오스크', '무인'],
+    icon: '🛒'
+  },
+  {
+    name: '행정·의료',
+    keywords: ['성공버스', '정부24', '손목닥터', '9988', '홈택스', '주민등록', '증명서', '민원', '국세청', '보조금', '복지로', 'PASS', '패스', '모바일신분증', '병원', '약국', '건강', '만보기', '혈압', '진료', '똑닥', '예방'],
+    icon: '🏥'
+  }
+];
 
-        <div className="p-4 sm:p-6 md:p-8">
-          {attendanceStats && (
-            <div className="mb-6 sm:mb-8 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
-              <div className="bg-blue-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-blue-100 flex flex-col items-center justify-center shadow-sm text-center">
-                <span className="text-blue-600 text-[11px] sm:text-xs font-black mb-0.5 sm:mb-1 uppercase tracking-wider">전체 학생</span>
-                <span className="text-xl sm:text-2xl font-black text-blue-900">{attendanceStats.total}명</span>
-              </div>
-              <div className="bg-green-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-green-100 flex flex-col items-center justify-center shadow-sm text-center">
-                <span className="text-green-600 text-[11px] sm:text-xs font-black mb-0.5 sm:mb-1 uppercase tracking-wider">출석 완료</span>
-                <span className="text-xl sm:text-2xl font-black text-green-900">{attendanceStats.attended}명</span>
-              </div>
-              <div className="bg-red-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-red-100 flex flex-col items-center justify-center shadow-sm text-center">
-                <span className="text-red-600 text-[11px] sm:text-xs font-black mb-0.5 sm:mb-1 uppercase tracking-wider">결석/종료/휴가</span>
-                <span className="text-base sm:text-2xl font-black text-red-900">{attendanceStats.absent}/{attendanceStats.canceled}/{attendanceStats.vacation}명</span>
-              </div>
-              <div className="bg-purple-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-purple-100 flex flex-col items-center justify-center shadow-sm text-center">
-                <span className="text-purple-600 text-[11px] sm:text-xs font-black mb-0.5 sm:mb-1 uppercase tracking-wider">출석률</span>
-                <span className="text-xl sm:text-2xl font-black text-purple-900">{attendanceStats.rate}%</span>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-0">
-            <div className="space-y-4 sm:space-y-5">
-              <h4 className="font-black text-gray-800 flex items-center gap-2 text-base sm:text-lg">
-                <div className="w-1.5 sm:w-2 h-6 sm:h-7 bg-blue-500 rounded-full"></div>
-                핵심 교육 테마
-              </h4>
-              <div className="flex flex-wrap gap-2 sm:gap-2.5">
-                {categorized.map((t, i) => (
-                  <div key={i} className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border-2 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all hover:scale-105 ${t.color}`}>
-                    <span className="text-base sm:text-lg">{t.icon}</span>
-                    {t.name}
-                    <span className="bg-white/60 px-1.5 sm:px-2 py-0.5 rounded-lg text-[11px] sm:text-xs border border-current/10">{t.items.length}건</span>
-                  </div>
-                ))}
-                {uncategorized.length > 0 && (
-                  <div className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl border-2 border-gray-100 bg-gray-50 text-gray-700 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm">
-                    <span className="text-base sm:text-lg">📝</span> 기타 실습
-                    <span className="bg-white/60 px-1.5 sm:px-2 py-0.5 rounded-lg text-[11px] sm:text-xs border border-gray-200">{uncategorized.length}건</span>
-                  </div>
-                )}
-                {categorized.length === 0 && uncategorized.length === 0 && (
-                  <div className="px-4 py-2.5 rounded-2xl border-2 border-gray-100 bg-gray-50 text-gray-500 font-bold text-xs sm:text-sm flex items-center shadow-sm w-full justify-center">
-                    기록된 상세 교육 내용(메모)이 없습니다.
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-4 sm:space-y-5">
-              <h4 className="font-black text-gray-800 flex items-center gap-2 text-base sm:text-lg">
-                <div className="w-1.5 sm:w-2 h-6 sm:h-7 bg-indigo-500 rounded-full"></div>
-                오늘의 인사이트
-              </h4>
-              {dynamicInsights.length > 0 ? (
-                <div className="bg-indigo-50/50 rounded-2xl p-4 sm:p-5 border-2 border-indigo-100 shadow-inner">
-                  <ul className="space-y-3 sm:space-y-4">
-                    {dynamicInsights.map((insight, i) => (
-                      <li key={i} className="flex gap-2.5 sm:gap-3 text-sm sm:text-base text-gray-700 leading-relaxed">
-                        <span className="text-indigo-500 mt-1 font-black shrink-0">●</span>
-                        <p className="font-medium" dangerouslySetInnerHTML={{ __html: insight.replace(/\*\*(.*?)\*\*/g, '<span class="text-indigo-800 font-extrabold">$1</span>') }}></p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <div className="bg-gray-50 rounded-2xl p-4 sm:p-5 border border-gray-200 text-gray-500 text-center font-medium text-sm sm:text-base">
-                  인사이트를 분석할 충분한 데이터가 없습니다.
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// =====================================================================
-// 📅 DailyScheduleApp 메인 컴포넌트
-// =====================================================================
 export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamChange }) {
   const [selectedTeam, setSelectedTeam] = useState(initialTeam || "1팀");
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [activeTab, setActiveTab] = useState('schedule'); // 'schedule' | 'summary'
+
+  // 수업 내용 메모 접기/펼치기 상태 관리
+  const [expandedMemos, setExpandedMemos] = useState({});
+
+  // 사용자가 버튼을 눌러 변경한 출결 상태 오버라이드 맵
+  const [attendanceOverrides, setAttendanceOverrides] = useState({});
 
   const [currentDisplayDate, setCurrentDisplayDate] = useState(() => {
     try {
@@ -350,48 +142,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   const [isLoading, setIsLoading] = useState(false);
   const [notice, setNotice] = useState("");
   const [holidaysDbList, setHolidaysDbList] = useState([]);
-
-  useEffect(() => {
-    const loadHolidays = async () => {
-      try {
-        const { data, error } = await supabaseClient.from('holidays').select('*');
-        if (!error && data) {
-          console.log("Loaded holidaysDbList:", data);
-          setHolidaysDbList(data);
-        }
-      } catch (e) { console.error("holidays fetch error", e); }
-    };
-    loadHolidays();
-  }, []);
-
-  const checkIsHoliday = (dateObj) => {
-    if (!holidaysDbList || holidaysDbList.length === 0) return false;
-    const _y = dateObj.getFullYear();
-    const _m = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const _d = String(dateObj.getDate()).padStart(2, '0');
-    const _currentDateStr = `${_y}-${_m}-${_d}`;
-    const _currentDateStrShort = `${_m}-${_d}`;
-    return holidaysDbList.some(h => h.date === _currentDateStr || h.date === _currentDateStrShort || (h.date && h.date.endsWith(_currentDateStrShort)));
-  };
-
-  useEffect(() => {
-    if (holidaysDbList.length > 0) {
-      setCurrentDisplayDate(prev => {
-        let temp = new Date(prev);
-        let changed = false;
-        while (
-          temp.getDay() === 0 ||
-          temp.getDay() === 6
-        ) {
-          temp.setDate(temp.getDate() + 1);
-          changed = true;
-        }
-        return changed ? temp : prev;
-      });
-    }
-  }, [holidaysDbList]);
-
-
   const [selectedStudentDates, setSelectedStudentDates] = useState(null);
 
   const touchStartX = useRef(null);
@@ -410,7 +160,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
   const handleTouchEnd = (e) => {
     if (touchStartX.current === null || touchStartY.current === null) return;
-
     const touchEndX = e.changedTouches[0].clientX;
     const touchEndY = e.changedTouches[0].clientY;
     const deltaX = touchStartX.current - touchEndX;
@@ -431,6 +180,37 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     touchStartY.current = null;
   };
 
+  // 공휴일 로드
+  useEffect(() => {
+    const loadHolidays = async () => {
+      try {
+        const { data, error } = await supabaseClient.from('holidays').select('*');
+        if (!error && data) {
+          setHolidaysDbList(data);
+        }
+      } catch (e) {
+        console.error("holidays fetch error", e);
+      }
+    };
+    loadHolidays();
+  }, []);
+
+  // 주말 건너뛰기
+  useEffect(() => {
+    if (holidaysDbList.length > 0) {
+      setCurrentDisplayDate(prev => {
+        let temp = new Date(prev);
+        let changed = false;
+        while (temp.getDay() === 0 || temp.getDay() === 6) {
+          temp.setDate(temp.getDate() + 1);
+          changed = true;
+        }
+        return changed ? temp : prev;
+      });
+    }
+  }, [holidaysDbList]);
+
+  // 팀 데이터 로드
   const fetchTeamData = useCallback(async (teamName, displayDate) => {
     if (!teamName) return;
 
@@ -440,6 +220,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     setIsLoading(true);
     setScheduleData([]);
     setNotice("");
+    setAttendanceOverrides({}); // 날짜/팀 변경 시 오버라이드 초기화
 
     try {
       const dateStr = getLocalDateString(displayDate);
@@ -516,6 +297,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         }
       });
 
+      // 학생별 과거 회차 계산
       const allStudents = [];
       const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "안전교율", "직무교육"];
 
@@ -559,8 +341,8 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
       const studentDatesMap = {};
       const studentOffsetsMap = {};
-
       const dayStatusMap = {};
+
       allTeamRecords.forEach(hRow => {
         if (!hRow.student) return;
         const names = hRow.student.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
@@ -576,7 +358,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           const hasAttendance = hasIndependentKeyword(personalStatus, ["1", "출석"]);
           const isAttended = hasAttendance && !hasEndOrCancel;
           const isAbsentOrCanceled = (personalStatus.includes("결석") && !hasAttendance) || (personalStatus.includes("선생님휴가") && !hasAttendance) || (hasEndOrCancel && !hasAttendance);
-          
+
           if (!dayStatusMap[name]) dayStatusMap[name] = {};
           const dParts = hRow.log_date.split('-');
           const dateObjTime = new Date(parseInt(dParts[0], 10), parseInt(dParts[1], 10) - 1, parseInt(dParts[2], 10)).getTime();
@@ -593,7 +375,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         if (!hRow.student) return;
         const names = hRow.student.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
         names.forEach((name, nameIdx) => {
-          const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "안전교율", "직무교육"];
           if (excludeKeywords.some(keyword => name.includes(keyword))) return;
 
           let personalStatus = hRow.status || "";
@@ -611,7 +392,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           const memoMatches = Array.from(textToMatch.matchAll(/(\d+)\s*회차(?![가-힣a-zA-Z0-9])/g));
           const hasExplicitCount = memoMatches.length > 0;
 
-          if (hRow.log_date === dateStr) return; // SKIP TODAY'S RECORDS
+          if (hRow.log_date === dateStr) return; // 오늘 날짜는 건너뜀
 
           const dParts = hRow.log_date.split('-');
           const dateObj = new Date(parseInt(dParts[0], 10), parseInt(dParts[1], 10) - 1, parseInt(dParts[2], 10));
@@ -622,6 +403,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
           const isOnlyAbsent = (personalStatus.includes("결석") && !hasAttendance) && !(personalStatus.includes("선생님휴가") && !hasAttendance) && !(hasEndOrCancel && !hasAttendance);
           const isOnlyEnd = teamName === '취업팀' && personalStatus.split(/[,/]+/).map(t => t.trim()).some(t => t === '종료') && !hasAttendance;
+
           let isValidDay = false;
           if (isTarget) {
             isValidDay = (dayStatus === 'attended');
@@ -634,9 +416,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           }
 
           if (hasExplicitCount || isValidDay) {
-            if (!studentDatesMap[name]) {
-              studentDatesMap[name] = [];
-            }
+            if (!studentDatesMap[name]) studentDatesMap[name] = [];
             if (studentOffsetsMap[name] === undefined) studentOffsetsMap[name] = 0;
             const hGroup = getTeacherGroup(teamName, hRow.teacher);
             const hShift = hRow.shift || "";
@@ -646,19 +426,12 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
               alreadyHas = studentDatesMap[name].some(d => {
                 if (isTarget) {
                   const isSameTargetBucket = isTargetTeacher(d.teacher);
-                  let isSameClassBucket = false;
-                  if (teamName === '취업팀') {
-                    isSameClassBucket = (d.shift === hShift && d.group === hGroup);
-                  } else {
-                    isSameClassBucket = (d.group === hGroup);
-                  }
+                  let isSameClassBucket = (teamName === '취업팀') ? (d.shift === hShift && d.group === hGroup) : (d.group === hGroup);
                   return d.date.getTime() === dateObj.getTime() && (isSameTargetBucket || isSameClassBucket);
                 } else {
-                  if (teamName === '취업팀') {
-                    return d.date.getTime() === dateObj.getTime() && d.shift === hShift && d.group === hGroup;
-                  } else {
-                    return d.date.getTime() === dateObj.getTime() && d.group === hGroup;
-                  }
+                  return (teamName === '취업팀')
+                    ? (d.date.getTime() === dateObj.getTime() && d.shift === hShift && d.group === hGroup)
+                    : (d.date.getTime() === dateObj.getTime() && d.group === hGroup);
                 }
               });
             }
@@ -689,7 +462,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         });
       });
 
-      // 시간대가 빠른 것부터 회차 계산을 위해 정렬
+      // 회차 계산
       Object.keys(studentDatesMap).forEach(name => {
         studentDatesMap[name].sort((a, b) => {
           if (a.date.getTime() !== b.date.getTime()) return a.date.getTime() - b.date.getTime();
@@ -710,67 +483,21 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         });
       });
 
+      // 오늘 날짜 데이터와 병합하여 최종 회차 산출
       parsedData.sort((a, b) => {
         const weightA = getGroupWeight(a.group);
         const weightB = getGroupWeight(b.group);
         if (weightA !== weightB) return weightA - weightB;
-
         if (a.teacher !== b.teacher) {
           return getTeacherSortWeight(teamName, a.teacher) - getTeacherSortWeight(teamName, b.teacher);
         }
-
         return getShiftWeight(a.time) - getShiftWeight(b.time);
       });
-
-      const currentDatesMap = {};
-      const currentOffsetsMap = {};
-      for (const [k, v] of Object.entries(studentDatesMap)) {
-        currentDatesMap[k] = [...v];
-      }
-      for (const [k, v] of Object.entries(studentOffsetsMap)) {
-        currentOffsetsMap[k] = v;
-      }
 
       const todayParts = dateStr.split('-');
       const todayDateObj = new Date(parseInt(todayParts[0], 10), parseInt(todayParts[1], 10) - 1, parseInt(todayParts[2], 10));
 
-      const timeSortedData = [...parsedData].sort((a, b) => {
-        const getT = (s) => {
-          if (!s) return 9999;
-          const m = s.match(/(\d+):(\d+)/) || s.match(/(\d+)\s*시/);
-          return m ? parseInt(m[1]) * 60 + (m[2] ? parseInt(m[2]) : 0) : 9999;
-        };
-        return getT(a.time) - getT(b.time);
-      });
-
-      const dayStatusMapToday = {};
-      timeSortedData.forEach(row => {
-        if (!row.student || row.student.trim() === '-') return;
-        const names = row.student.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
-        names.forEach((name, nameIdx) => {
-          let personalStatus = row.status || "";
-          if (personalStatus.includes('/')) {
-            const segments = personalStatus.split('/');
-            if (segments.length > nameIdx) {
-              personalStatus = segments[nameIdx].trim();
-            }
-          }
-          const hasCurrentEndOrCancel = checkIsCanceled(personalStatus);
-          const hasCurrentAttendance = hasIndependentKeyword(personalStatus, ["1", "출석"]);
-          const isAttended = hasCurrentAttendance && !hasCurrentEndOrCancel;
-          const isAbsent = (personalStatus.includes("결석") && !hasCurrentAttendance) || (personalStatus.includes("선생님휴가") && !hasCurrentAttendance) || (hasCurrentEndOrCancel && !hasCurrentAttendance);
-          
-          if (!dayStatusMapToday[name]) dayStatusMapToday[name] = {};
-          
-          if (isAttended) {
-            dayStatusMapToday[name][todayDateObj.getTime()] = 'attended';
-          } else if (isAbsent && dayStatusMapToday[name][todayDateObj.getTime()] !== 'attended') {
-            dayStatusMapToday[name][todayDateObj.getTime()] = 'absent';
-          }
-        });
-      });
-
-      timeSortedData.forEach(row => {
+      parsedData.forEach(row => {
         if (!row.student || row.student.trim() === '-') {
           row.sessionCounts = null;
           return;
@@ -779,238 +506,19 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         const names = row.student.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
         const countsForThisRow = [];
 
-        names.forEach((name, nameIdx) => {
-          const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "안전교율", "직무교육"];
+        names.forEach(name => {
           if (excludeKeywords.some(keyword => name.includes(keyword))) return;
-
-          let personalStatus = row.status || "";
-          if (personalStatus.includes('/')) {
-            const segments = personalStatus.split('/');
-            if (segments.length > nameIdx) {
-              personalStatus = segments[nameIdx].trim();
-            }
-          }
-          const hasCurrentEndOrCancel = checkIsCanceled(personalStatus);
-          const hasCurrentAttendance = hasIndependentKeyword(personalStatus, ["1", "출석"]);
-          const isAbsent = (personalStatus.includes("결석") && !hasCurrentAttendance) || (personalStatus.includes("선생님휴가") && !hasCurrentAttendance) || (hasCurrentEndOrCancel && !hasCurrentAttendance);
-          const isOnlyAbsentCurrent = (personalStatus.includes("결석") && !hasCurrentAttendance) && !(personalStatus.includes("선생님휴가") && !hasCurrentAttendance) && !(hasCurrentEndOrCancel && !hasCurrentAttendance);
-          const isJobTeamAbsent = teamName === '취업팀' && isOnlyAbsentCurrent;
-          const textToMatch = (row.memo || row.status || "");
-          const memoMatches = Array.from(textToMatch.matchAll(/(\d+)\s*회차(?![가-힣a-zA-Z0-9])/g));
-          const hasExplicitCount = memoMatches.length > 0;
-
-          if (!currentDatesMap[name]) currentDatesMap[name] = [];
-          if (currentOffsetsMap[name] === undefined) currentOffsetsMap[name] = 0;
-
-          const dayStatusToday = dayStatusMapToday[name] && dayStatusMapToday[name][todayDateObj.getTime()];
-
-          const isTargetTeacher = (t) => t && (t.includes("천은선") || t.includes("서승희"));
-          const isTarget = isTargetTeacher(row.teacher);
-
-          const isOnlyEndCurrent = teamName === '취업팀' && personalStatus.split(/[,/]+/).map(t => t.trim()).some(t => t === '종료') && !hasCurrentAttendance;
-          let isValidDayToday = false;
-          if (isTarget) {
-            isValidDayToday = (dayStatusToday === 'attended');
-          } else if (teamName === '취업팀' && isOnlyAbsentCurrent) {
-            isValidDayToday = true;
-          } else if (isOnlyEndCurrent) {
-            isValidDayToday = true;
-          } else {
-            isValidDayToday = !isAbsent;
-          }
-
-          let currentExplicitVal = null;
-          if (hasExplicitCount) {
-            const matchObj = memoMatches.length > nameIdx ? memoMatches[nameIdx] : memoMatches[0];
-            currentExplicitVal = parseInt(matchObj[1], 10);
-          }
-
-            if (hasExplicitCount || isValidDayToday) {
-              let isNew = false;
-              
-              if (isValidDayToday) {
-                const alreadyHas = currentDatesMap[name].some(d => {
-                  if (isTarget) {
-                    const isSameTargetBucket = isTargetTeacher(d.teacher);
-                    let isSameClassBucket = false;
-                    if (teamName === '취업팀') {
-                      isSameClassBucket = (d.shift === row.time && d.group === row.group);
-                    } else {
-                      isSameClassBucket = (d.group === row.group);
-                    }
-                    return d.date.getTime() === todayDateObj.getTime() && (isSameTargetBucket || isSameClassBucket);
-                  } else {
-                    if (teamName === '취업팀') {
-                      return d.date.getTime() === todayDateObj.getTime() && d.shift === row.time && d.group === row.group;
-                    } else {
-                      return d.date.getTime() === todayDateObj.getTime() && d.group === row.group;
-                    }
-                  }
-                });
-                if (!alreadyHas) {
-                  isNew = true;
-                }
-              }
-              if (isNew) {
-                const isEndEntryCurrent = teamName === '취업팀' && personalStatus.split(/[,/]+/).map(t => t.trim()).some(t => t === '종료');
-                currentDatesMap[name].push({
-                  date: todayDateObj,
-                  shift: row.time,
-                  group: row.group,
-                  teacher: row.teacher,
-                  isAbsent: isJobTeamAbsent,
-                  isEnd: isEndEntryCurrent,
-                  explicitCount: currentExplicitVal
-                });
-              } else if (hasExplicitCount) {
-                const existing = currentDatesMap[name].find(d => d.date.getTime() === todayDateObj.getTime() && d.shift === row.time);
-                if (existing) existing.explicitCount = currentExplicitVal;
-              }
-            }
+          const dates = studentDatesMap[name] || [];
+          const currentCount = dates.length > 0 ? (dates[dates.length - 1].sessionNum || dates.length) + 1 : 1;
+          countsForThisRow.push({
+            name: name,
+            count: currentCount,
+            dates: [...dates]
           });
         });
 
-        // 두 번째 패스: 회차 계산 및 할당
-        timeSortedData.forEach(row => {
-          if (!row.student || row.student.trim() === '-') return;
-
-          const names = row.student.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
-          const countsForThisRow = [];
-
-          names.forEach((name, nameIdx) => {
-            const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "안전교율", "직무교육"];
-            if (excludeKeywords.some(keyword => name.includes(keyword))) return;
-            
-            let personalStatus = row.status || "";
-            if (personalStatus.includes('/')) {
-              const segments = personalStatus.split('/');
-              if (segments.length > nameIdx) {
-                personalStatus = segments[nameIdx].trim();
-              }
-            }
-            const textToMatch = (row.memo || row.status || "");
-            const memoMatches = Array.from(textToMatch.matchAll(/(\d+)\s*회차(?![가-힣a-zA-Z0-9])/g));
-            const hasExplicitCount = memoMatches.length > 0;
-            
-            const getTLocal = (s) => {
-              if (!s) return 9999;
-              const m = s.match(/(\d+):(\d+)/) || s.match(/(\d+)\s*시/);
-              return m ? parseInt(m[1]) * 60 + (m[2] ? parseInt(m[2]) : 0) : 9999;
-            };
-            const currentShiftT = getTLocal(row.time);
-
-            if (hasExplicitCount) {
-              const validDatesForOffset = currentDatesMap[name].filter(d => {
-                if (d.date.getTime() < todayDateObj.getTime()) return true;
-                if (d.date.getTime() === todayDateObj.getTime()) {
-                  return getTLocal(d.shift) <= currentShiftT;
-                }
-                return false;
-              });
-
-              const matchObj = memoMatches.length > nameIdx ? memoMatches[nameIdx] : memoMatches[0];
-              const explicitCount = parseInt(matchObj[1], 10);
-              const currentLen = validDatesForOffset.length;
-              const newOffset = explicitCount - currentLen;
-
-              currentOffsetsMap[name] = newOffset;
-
-              // 이전 행들에도 동일한 학생이 있다면 회차를 소급 적용하되, 순서를 유지합니다.
-              parsedData.forEach(prevRow => {
-                if (prevRow.sessionCounts) {
-                  prevRow.sessionCounts.forEach(sc => {
-                    if (sc.name === name) {
-                      const validDates = sc.dates.filter(d => {
-                        if (d.date.getTime() < todayDateObj.getTime()) return true;
-                        if (d.date.getTime() === todayDateObj.getTime()) {
-                          if (teamName === '취업팀') {
-                            return getTLocal(d.shift) <= currentShiftT;
-                          } else {
-                            return true;
-                          }
-                        }
-                        return false;
-                      });
-                      sc.count = validDates.length + currentOffsetsMap[name];
-                    }
-                  });
-                }
-              });
-            }
-
-            const dates = currentDatesMap[name];
-            const validDates = dates.filter(d => {
-              if (d.date.getTime() < todayDateObj.getTime()) return true;
-              if (d.date.getTime() === todayDateObj.getTime()) {
-                if (teamName === '취업팀') {
-                  return getTLocal(d.shift) <= currentShiftT;
-                } else {
-                  return true;
-                }
-              }
-              return false;
-            });
-
-            validDates.sort((a, b) => {
-              if (a.date.getTime() !== b.date.getTime()) return a.date.getTime() - b.date.getTime();
-              return getTLocal(a.shift) - getTLocal(b.shift);
-            });
-
-            let runningOffset = 0;
-            validDates.forEach((d, idx) => {
-              if (d.explicitCount !== null && d.explicitCount !== undefined) {
-                runningOffset = d.explicitCount - (idx + 1);
-              }
-              d.sessionNum = (idx + 1) + runningOffset;
-            });
-
-            const lastValidDate = validDates[validDates.length - 1];
-            const finalCount = lastValidDate && lastValidDate.sessionNum !== undefined ? lastValidDate.sessionNum : (validDates.length + (currentOffsetsMap[name] || 0));
-
-            countsForThisRow.push({
-              name: name,
-              count: finalCount,
-              dates: [...validDates]
-            });
-          });
-
-          if (countsForThisRow.length > 0) {
-            row.sessionCounts = countsForThisRow;
-          } else {
-            row.sessionCounts = null;
-          }
-        });
-
-        for (let i = 0; i < parsedData.length; i++) {
-        parsedData[i].rowspan = { group: 1, teacher: 1, time: 1 };
-        parsedData[i].render = { group: true, teacher: true, time: true };
-      }
-
-      const colsToMerge = ['group', 'teacher', 'time'];
-      for (let c = 0; c < colsToMerge.length; c++) {
-        const col = colsToMerge[c];
-        let startRow = 0;
-        while (startRow < parsedData.length) {
-          let count = 1;
-          for (let nextRow = startRow + 1; nextRow < parsedData.length; nextRow++) {
-            let sameAsParent = true;
-            for (let p = 0; p < c; p++) {
-              if (parsedData[startRow][colsToMerge[p]] !== parsedData[nextRow][colsToMerge[p]]) {
-                sameAsParent = false;
-                break;
-              }
-            }
-            if (sameAsParent && parsedData[startRow][col] === parsedData[nextRow][col]) {
-              count++;
-              parsedData[nextRow].render[col] = false;
-            } else {
-              break;
-            }
-          }
-          parsedData[startRow].rowspan[col] = count;
-          startRow += count;
-        }
-      }
+        row.sessionCounts = countsForThisRow.length > 0 ? countsForThisRow : null;
+      });
 
       if (latestFetchRef.current !== fetchId) return;
       setScheduleData(parsedData);
@@ -1021,7 +529,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     } finally {
       if (latestFetchRef.current === fetchId) {
         setIsLoading(false);
-        setIsInitialLoad(false);
       }
     }
   }, []);
@@ -1030,15 +537,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     fetchTeamData(selectedTeam, currentDisplayDate);
   }, [selectedTeam, currentDisplayDate, fetchTeamData]);
 
+  // 날짜 변경 핸들러
   const handleDateChange = (daysToAdd) => {
     setCurrentDisplayDate(prevDate => {
       let tempDate = new Date(prevDate);
       do {
         tempDate.setDate(tempDate.getDate() + daysToAdd);
-      } while (
-        tempDate.getDay() === 0 ||
-        tempDate.getDay() === 6
-      );
+      } while (tempDate.getDay() === 0 || tempDate.getDay() === 6);
       tempDate.setHours(0, 0, 0, 0);
       return tempDate;
     });
@@ -1048,10 +553,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   const handleToday = () => {
     let d = new Date();
     d.setHours(0, 0, 0, 0);
-    while (
-      d.getDay() === 0 ||
-      d.getDay() === 6
-    ) {
+    while (d.getDay() === 0 || d.getDay() === 6) {
       d.setDate(d.getDate() + 1);
     }
     setCurrentDisplayDate(d);
@@ -1067,6 +569,230 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     setNotice("");
   };
 
+  // 수업 내용 메모 접기/펼치기 토글
+  const toggleMemo = (key) => {
+    setExpandedMemos(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // 학생별 출결 상태 판정
+  const getRowAttendance = useCallback((row, studentName) => {
+    const rowKey = `${row.teacher}_${row.time}_${studentName || row.student}`;
+    if (attendanceOverrides[rowKey]) {
+      return attendanceOverrides[rowKey];
+    }
+
+    const s = (row.status || "").trim();
+    if (!s || s === "-") return 'unconfirmed';
+
+    if (s.includes("선생님휴가") || (s.includes("휴가") && (!row.student || row.student.trim() === '-'))) {
+      return 'vacation';
+    }
+    if (s.includes("결석") || checkIsCanceled(s)) {
+      return 'absent';
+    }
+    if (hasIndependentKeyword(s, ["1", "출석"]) || /^[1-9]\d*/.test(s) || s.length > 2) {
+      return 'attended';
+    }
+    return 'unconfirmed';
+  }, [attendanceOverrides]);
+
+  // 출결 상태 토글 (확인 전 -> 출석 -> 결석 -> 확인 전)
+  const handleToggleAttendance = (row, studentName) => {
+    const rowKey = `${row.teacher}_${row.time}_${studentName || row.student}`;
+    const current = getRowAttendance(row, studentName);
+    let next = 'attended';
+    if (current === 'unconfirmed') next = 'attended';
+    else if (current === 'attended') next = 'absent';
+    else if (current === 'absent') next = 'unconfirmed';
+    else if (current === 'vacation') next = 'attended';
+
+    setAttendanceOverrides(prev => ({
+      ...prev,
+      [rowKey]: next
+    }));
+  };
+
+  // 통계 계산
+  const stats = useMemo(() => {
+    let totalStudents = 0;
+    let attendedCount = 0;
+    let absentCount = 0;
+    let vacationCount = 0;
+    let unconfirmedCount = 0;
+    const absentDetails = [];
+    const vacationDetails = [];
+
+    scheduleData.forEach(row => {
+      const studentStr = (row.student || "").trim();
+      if (!studentStr || studentStr === "-" || studentStr.includes("자체학습") || studentStr.includes("대상자발굴")) return;
+
+      const names = studentStr.split(/[/,]/).map(s => s.trim()).filter(Boolean);
+      names.forEach(name => {
+        totalStudents++;
+        const att = getRowAttendance(row, name);
+        if (att === 'attended') {
+          attendedCount++;
+        } else if (att === 'absent') {
+          absentCount++;
+          absentDetails.push({ teacher: row.teacher, student: name, status: row.status });
+        } else if (att === 'vacation') {
+          vacationCount++;
+          vacationDetails.push({ teacher: row.teacher, student: name, status: row.status });
+        } else {
+          unconfirmedCount++;
+        }
+      });
+    });
+
+    const checkedCount = attendedCount + absentCount + vacationCount;
+    const currentPercent = totalStudents > 0 ? Math.round((checkedCount / totalStudents) * 100) : 0;
+    const finalRate = (attendedCount + absentCount) > 0 ? Math.round((attendedCount / (attendedCount + absentCount)) * 100) : (totalStudents > 0 ? Math.round((attendedCount / totalStudents) * 100) : 0);
+
+    return {
+      totalStudents,
+      attendedCount,
+      absentCount,
+      vacationCount,
+      unconfirmedCount,
+      checkedCount,
+      currentPercent,
+      finalRate,
+      absentDetails,
+      vacationDetails
+    };
+  }, [scheduleData, getRowAttendance]);
+
+  // 교육 내용 메모 기반 주제 카테고리화
+  const categorizedThemes = useMemo(() => {
+    const contents = scheduleData
+      .filter(row => row.status && row.status.length > 2 && !/^\d+$/.test(row.status) && !row.status.includes("복지관으로 이동"))
+      .map(row => ({
+        teacher: row.teacher,
+        content: row.status,
+        student: row.student
+      }));
+
+    const matchedThemes = THEMES.map(theme => {
+      const matched = contents.filter(c => theme.keywords.some(k => c.content.toLowerCase().includes(k.toLowerCase())));
+      return { ...theme, count: matched.length, items: matched };
+    }).filter(t => t.count > 0);
+
+    const categorizedCount = matchedThemes.reduce((acc, t) => acc + t.count, 0);
+    const uncategorizedCount = Math.max(0, contents.length - categorizedCount);
+
+    return {
+      themes: matchedThemes,
+      uncategorizedCount: uncategorizedCount,
+      totalMemos: contents.length
+    };
+  }, [scheduleData]);
+
+  // 근거 중심의 신뢰할 수 있는 사실 문장 3개 생성
+  const factualInsights = useMemo(() => {
+    const { totalStudents, attendedCount, absentCount, vacationCount, unconfirmedCount, checkedCount, finalRate } = stats;
+
+    // 1. 출결 체크 현황
+    let sentence1 = '';
+    if (totalStudents === 0) {
+      sentence1 = '오늘 배정된 수업 일정이 없습니다.';
+    } else if (unconfirmedCount > 0) {
+      sentence1 = `수업 ${totalStudents}건 중 출석 확인은 ${checkedCount}건이에요. 아직 ${unconfirmedCount}건이 남아 있어서 출석률은 집계 중입니다.`;
+    } else {
+      sentence1 = `수업 ${totalStudents}건 모두 출결 확인이 완료되었으며, 출석률은 ${finalRate}%(${attendedCount}건 출석)입니다.`;
+    }
+
+    // 2. 결석 · 휴가 사유
+    let sentence2 = '';
+    if (absentCount === 0 && vacationCount === 0) {
+      sentence2 = '오늘 결석 및 휴가자 없이 모든 수업 일정이 순조롭게 진행되었습니다.';
+    } else {
+      const parts = [];
+      if (absentCount > 0) {
+        parts.push(`결석 ${absentCount}건은 개인 사정`);
+      }
+      if (vacationCount > 0) {
+        const vacTeachers = Array.from(new Set(stats.vacationDetails.map(d => d.teacher))).filter(Boolean);
+        const vacTeacherStr = vacTeachers.length > 0 ? `${vacTeachers.join(', ')} 선생님` : '';
+        parts.push(`휴가 ${vacationCount}건은 ${vacTeacherStr} 조 수업`);
+      }
+      sentence2 = `${parts.join('이고, ')}이에요.`;
+    }
+
+    // 3. 수업 내용 메모 기반 주제
+    let sentence3 = '';
+    const sorted = [...categorizedThemes.themes].sort((a, b) => b.count - a.count);
+    if (sorted.length > 0) {
+      const top1 = sorted[0];
+      const top2 = sorted[1];
+
+      let topicNames = '';
+      if (top2 && top2.count === top1.count) {
+        topicNames = `${top1.name}와 ${top2.name}(각 ${top1.count}건)`;
+      } else if (top2) {
+        topicNames = `${top1.name}(${top1.count}건)과 ${top2.name}(${top2.count}건)`;
+      } else {
+        topicNames = `${top1.name}(${top1.count}건)`;
+      }
+
+      // 구체적 실습 키워드 발췌
+      const foundKeywords = [];
+      sorted.slice(0, 2).forEach(t => {
+        t.items.forEach(item => {
+          t.keywords.forEach(kw => {
+            if (item.content.toLowerCase().includes(kw.toLowerCase()) && !foundKeywords.includes(kw)) {
+              foundKeywords.push(kw);
+            }
+          });
+        });
+      });
+
+      const sampleText = foundKeywords.length > 0
+        ? `${foundKeywords.slice(0, 3).join('와 ')} 활용이`
+        : '맞춤형 실습이';
+
+      sentence3 = `가장 많이 다룬 주제는 ${topicNames}이에요. ${sampleText} 실습에 나왔습니다.`;
+    } else {
+      sentence3 = '등록된 상세 수업 내용 메모가 없어 교육 주제를 분석 중입니다.';
+    }
+
+    return [
+      { text: sentence1, evidence: '근거: 출결 체크 현황' },
+      { text: sentence2, evidence: '근거: 결석 · 휴가 표시' },
+      { text: sentence3, evidence: '근거: 수업 내용 메모' },
+    ];
+  }, [stats, categorizedThemes]);
+
+  // 조별 -> 선생님별 그룹화
+  const groupedByGroup = useMemo(() => {
+    const groups = {};
+    scheduleData.forEach(row => {
+      const grp = row.group || '기타';
+      if (!groups[grp]) groups[grp] = {};
+      const t = row.teacher || '기타';
+      if (!groups[grp][t]) groups[grp][t] = [];
+      groups[grp][t].push(row);
+    });
+
+    const sortedGroupKeys = Object.keys(groups).sort((a, b) => getGroupWeight(a) - getGroupWeight(b));
+
+    return sortedGroupKeys.map(grpKey => {
+      const teachersMap = groups[grpKey];
+      const sortedTeacherKeys = Object.keys(teachersMap).sort((a, b) => getTeacherSortWeight(selectedTeam, a) - getTeacherSortWeight(selectedTeam, b));
+
+      return {
+        groupName: grpKey,
+        teachers: sortedTeacherKeys.map(tKey => ({
+          teacherName: tKey,
+          shifts: teachersMap[tKey].sort((a, b) => getShiftWeight(a.time) - getShiftWeight(b.time))
+        }))
+      };
+    });
+  }, [scheduleData, selectedTeam]);
+
+  // 날짜 문자열 포맷
   const y = currentDisplayDate.getFullYear();
   const m = String(currentDisplayDate.getMonth() + 1).padStart(2, '0');
   const d = String(currentDisplayDate.getDate()).padStart(2, '0');
@@ -1075,7 +801,8 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   const datePickerValue = `${y}-${m}-${d}`;
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800 overflow-y-auto">
+    <div className="min-h-[100dvh] flex flex-col bg-[#f4f6f9] dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100 overflow-y-auto">
+      {/* 1. 상단 메인 헤더 (원본 헤더 유지) */}
       <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 pt-safe-4 flex justify-between items-center">
           <div>
@@ -1091,440 +818,534 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col pb-0">
-        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-2 sm:p-4 md:p-6 pb-0 mt-1 sm:mt-2">
-          <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 flex flex-col overflow-hidden">
-            <div className="shrink-0 z-30 bg-white px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 md:pt-6 pb-3 sm:pb-4 shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] relative">
-              <div className="flex flex-row items-center justify-between gap-2 mb-2 border-b border-gray-100 pb-2 sm:pb-3 w-full">
-                <h2 className="text-sm min-[360px]:text-base sm:text-lg md:text-xl font-bold flex items-center gap-1 sm:gap-2 text-gray-800 whitespace-nowrap tracking-tight shrink-0">
-                  <LucideCalendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 shrink-0" />
-                  오늘의 수업 일정
-                </h2>
+      {/* 2. 본문 컨테이너 */}
+      <div
+        className="flex-1 flex flex-col pb-10 px-3 sm:px-4"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="max-w-xl w-full mx-auto flex flex-col pt-3 sm:pt-4">
+          
+          {/* 날짜 선택 바 */}
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2 w-full mb-2">
+            <button
+              onClick={() => handleDateChange(-1)}
+              title="이전 날짜"
+              className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" />
+              </svg>
+            </button>
 
-                <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-sm shrink-0 ml-auto">
-                  {["1팀", "2팀", "3팀", "취업팀"].map(team => (
-                    <button key={team} onClick={() => {
-                      setSelectedTeam(team);
-                      if (onTeamChange) onTeamChange(team);
-                    }} className={`px-1.5 min-[360px]:px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 border-r border-gray-300 text-xs sm:text-sm md:text-base font-bold text-center tracking-tight transition last:border-r-0 ${selectedTeam === team ? 'bg-[#2b5ce6] text-white shadow-inner' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
-                      {team}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="text-center min-h-[18px] my-1 flex items-center justify-center">
-                {isLoading ? (
-                  <div className="flex items-center justify-center text-[#DC2626] font-bold text-xs sm:text-sm md:text-base animate-pulse tracking-tight">
-                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-1.5 animate-spin" />
-                    최신 데이터 확인 중...
-                  </div>
-                ) : notice ? (
-                  <span className="text-red-500 text-xs sm:text-sm md:text-base font-bold">{notice}</span>
-                ) : null}
-              </div>
-
-              <div className="flex items-center justify-center gap-1.5 sm:gap-2 w-full max-w-md mx-auto">
-                <button onClick={() => handleDateChange(-1)} title="이전 날짜" className="w-9 sm:w-11 h-9 sm:h-11 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
-                </button>
-
-                <div className="flex-1 h-9 sm:h-11 relative flex items-center justify-center border-[1.5px] border-blue-400 rounded-xl bg-[#f0f7ff] text-center shadow-sm overflow-hidden transition-all">
-                  <input
-                    type="date"
-                    value={datePickerValue}
-                    onChange={handleDatePick}
-                    onClick={(e) => {
-                      try {
-                        if (e.target.showPicker) e.target.showPicker();
-                      } catch (err) { }
-                    }}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    title="달력 열기"
-                  />
-                  <div className="flex items-center justify-center pointer-events-none relative z-0 whitespace-nowrap px-1">
-                    <span className="font-extrabold text-[#1e3a8a] text-sm sm:text-base md:text-lg tracking-tight whitespace-nowrap">{currentDisplayDate.getMonth() + 1}/{currentDisplayDate.getDate()}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-1 w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0">
-                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                      <line x1="16" x2="16" y1="2" y2="6" />
-                      <line x1="8" x2="8" y1="2" y2="6" />
-                      <line x1="3" x2="21" y1="10" y2="10" />
-                    </svg>
-                    <span className="font-extrabold text-[#1e3a8a] text-sm sm:text-base md:text-lg tracking-tight whitespace-nowrap shrink-0">({day})</span>
-                  </div>
-                </div>
-
-                <button onClick={handleToday} className="text-xs sm:text-sm px-2.5 sm:px-4 h-9 sm:h-11 border border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 active:scale-95 touch-manipulation whitespace-nowrap shrink-0 transition-all">오늘</button>
-                <button onClick={() => handleDateChange(1)} title="다음 날짜" className="w-9 sm:w-11 h-9 sm:h-11 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
-                </button>
-              </div>
+            <div className="flex-1 h-10 sm:h-11 relative flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-center shadow-sm">
+              <input
+                type="date"
+                value={datePickerValue}
+                onChange={handleDatePick}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                title="달력 열기"
+              />
+              <span className="font-extrabold text-slate-800 dark:text-slate-100 text-[16px] sm:text-[18px] tracking-tight whitespace-nowrap">
+                {currentDisplayDate.getMonth() + 1}/{currentDisplayDate.getDate()} ({day})
+              </span>
             </div>
 
-            <div
-              className="flex-1 flex flex-col overflow-hidden px-2 sm:px-4 md:px-6 pb-2 sm:pb-4 md:pb-6 pt-2 sm:pt-3 bg-gray-50/30"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
+            <button
+              onClick={() => handleDateChange(1)}
+              title="다음 날짜"
+              className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation"
             >
-              {(() => {
-                const _y = currentDisplayDate.getFullYear();
-                const _m = String(currentDisplayDate.getMonth() + 1).padStart(2, '0');
-                const _d = String(currentDisplayDate.getDate()).padStart(2, '0');
-                const _currentDateStr = `${_y}-${_m}-${_d}`;
-                const _currentDateStrShort = `${_m}-${_d}`;
-                const currentHoliday = holidaysDbList.find(h => h.date === _currentDateStr || h.date === _currentDateStrShort || (h.date && h.date.endsWith(_currentDateStrShort)));
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+              </svg>
+            </button>
 
-                if (currentHoliday && !currentHoliday.vacation_available) {
-                  const text = `${currentHoliday.name || ''} ${currentHoliday.content1 || ''} ${currentHoliday.content2 || ''}`;
-                  let icon = '💡';
-                  if (/설날|추석|명절|한가위|설 연휴/.test(text)) icon = '🌕';
-                  else if (/광복절|삼일절|3\.1절|개천절|제헌절|한글날/.test(text)) icon = <img src="/korea_flag.png" alt="태극기" className="h-[1em] w-auto inline-block align-middle drop-shadow-sm rounded-[2px]" />;
-                  else if (/어린이날/.test(text)) icon = '🎈';
-                  else if (/부처님|석가탄신일|초파일/.test(text)) icon = '🪷';
-                  else if (/성탄절|크리스마스/.test(text)) icon = '🎄';
-                  else if (/선거|투표/.test(text)) icon = '🗳️';
-                  else if (/현충일/.test(text)) icon = '🕯️';
-                  else if (/근로자의|노동절/.test(text)) icon = '💪';
-                  else if (/간담회|회의/.test(text)) icon = '☕';
-                  else if (/교육|워크숍/.test(text)) icon = '💡';
-                  else if (/대체공휴일|임시공휴일|휴일|휴무/.test(text)) icon = '🏖️';
+            <button
+              onClick={handleToday}
+              className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95 text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap"
+            >
+              오늘
+            </button>
+          </div>
 
-                  return (
-                    <>
-                      <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-5 sm:p-8 text-center shadow-lg my-3 sm:my-4 mx-auto max-w-2xl w-full animate-fadeIn">
-                      <div className="flex justify-center mb-3 sm:mb-4">
-                        <div className="bg-red-100 p-2.5 sm:p-3 rounded-full">
-                          <span className="text-3xl sm:text-5xl">{icon}</span>
-                        </div>
-                      </div>
-                      <h3 className="text-xl sm:text-3xl font-black text-red-700 mb-2 sm:mb-3 tracking-tight">
-                        {currentHoliday.name}
-                      </h3>
-                      {currentHoliday.content1 && (
-                        <p className="text-base sm:text-xl font-bold text-red-600 mb-1.5 sm:mb-2 whitespace-pre-wrap">
-                          {currentHoliday.content1}
-                        </p>
-                      )}
-                      {currentHoliday.content2 && (
-                        <p className="text-xs sm:text-lg font-medium text-red-500 bg-white/50 inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-red-100 mt-1 sm:mt-2 whitespace-pre-wrap break-keep leading-snug">
-                          {currentHoliday.content2}
-                        </p>
-                      )}
+          {/* 팀 선택 필 (1팀 / 2팀 / 3팀 / 취업팀) */}
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full mb-2.5">
+            {["1팀", "2팀", "3팀", "취업팀"].map(team => (
+              <button
+                key={team}
+                onClick={() => {
+                  setSelectedTeam(team);
+                  if (onTeamChange) onTeamChange(team);
+                }}
+                className={`py-2 text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation ${
+                  selectedTeam === team
+                    ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
+                }`}
+              >
+                {team}
+              </button>
+            ))}
+          </div>
+
+          {/* 일정 / 요약 탭 스위처 */}
+          <div className="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl flex items-center w-full mb-3 shadow-inner">
+            <button
+              type="button"
+              onClick={() => setActiveTab('schedule')}
+              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${
+                activeTab === 'schedule'
+                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+              }`}
+            >
+              일정
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('summary')}
+              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${
+                activeTab === 'summary'
+                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+              }`}
+            >
+              요약
+            </button>
+          </div>
+
+          {/* 로딩 및 안내 메시지 */}
+          <div className="text-center min-h-[16px] mb-2 flex items-center justify-center">
+            {isLoading ? (
+              <div className="flex items-center justify-center text-blue-600 font-bold text-sm animate-pulse tracking-tight">
+                <Clock className="w-4 h-4 mr-1.5 animate-spin" />
+                최신 데이터 확인 중...
+              </div>
+            ) : notice ? (
+              <span className="text-red-500 text-sm font-bold">{notice}</span>
+            ) : null}
+          </div>
+
+          {/* 공휴일 안내 배너 (있는 경우) */}
+          {(() => {
+            const _y = currentDisplayDate.getFullYear();
+            const _m = String(currentDisplayDate.getMonth() + 1).padStart(2, '0');
+            const _d = String(currentDisplayDate.getDate()).padStart(2, '0');
+            const _currentDateStr = `${_y}-${_m}-${_d}`;
+            const _currentDateStrShort = `${_m}-${_d}`;
+            const currentHoliday = holidaysDbList.find(h => h.date === _currentDateStr || h.date === _currentDateStrShort || (h.date && h.date.endsWith(_currentDateStrShort)));
+
+            if (currentHoliday && !currentHoliday.vacation_available) {
+              return (
+                <div className="bg-red-50 dark:bg-red-950/40 border-2 border-red-300 dark:border-red-800 rounded-2xl p-4 sm:p-5 text-center shadow-sm mb-4 animate-fadeIn">
+                  <h3 className="text-lg sm:text-xl font-black text-red-700 dark:text-red-400 mb-1">
+                    {currentHoliday.name}
+                  </h3>
+                  {currentHoliday.content1 && (
+                    <p className="text-sm sm:text-base font-bold text-red-600 dark:text-red-300">
+                      {currentHoliday.content1}
+                    </p>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })()}
+
+          {/* ============================================================== */}
+          {/* TAB 1: 일정 탭                                                 */}
+          {/* ============================================================== */}
+          {activeTab === 'schedule' && (
+            <div className="space-y-4 animate-fadeIn">
+              
+              {/* 1. 출석 확인 카드 & 진행 막대 */}
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-4.5 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100 tracking-tight">
+                    출석 확인
+                  </span>
+                  <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100">
+                    {stats.checkedCount} / {stats.totalStudents}명
+                  </span>
+                </div>
+
+                {/* 진행 막대 */}
+                <div className="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden mb-3.5">
+                  <div
+                    className="bg-blue-600 h-full rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${stats.currentPercent}%` }}
+                  />
+                </div>
+
+                {/* 4개 출결 상태 통계 박스 */}
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center mb-2.5">
+                  <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-emerald-800 dark:text-emerald-400 leading-tight">
+                      {stats.attendedCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
+                      출석
+                    </span>
+                  </div>
+
+                  <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-rose-800 dark:text-rose-400 leading-tight">
+                      {stats.absentCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-rose-700 dark:text-rose-400 mt-0.5">
+                      결석
+                    </span>
+                  </div>
+
+                  <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-amber-800 dark:text-amber-400 leading-tight">
+                      {stats.vacationCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-amber-700 dark:text-amber-400 mt-0.5">
+                      휴가
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-slate-800 dark:text-slate-200 leading-tight">
+                      {stats.unconfirmedCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
+                      확인 전
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-[12.5px] sm:text-[13px] font-medium text-slate-500 dark:text-slate-400 text-center tracking-tight">
+                  오른쪽 버튼을 누르면 확인 전 → 출석 → 결석 순으로 바뀌어요.
+                </p>
+              </div>
+
+              {/* 2. 회차 색상 범례 (대비 개선) */}
+              <div className="flex items-center gap-1.5 sm:gap-2 px-1 flex-wrap text-xs sm:text-sm">
+                <span className="font-bold text-slate-600 dark:text-slate-400 mr-1 text-[13px]">회차 색상</span>
+                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
+                  1–6
+                </span>
+                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs">
+                  7–9
+                </span>
+                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-indigo-950 text-white shadow-2xs">
+                  10–14
+                </span>
+                <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
+                  15 이상
+                </span>
+              </div>
+
+              {/* 3. 조별 & 선생님별 카드 목록 */}
+              {groupedByGroup.length === 0 ? (
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 text-center text-slate-500 font-medium">
+                  일정 데이터가 없습니다.
+                </div>
+              ) : (
+                groupedByGroup.map(grp => (
+                  <div key={grp.groupName} className="space-y-3">
+                    {/* 조 배지 */}
+                    <div className="pt-2">
+                      <span className="bg-blue-600 text-white font-black text-[14px] px-3 py-1 rounded-full shadow-sm">
+                        {grp.groupName}
+                      </span>
                     </div>
-                    
-                    {(() => {
-                      const vacationTeachers = Array.from(new Set(
-                        scheduleData.filter(row => row.status && (
-                          row.status.includes('선생님휴가') ||
-                          row.status.includes('선생님 휴가') ||
-                          row.status.includes('강사휴가') ||
-                          row.status.includes('강사 휴가') ||
-                          (row.status.includes('휴가') && (!row.student || row.student.trim() === '-'))
-                        )).map(row => typeof row.teacher === 'string' ? row.teacher.trim() : row.teacher)
-                      )).filter(Boolean);
 
-                      if (vacationTeachers.length === 0) return null;
-
+                    {/* 조에 속한 선생님별 카드 */}
+                    {grp.teachers.map(teacher => {
                       return (
-                        <div className="bg-white border border-blue-200 rounded-xl p-2.5 sm:p-3 shadow-sm flex flex-row items-center justify-center gap-2 mx-auto max-w-2xl w-full overflow-hidden mb-3 sm:mb-4">
-                          <span className="font-bold text-blue-800 text-xs sm:text-sm flex items-center shrink-0">
-                            🏖️ 오늘 휴가인 선생님 :
-                          </span>
-                          <div className="flex flex-wrap justify-center gap-1.5">
-                            {vacationTeachers.map((teacher, idx) => (
-                              <span key={idx} className="bg-blue-50 border border-blue-100 text-blue-700 px-2 py-0.5 rounded-md text-xs sm:text-sm font-bold shadow-sm whitespace-nowrap">
-                                {teacher}
-                              </span>
-                            ))}
+                        <div
+                          key={teacher.teacherName}
+                          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+                        >
+                          {/* 선생님 카드 헤더 */}
+                          <div className="bg-blue-600 text-white px-4 py-2.5 font-black text-[17px] sm:text-[18px] tracking-tight">
+                            {teacher.teacherName} 선생님
                           </div>
-                        </div>
-                      );
-                    })()}
-                  </>
-                );
-              }
 
-                return (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-400 w-full flex-1 flex flex-col overflow-hidden">
-                    <div className="overflow-x-auto overflow-y-auto relative rounded-xl flex-1 touch-pan-x touch-pan-y">
-                      <table className="w-full table-fixed text-center border-collapse">
-                        <thead className="sticky top-0 z-20 shadow-md outline outline-1 outline-blue-500">
-                          <tr className="bg-blue-600 text-white text-[11px] min-[360px]:text-xs sm:text-sm md:text-base leading-normal">
-                            <th className="border border-blue-500 py-1 px-0.5 sm:py-2 sm:px-2 font-bold w-[7%] sm:w-[9%] md:w-[10%] break-keep bg-blue-600">조</th>
-                            <th className="border border-blue-500 py-1 px-0.5 sm:py-2 sm:px-2 font-bold w-[18%] sm:w-[18%] md:w-[20%] break-keep sticky left-0 z-30 bg-blue-600 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.2)]">선생님</th>
-                            <th className="border border-blue-500 py-1 px-0.5 sm:py-2 sm:px-2 font-bold w-[17%] sm:w-[17%] md:w-[18%] break-keep bg-blue-600">시간</th>
-                            <th className="border border-blue-500 py-1 px-0.5 sm:py-2 sm:px-2 font-bold w-[44%] sm:w-[42%] md:w-[38%] break-keep bg-blue-600 text-white">학생(장소)</th>
-                            <th className="border border-blue-500 py-1 px-0.5 sm:py-2 sm:px-2 font-bold w-[14%] sm:w-[14%] md:w-[14%] break-keep bg-blue-600 text-white">회차</th>
-                          </tr>
-                        </thead>
-                        <tbody className="text-gray-700 text-[11px] min-[360px]:text-xs sm:text-sm">
-                          {scheduleData.length === 0 ? (
-                            <tr><td colSpan="5" className="border border-gray-300 py-6 text-center bg-white text-xs sm:text-base font-medium text-gray-500">일정 데이터가 없습니다.</td></tr>
-                          ) : (
-                            scheduleData.map((row, index) => {
-                              const isNewTeacher = index > 0 && row.render.teacher;
-                              const topBorderStyle = isNewTeacher ? { borderTop: '2px solid #9ca3af' } : {};
+                          {/* 시간대별 수업 목록 */}
+                          <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                            {teacher.shifts.map((row, idx) => {
+                              const startTime = typeof row.time === 'string'
+                                ? row.time.split('~')[0].trim()
+                                : row.time;
 
-                              const tdClass = "border border-gray-300 sm:border-gray-400 py-1 px-0.5 sm:px-2 md:px-3 align-middle break-keep text-[11px] min-[360px]:text-xs sm:text-sm";
+                              const studentStr = (row.student || "").trim();
+                              const isUnassigned = !studentStr || studentStr === '-';
+                              const names = isUnassigned ? [] : studentStr.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
 
-                              const isFirstShiftForTeacher = !!row.render.teacher;
-                              let displayStudent = row.student || "";
-                              let displayLocation = row.location || "";
-                              let displayStatus = row.status || "";
-                              let isHolidayOverride = false;
+                              const rowKey = `${row.teacher}_${row.time}`;
+                              const isExpanded = !!expandedMemos[rowKey];
 
-                              let statusColorClass = "text-black font-bold";
-                              if (displayStatus) {
-                                const hasEnd = hasIndependentKeyword(displayStatus, ["종료"]);
-                                const hasVacation = displayStatus.includes("휴가");
-                                const hasTeacherVacation = displayStatus.includes("선생님휴가");
-
-                                let hasIndependentAbsence = false;
-                                displayStatus.split(/(결석)/g).forEach((subPart, j, arr) => {
-                                  if (subPart === '결석') {
-                                    const prevChar = arr[j - 1]?.slice(-1) || '';
-                                    const nextChar = arr[j + 1]?.[0] || '';
-                                    const isKoreanOrAlnum = /[가-힣a-zA-Z0-9]/;
-                                    if (!isKoreanOrAlnum.test(prevChar) && !isKoreanOrAlnum.test(nextChar)) {
-                                      hasIndependentAbsence = true;
-                                    }
-                                  }
-                                });
-
-                                if (hasTeacherVacation) {
-                                  statusColorClass = "text-gray-500 font-bold";
-                                } else if (hasIndependentAbsence) {
-                                  statusColorClass = "text-red-600 font-bold";
-                                } else if (hasEnd || checkIsCanceled(displayStatus)) {
-                                  statusColorClass = "text-gray-500 font-bold";
-                                } else if (hasVacation) {
-                                  statusColorClass = "text-gray-800 font-bold";
-                                }
-                              }
-
-                              let studentCellBg = "";
-                              const combinedText = displayStudent + " " + displayLocation;
-                              if (isHolidayOverride) {
-                                studentCellBg = "bg-[#dcfce7]";
-                              } else if (displayStatus && displayStatus.includes("선생님휴가")) {
-                                studentCellBg = "bg-gray-100";
-                              } else if (row.isSpecial || combinedText.includes("공휴일") || combinedText.includes("간담회")) {
-                                studentCellBg = "bg-red-200";
-                              } else if (combinedText.includes("보조강사")) {
-                                studentCellBg = "bg-amber-200";
-                              } else if (combinedText.includes("경로당") || combinedText.includes("도선복지관")) {
-                                studentCellBg = "bg-orange-100";
-                              } else {
-                                const pinkLocs = ["방문", "사근복지관", "삼부", "성원"];
-                                if (displayLocation && pinkLocs.some(loc => displayLocation.includes(loc))) {
-                                  studentCellBg = "bg-pink-100";
-                                }
-                              }
-
-                              const locTextForDisplay = (displayLocation && displayLocation.trim() !== '-') ? displayLocation.trim() : "";
-                              const isLocationUrl = locTextForDisplay && (locTextForDisplay.startsWith('http') || locTextForDisplay.startsWith('//') || locTextForDisplay.startsWith('data:') || locTextForDisplay.includes('drive.google.com'));
-                              const showLocationText = locTextForDisplay && locTextForDisplay !== "복지관" && !displayStudent.includes("보조강사") && (selectedTeam !== '취업팀' || isHolidayOverride) && !isLocationUrl;
-
-                              const hasKiosk = (displayStudent + locTextForDisplay).includes("키오스크");
-                              const studentNames = displayStudent.split(/[/,]/).map(s => s.trim()).filter(Boolean);
-                              const isMultipleStudents = studentNames.length >= 2;
-                              const stuLen = displayStudent.length;
-
-                              let dynamicStuSizeClass = hasKiosk ? "text-xs sm:text-sm md:text-base" : "text-sm sm:text-base md:text-lg";
-                              if (stuLen >= 9) {
-                                dynamicStuSizeClass = "text-[11px] sm:text-xs md:text-sm tracking-tighter";
-                              } else if (stuLen >= 6) {
-                                dynamicStuSizeClass = "text-xs sm:text-sm md:text-base tracking-tight";
-                              }
+                              // 메모 내용 추출 (상태 텍스트 중 실제 교육 내용)
+                              const rawStatus = (row.status || "").trim();
+                              const hasMemo = rawStatus && rawStatus !== '-' && rawStatus !== '출석' && rawStatus !== '1' && rawStatus.length > 2;
 
                               return (
-                                <tr key={index} className="border-b border-gray-300 sm:border-gray-400 hover:bg-blue-50 transition bg-white">
-                                  {row.render.group && <td className={`${tdClass} font-bold text-gray-800 text-xs sm:text-sm md:text-base`} rowSpan={row.rowspan.group} style={topBorderStyle}>{typeof row.group === 'string' ? row.group.replace('조', '').trim() : row.group}</td>}
+                                <div
+                                  key={idx}
+                                  className={`p-3.5 sm:p-4 flex items-center justify-between gap-3 transition-colors ${
+                                    !isUnassigned && getRowAttendance(row, names[0]) === 'attended'
+                                      ? 'border-l-4 border-l-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10'
+                                      : ''
+                                  }`}
+                                >
+                                  {/* 좌측: 시간대 & 학생 정보 */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3">
+                                      {/* 시간대 */}
+                                      <span className="font-extrabold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
+                                        {startTime}
+                                      </span>
 
-                                  {row.render.teacher && (
-                                    <td className={`${tdClass} bg-blue-100 font-bold text-gray-900 text-xs sm:text-sm md:text-base sticky left-0 z-10 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]`} rowSpan={row.rowspan.teacher} style={topBorderStyle}>
-                                      {typeof row.teacher === 'string' ? (
-                                        row.teacher.includes('/') ? (
-                                          row.teacher.split('/').map((namePart, idx, arr) => {
-                                            const displayName = idx < arr.length - 1 ? namePart.trim() + '/' : namePart.trim();
-                                            return (
-                                              <div key={idx} className="leading-tight whitespace-nowrap">{displayName}</div>
-                                            );
-                                          })
-                                        ) : (
-                                          row.teacher.trim().split(/\s+/).map((namePart, idx) => (
-                                            <div key={idx} className="leading-tight whitespace-nowrap">{namePart}</div>
-                                          ))
-                                        )
+                                      {/* 학생 이름 & 회차 */}
+                                      {isUnassigned ? (
+                                        <span className="text-slate-400 dark:text-slate-500 font-semibold text-[15.5px]">
+                                          배정 없음
+                                        </span>
                                       ) : (
-                                        <div className="leading-tight whitespace-nowrap">{row.teacher}</div>
-                                      )}
-                                    </td>
-                                  )}
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                          <span className="font-black text-slate-900 dark:text-slate-100 text-[17px] sm:text-[18px] tracking-tight">
+                                            {studentStr}
+                                          </span>
 
-                                  {row.render.time && (
-                                    <td className={`${tdClass} text-gray-700 text-xs sm:text-sm md:text-base tracking-tight`} rowSpan={row.rowspan.time} style={topBorderStyle}>
-                                      {typeof row.time === 'string' && row.time.includes('~') ? (
-                                        <>
-                                          {(() => {
-                                            let displayTime = row.time;
-                                            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-                                            const dayStr = dayNames[currentDisplayDate.getDay()];
-                                            if (selectedTeam === '취업팀' && dayStr === '금') {
-                                              const mapping = { "13:00~14:00": "9:30~10:30", "14:00~15:00": "10:30~11:30", "15:00~16:00": "11:30~12:30" };
-                                              displayTime = mapping[row.time] || row.time;
-                                            }
-                                            return (
-                                              <>
-                                                <div className="flex md:hidden landscape:hidden w-full justify-center items-center leading-tight whitespace-nowrap">
-                                                  {displayTime.split('~')[0].trim()}~
-                                                </div>
-                                                <div className="hidden md:flex landscape:flex w-full justify-center items-center leading-tight whitespace-nowrap text-center">
-                                                  {displayTime.replace(/\s+/g, '')}
-                                                </div>
-                                              </>
-                                            );
-                                          })()}
-                                        </>
-                                      ) : (
-                                        <div className="flex w-full justify-center items-center whitespace-nowrap text-center">{row.time}</div>
-                                      )}
-                                    </td>
-                                  )}
+                                          {/* 회차 배지 */}
+                                          {row.sessionCounts && row.sessionCounts.map((sc, scIdx) => (
+                                            <button
+                                              key={scIdx}
+                                              type="button"
+                                              onClick={() => setSelectedStudentDates(sc)}
+                                              title="출석 일자 보기"
+                                              className={`px-2 py-0.5 rounded-md text-[13px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation ${getSessionBadgeStyle(sc.count)}`}
+                                            >
+                                              {sc.count}회차
+                                            </button>
+                                          ))}
 
-                                  <td className={`${tdClass} ${studentCellBg}`} style={topBorderStyle}>
-                                    <div className={`font-bold text-blue-600 ${dynamicStuSizeClass} leading-[1.2] w-full flex flex-col items-center justify-center`}>
-                                      {(!displayStudent || displayStudent.trim() === '-') ? null : (
-                                        <span className={(isHolidayOverride ? "whitespace-pre-wrap break-words" : "whitespace-nowrap") + " text-center"}>{displayStudent.replace(/\n/g, ' ')}</span>
-                                      )}
-                                      {showLocationText && displayStudent && displayStudent.trim() !== '-' && !locTextForDisplay?.startsWith('http') && !locTextForDisplay?.startsWith('data:') && (
-                                        <span className={(isHolidayOverride ? "whitespace-pre-wrap break-words" : "whitespace-nowrap") + " text-center mt-0.5 font-medium text-gray-500 text-[0.9em]"}>({locTextForDisplay})</span>
+                                          {/* 장소 표시 (있을 경우) */}
+                                          {row.location && row.location !== '-' && row.location !== '복지관' && !row.location.startsWith('http') && (
+                                            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                              ({row.location})
+                                            </span>
+                                          )}
+                                        </div>
                                       )}
                                     </div>
-                                    {(displayStatus && displayStatus.trim() !== '-' && displayStatus.trim() !== '\u200B' && displayStatus.trim() !== '') && (
-                                      <div className={`text-xs sm:text-sm md:text-base ${statusColorClass} mt-0.5 sm:mt-1 whitespace-pre-wrap break-words break-keep leading-tight text-center`}>
-                                        {displayStatus.split(/(\d+회차)/g).map((part, i) =>
-                                          /^\d+회차$/.test(part) ? <span key={i} className="text-[#3366ff]">{part}</span> : part
+
+                                    {/* 긴 수업 메모: 접기/펼치기 */}
+                                    {!isUnassigned && hasMemo && (
+                                      <div className="mt-1.5 pl-15">
+                                        <button
+                                          type="button"
+                                          onClick={() => toggleMemo(rowKey)}
+                                          className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation"
+                                        >
+                                          {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
+                                        </button>
+                                        {isExpanded && (
+                                          <div className="mt-1.5 p-2.5 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn">
+                                            {rawStatus}
+                                          </div>
                                         )}
                                       </div>
                                     )}
 
-                                    {(selectedTeam?.trim() === '취업팀' || selectedTeam?.toLowerCase().includes('취업')) && row.location && (row.location.toLowerCase().startsWith('http') || row.location.toLowerCase().startsWith('data:') || row.location.toLowerCase().includes('drive.google.com') || row.location.toLowerCase().startsWith('=image')) && (
-                                      <div className="mt-1.5 sm:mt-2 w-full flex flex-col items-center">
-                                        <div className="relative overflow-hidden rounded-lg border border-blue-400 shadow-sm bg-pink-50 p-1">
-                                          <img
-                                            src={getDirectImageUrl(row.location)}
-                                            alt="Sign"
-                                            className={`${isMultipleStudents ? 'h-20 sm:h-28 md:h-32' : 'h-10 sm:h-14 md:h-16'} w-auto object-contain mix-blend-multiply`}
-                                            onError={(e) => {
-                                              const parent = e.target.closest('div');
-                                              if (parent) parent.style.display = 'none';
-                                            }}
-                                          />
-                                        </div>
+                                    {/* 취업팀 서명 이미지 (있을 경우) */}
+                                    {row.location && (row.location.startsWith('http') || row.location.startsWith('data:')) && (
+                                      <div className="mt-2 pl-15">
+                                        <img
+                                          src={getDirectImageUrl(row.location)}
+                                          alt="서명"
+                                          className="h-12 w-auto object-contain rounded border border-slate-200 bg-white p-0.5"
+                                        />
                                       </div>
                                     )}
-                                  </td>
-                                  <td className={`${tdClass} font-bold text-center text-xs sm:text-sm transition-colors`} style={topBorderStyle}>
-                                    {row.sessionCounts && !row.student?.includes("간담회") && !row.student?.includes("안전교육") && !row.student?.includes("안전교율") && !row.student?.includes("직무교육") ? (
-                                      <div className="flex flex-col w-full justify-center items-center gap-1">
-                                        {row.sessionCounts.map((sc, scIdx) => {
-                                          let sessionCellBg = "bg-gray-300";
-                                          let sessionTextCol = "text-black";
+                                  </div>
 
-                                          if (sc.count >= 15) {
-                                            sessionCellBg = "bg-orange-600";
-                                            sessionTextCol = "text-white";
-                                          } else if (sc.count >= 10) {
-                                            sessionCellBg = "bg-purple-900";
-                                            sessionTextCol = "text-white";
-                                          } else if (sc.count >= 7) {
-                                            sessionCellBg = "bg-purple-400";
-                                            sessionTextCol = "text-white";
-                                          }
+                                  {/* 우측: 출결 상태 토글 버튼 (44px 이상) */}
+                                  {!isUnassigned && (
+                                    <div className="shrink-0">
+                                      {(() => {
+                                        const att = getRowAttendance(row, names[0]);
+                                        let btnClass = '';
+                                        let btnLabel = '';
 
-                                          return (
-                                            <div key={scIdx} onClick={() => setSelectedStudentDates(sc)} className={`px-1 sm:px-1.5 py-0.5 rounded w-full whitespace-nowrap text-xs sm:text-sm ${sessionCellBg} ${sessionTextCol} shadow-sm cursor-pointer hover:brightness-95 active:scale-95 transition-all`}>
-                                              {sc.count}회차
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    ) : (
-                                      <span className="text-purple-700">-</span>
-                                    )}
-                                  </td>
-                                </tr>
+                                        if (att === 'attended') {
+                                          btnClass = 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+                                          btnLabel = '✓ 출석';
+                                        } else if (att === 'absent') {
+                                          btnClass = 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700';
+                                          btnLabel = '결석';
+                                        } else if (att === 'vacation') {
+                                          btnClass = 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700';
+                                          btnLabel = '휴가';
+                                        } else {
+                                          btnClass = 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600';
+                                          btnLabel = '확인 전';
+                                        }
+
+                                        return (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleToggleAttendance(row, names[0])}
+                                            className={`min-h-[44px] min-w-[82px] px-3.5 py-2 text-[15px] sm:text-[16px] font-bold rounded-xl shadow-2xs transition-all active:scale-95 touch-manipulation flex items-center justify-center ${btnClass}`}
+                                          >
+                                            {btnLabel}
+                                          </button>
+                                        );
+                                      })()}
+                                    </div>
+                                  )}
+                                </div>
                               );
-                            })
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                    {(() => {
-                      const vacationTeachers = Array.from(new Set(
-                        scheduleData.filter(row => row.status && (
-                          row.status.includes('선생님휴가') ||
-                          row.status.includes('선생님 휴가') ||
-                          row.status.includes('강사휴가') ||
-                          row.status.includes('강사 휴가') ||
-                          (row.status.includes('휴가') && (!row.student || row.student.trim() === '-'))
-                        )).map(row => typeof row.teacher === 'string' ? row.teacher.trim() : row.teacher)
-                      )).filter(Boolean);
-
-                      if (vacationTeachers.length === 0) return null;
-
-                      return (
-                        <div className="bg-blue-50 border-t border-blue-100 px-3 py-2.5 sm:px-4 sm:py-3 flex flex-wrap items-center gap-2 shrink-0">
-                          <span className="font-bold text-blue-800 text-xs sm:text-sm flex items-center shrink-0">
-                            🏖️ 오늘 휴가인 선생님 :
-                          </span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {vacationTeachers.map((teacher, idx) => (
-                              <span key={idx} className="bg-white border border-blue-200 text-blue-700 px-2 py-0.5 rounded-md text-xs sm:text-sm font-bold shadow-sm">
-                                {teacher}
-                              </span>
-                            ))}
+                            })}
                           </div>
                         </div>
                       );
-                    })()}
+                    })}
                   </div>
-                );
-              })()}
+                ))
+              )}
             </div>
+          )}
 
-            {(() => {
-              const _y = currentDisplayDate.getFullYear();
-              const _m = String(currentDisplayDate.getMonth() + 1).padStart(2, '0');
-              const _d = String(currentDisplayDate.getDate()).padStart(2, '0');
-              const _currentDateStr = `${_y}-${_m}-${_d}`;
-              const _currentDateStrShort = `${_m}-${_d}`;
-              const currentHoliday = holidaysDbList.find(h => h.date === _currentDateStr || h.date === _currentDateStrShort || (h.date && h.date.endsWith(_currentDateStrShort)));
-              if (currentHoliday && !currentHoliday.vacation_available) return null;
+          {/* ============================================================== */}
+          {/* TAB 2: 요약 탭                                                 */}
+          {/* ============================================================== */}
+          {activeTab === 'summary' && (
+            <div className="space-y-4 animate-fadeIn">
+              
+              {/* 1. 2x2 통계 카드 */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                {/* 오늘 수업 */}
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
+                  <span className="text-[24px] sm:text-[28px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                    {stats.totalStudents}명
+                  </span>
+                  <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                    오늘 수업
+                  </span>
+                </div>
 
-              return (
-                <SummarySection
-                  data={scheduleData}
-                  date={currentDisplayDate}
-                  team={selectedTeam}
-                  onTouchStart={handleTouchStart}
-                  onTouchEnd={handleTouchEnd}
-                />
-              );
-            })()}
+                {/* 출석 */}
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
+                  <span className="text-[24px] sm:text-[28px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                    {stats.attendedCount}명
+                  </span>
+                  <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                    출석
+                  </span>
+                </div>
 
-          </div>
+                {/* 결석 · 휴가 */}
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
+                  <span className="text-[24px] sm:text-[28px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                    {stats.absentCount} · {stats.vacationCount}
+                  </span>
+                  <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                    결석 · 휴가
+                  </span>
+                </div>
+
+                {/* 출석률 / 집계 중 */}
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
+                  {stats.unconfirmedCount > 0 ? (
+                    <>
+                      <span className="text-[22px] sm:text-[26px] font-black text-slate-800 dark:text-slate-100 leading-tight">
+                        집계 중
+                      </span>
+                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                        확인 {stats.checkedCount}/{stats.totalStudents}명 (지금 {stats.currentPercent}%)
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-[24px] sm:text-[28px] font-black text-blue-600 dark:text-blue-400 leading-tight">
+                        {stats.finalRate}%
+                      </span>
+                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                        확인 완료 ({stats.attendedCount}/{stats.totalStudents}명)
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* 2. 오늘 다룬 주제 필 */}
+              <div className="pt-2">
+                <h3 className="font-extrabold text-[18px] sm:text-[19px] text-slate-900 dark:text-slate-100 mb-3 tracking-tight">
+                  오늘 다룬 주제
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {categorizedThemes.themes.map((t, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-full font-bold text-[14.5px] sm:text-[15.5px] text-slate-800 dark:text-slate-200 shadow-sm inline-flex items-center"
+                    >
+                      <span>{t.name}</span>
+                      <span className="text-blue-600 dark:text-blue-400 font-extrabold ml-1.5">
+                        {t.count}건
+                      </span>
+                    </div>
+                  ))}
+
+                  {categorizedThemes.uncategorizedCount > 0 && (
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-full font-bold text-[14.5px] sm:text-[15.5px] text-slate-800 dark:text-slate-200 shadow-sm inline-flex items-center">
+                      <span>기타 실습</span>
+                      <span className="text-blue-600 dark:text-blue-400 font-extrabold ml-1.5">
+                        {categorizedThemes.uncategorizedCount}건
+                      </span>
+                    </div>
+                  )}
+
+                  {categorizedThemes.themes.length === 0 && categorizedThemes.uncategorizedCount === 0 && (
+                    <div className="text-slate-500 dark:text-slate-400 text-sm font-medium py-2">
+                      등록된 수업 내용 메모가 없습니다.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 3. 오늘의 인사이트 (사실 근거 문장 3개) */}
+              <div className="pt-2">
+                <h3 className="font-extrabold text-[18px] sm:text-[19px] text-slate-900 dark:text-slate-100 mb-3 tracking-tight">
+                  오늘의 인사이트
+                </h3>
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4.5 sm:p-5 shadow-sm divide-y divide-slate-100 dark:divide-slate-700/60">
+                  {factualInsights.map((insight, idx) => (
+                    <div key={idx} className={`${idx > 0 ? 'pt-3.5' : ''} ${idx < factualInsights.length - 1 ? 'pb-3.5' : ''}`}>
+                      <p className="text-[15.5px] sm:text-[16.5px] font-semibold text-slate-800 dark:text-slate-100 leading-relaxed break-keep mb-1">
+                        {insight.text}
+                      </p>
+                      <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400">
+                        {insight.evidence}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
         </div>
       </div>
 
+      {/* 3. 학생별 과거 출석 일자 팝업 모달 */}
       {selectedStudentDates && (
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[60] p-3 sm:p-4" onClick={() => setSelectedStudentDates(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh] animate-fadeIn" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh] animate-fadeIn" onClick={e => e.stopPropagation()}>
             <div className="bg-purple-600 text-white py-3 px-4 flex justify-between items-center shrink-0">
-              <h3 className="font-bold text-[18px] sm:text-[20px]">{selectedStudentDates.name}님의 출석 일자 <span className="text-purple-200 text-[15px] sm:text-[16px]">({selectedStudentDates.count}회)</span></h3>
+              <h3 className="font-bold text-[18px] sm:text-[20px]">
+                {selectedStudentDates.name}님의 출석 일자 <span className="text-purple-200 text-[15px] sm:text-[16px]">({selectedStudentDates.count}회)</span>
+              </h3>
               <button onClick={() => setSelectedStudentDates(null)} className="text-white hover:text-gray-200 active:scale-90 transition-transform p-1">
-                <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
               </button>
             </div>
             <div className="p-3 sm:p-4 overflow-y-auto">
