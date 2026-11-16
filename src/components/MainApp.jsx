@@ -3350,14 +3350,12 @@ export default function MainApp({
                   icon={<IconClassroom />}
                   chipColor="chip-sky"
                   label="평생교육실2"
-                  sub="사용 현황"
                 />
                 <MenuTile
                   onClick={() => { handleLogout(); onNavigateToNangmanStudio(); }}
                   icon={<IconStudio />}
                   chipColor="chip-pink"
                   label="낭만스튜디오"
-                  sub="사용 현황"
                 />
               </div>
             </section>
