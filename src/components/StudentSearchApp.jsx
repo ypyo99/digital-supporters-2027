@@ -480,7 +480,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                             setRecentSearches([]);
                             removeSavedItem('sungdong_recent_searches');
                           }}
-                          className="px-2.5 py-0.5 rounded-md border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-[12px] md:text-[13px] font-bold shadow-2xs active:scale-95 transition-all"
+                          className="px-2.5 py-0.5 rounded-md border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[12px] md:text-[13px] font-bold shadow-2xs active:scale-95 transition-all"
                         >
                           지우기
                         </button>
