@@ -947,7 +947,7 @@ export default function StudentFormsAdminApp({
               <span className="text-sm font-extrabold bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-xl shrink-0 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
                 <span>{teacherFilter} 선생님</span>
-                <span className="text-slate-400 font-normal">({filteredStudents.length}명)</span>
+                <span className="text-slate-600 font-bold">({filteredStudents.length}명)</span>
               </span>
             )}
           </div>
