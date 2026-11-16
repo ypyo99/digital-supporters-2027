@@ -714,10 +714,9 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                       const dateStr = getLocalDateString(day);
                       const todayStr = getLocalDateString(new Date());
                       const isToday = dateStr === todayStr;
-                      const isPast = dateStr < todayStr;
 
                       return (
-                        <th key={i} style={{ width: '17.6%' }} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : `border-r-2 border-gray-300 last:border-0 ${isPast ? 'text-slate-400' : 'text-blue-900'}`}`}>
+                        <th key={i} style={{ width: '17.6%' }} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : 'border-r-2 border-gray-300 text-blue-900 last:border-0'}`}>
                           {day.getMonth() + 1}/{day.getDate()} ({weekDays[i]})
                         </th>
                       );
@@ -734,7 +733,6 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                         const dateStr = getLocalDateString(day);
                         const todayStr = getLocalDateString(new Date());
                         const isToday = dateStr === todayStr;
-                        const isPast = dateStr < todayStr;
                         const specialDayInfo = specialDays && specialDays[dateStr];
 
                         const isLastSlot = idx === timeSlots.length - 1;
@@ -770,7 +768,7 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
 
                         return (
                           <td key={i} className={`${cellBgClass} p-0 align-top transition-all overflow-hidden h-full hover:brightness-95 ${todayBorderClass}`}>
-                            <div className={`flex flex-col gap-1 justify-start items-center h-full min-h-[110px] overflow-hidden w-full max-w-full ${isHoliday ? 'p-3 bg-red-300 text-white' : 'p-3'} ${isPast && !isHoliday ? 'opacity-50' : ''}`}>
+                            <div className={`flex flex-col gap-1 justify-start items-center h-full min-h-[110px] overflow-hidden w-full max-w-full ${isHoliday ? 'p-3 bg-red-300 text-white' : 'p-3'}`}>
                               {(showTags || showSessions) && (
                                 <div className="flex flex-wrap gap-1 justify-center items-center w-full mb-1">
                                   {showTags && parsedStatus.tags.map((tag, tIdx) => {
