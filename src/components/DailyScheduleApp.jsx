@@ -65,47 +65,120 @@ const getSessionBadgeStyle = (count) => {
   }
 };
 
-// 핵심 교육 테마 분류 정의
+// 핵심 교육 테마 분류 정의 (구체적이고 명확한 주제명 및 세부 실습 규칙)
 const THEMES = [
   {
-    name: 'AI·스마트 도구',
-    keywords: ['Gemini', 'AI', 'GPT', '제미나이', '구글렌즈', '클로바', '챗지피티', '챗GPT', '인공지능', '이미지', '파파고', '번역', '음성인식', '스마트렌즈', '빅스비', '시리', '챗봇'],
-    icon: '✨'
+    name: '생성형 AI·스마트렌즈·번역',
+    keywords: [
+      'Gemini', 'AI', 'GPT', '제미나이', '재미나이', '구글렌즈', '클로바', '챗지피티', '챗GPT',
+      '인공지능', '파파고', '번역', '음성인식', '스마트렌즈', '빅스비', '시리', '챗봇', '음성검색', '구글번역'
+    ],
+    icon: '✨',
+    subKeywordRules: [
+      { label: '제미나이·AI', keywords: ['제미나이', '재미나이', 'Gemini', '챗GPT', 'GPT', '챗지피티', '인공지능', 'AI', '클로바'] },
+      { label: '구글렌즈(사물·꽃 검색)', keywords: ['구글렌즈', '스마트렌즈', '렌즈'] },
+      { label: '파파고·외국어 번역', keywords: ['파파고', '번역', '구글번역'] },
+      { label: '음성인식·비서(빅스비)', keywords: ['빅스비', '시리', '음성인식', '음성검색', '마이크'] }
+    ],
+    defaultDetails: '제미나이/ChatGPT 인공지능, 구글렌즈 사물인식, 파파고 번역, 음성비서'
   },
   {
-    name: '금융·결제',
-    keywords: ['페이', '이체', '은행', '지로', '보험', '증권', '토스', '카드', '서울페이', '제로페이', '카카오페이', '삼성페이', '네이버페이', '계좌', '송금', '환전'],
-    icon: '💰'
+    name: '유튜브·사진·동영상',
+    keywords: [
+      '유튜브', '유트브', '사진', '영상', '동영상', '편집', '갤러리', '숏츠', '쇼츠', '릴스', '틱톡',
+      '키네마스터', 'VITA', '캡처', '촬영', '음악', '멜론', '라디오', '팟캐스트', '콜라주', '스티커'
+    ],
+    icon: '🎥',
+    subKeywordRules: [
+      { label: '유튜브(시청·구독·쇼츠)', keywords: ['유튜브', '유트브', '쇼츠', '숏츠', '릴스'] },
+      { label: '사진 촬영·앨범 정리', keywords: ['사진', '촬영', '앨범', '갤러리', '콜라주', '스티커'] },
+      { label: '영상 편집(키네마스터 등)', keywords: ['영상', '동영상', '편집', '키네마스터', 'VITA'] },
+      { label: '음악 감상(라디오/멜론)', keywords: ['음악', '멜론', '라디오', '팟캐스트'] }
+    ],
+    defaultDetails: '유튜브 동영상 시청·쇼츠, 사진 촬영 및 갤러리 관리, 영상 편집'
   },
   {
-    name: '소통',
-    keywords: ['카카오톡', '카톡', '메시지', 'SMS', '문자', '이메일', '페이스톡', '밴드', '인스타그램', '페이스북', '유선', '연락처', '전화', '단톡방', '오픈채팅'],
-    icon: '💬'
+    name: '카카오톡·문자 소통',
+    keywords: [
+      '카카오톡', '카톡', '메시지', '메세지', 'SMS', '문자', '이메일', '페이스톡', '영상통화',
+      '밴드', '인스타그램', '페이스북', '유선', '연락처', '전화', '단톡방', '오픈채팅', '친구추가'
+    ],
+    icon: '💬',
+    subKeywordRules: [
+      { label: '카카오톡(대화·사진전송)', keywords: ['카카오톡', '카톡', '단톡방', '오픈채팅', '친구추가'] },
+      { label: '문자(SMS)·영상통화', keywords: ['문자', '메시지', '메세지', 'SMS', '페이스톡', '영상통화'] },
+      { label: '밴드·SNS', keywords: ['밴드', '인스타그램', '페이스북'] }
+    ],
+    defaultDetails: '카카오톡 대화·사진 전송, 단체방, 문자(SMS), 영상통화'
   },
   {
-    name: '미디어',
-    keywords: ['유튜브', '유트브', '사진', '영상', '편집', '갤러리', '숏츠', '릴스', '틱톡', '키네마스터', 'VITA', '캡처', '촬영', '음악', '멜론', '라디오', '팟캐스트'],
-    icon: '🎥'
+    name: '모바일뱅킹·간편결제',
+    keywords: [
+      '페이', '이체', '은행', '지로', '보험', '증권', '토스', '카드', '서울페이', '제로페이',
+      '카카오페이', '삼성페이', '네이버페이', '계좌', '송금', '환전', '금융'
+    ],
+    icon: '💰',
+    subKeywordRules: [
+      { label: '은행 앱 계좌이체', keywords: ['은행', '이체', '송금', '계좌'] },
+      { label: '간편결제(서울페이·삼성페이 등)', keywords: ['페이', '카카오페이', '서울페이', '제로페이', '삼성페이', '네이버페이', '토스', '카드'] }
+    ],
+    defaultDetails: '은행 앱 계좌이체, 토스, 카카오페이/서울페이 간편결제'
   },
   {
-    name: '기기·보안',
-    keywords: ['와이파이', '블루투스', '화면', '소리', '벨소리', '알림', '글자', '업데이트', '비밀번호', '잠금', '보안', '용량', '배터리', '설정', '스미싱', '보이스피싱', '스팸', '바이러스', '백신'],
-    icon: '⚙️'
+    name: '스마트폰 기초설정·스미싱예방',
+    keywords: [
+      '와이파이', '블루투스', '화면', '소리', '벨소리', '알림', '글자', '업데이트', '비밀번호',
+      '잠금', '보안', '용량', '배터리', '설정', '스미싱', '보이스피싱', '스팸', '바이러스', '백신', '키패드'
+    ],
+    icon: '⚙️',
+    subKeywordRules: [
+      { label: '기기 기본설정(글자·화면·소리)', keywords: ['화면', '글자', '소리', '벨소리', '알림', '와이파이', '블루투스', '배터리', '용량', '설정'] },
+      { label: '보이스피싱·스미싱 예방', keywords: ['스미싱', '보이스피싱', '보안', '바이러스', '백신', '스팸', '비밀번호', '잠금'] }
+    ],
+    defaultDetails: '화면 밝기·글자 크기, 와이파이, 보이스피싱/스미싱 예방'
   },
   {
-    name: '교통·이동',
-    keywords: ['지도', '카카오T', '카카오티', '택시', '코레일', '따릉이', 'SRT', '고속버스', '길찾기', '내비게이션', '지하철', '버스', '성공버스', '노선', '승차권', '티켓', '기차', '예매'],
-    icon: '🚲'
+    name: '지도·길찾기·교통예매',
+    keywords: [
+      '지도', '카카오T', '카카오티', '택시', '코레일', '따릉이', 'SRT', '고속버스', '길찾기',
+      '길찿기', '내비게이션', '지하철', '버스', '성공버스', '노선', '승차권', '티켓', '기차', '예매'
+    ],
+    icon: '🚲',
+    subKeywordRules: [
+      { label: '지도 길찾기(네이버·카카오)', keywords: ['지도', '길찾기', '길찿기', '내비게이션'] },
+      { label: '택시 호출(카카오T)', keywords: ['카카오T', '카카오티', '택시'] },
+      { label: '대중교통(버스·지하철)', keywords: ['버스', '지하철', '노선', '성공버스', '따릉이'] },
+      { label: '기차·고속버스 예매', keywords: ['코레일', 'SRT', '고속버스', '승차권', '티켓', '기차', '예매'] }
+    ],
+    defaultDetails: '지도 길찾기, 카카오T 택시 호출, 버스 노선, 기차표 예매'
   },
   {
-    name: '쇼핑·배달',
-    keywords: ['배민', '배달의민족', '요기요', '쿠팡', '당근', '당근마켓', '중고나라', '쇼핑', '마트', '장보기', '이마트', '홈플러스', 'G마켓', '11번가', '주문', '키오스크', '무인'],
-    icon: '🛒'
+    name: '온라인쇼핑·배달·키오스크',
+    keywords: [
+      '배민', '배달의민족', '요기요', '쿠팡', '당근', '당근마켓', '중고나라', '쇼핑', '마트',
+      '장보기', '이마트', '홈플러스', 'G마켓', '11번가', '주문', '키오스크', '무인'
+    ],
+    icon: '🛒',
+    subKeywordRules: [
+      { label: '온라인쇼핑(쿠팡·당근마켓)', keywords: ['쿠팡', '당근', '당근마켓', '쇼핑', '마트', '장보기', '중고나라'] },
+      { label: '배달앱 주문', keywords: ['배달', '배민', '배달의민족', '요기요', '주문'] },
+      { label: '무인 키오스크 실습', keywords: ['키오스크', '무인'] }
+    ],
+    defaultDetails: '쿠팡·당근마켓 쇼핑, 배달앱 주문, 무인 키오스크 실습'
   },
   {
-    name: '행정·의료',
-    keywords: ['성공버스', '정부24', '손목닥터', '9988', '홈택스', '주민등록', '증명서', '민원', '국세청', '보조금', '복지로', 'PASS', '패스', '모바일신분증', '병원', '약국', '건강', '만보기', '혈압', '진료', '똑닥', '예방'],
-    icon: '🏥'
+    name: '정부24·병원·건강앱',
+    keywords: [
+      '정부24', '손목닥터', '9988', '홈택스', '주민등록', '증명서', '민원', '국세청', '보조금',
+      '복지로', 'PASS', '패스', '모바일신분증', '병원', '약국', '건강', '만보기', '혈압', '진료', '똑닥', '실손24'
+    ],
+    icon: '🏥',
+    subKeywordRules: [
+      { label: '손목닥터 9988·건강관리', keywords: ['손목닥터', '9988', '건강', '만보기', '혈압'] },
+      { label: '정부24·민원증명서', keywords: ['정부24', '홈택스', '주민등록', '증명서', '민원', '국세청', '보조금', '복지로', '모바일신분증', 'PASS', '패스'] },
+      { label: '병원·약국(똑닥·실손24)', keywords: ['병원', '약국', '진료', '똑닥', '실손24'] }
+    ],
+    defaultDetails: '손목닥터 9988, 정부24 민원증명서, 병원 예약 및 모바일신분증'
   }
 ];
 
@@ -701,7 +774,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     };
   }, [scheduleData, getRowAttendance]);
 
-  // 교육 내용 메모 기반 주제 카테고리화
+  // 교육 내용 메모 기반 주제 카테고리화 및 세부 실습 내용 분석
   const categorizedThemes = useMemo(() => {
     const contents = scheduleData
       .filter(row => row.status && row.status.length > 2 && !/^\d+$/.test(row.status) && !row.status.includes("복지관으로 이동"))
@@ -713,7 +786,37 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
     const matchedThemes = THEMES.map(theme => {
       const matched = contents.filter(c => theme.keywords.some(k => c.content.toLowerCase().includes(k.toLowerCase())));
-      return { ...theme, count: matched.length, items: matched };
+
+      // 해당 테마 안에서 발견된 구체적 실습 키워드 집계 및 친숙한 세부 명칭 매핑
+      const kwCountMap = {};
+      matched.forEach(item => {
+        const text = item.content.toLowerCase();
+        theme.subKeywordRules?.forEach(rule => {
+          if (rule.keywords.some(k => text.includes(k.toLowerCase()))) {
+            kwCountMap[rule.label] = (kwCountMap[rule.label] || 0) + 1;
+          }
+        });
+      });
+
+      const topKeywords = Object.entries(kwCountMap)
+        .sort((a, b) => b[1] - a[1])
+        .map(([label, count]) => `${label} ${count}건`);
+
+      const cleanSubLabels = Object.entries(kwCountMap)
+        .sort((a, b) => b[1] - a[1])
+        .map(([label]) => label);
+
+      const detailSummary = topKeywords.length > 0
+        ? topKeywords.join(', ')
+        : theme.defaultDetails;
+
+      return {
+        ...theme,
+        count: matched.length,
+        items: matched,
+        detailSummary,
+        cleanSubLabels
+      };
     }).filter(t => t.count > 0);
 
     const categorizedCount = matchedThemes.reduce((acc, t) => acc + t.count, 0);
@@ -780,22 +883,22 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         topicNames = `${top1.name}(${top1.count}건)`;
       }
 
-      // 구체적 실습 키워드 발췌
+      // 구체적 실습 키워드 발췌 (상위 2개 테마의 실제 세부 실습 명칭)
       const foundKeywords = [];
       sorted.slice(0, 2).forEach(t => {
-        t.items.forEach(item => {
-          t.keywords.forEach(kw => {
-            if (item.content.toLowerCase().includes(kw.toLowerCase()) && !foundKeywords.includes(kw)) {
-              foundKeywords.push(kw);
+        if (t.cleanSubLabels && t.cleanSubLabels.length > 0) {
+          t.cleanSubLabels.forEach(k => {
+            if (!foundKeywords.includes(k)) {
+              foundKeywords.push(k);
             }
           });
-        });
+        }
       });
 
       const sampleKeywords = foundKeywords.slice(0, 3);
       const sampleText = sampleKeywords.length > 0
-        ? `${joinKoreanWithWaGwa(sampleKeywords)} 활용이 실습에 나왔습니다.`
-        : '맞춤형 개별 실습이 진행되었습니다.';
+        ? `세부 실습으로는 ${joinKoreanWithWaGwa(sampleKeywords)} 등이 주로 다루어졌습니다.`
+        : '학습자 눈높이에 맞춘 맞춤형 개별 실습이 순조롭게 진행되었습니다.';
 
       sentence3 = `가장 많이 다룬 주제는 ${attachYiYe(topicNames)}. ${sampleText}`;
     } else {
@@ -869,7 +972,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         onTouchEnd={handleTouchEnd}
       >
         <div className="max-w-xl w-full mx-auto flex flex-col pt-3 sm:pt-4">
-          
+
           {/* 날짜 선택 바 */}
           <div className="flex items-center justify-between gap-1.5 sm:gap-2 w-full mb-2">
             <button
@@ -922,11 +1025,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   setSelectedTeam(team);
                   if (onTeamChange) onTeamChange(team);
                 }}
-                className={`py-2 text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation ${
-                  selectedTeam === team
+                className={`py-2 text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation ${selectedTeam === team
                     ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
                     : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
-                }`}
+                  }`}
               >
                 {team}
               </button>
@@ -938,22 +1040,20 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
             <button
               type="button"
               onClick={() => setActiveTab('schedule')}
-              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${
-                activeTab === 'schedule'
+              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${activeTab === 'schedule'
                   ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-              }`}
+                }`}
             >
               일정
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('summary')}
-              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${
-                activeTab === 'summary'
+              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${activeTab === 'summary'
                   ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-              }`}
+                }`}
             >
               요약
             </button>
@@ -1002,7 +1102,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           {/* ============================================================== */}
           {activeTab === 'schedule' && (
             <div className="space-y-4 animate-fadeIn">
-              
+
               {/* 1. 출석 확인 카드 & 진행 막대 */}
               <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-4.5 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
@@ -1089,11 +1189,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[12px] sm:text-[12.5px] font-extrabold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${
-                    memoRowKeys.length === 0
+                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[12px] sm:text-[12.5px] font-extrabold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
                       : 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95'
-                  }`}
+                    }`}
                   title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
                 >
                   <span>{isAllExpanded ? '수업 내용 접기' : '수업 내용 보기'}</span>
@@ -1149,11 +1248,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                               return (
                                 <div
                                   key={idx}
-                                  className={`p-3.5 sm:p-4 flex items-center justify-between gap-3 transition-colors ${
-                                    !isUnassigned && getRowAttendance(row, names[0]) === 'attended'
+                                  className={`p-3.5 sm:p-4 flex items-center justify-between gap-3 transition-colors ${!isUnassigned && getRowAttendance(row, names[0]) === 'attended'
                                       ? 'border-l-4 border-l-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10'
                                       : ''
-                                  }`}
+                                    }`}
                                 >
                                   {/* 좌측: 시간대 & 학생 정보 */}
                                   <div className="flex-1 min-w-0">
@@ -1279,7 +1377,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           {/* ============================================================== */}
           {activeTab === 'summary' && (
             <div className="space-y-4 animate-fadeIn">
-              
+
               {/* 1. 2x2 통계 카드 */}
               <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                 {/* 오늘 수업 */}
@@ -1336,35 +1434,57 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 </div>
               </div>
 
-              {/* 2. 오늘 다룬 주제 필 */}
+              {/* 2. 오늘 다룬 주제 */}
               <div className="pt-2">
-                <h3 className="font-extrabold text-[18px] sm:text-[19px] text-slate-900 dark:text-slate-100 mb-3 tracking-tight">
-                  오늘 다룬 주제
-                </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="font-extrabold text-[18px] sm:text-[19px] text-slate-900 dark:text-slate-100 tracking-tight">
+                    오늘 다룬 주제
+                  </h3>
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    수업 내용 메모 분석
+                  </span>
+                </div>
+
+                <div className="space-y-2.5">
                   {categorizedThemes.themes.map((t, idx) => (
                     <div
                       key={idx}
-                      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-full font-bold text-[14.5px] sm:text-[15.5px] text-slate-800 dark:text-slate-200 shadow-sm inline-flex items-center"
+                      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3.5 sm:p-4 rounded-2xl shadow-sm transition-all"
                     >
-                      <span>{t.name}</span>
-                      <span className="text-blue-600 dark:text-blue-400 font-extrabold ml-1.5">
-                        {t.count}건
-                      </span>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl sm:text-2xl">{t.icon}</span>
+                          <span className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900 dark:text-slate-100">
+                            {t.name}
+                          </span>
+                        </div>
+                        <span className="text-blue-600 dark:text-blue-400 font-black text-[16px] sm:text-[17px] shrink-0 ml-2">
+                          {t.count}건
+                        </span>
+                      </div>
+                      <div className="text-[13px] sm:text-[13.5px] text-slate-600 dark:text-slate-300 pl-7 sm:pl-8 leading-relaxed flex items-start gap-1">
+                        <span className="text-slate-400 dark:text-slate-500 shrink-0 font-medium">↳ 세부 실습:</span>
+                        <span className="font-medium text-slate-700 dark:text-slate-200 break-keep">{t.detailSummary}</span>
+                      </div>
                     </div>
                   ))}
 
                   {categorizedThemes.uncategorizedCount > 0 && (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-full font-bold text-[14.5px] sm:text-[15.5px] text-slate-800 dark:text-slate-200 shadow-sm inline-flex items-center">
-                      <span>기타 실습</span>
-                      <span className="text-blue-600 dark:text-blue-400 font-extrabold ml-1.5">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3.5 sm:p-4 rounded-2xl shadow-sm flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl sm:text-2xl">📝</span>
+                        <span className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900 dark:text-slate-100">
+                          기타 맞춤 실습
+                        </span>
+                      </div>
+                      <span className="text-blue-600 dark:text-blue-400 font-black text-[16px] sm:text-[17px] shrink-0 ml-2">
                         {categorizedThemes.uncategorizedCount}건
                       </span>
                     </div>
                   )}
 
                   {categorizedThemes.themes.length === 0 && categorizedThemes.uncategorizedCount === 0 && (
-                    <div className="text-slate-500 dark:text-slate-400 text-sm font-medium py-2">
+                    <div className="text-slate-500 dark:text-slate-400 text-sm font-medium py-4 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                       등록된 수업 내용 메모가 없습니다.
                     </div>
                   )}
