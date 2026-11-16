@@ -985,7 +985,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
             <button
               onClick={handleToday}
-              className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95 text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap"
+              className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap"
             >
               오늘
             </button>
