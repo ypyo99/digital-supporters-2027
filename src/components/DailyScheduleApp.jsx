@@ -1375,51 +1375,8 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           {activeTab === 'summary' && (
             <div className="space-y-4 animate-fadeIn">
 
-              {/* 1. 2x2 통계 카드 */}
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                {/* 오늘 수업 */}
-                <div className="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200/90 dark:border-blue-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
-                  <span className="text-[22px] sm:text-[25px] font-black text-blue-950 dark:text-blue-100 leading-tight">
-                    {isLoading ? '-' : `${stats.totalStudents}명`}
-                  </span>
-                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-blue-700 dark:text-blue-300 mt-0.5">
-                    오늘 수업
-                  </span>
-                </div>
-
-                {/* 출석 */}
-                <div className="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/90 dark:border-emerald-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
-                  <span className="text-[22px] sm:text-[25px] font-black text-emerald-950 dark:text-emerald-100 leading-tight">
-                    {isLoading ? '-' : `${stats.attendedCount}명`}
-                  </span>
-                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">
-                    출석
-                  </span>
-                </div>
-
-                {/* 결석 · 휴가 */}
-                <div className="bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/90 dark:border-rose-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
-                  <span className="text-[22px] sm:text-[25px] font-black text-rose-950 dark:text-rose-100 leading-tight">
-                    {isLoading ? '-' : `${stats.absentCount} · ${stats.vacationCount}`}
-                  </span>
-                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-rose-700 dark:text-rose-300 mt-0.5">
-                    결석 · 휴가
-                  </span>
-                </div>
-
-                {/* 아직 출결을 체크하지 않은 인원 (확인 전) */}
-                <div className="bg-slate-100/90 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
-                  <span className="text-[22px] sm:text-[25px] font-black text-slate-900 dark:text-slate-100 leading-tight">
-                    {isLoading ? '-' : `${stats.unconfirmedCount}명`}
-                  </span>
-                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
-                    확인 전
-                  </span>
-                </div>
-              </div>
-
-              {/* 2. 오늘 다룬 주제 */}
-              <div className="pt-2">
+              {/* 1. 오늘 다룬 주제 */}
+              <div className="pt-0.5">
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="font-extrabold text-[18px] sm:text-[19px] text-slate-900 dark:text-slate-100 tracking-tight">
                     오늘 다룬 주제
