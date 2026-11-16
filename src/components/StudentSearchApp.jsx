@@ -391,11 +391,11 @@ export default function StudentSearchApp({ onNavigateBack }) {
         <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-2">
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
             <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-3 md:px-6 py-2.5">
-              <div className="flex items-start justify-between gap-1 md:gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
                 <div className="flex flex-col min-w-0">
                   <p className="text-teal-100 text-[12px] md:text-base whitespace-nowrap">대상자를 선택하세요 ({filteredNames.length}명)</p>
                 </div>
-                <div className="flex flex-col items-end gap-1.5 shrink-0 ml-auto">
+                <div className="flex flex-row items-center gap-1.5 shrink-0 ml-auto">
                   <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-sm">
                     {['전체', '1팀', '2팀', '3팀', '취업팀'].map(t => (
                       <button key={t} onClick={() => { setTeamFilter(t); setTeacherFilter("전체"); }} className={`px-1 min-[360px]:px-1.5 md:px-4 py-1 md:py-1.5 border-r border-gray-300 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-semibold tracking-tighter transition last:border-r-0 ${teamFilter === t ? 'bg-[#2b5ce6] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
@@ -406,7 +406,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                   <select
                     value={teacherFilter}
                     onChange={(e) => setTeacherFilter(e.target.value)}
-                    className="bg-white border border-gray-300 rounded-lg px-2 py-0.5 md:py-1 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-bold text-gray-700 shadow-sm outline-none focus:ring-2 focus:ring-teal-400 w-fit min-w-[100px] min-[360px]:min-w-[120px] md:min-w-[160px] max-w-[130px] min-[360px]:max-w-[160px] min-[400px]:max-w-[190px] md:max-w-[260px] transition-all"
+                    className="bg-white border border-gray-300 rounded-lg px-2 py-0.5 md:py-1 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-bold text-gray-700 shadow-sm outline-none focus:ring-2 focus:ring-teal-400 w-fit min-w-[92px] min-[360px]:min-w-[104px] md:min-w-[160px] max-w-[120px] min-[400px]:max-w-[150px] md:max-w-[260px] self-stretch transition-all"
                   >
                     <option value="전체">선생님 선택</option>
                     {(() => {
