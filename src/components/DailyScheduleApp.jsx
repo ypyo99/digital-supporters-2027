@@ -1299,7 +1299,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                       {/* 수업 내용 접기/펼치기 버튼 (학생이름 바로 아래 여백 최소화) */}
                                       {!isUnassigned && hasMemo && (
-                                        <div className="mt-0.5 pl-14 sm:pl-15">
+                                        <div className="mt-0.5 pl-[58px] sm:pl-[60px]">
                                           <button
                                             type="button"
                                             onClick={() => toggleMemo(rowKey)}
@@ -1347,16 +1347,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                     )}
                                   </div>
 
-                                  {/* 펼쳐진 수업 메모 내용 (가로 전체 너비 사용) */}
+                                  {/* 펼쳐진 수업 메모 내용 (수업 내용 보기 텍스트와 왼쪽 정렬) */}
                                   {!isUnassigned && hasMemo && isExpanded && (
-                                    <div className="mt-2 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn w-full">
+                                    <div className="mt-1.5 ml-[58px] sm:ml-[60px] p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn">
                                       {rawStatus}
                                     </div>
                                   )}
 
                                   {/* 취업팀 서명 이미지 (있을 경우) */}
                                   {row.location && (row.location.startsWith('http') || row.location.startsWith('data:')) && (
-                                    <div className="mt-2 pl-0 sm:pl-14">
+                                    <div className="mt-2 ml-[58px] sm:ml-[60px]">
                                       <img
                                         src={getDirectImageUrl(row.location)}
                                         alt="서명"
