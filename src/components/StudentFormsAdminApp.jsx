@@ -1462,11 +1462,10 @@ export default function StudentFormsAdminApp({
                       />
                     </th>
                   )}
-                  {/* Index (연번: 고정) */}
+                  {/* Index (연번: 스크롤) */}
                   <th
-                    className="sticky z-30 bg-slate-50 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200"
+                    className="py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
                     style={{
-                      left: `${!isTeacherView ? 40 : 0}px`,
                       width: '48px',
                       minWidth: '48px',
                       maxWidth: '48px'
@@ -1476,9 +1475,9 @@ export default function StudentFormsAdminApp({
                   </th>
                   {/* Sticky Student Name (학생 성명 고정 & 너비 조절 가능) */}
                   <th
-                    className="sticky z-30 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
+                    className="sticky z-40 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
                     style={{
-                      left: `${(!isTeacherView ? 40 : 0) + 48}px`,
+                      left: `${!isTeacherView ? 40 : 0}px`,
                       width: `${nameColWidth}px`,
                       minWidth: `${nameColWidth}px`,
                       maxWidth: `${nameColWidth}px`
@@ -1578,12 +1577,11 @@ export default function StudentFormsAdminApp({
                           </td>
                         )}
 
-                        {/* Index (연번: 고정) */}
+                        {/* Index (연번: 스크롤) */}
                         <td
-                          className={`sticky z-20 py-2.5 px-3 text-center text-slate-500 text-xs font-bold border-b border-slate-100 border-r border-slate-100 whitespace-nowrap shrink-0 select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
+                          className={`py-2.5 px-3 text-center text-slate-500 text-xs font-bold border-b border-slate-100 border-r border-slate-100 whitespace-nowrap shrink-0 select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
                             }`}
                           style={{
-                            left: `${!isTeacherView ? 40 : 0}px`,
                             width: '48px',
                             minWidth: '48px',
                             maxWidth: '48px'
@@ -1598,7 +1596,7 @@ export default function StudentFormsAdminApp({
                           className={`sticky z-20 py-2.5 px-3 whitespace-nowrap border-b border-slate-100 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] transition-colors cursor-pointer select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
                             }`}
                           style={{
-                            left: `${(!isTeacherView ? 40 : 0) + 48}px`,
+                            left: `${!isTeacherView ? 40 : 0}px`,
                             width: `${nameColWidth}px`,
                             minWidth: `${nameColWidth}px`,
                             maxWidth: `${nameColWidth}px`
