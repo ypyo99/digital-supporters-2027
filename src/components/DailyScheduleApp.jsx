@@ -1226,16 +1226,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                 barColorClass = 'bg-slate-200 border-r border-slate-300 dark:bg-slate-700 dark:border-slate-600'; // 배정 없음: 연한 회색 막대
                                 rowBgClass = 'bg-slate-50/40 dark:bg-slate-800/40';
                               } else if (att === 'attended') {
-                                barColorClass = 'bg-emerald-400 border-r border-emerald-500 dark:bg-emerald-600 dark:border-emerald-500'; // 출석: 선명하고 부드러운 초록색 막대
+                                barColorClass = 'bg-emerald-300 border-r border-emerald-400 dark:bg-emerald-700 dark:border-emerald-600'; // 출석: 에메랄드 그린 막대
                                 rowBgClass = 'bg-emerald-50/20 dark:bg-emerald-950/10';
                               } else if (att === 'absent') {
-                                barColorClass = 'bg-rose-400 border-r border-rose-500 dark:bg-rose-600 dark:border-rose-500'; // 결석: 부드럽고 또렷한 빨간색(코랄로즈) 막대
+                                barColorClass = 'bg-rose-300 border-r border-rose-400 dark:bg-rose-700 dark:border-rose-600'; // 결석: 코랄 로즈 레드 막대
                                 rowBgClass = 'bg-rose-50/20 dark:bg-rose-950/10';
                               } else if (att === 'vacation') {
-                                barColorClass = 'bg-amber-400 border-r border-amber-500 dark:bg-amber-600 dark:border-amber-500'; // 휴가: 웜 앰버 막대
+                                barColorClass = 'bg-amber-300 border-r border-amber-400 dark:bg-amber-700 dark:border-amber-600'; // 휴가: 웜 앰버 막대
                                 rowBgClass = 'bg-amber-50/20 dark:bg-amber-950/10';
                               } else {
-                                barColorClass = 'bg-slate-400 border-r border-slate-500 dark:bg-slate-500 dark:border-slate-400'; // 확인중: 진한 회색 막대
+                                barColorClass = 'bg-slate-300 border-r border-slate-400 dark:bg-slate-600 dark:border-slate-500'; // 확인 전/진행 중: 슬레이트 그레이 막대
                                 rowBgClass = 'bg-white dark:bg-slate-800';
                               }
 
