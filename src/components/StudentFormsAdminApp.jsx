@@ -1638,7 +1638,6 @@ export default function StudentFormsAdminApp({
                                 title="클릭하여 새 신청서 작성"
                               >
                                 <span className="whitespace-nowrap">❌ 미작성</span>
-                                <span className="text-[10px] text-blue-600 font-bold ml-0.5 whitespace-nowrap">+작성</span>
                               </button>
                             )}
                           </td>
@@ -1665,7 +1664,6 @@ export default function StudentFormsAdminApp({
                                 title="클릭하여 새 사전설문지 작성"
                               >
                                 <span className="whitespace-nowrap">❌ 미작성</span>
-                                <span className="text-[10px] text-indigo-600 font-bold ml-0.5 whitespace-nowrap">+작성</span>
                               </button>
                             )}
                           </td>
@@ -1692,7 +1690,6 @@ export default function StudentFormsAdminApp({
                                 title="클릭하여 새 사후설문지 작성"
                               >
                                 <span className="whitespace-nowrap">❌ 미작성</span>
-                                <span className="text-[10px] text-purple-700 font-bold ml-0.5 whitespace-nowrap">+작성</span>
                               </button>
                             )}
                           </td>
