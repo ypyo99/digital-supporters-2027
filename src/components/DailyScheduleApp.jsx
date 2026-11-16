@@ -1245,14 +1245,37 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                               const rawStatus = (row.status || "").trim();
                               const hasMemo = rawStatus && rawStatus !== '-' && rawStatus !== '출석' && rawStatus !== '1' && rawStatus.length > 2;
 
+                              const att = isUnassigned ? 'unassigned' : getRowAttendance(row, names[0]);
+
+                              // 상태별 좌측 막대 색상 및 배경 톤
+                              let barColorClass = '';
+                              let rowBgClass = '';
+
+                              if (isUnassigned) {
+                                barColorClass = 'bg-slate-300 dark:bg-slate-600'; // 배정 없음: 연한 회색 막대
+                                rowBgClass = 'bg-slate-50/40 dark:bg-slate-800/40';
+                              } else if (att === 'attended') {
+                                barColorClass = 'bg-emerald-500'; // 출석: 초록색 막대
+                                rowBgClass = 'bg-emerald-50/20 dark:bg-emerald-950/10';
+                              } else if (att === 'absent') {
+                                barColorClass = 'bg-rose-500'; // 결석: 빨간색 막대
+                                rowBgClass = 'bg-rose-50/20 dark:bg-rose-950/10';
+                              } else if (att === 'vacation') {
+                                barColorClass = 'bg-amber-400'; // 휴가: 주황/노란색 막대
+                                rowBgClass = 'bg-amber-50/20 dark:bg-amber-950/10';
+                              } else {
+                                barColorClass = 'bg-slate-500 dark:bg-slate-400'; // 확인중: 진한 회색 막대
+                                rowBgClass = 'bg-white dark:bg-slate-800';
+                              }
+
                               return (
                                 <div
                                   key={idx}
-                                  className={`p-3 sm:p-3.5 transition-colors ${!isUnassigned && getRowAttendance(row, names[0]) === 'attended'
-                                      ? 'border-l-4 border-l-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/10'
-                                      : ''
-                                    }`}
+                                  className={`relative p-3 sm:p-3.5 pl-3.5 sm:pl-4 transition-colors ${rowBgClass}`}
                                 >
+                                  {/* 시간대 좌측 상태 표시 막대 */}
+                                  <div className={`absolute left-0 top-0 bottom-0 w-1.5 sm:w-2 ${barColorClass} transition-colors`} />
+
                                   {/* 상단 라인: 시간대, 학생명, 회차 배지 및 우측 끝 출결 토글 버튼 */}
                                   <div className="flex items-start justify-between gap-2">
                                     <div className="min-w-0 flex-1">
