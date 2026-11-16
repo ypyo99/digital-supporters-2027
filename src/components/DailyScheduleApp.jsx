@@ -1419,10 +1419,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                         {stats.unconfirmedCount}명
                       </span>
                       <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
-                        확인 전 (집계 중)
-                      </span>
-                      <span className="text-[11px] sm:text-[11.5px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 leading-none">
-                        진행 {stats.checkedCount}/{stats.totalStudents}명 ({stats.currentPercent}%)
+                        확인 중
                       </span>
                     </>
                   ) : (
@@ -1432,9 +1429,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                       </span>
                       <span className="text-[12.5px] sm:text-[13.5px] font-bold text-indigo-800 dark:text-indigo-300 mt-0.5">
                         출석률
-                      </span>
-                      <span className="text-[11px] sm:text-[11.5px] font-medium text-indigo-600 dark:text-indigo-400 mt-0.5 leading-none">
-                        전원 확인 완료 ({stats.attendedCount}/{stats.totalStudents}명)
                       </span>
                     </>
                   )}
