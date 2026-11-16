@@ -293,7 +293,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     setIsLoading(true);
     setScheduleData([]);
     setNotice("");
-    setAttendanceOverrides({}); // 날짜/팀 변경 시 오버라이드 초기화
     setExpandedMemos({});
 
     try {
