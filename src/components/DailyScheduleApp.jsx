@@ -1085,7 +1085,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                     출석 확인
                   </span>
                   <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100">
-                    {stats.checkedCount} / {stats.totalStudents}명
+                    {isLoading ? '- / -명' : `${stats.checkedCount} / ${stats.totalStudents}명`}
                   </span>
                 </div>
 
@@ -1093,7 +1093,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 <div className="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden mb-3.5">
                   <div
                     className="bg-blue-600 h-full rounded-full transition-all duration-300 ease-out"
-                    style={{ width: `${stats.currentPercent}%` }}
+                    style={{ width: `${isLoading ? 0 : stats.currentPercent}%` }}
                   />
                 </div>
 
@@ -1101,7 +1101,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
                   <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl py-2 flex flex-col items-center justify-center">
                     <span className="text-[20px] font-black text-emerald-800 dark:text-emerald-400 leading-tight">
-                      {stats.attendedCount}
+                      {isLoading ? '-' : stats.attendedCount}
                     </span>
                     <span className="text-[12px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
                       출석
@@ -1110,7 +1110,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                   <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl py-2 flex flex-col items-center justify-center">
                     <span className="text-[20px] font-black text-rose-800 dark:text-rose-400 leading-tight">
-                      {stats.absentCount}
+                      {isLoading ? '-' : stats.absentCount}
                     </span>
                     <span className="text-[12px] font-bold text-rose-700 dark:text-rose-400 mt-0.5">
                       결석
@@ -1119,7 +1119,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                   <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl py-2 flex flex-col items-center justify-center">
                     <span className="text-[20px] font-black text-amber-800 dark:text-amber-400 leading-tight">
-                      {stats.vacationCount}
+                      {isLoading ? '-' : stats.vacationCount}
                     </span>
                     <span className="text-[12px] font-bold text-amber-700 dark:text-amber-400 mt-0.5">
                       휴가
@@ -1128,7 +1128,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                   <div className="bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 rounded-xl py-2 flex flex-col items-center justify-center">
                     <span className="text-[20px] font-black text-slate-800 dark:text-slate-200 leading-tight">
-                      {stats.unconfirmedCount}
+                      {isLoading ? '-' : stats.unconfirmedCount}
                     </span>
                     <span className="text-[12px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
                       확인 전
@@ -1380,7 +1380,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 {/* 오늘 수업 */}
                 <div className="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200/90 dark:border-blue-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
                   <span className="text-[22px] sm:text-[25px] font-black text-blue-950 dark:text-blue-100 leading-tight">
-                    {stats.totalStudents}명
+                    {isLoading ? '-' : `${stats.totalStudents}명`}
                   </span>
                   <span className="text-[12.5px] sm:text-[13.5px] font-bold text-blue-700 dark:text-blue-300 mt-0.5">
                     오늘 수업
@@ -1390,7 +1390,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 {/* 출석 */}
                 <div className="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/90 dark:border-emerald-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
                   <span className="text-[22px] sm:text-[25px] font-black text-emerald-950 dark:text-emerald-100 leading-tight">
-                    {stats.attendedCount}명
+                    {isLoading ? '-' : `${stats.attendedCount}명`}
                   </span>
                   <span className="text-[12.5px] sm:text-[13.5px] font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">
                     출석
@@ -1400,7 +1400,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 {/* 결석 · 휴가 */}
                 <div className="bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/90 dark:border-rose-800/60 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
                   <span className="text-[22px] sm:text-[25px] font-black text-rose-950 dark:text-rose-100 leading-tight">
-                    {stats.absentCount} · {stats.vacationCount}
+                    {isLoading ? '-' : `${stats.absentCount} · ${stats.vacationCount}`}
                   </span>
                   <span className="text-[12.5px] sm:text-[13.5px] font-bold text-rose-700 dark:text-rose-300 mt-0.5">
                     결석 · 휴가
@@ -1409,11 +1409,20 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                 {/* 출석률 / 미확인 (집계 중) */}
                 <div className={`rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center ${
-                  stats.unconfirmedCount > 0
+                  isLoading || stats.unconfirmedCount > 0 || stats.totalStudents === 0
                     ? 'bg-slate-100/90 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600'
                     : 'bg-indigo-50/90 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800'
                 }`}>
-                  {stats.unconfirmedCount > 0 ? (
+                  {isLoading ? (
+                    <>
+                      <span className="text-[22px] sm:text-[25px] font-black text-slate-400 dark:text-slate-500 leading-tight">
+                        -
+                      </span>
+                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
+                        확인 중
+                      </span>
+                    </>
+                  ) : stats.unconfirmedCount > 0 ? (
                     <>
                       <span className="text-[22px] sm:text-[25px] font-black text-slate-900 dark:text-slate-100 leading-tight">
                         {stats.unconfirmedCount}명
@@ -1422,12 +1431,21 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                         확인 중
                       </span>
                     </>
-                  ) : (
+                  ) : stats.totalStudents > 0 ? (
                     <>
                       <span className="text-[22px] sm:text-[25px] font-black text-indigo-700 dark:text-indigo-300 leading-tight">
                         {stats.finalRate}%
                       </span>
                       <span className="text-[12.5px] sm:text-[13.5px] font-bold text-indigo-800 dark:text-indigo-300 mt-0.5">
+                        출석률
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-[22px] sm:text-[25px] font-black text-slate-400 dark:text-slate-500 leading-tight">
+                        -
+                      </span>
+                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
                         출석률
                       </span>
                     </>
