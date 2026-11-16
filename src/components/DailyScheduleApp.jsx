@@ -1438,15 +1438,18 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   </span>
                 </div>
 
-                {/* 출석률 / 집계 중 */}
+                {/* 출석률 / 미확인 (집계 중) */}
                 <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 text-center shadow-sm flex flex-col items-center justify-center min-h-[96px]">
                   {stats.unconfirmedCount > 0 ? (
                     <>
-                      <span className="text-[22px] sm:text-[26px] font-black text-slate-800 dark:text-slate-100 leading-tight">
-                        집계 중
+                      <span className="text-[24px] sm:text-[28px] font-black text-slate-800 dark:text-slate-100 leading-tight">
+                        {stats.unconfirmedCount}명
                       </span>
-                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
-                        확인 {stats.checkedCount}/{stats.totalStudents}명 (지금 {stats.currentPercent}%)
+                      <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                        확인 전 (집계 중)
+                      </span>
+                      <span className="text-[11.5px] sm:text-[12px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
+                        진행 {stats.checkedCount}/{stats.totalStudents}명 ({stats.currentPercent}%)
                       </span>
                     </>
                   ) : (
@@ -1454,8 +1457,11 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                       <span className="text-[24px] sm:text-[28px] font-black text-blue-600 dark:text-blue-400 leading-tight">
                         {stats.finalRate}%
                       </span>
-                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-                        확인 완료 ({stats.attendedCount}/{stats.totalStudents}명)
+                      <span className="text-[13.5px] sm:text-[14.5px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                        출석률
+                      </span>
+                      <span className="text-[11.5px] sm:text-[12px] font-medium text-emerald-600 dark:text-emerald-400 mt-0.5">
+                        전원 확인 완료 ({stats.attendedCount}/{stats.totalStudents}명)
                       </span>
                     </>
                   )}
