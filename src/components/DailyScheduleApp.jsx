@@ -1223,19 +1223,19 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                               let rowBgClass = '';
 
                               if (isUnassigned) {
-                                barColorClass = 'bg-slate-300 dark:bg-slate-600'; // 배정 없음: 연한 회색 막대
+                                barColorClass = 'bg-slate-200 border-r-2 border-slate-300 dark:bg-slate-700 dark:border-slate-600'; // 배정 없음: 연한 회색 막대
                                 rowBgClass = 'bg-slate-50/40 dark:bg-slate-800/40';
                               } else if (att === 'attended') {
-                                barColorClass = 'bg-emerald-500'; // 출석: 초록색 막대
+                                barColorClass = 'bg-emerald-100 border-r-2 border-emerald-300 dark:bg-emerald-950/80 dark:border-emerald-700'; // 출석: 출석 버튼과 동일한 소프트 민트톤
                                 rowBgClass = 'bg-emerald-50/20 dark:bg-emerald-950/10';
                               } else if (att === 'absent') {
-                                barColorClass = 'bg-rose-500'; // 결석: 빨간색 막대
+                                barColorClass = 'bg-rose-100 border-r-2 border-rose-300 dark:bg-rose-950/80 dark:border-rose-700'; // 결석: 결석 버튼과 동일한 소프트 로즈톤
                                 rowBgClass = 'bg-rose-50/20 dark:bg-rose-950/10';
                               } else if (att === 'vacation') {
-                                barColorClass = 'bg-amber-400'; // 휴가: 주황/노란색 막대
+                                barColorClass = 'bg-amber-100 border-r-2 border-amber-300 dark:bg-amber-950/80 dark:border-amber-700'; // 휴가: 휴가 버튼과 동일한 웜 앰버톤
                                 rowBgClass = 'bg-amber-50/20 dark:bg-amber-950/10';
                               } else {
-                                barColorClass = 'bg-slate-500 dark:bg-slate-400'; // 확인중: 진한 회색 막대
+                                barColorClass = 'bg-slate-100 border-r-2 border-slate-300 dark:bg-slate-700 dark:border-slate-600'; // 확인중: 확인 전 버튼과 동일한 슬레이트톤
                                 rowBgClass = 'bg-white dark:bg-slate-800';
                               }
 
@@ -1244,8 +1244,8 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                   key={idx}
                                   className={`relative p-3 sm:p-3.5 pl-3.5 sm:pl-4 transition-colors ${rowBgClass}`}
                                 >
-                                  {/* 시간대 좌측 상태 표시 막대 */}
-                                  <div className={`absolute left-0 top-0 bottom-0 w-1.5 sm:w-2 ${barColorClass} transition-colors`} />
+                                  {/* 시간대 좌측 상태 표시 막대 (우측 버튼과 동일한 색상 배색) */}
+                                  <div className={`absolute left-0 top-0 bottom-0 w-2 sm:w-2.5 ${barColorClass} transition-colors`} />
 
                                   {/* 상단 라인: 시간대, 학생명, 회차 배지 및 우측 끝 출결 토글 버튼 */}
                                   <div className="flex items-start justify-between gap-2">
