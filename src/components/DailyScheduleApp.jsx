@@ -1254,50 +1254,66 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                     }`}
                                 >
                                   {/* 상단 라인: 시간대, 학생명, 회차 배지 및 우측 끝 출결 토글 버튼 */}
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap min-w-0 flex-1">
-                                      {/* 시간대 */}
-                                      <span className="font-extrabold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
-                                        {startTime}
-                                      </span>
-
-                                      {/* 학생 이름 & 회차 */}
-                                      {isUnassigned ? (
-                                        <span className="text-slate-400 dark:text-slate-500 font-semibold text-[15.5px]">
-                                          배정 없음
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="min-w-0 flex-1">
+                                      {/* 시간대 & 학생명 & 회차 */}
+                                      <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                                        {/* 시간대 */}
+                                        <span className="font-extrabold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
+                                          {startTime}
                                         </span>
-                                      ) : (
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                          <span className="font-black text-slate-900 dark:text-slate-100 text-[17px] sm:text-[18px] tracking-tight">
-                                            {studentStr}
+
+                                        {/* 학생 이름 & 회차 */}
+                                        {isUnassigned ? (
+                                          <span className="text-slate-400 dark:text-slate-500 font-semibold text-[15.5px]">
+                                            배정 없음
                                           </span>
-
-                                          {/* 회차 배지 */}
-                                          {row.sessionCounts && row.sessionCounts.map((sc, scIdx) => (
-                                            <button
-                                              key={scIdx}
-                                              type="button"
-                                              onClick={() => setSelectedStudentDates(sc)}
-                                              title="출석 일자 보기"
-                                              className={`px-2 py-0.5 rounded-md text-[13px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation ${getSessionBadgeStyle(sc.count)}`}
-                                            >
-                                              {sc.count}회차
-                                            </button>
-                                          ))}
-
-                                          {/* 장소 표시 (있을 경우) */}
-                                          {row.location && row.location !== '-' && row.location !== '복지관' && !row.location.startsWith('http') && (
-                                            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                                              ({row.location})
+                                        ) : (
+                                          <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="font-black text-slate-900 dark:text-slate-100 text-[17px] sm:text-[18px] tracking-tight">
+                                              {studentStr}
                                             </span>
-                                          )}
+
+                                            {/* 회차 배지 */}
+                                            {row.sessionCounts && row.sessionCounts.map((sc, scIdx) => (
+                                              <button
+                                                key={scIdx}
+                                                type="button"
+                                                onClick={() => setSelectedStudentDates(sc)}
+                                                title="출석 일자 보기"
+                                                className={`px-2 py-0.5 rounded-md text-[13px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation ${getSessionBadgeStyle(sc.count)}`}
+                                              >
+                                                {sc.count}회차
+                                              </button>
+                                            ))}
+
+                                            {/* 장소 표시 (있을 경우) */}
+                                            {row.location && row.location !== '-' && row.location !== '복지관' && !row.location.startsWith('http') && (
+                                              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                                ({row.location})
+                                              </span>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {/* 수업 내용 접기/펼치기 버튼 (학생이름 바로 아래 여백 최소화) */}
+                                      {!isUnassigned && hasMemo && (
+                                        <div className="mt-0.5 pl-14 sm:pl-15">
+                                          <button
+                                            type="button"
+                                            onClick={() => toggleMemo(rowKey)}
+                                            className="inline-flex items-center gap-1 text-[13px] sm:text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation"
+                                          >
+                                            {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
+                                          </button>
                                         </div>
                                       )}
                                     </div>
 
                                     {/* 우측 끝: 출결 상태 토글 버튼 (회차와 같은 라인 우측 끝) */}
                                     {!isUnassigned && (
-                                      <div className="shrink-0 ml-1.5">
+                                      <div className="shrink-0 ml-1.5 pt-0.5">
                                         {(() => {
                                           const att = getRowAttendance(row, names[0]);
                                           let btnClass = '';
@@ -1321,7 +1337,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                             <button
                                               type="button"
                                               onClick={() => handleToggleAttendance(row, names[0])}
-                                              className={`min-h-[38px] sm:min-h-[42px] min-w-[78px] sm:min-w-[82px] px-3 sm:px-3.5 py-1.5 sm:py-2 text-[14.5px] sm:text-[15.5px] font-bold rounded-xl shadow-2xs transition-all active:scale-95 touch-manipulation flex items-center justify-center ${btnClass}`}
+                                              className={`min-h-[38px] sm:min-h-[40px] min-w-[78px] sm:min-w-[82px] px-3 sm:px-3.5 py-1.5 sm:py-2 text-[14.5px] sm:text-[15.5px] font-bold rounded-xl shadow-2xs transition-all active:scale-95 touch-manipulation flex items-center justify-center ${btnClass}`}
                                             >
                                               {btnLabel}
                                             </button>
@@ -1331,21 +1347,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                     )}
                                   </div>
 
-                                  {/* 하단: 긴 수업 메모 접기/펼치기 및 내용 (가로 전체 너비 사용) */}
-                                  {!isUnassigned && hasMemo && (
-                                    <div className="mt-1.5 pl-0 sm:pl-14">
-                                      <button
-                                        type="button"
-                                        onClick={() => toggleMemo(rowKey)}
-                                        className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation"
-                                      >
-                                        {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
-                                      </button>
-                                      {isExpanded && (
-                                        <div className="mt-1.5 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn w-full">
-                                          {rawStatus}
-                                        </div>
-                                      )}
+                                  {/* 펼쳐진 수업 메모 내용 (가로 전체 너비 사용) */}
+                                  {!isUnassigned && hasMemo && isExpanded && (
+                                    <div className="mt-2 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn w-full">
+                                      {rawStatus}
                                     </div>
                                   )}
 
