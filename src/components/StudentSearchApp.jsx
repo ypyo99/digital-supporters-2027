@@ -157,7 +157,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
             const names = row.student.split(/[/,]/).map(s => s.trim().split('(')[0].trim()).filter(Boolean);
 
             names.forEach((name, nameIdx) => {
-              const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "폭염기 활동", "교재 연구", "교재연구", "온라인강의", "왕초보컴퓨터", "왕초보컴퓨터반", "수강자 섭외"];
+              const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "폭염기 활동", "교재 연구", "교재연구", "온라인강의", "왕초보", "왕초보컴퓨터", "왕초보검퓨터", "왕초보컴퓨터반", "왕초보검퓨터반", "수강자 섭외", '.', 'ㆍ', '일박람회', '일자리박람회', '학습대상자'];
               if (excludeKeywords.some(keyword => name.includes(keyword))) return;
 
               // 출결 태그 분리 및 매핑
@@ -232,7 +232,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
 
   const filteredRecords = useMemo(() => {
     if (!selectedName || selectedName.trim() === "") return [];
-    
+
     let allForStudent = allRecords.filter(r => r.name === selectedName);
     if (allForStudent.length === 0) return [];
 
@@ -253,7 +253,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
     allForStudent.forEach(r => {
       const textToMatch = (r.memo || "");
       const memoMatch = textToMatch.match(/(\d+)\s*회차(?![가-힣a-zA-Z0-9])/);
-      
+
       const attTag = r.attendanceTag || "";
       const hasAtt = /(^|[,/])\s*(1|출석)\s*([,/]|$)/.test(attTag);
       const isAbsentOrCanceled = (attTag.includes("결석") && !hasAtt) || (attTag.includes("선생님휴가") && !hasAtt) || (attTag.includes("종료") && !hasAtt) || (attTag.includes("취소") && !hasAtt);
@@ -262,23 +262,23 @@ export default function StudentSearchApp({ onNavigateBack }) {
       const dateKey = r.colDate.getTime();
       const isTargetTeacher = (t) => t && (t.includes("천은선") || t.includes("서승희"));
       const isTarget = isTargetTeacher(r.teacher);
-      
+
       let keys = [];
       const classKey = r.team === '취업팀' ? `${dateKey}_${r.time}_${r.group}` : `${dateKey}_${r.group}`;
       keys.push(classKey);
       if (isTarget) {
-          keys.push(`${dateKey}_target`);
+        keys.push(`${dateKey}_target`);
       }
 
       if (memoMatch || isAttended) {
-          keys.forEach(k => attendedKeys.add(k));
+        keys.forEach(k => attendedKeys.add(k));
       }
     });
 
     allForStudent.forEach(r => {
       const textToMatch = (r.memo || "");
       const memoMatch = textToMatch.match(/(\d+)\s*회차(?![가-힣a-zA-Z0-9])/);
-      
+
       const attTag = r.attendanceTag || "";
       const hasAtt = /(^|[,/])\s*(1|출석)\s*([,/]|$)/.test(attTag);
       const isAbsentOrCanceled = (attTag.includes("결석") && !hasAtt) || (attTag.includes("선생님휴가") && !hasAtt) || (attTag.includes("종료") && !hasAtt) || (attTag.includes("취소") && !hasAtt);
@@ -287,46 +287,46 @@ export default function StudentSearchApp({ onNavigateBack }) {
       const dateKey = r.colDate.getTime();
       const isTargetTeacher = (t) => t && (t.includes("천은선") || t.includes("서승희"));
       const isTarget = isTargetTeacher(r.teacher);
-      
+
       let keys = [];
       const classKey = r.team === '취업팀' ? `${dateKey}_${r.time}_${r.group}` : `${dateKey}_${r.group}`;
       keys.push(classKey);
       if (isTarget) {
-          keys.push(`${dateKey}_target`);
+        keys.push(`${dateKey}_target`);
       }
 
       if (memoMatch) {
-         currentSession = parseInt(memoMatch[1], 10);
-         r.computedSession = `${currentSession}회차`;
-         keys.forEach(k => countedDates.add(k)); // 명시적 회차가 있을 때도 중복 카운트 방지를 위해 등록
+        currentSession = parseInt(memoMatch[1], 10);
+        r.computedSession = `${currentSession}회차`;
+        keys.forEach(k => countedDates.add(k)); // 명시적 회차가 있을 때도 중복 카운트 방지를 위해 등록
       } else {
-         if (isAttended) {
-            // 해당 날짜(키들 중 하나라도)에 아직 출석 처리(회차 증가)를 안 했다면 증가
-            const alreadyCounted = keys.some(k => countedDates.has(k));
-            if (!alreadyCounted) {
-                currentSession++;
-            }
-            keys.forEach(k => countedDates.add(k));
-            r.computedSession = `${currentSession}회차`;
-         } else {
-            // 결석/빈 기록인 경우
-            const willBeAttended = keys.some(k => attendedKeys.has(k));
-            if (willBeAttended) {
-                // 같은 키들에 출석 기록이 있다면, 이 기록에서는 회차를 표시하지 않음
-                r.computedSession = "";
+        if (isAttended) {
+          // 해당 날짜(키들 중 하나라도)에 아직 출석 처리(회차 증가)를 안 했다면 증가
+          const alreadyCounted = keys.some(k => countedDates.has(k));
+          if (!alreadyCounted) {
+            currentSession++;
+          }
+          keys.forEach(k => countedDates.add(k));
+          r.computedSession = `${currentSession}회차`;
+        } else {
+          // 결석/빈 기록인 경우
+          const willBeAttended = keys.some(k => attendedKeys.has(k));
+          if (willBeAttended) {
+            // 같은 키들에 출석 기록이 있다면, 이 기록에서는 회차를 표시하지 않음
+            r.computedSession = "";
+          } else {
+            // 출석 기록이 아예 없는 순수 결석/휴강일인 경우 누적 회차 표시
+            if (currentSession > 0) {
+              r.computedSession = `${currentSession}회차`;
             } else {
-                // 출석 기록이 아예 없는 순수 결석/휴강일인 경우 누적 회차 표시
-                if (currentSession > 0) {
-                   r.computedSession = `${currentSession}회차`;
-                } else {
-                   r.computedSession = ""; 
-                }
+              r.computedSession = "";
             }
-         }
+          }
+        }
       }
-      
+
       if (r.memo) {
-         r.memo = r.memo.replace(/\d+\s*회차/g, '').replace(/^,\s*/, '').replace(/,\s*$/, '').replace(/,\s*,/g, ',').trim();
+        r.memo = r.memo.replace(/\d+\s*회차/g, '').replace(/^,\s*/, '').replace(/,\s*$/, '').replace(/,\s*,/g, ',').trim();
       }
     });
 
@@ -354,7 +354,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
         if (r.memo && (!existing.memo || !existing.memo.includes(r.memo))) {
           existing.memo = existing.memo ? existing.memo + (r.memo ? ', ' + r.memo : '') : r.memo;
         }
-        
+
         const t1 = existing.attendanceTag || "";
         const t2 = r.attendanceTag || "";
         if (t1 === "선생님휴가" && t2 && t2 !== "선생님휴가") {
