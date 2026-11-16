@@ -392,10 +392,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
             <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-3 md:px-6 py-2.5">
               <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
-                <div className="flex flex-col min-w-0">
-                  <p className="text-teal-100 text-[12px] md:text-base whitespace-nowrap">대상자를 선택하세요 ({filteredNames.length}명)</p>
-                </div>
-                <div className="flex flex-row items-center gap-1.5 shrink-0 ml-auto">
+                <div className="flex flex-row items-center gap-1.5 shrink-0">
                   <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-sm">
                     {['전체', '1팀', '2팀', '3팀', '취업팀'].map(t => (
                       <button key={t} onClick={() => { setTeamFilter(t); setTeacherFilter("전체"); }} className={`px-1 min-[360px]:px-1.5 md:px-4 py-1 md:py-1.5 border-r border-gray-300 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-semibold tracking-tighter transition last:border-r-0 ${teamFilter === t ? 'bg-[#2b5ce6] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
@@ -423,6 +420,11 @@ export default function StudentSearchApp({ onNavigateBack }) {
                       return list.map((name, i) => <option key={i} value={name}>{name}</option>);
                     })()}
                   </select>
+                </div>
+                <div className="flex items-center min-w-0 ml-auto">
+                  <p className="text-white font-extrabold text-[15px] sm:text-[17px] md:text-xl tracking-tight whitespace-nowrap">
+                    대상자 ({filteredNames.length}명)
+                  </p>
                 </div>
               </div>
             </div>
