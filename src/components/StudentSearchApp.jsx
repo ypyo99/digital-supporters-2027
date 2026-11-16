@@ -422,7 +422,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                   </select>
                 </div>
                 <div className="flex justify-start">
-                  <p className="text-white font-extrabold text-[15px] min-[360px]:text-[16px] sm:text-[18px] md:text-xl tracking-tight whitespace-nowrap">
+                  <p className="text-white font-bold text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg tracking-tight whitespace-nowrap">
                     대상자 ({filteredNames.length}명)
                   </p>
                 </div>
