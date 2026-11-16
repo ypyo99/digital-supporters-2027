@@ -372,7 +372,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800">
-      <div className="shrink-0 app-header is-teal text-white z-40 relative">
+      <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-start">
           <div>
             <div className="flex items-center mb-1">
@@ -390,7 +390,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
       <div className="flex-1 flex flex-col pb-4">
         <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-2">
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-500 to-emerald-500 px-3 md:px-6 py-2.5">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-3 md:px-6 py-2.5">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-xs shrink-0">
@@ -403,7 +403,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                   <select
                     value={teacherFilter}
                     onChange={(e) => setTeacherFilter(e.target.value)}
-                    className="bg-white border border-gray-300 rounded-lg px-2 py-0.5 md:py-1 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-bold text-gray-700 shadow-xs outline-none focus:ring-2 focus:ring-teal-400 w-fit shrink-0 self-stretch transition-all"
+                    className="bg-white border border-gray-300 rounded-lg px-2 py-0.5 md:py-1 text-[12px] min-[360px]:text-[13px] min-[400px]:text-[14px] landscape:text-[18px] md:text-lg font-bold text-gray-700 shadow-xs outline-none focus:ring-2 focus:ring-blue-400 w-fit shrink-0 self-stretch transition-all"
                   >
                     <option value="전체">선생님 선택</option>
                     {(() => {
@@ -432,13 +432,13 @@ export default function StudentSearchApp({ onNavigateBack }) {
             <div className="px-3 md:px-6 py-3">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <Clock className="w-8 h-8 text-teal-500 animate-spin" />
-                  <p className="text-teal-700 font-bold text-base animate-pulse">{loadProgress}</p>
+                  <Clock className="w-8 h-8 text-blue-500 animate-spin" />
+                  <p className="text-blue-700 font-bold text-base animate-pulse">{loadProgress}</p>
                 </div>
               ) : (
                 <div>
                   <div className="relative mb-3">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-teal-500 pointer-events-none">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 pointer-events-none">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                     <input
@@ -452,7 +452,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                           setSelectedName("");
                         }
                       }}
-                      className="w-full pl-10 pr-10 py-2 rounded-xl border-2 border-teal-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-50 outline-none transition-all text-[15px] font-bold shadow-sm placeholder:text-gray-400"
+                      className="w-full pl-10 pr-10 py-2 rounded-xl border-2 border-blue-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-50 outline-none transition-all text-[15px] font-bold shadow-sm placeholder:text-gray-400"
                     />
                     {searchTerm && (
                       <button
@@ -493,7 +493,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                               setSelectedName(name);
                               setSearchTerm("");
                             }}
-                            className={`px-3 py-1 rounded-full text-[13px] font-bold border transition-all active:scale-95 ${selectedName === name ? 'bg-teal-600 text-white border-teal-700 shadow-md' : 'bg-emerald-50 text-emerald-800 border-emerald-200 shadow-sm hover:bg-emerald-100 hover:border-emerald-300'}`}
+                            className={`px-3 py-1 rounded-full text-[13px] font-bold border transition-all active:scale-95 ${selectedName === name ? 'bg-blue-600 text-white border-blue-700 shadow-md' : 'bg-blue-50 text-blue-800 border-blue-200 shadow-sm hover:bg-blue-100 hover:border-blue-300'}`}
                           >
                             {name}
                           </button>
@@ -502,7 +502,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                     </div>
                   )}
 
-                  <div className="max-h-[194px] md:max-h-[384px] overflow-y-auto border-2 border-teal-300 rounded-xl p-1 bg-gray-50/50 overflow-x-hidden">
+                  <div className="max-h-[194px] md:max-h-[384px] overflow-y-auto border-2 border-blue-300 rounded-xl p-1 bg-gray-50/50 overflow-x-hidden">
                     <div className="grid grid-cols-3 min-[380px]:grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-1">
                       {filteredNames.map(name => {
                         const isSpecial = name === "금호벽산경로당" || name === "금호벽산제2경로당";
@@ -524,7 +524,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                                 });
                               }
                             }}
-                            className={`px-0.5 py-0.5 rounded-lg ${fontSizeClass} font-bold transition-all active:scale-95 touch-manipulation border flex items-center justify-center text-center break-all leading-tight min-h-[34px] ${selectedName === name ? 'bg-teal-600 text-white border-teal-700 shadow-md' : 'bg-gray-200 text-gray-800 border-gray-400 hover:bg-teal-50 hover:border-teal-400 shadow-sm'}`}
+                            className={`px-0.5 py-0.5 rounded-lg ${fontSizeClass} font-bold transition-all active:scale-95 touch-manipulation border flex items-center justify-center text-center break-all leading-tight min-h-[34px] ${selectedName === name ? 'bg-blue-600 text-white border-blue-700 shadow-md' : 'bg-gray-200 text-gray-800 border-gray-400 hover:bg-blue-50 hover:border-blue-300 shadow-sm'}`}
                           >
                             {name === "금호벽산경로당" ? <span>금호벽산<br />경로당</span> :
                               name === "금호벽산제2경로당" ? <span>금호벽산<br />제2경로당</span> :
@@ -541,9 +541,9 @@ export default function StudentSearchApp({ onNavigateBack }) {
             {selectedName && stats && (
               <div className="px-4 md:px-6 pb-3">
                 <div className="grid grid-cols-4 gap-2 md:gap-3">
-                  <div className="bg-teal-200 rounded-xl p-2.5 md:p-3 text-center border border-teal-300">
-                    <div className="text-[13px] md:text-[15px] text-teal-800 font-bold">전체</div>
-                    <div className="text-2xl md:text-3xl font-black text-teal-900">{stats.total}</div>
+                  <div className="bg-sky-100 rounded-xl p-2.5 md:p-3 text-center border border-sky-200">
+                    <div className="text-[13px] md:text-[15px] text-sky-800 font-bold">전체</div>
+                    <div className="text-2xl md:text-3xl font-black text-sky-950">{stats.total}</div>
                   </div>
                   <div className="bg-blue-200 rounded-xl p-2.5 md:p-3 text-center border border-blue-300">
                     <div className="text-[13px] md:text-[15px] text-blue-800 font-bold">출석</div>
@@ -572,7 +572,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                       const hasAttUi = /(^|[,/])\s*(1|출석)\s*([,/]|$)/.test(rec.attendanceTag);
                       const isAbsent = rec.attendanceTag.includes("결석") && !hasAttUi;
                       const isCanceled = rec.attendanceTag.includes("종료") || rec.attendanceTag.includes("취소");
-                      const borderColor = isAbsent ? "border-l-red-400" : isCanceled ? "border-l-gray-400" : isAttended ? "border-l-blue-400" : "border-l-teal-300";
+                      const borderColor = isAbsent ? "border-l-red-400" : isCanceled ? "border-l-gray-400" : isAttended ? "border-l-blue-400" : "border-l-blue-300";
                       const bgColor = isAbsent ? "bg-red-50/50" : isCanceled ? "bg-gray-50/50" : "bg-white";
 
                       return (
@@ -581,7 +581,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-extrabold text-[16px] md:text-[18px] text-gray-900 whitespace-nowrap">{rec.dateStr}</span>
                               <span className="text-[15px] md:text-[17px] text-[#2563eb] font-extrabold bg-[#eff6ff] px-2.5 py-0.5 rounded-lg border border-[#bfdbfe] whitespace-nowrap">{rec.name}</span>
-                              <span className="text-[14px] md:text-[16px] text-teal-600 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 whitespace-nowrap">{rec.team}</span>
+                              <span className="text-[14px] md:text-[16px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 whitespace-nowrap">{rec.team}</span>
                               {rec.attendanceTag ? (
                                 <span className={`text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${rec.attendanceTag.includes('선생님휴가') ? 'bg-gray-400 text-white border border-gray-500' : isAbsent ? 'bg-red-100 text-red-700 border border-red-300' : isCanceled ? 'bg-orange-300 text-white border border-orange-400' : 'bg-blue-100 text-blue-700 border border-blue-300'}`}>
                                   {rec.attendanceTag}
