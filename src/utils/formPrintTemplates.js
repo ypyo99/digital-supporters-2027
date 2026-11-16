@@ -530,7 +530,7 @@ export function renderSurveyFormHtml(survey, studentName, type = 'pre', isBlank 
               if (comparison.totalDiff > 0) {
                 return `1:1 맞춤형 디지털 교육을 통해 ${participantName} 어르신의 디지털 역량 총점이 사전 대비 +${comparison.totalDiff}점 향상(+${comparison.growthRate}%)되었습니다. 특히 [${comparison.bestDomain.title}] 영역에서 가장 두드러진 역량 향상을 나타냈습니다.`;
               } else if (comparison.totalDiff === 0) {
-                return `사전 조사 점수(${comparison.preTotal}점)와 동일한 역량 수준(${totalScore}점)을 유지하고 계십니다.`;
+                return `사전 조사 점수인 ${comparison.preTotal}점과 동일한 역량 수준(${totalScore}점)을 유지하고 계십니다.`;
               } else {
                 return `사후 평가 총점은 ${totalScore}점(사전 ${comparison.preTotal}점, ${comparison.totalDiff}점)으로 집계되었습니다.`;
               }

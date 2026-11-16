@@ -13,7 +13,10 @@ import {
   getDirectImageUrl,
   getTeacherShifts,
   getTeamTeacherNames,
-  findTeacherRecord
+  findTeacherRecord,
+  attachWaGwa,
+  attachYiYe,
+  joinKoreanWithWaGwa
 } from '../utils/helpers';
 import { Home, LucideCalendar, Clock, BookOpen, Sparkles } from './Icons';
 
@@ -716,9 +719,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       if (vacationCount > 0) {
         const vacTeachers = Array.from(new Set(stats.vacationDetails.map(d => d.teacher))).filter(Boolean);
         const vacTeacherStr = vacTeachers.length > 0 ? `${vacTeachers.join(', ')} 선생님` : '';
-        parts.push(`휴가 ${vacationCount}건은 ${vacTeacherStr} 조 수업`);
+        parts.push(vacTeacherStr ? `휴가 ${vacationCount}건은 ${vacTeacherStr} 조 수업` : `휴가 ${vacationCount}건은 선생님 휴가 일정`);
       }
-      sentence2 = `${parts.join('이고, ')}이에요.`;
+
+      if (parts.length === 1) {
+        sentence2 = `${attachYiYe(parts[0])}.`;
+      } else {
+        const head = parts.slice(0, -1).join('이고, ');
+        const tail = parts[parts.length - 1];
+        sentence2 = `${head}이고, ${attachYiYe(tail)}.`;
+      }
     }
 
     // 3. 수업 내용 메모 기반 주제
@@ -730,9 +740,9 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
       let topicNames = '';
       if (top2 && top2.count === top1.count) {
-        topicNames = `${top1.name}와 ${top2.name}(각 ${top1.count}건)`;
+        topicNames = `${attachWaGwa(top1.name)} ${top2.name}(각 ${top1.count}건)`;
       } else if (top2) {
-        topicNames = `${top1.name}(${top1.count}건)과 ${top2.name}(${top2.count}건)`;
+        topicNames = `${attachWaGwa(`${top1.name}(${top1.count}건)`)} ${top2.name}(${top2.count}건)`;
       } else {
         topicNames = `${top1.name}(${top1.count}건)`;
       }
@@ -749,11 +759,12 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         });
       });
 
-      const sampleText = foundKeywords.length > 0
-        ? `${foundKeywords.slice(0, 3).join('와 ')} 활용이`
-        : '맞춤형 실습이';
+      const sampleKeywords = foundKeywords.slice(0, 3);
+      const sampleText = sampleKeywords.length > 0
+        ? `${joinKoreanWithWaGwa(sampleKeywords)} 활용이 실습에 나왔습니다.`
+        : '맞춤형 개별 실습이 진행되었습니다.';
 
-      sentence3 = `가장 많이 다룬 주제는 ${topicNames}이에요. ${sampleText} 실습에 나왔습니다.`;
+      sentence3 = `가장 많이 다룬 주제는 ${attachYiYe(topicNames)}. ${sampleText}`;
     } else {
       sentence3 = '등록된 상세 수업 내용 메모가 없어 교육 주제를 분석 중입니다.';
     }

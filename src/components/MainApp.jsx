@@ -91,7 +91,8 @@ import {
   getTeacherSortWeight,
   getTeacherGroup,
   getTeamDefaultShifts,
-  getDayName
+  getDayName,
+  attachRoEuro
 } from '../utils/helpers';
 import {
   User,
@@ -2844,7 +2845,7 @@ export default function MainApp({
           }
         }
 
-        setErrorMessage(`⚠️ 해당 날짜는 시트에 정의되지 않았습니다. (${targetDate}로 이동합니다)`);
+        setErrorMessage(`⚠️ 해당 날짜는 시트에 정의되지 않았습니다. (${attachRoEuro(targetDate)} 이동합니다)`);
         setTimeout(() => setErrorMessage(""), 3000);
         setDate(targetDate);
         return;

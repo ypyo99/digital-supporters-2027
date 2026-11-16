@@ -424,3 +424,127 @@ export function getShiftWeight(shift) {
 export const teamList = ['1팀', '2팀', '3팀', '취업팀'];
 
 export const isTargetTeacher = (teacher) => teacher && (teacher.includes('천은선') || teacher.includes('서승희'));
+
+/**
+ * 한국어 받침(종성) 유무 판별 함수
+ * - 대상 문자열 뒤의 닫는 괄호, 특수기호, 공백 등을 제거한 후 실질적인 끝음절의 종성을 검사합니다.
+ * - 한글 완성형 (0xAC00 ~ 0xD7A3): (code - 0xAC00) % 28 > 0 이면 받침 있음
+ * - 숫자: 0, 1, 3, 6, 7, 8 (영, 일, 삼, 육, 칠, 팔)은 받침 있음 / 2, 4, 5, 9 (이, 사, 오, 구)는 받침 없음
+ * - 영문 끝소리: 대부분 모음 발음(에이, 비, 씨...)이며 L, M, N, R만 자음 받침(엘, 엠, 엔, 알)을 가짐
+ */
+export const hasJongseong = (str) => {
+  if (!str) return false;
+  const cleaned = String(str).trim().replace(/[\s)\]}"'.,·~]+$/g, '');
+  if (!cleaned) return false;
+
+  const lastChar = cleaned[cleaned.length - 1];
+  const code = lastChar.charCodeAt(0);
+
+  // 1. 한글 완성형 음절
+  if (code >= 0xac00 && code <= 0xd7a3) {
+    return (code - 0xac00) % 28 > 0;
+  }
+
+  // 2. 아라비아 숫자
+  if (/[0-9]/.test(lastChar)) {
+    return /[013678]/.test(lastChar);
+  }
+
+  // 3. 영문 알파벳 (L, M, N, R만 국문 표기 시 종성 자음 받침 형성)
+  if (/[a-zA-Z]/.test(lastChar)) {
+    return /[lmnr]/i.test(lastChar);
+  }
+
+  return false;
+};
+
+/**
+ * 조사 '와/과' 자동 결합 (받침 있으면 '과', 없으면 '와')
+ * 예: 카카오톡 -> 카카오톡과 / 제미나이 -> 제미나이와 / 소통 -> 소통과 / AI·스마트 도구 -> AI·스마트 도구와
+ */
+export const attachWaGwa = (word) => {
+  if (!word) return '';
+  return hasJongseong(word) ? `${word}과` : `${word}와`;
+};
+
+/**
+ * 조사 '은/는' 자동 결합 (받침 있으면 '은', 없으면 '는')
+ */
+export const attachEunNeun = (word) => {
+  if (!word) return '';
+  return hasJongseong(word) ? `${word}은` : `${word}는`;
+};
+
+/**
+ * 조사 '을/를' 자동 결합 (받침 있으면 '을', 없으면 '를')
+ */
+export const attachEulReul = (word) => {
+  if (!word) return '';
+  return hasJongseong(word) ? `${word}을` : `${word}를`;
+};
+
+/**
+ * 조사 '이/가' 자동 결합 (받침 있으면 '이', 없으면 '가')
+ */
+export const attachYiGa = (word) => {
+  if (!word) return '';
+  return hasJongseong(word) ? `${word}이` : `${word}가`;
+};
+
+/**
+ * 서술격 조사 '이에요/예요' 자동 결합 (받침 있으면 '이에요', 없으면 '예요')
+ * 예: 수업 -> 수업이에요 / 사정 -> 사정이에요 / 미디어 -> 미디어예요 / 2건 -> 2건이에요
+ */
+export const attachYiYe = (word) => {
+  if (!word) return '';
+  return hasJongseong(word) ? `${word}이에요` : `${word}예요`;
+};
+
+/**
+ * 조사 '로/으로' 자동 결합 (받침 없거나 'ㄹ' 받침은 '로', 그 외 받침은 '으로')
+ */
+export const attachRoEuro = (word) => {
+  if (!word) return '';
+  const cleaned = String(word).trim().replace(/[\s)\]}"'.,·~]+$/g, '');
+  if (!cleaned) return word;
+
+  const lastChar = cleaned[cleaned.length - 1];
+  const code = lastChar.charCodeAt(0);
+
+  if (code >= 0xac00 && code <= 0xd7a3) {
+    const finalIndex = (code - 0xac00) % 28;
+    return (finalIndex === 0 || finalIndex === 8) ? `${word}로` : `${word}으로`;
+  }
+
+  if (/[0-9]/.test(lastChar)) {
+    return /[1245789]/.test(lastChar) ? `${word}로` : `${word}으로`;
+  }
+
+  if (/[a-zA-Z]/.test(lastChar)) {
+    return /[lr]|[aeiou]/i.test(lastChar) ? `${word}로` : `${word}으로`;
+  }
+
+  return `${word}으로`;
+};
+
+/**
+ * 한국어 단어 목록을 와/과 로 자연스럽게 나열
+ * 예:
+ * ['카카오톡'] -> '카카오톡'
+ * ['카카오톡', '제미나이'] -> '카카오톡과 제미나이'
+ * ['제미나이', '카카오톡'] -> '제미나이와 카카오톡'
+ * ['카카오톡', '제미나이', '유튜브'] -> '카카오톡, 제미나이와 유튜브'
+ * ['제미나이', '카카오톡', '유튜브'] -> '제미나이, 카카오톡과 유튜브'
+ */
+export const joinKoreanWithWaGwa = (list) => {
+  if (!list || list.length === 0) return '';
+  if (list.length === 1) return list[0];
+  if (list.length === 2) {
+    return `${attachWaGwa(list[0])} ${list[1]}`;
+  }
+  const prefix = list.slice(0, -2).join(', ');
+  const secondLast = list[list.length - 2];
+  const last = list[list.length - 1];
+  const combined = `${attachWaGwa(secondLast)} ${last}`;
+  return prefix ? `${prefix}, ${combined}` : combined;
+};
