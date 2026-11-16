@@ -11,6 +11,14 @@ import {
 } from '../utils/helpers';
 import { User, Home, Clock } from './Icons';
 
+// 회차 배지 스타일 (팀별 오늘 일정보기와 동일)
+const getSessionBadgeStyle = (count) => {
+  if (count >= 15) return 'bg-amber-100 text-amber-950 border border-amber-300 font-bold';
+  if (count >= 10) return 'bg-indigo-950 text-white font-bold';
+  if (count >= 7) return 'bg-purple-100 text-purple-900 border border-purple-200 font-bold';
+  return 'bg-slate-200 text-slate-800 font-bold';
+};
+
 const hasIndependentKeyword = (str, keywords) => {
   if (!str) return false;
   const tokens = str.split(/[,/]+/).map(t => t.trim());
@@ -55,6 +63,8 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
   const [noDataMessage, setNoDataMessage] = useState("");
   const [teamLeader, setTeamLeader] = useState(null);
   const [selectedStudentDates, setSelectedStudentDates] = useState(null);
+  const [expandedMemos, setExpandedMemos] = useState({}); // 메모 펼침 상태 { "시간|날짜": true }
+  const toggleMemo = (key) => setExpandedMemos(prev => ({ ...prev, [key]: !prev[key] }));
 
   const weekDays = ['월', '화', '수', '목', '금'];
   const [timeSlots, setTimeSlots] = useState([]);
@@ -702,10 +712,12 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                     <th className="w-[12%] py-2 md:py-3 border-r-2 border-gray-300 font-black text-gray-800 text-[clamp(1rem,2.2vw,1.3rem)]">수업시간</th>
                     {currentDays.map((day, i) => {
                       const dateStr = getLocalDateString(day);
-                      const isToday = dateStr === getLocalDateString(new Date());
+                      const todayStr = getLocalDateString(new Date());
+                      const isToday = dateStr === todayStr;
+                      const isPast = dateStr < todayStr;
 
                       return (
-                        <th key={i} style={{ width: '17.6%' }} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : 'border-r-2 border-gray-300 text-blue-900 last:border-0'}`}>
+                        <th key={i} style={{ width: '17.6%' }} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : `border-r-2 border-gray-300 last:border-0 ${isPast ? 'text-slate-400' : 'text-blue-900'}`}`}>
                           {day.getMonth() + 1}/{day.getDate()} ({weekDays[i]})
                         </th>
                       );
@@ -720,7 +732,9 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                       </td>
                       {currentDays.map((day, i) => {
                         const dateStr = getLocalDateString(day);
-                        const isToday = dateStr === getLocalDateString(new Date());
+                        const todayStr = getLocalDateString(new Date());
+                        const isToday = dateStr === todayStr;
+                        const isPast = dateStr < todayStr;
                         const specialDayInfo = specialDays && specialDays[dateStr];
 
                         const isLastSlot = idx === timeSlots.length - 1;
@@ -738,62 +752,63 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                         }
 
                         const parsedStatus = parseWeeklyStatus(cellData.status);
-                        const isAssistant = cellData.student && cellData.student.includes("보조강사");
-                        const isKyungrodang = (cellData.student || "").includes("경로당") || (cellData.student || "").includes("복지관") || (cellData.location || "").includes("경로당") || ((cellData.location || "").includes("복지관") && (cellData.location || "").trim() !== "복지관");
                         const isHoliday = !!specialDayInfo || (cellData.student && /공휴일|근로자의날|어린이날|휴일|공휴/.test(cellData.student.replace(/\s/g, ''))) ||
                           (cellData.status && /공휴일|근로자의날|어린이날|휴일|공휴/.test(cellData.status.replace(/\s/g, ''))) ||
                           (cellData.location && /공휴일|근로자의날|어린이날|휴일|공휴/.test(cellData.location.replace(/\s/g, '')));
-                        const cardBgClass = isAssistant ? "bg-amber-200" : isKyungrodang ? "bg-orange-100" : "bg-white";
+                        const isAbsent = !!(cellData.status && cellData.status.includes('결석'));
 
-                        let cellBgClass = cardBgClass;
+                        // 배경: 기본 흰색 통일, 결석은 연한 빨강, 휴일은 기존 빨강 유지
+                        let cellBgClass = isAbsent ? "bg-red-50" : "bg-white";
                         if (specialDayInfo) {
                           cellBgClass = "bg-red-300";
                         }
 
+                        const showTags = parsedStatus.tags.length > 0 && !cellData.student?.includes("간담회");
+                        const showSessions = cellData.sessionCounts && !cellData.student?.includes("간담회") && !cellData.student?.includes("안전교육") && !cellData.student?.includes("소양교육") && !cellData.student?.includes("직무교육");
+                        const memoKey = `${time}|${dateStr}`;
+                        const isMemoExpanded = !!expandedMemos[memoKey];
+
                         return (
                           <td key={i} className={`${cellBgClass} p-0 align-top transition-all overflow-hidden h-full hover:brightness-95 ${todayBorderClass}`}>
-                            <div className={`flex flex-col gap-1 justify-start items-center h-full min-h-[110px] overflow-hidden w-full max-w-full ${isHoliday ? 'p-3 bg-red-300 text-white' : 'p-3'}`}>
-                              {parsedStatus.tags.length > 0 && !cellData.student?.includes("간담회") && (
-                                <div className="flex flex-wrap gap-1.5 justify-center w-full mb-1">
-                                  {parsedStatus.tags.map((tag, tIdx) => {
+                            <div className={`flex flex-col gap-1 justify-start items-center h-full min-h-[110px] overflow-hidden w-full max-w-full ${isHoliday ? 'p-3 bg-red-300 text-white' : 'p-3'} ${isPast && !isHoliday ? 'opacity-50' : ''}`}>
+                              {(showTags || showSessions) && (
+                                <div className="flex flex-wrap gap-1 justify-center items-center w-full mb-1">
+                                  {showTags && parsedStatus.tags.map((tag, tIdx) => {
                                     let tagStyle = "bg-blue-100 text-blue-700 border-blue-300";
                                     if (tag.includes('결석')) tagStyle = "bg-red-100 text-red-700 border-red-300";
                                     else if (tag.includes('종료') || tag.includes('취소')) tagStyle = "bg-orange-100 text-orange-700 border-orange-300";
                                     else if (tag.includes('휴가')) tagStyle = "bg-gray-200 text-gray-700 border-gray-400";
                                     else if (tag.includes('출석') || /^\d+/.test(tag)) tagStyle = "bg-blue-500 text-white border-blue-600 shadow-inner";
                                     return (
-                                      <span key={tIdx} className={`px-2.5 py-1 rounded-lg text-[clamp(0.75rem,1.5vw,1rem)] font-extrabold border shadow-sm leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-full ${tagStyle}`}>
+                                      <span key={`t${tIdx}`} className={`px-2 py-0.5 rounded-md text-[clamp(0.75rem,1.5vw,1rem)] font-extrabold border shadow-sm leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full ${tagStyle}`}>
                                         {tag}
                                       </span>
                                     );
                                   })}
+                                  {showSessions && cellData.sessionCounts.map((sc, scIdx) => (
+                                    <button
+                                      key={`s${scIdx}`}
+                                      type="button"
+                                      onClick={() => setSelectedStudentDates(sc)}
+                                      title="출석 일자 보기"
+                                      className={`px-2 py-0.5 rounded-md text-[clamp(0.75rem,1.5vw,1rem)] leading-tight whitespace-nowrap shadow-2xs cursor-pointer hover:brightness-95 active:scale-95 transition-all ${getSessionBadgeStyle(sc.count)}`}
+                                    >
+                                      {sc.count}회차
+                                    </button>
+                                  ))}
                                 </div>
                               )}
-                              {cellData.sessionCounts && !cellData.student?.includes("간담회") && !cellData.student?.includes("안전교육") && !cellData.student?.includes("소양교육") && !cellData.student?.includes("직무교육") && (
-                                <div className="flex flex-wrap gap-1 justify-center w-full mb-1">
-                                  {cellData.sessionCounts.map((sc, scIdx) => {
-                                    let sessionCellBg = "bg-gray-300";
-                                    let sessionTextCol = "text-black";
-                                    if (sc.count >= 15) { sessionCellBg = "bg-orange-600"; sessionTextCol = "text-white"; }
-                                    else if (sc.count >= 10) { sessionCellBg = "bg-purple-900"; sessionTextCol = "text-white"; }
-                                    else if (sc.count >= 7) { sessionCellBg = "bg-purple-400"; sessionTextCol = "text-white"; }
-                                    return (
-                                      <button
-                                        key={scIdx}
-                                        type="button"
-                                        onClick={() => setSelectedStudentDates(sc)}
-                                        className={`flex flex-col items-center px-2 py-0.5 rounded-md text-[clamp(0.75rem,1.5vw,1rem)] font-extrabold border shadow-sm leading-tight whitespace-nowrap cursor-pointer hover:brightness-95 active:scale-95 transition-all ${sessionCellBg} ${sessionTextCol}`}
-                                      >
-                                        {sc.count}회차
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                              {cellData.student && <div className={`font-bold ${isHoliday ? 'text-white w-full' : (cellData.isSpecial ? 'text-red-700 w-full' : 'text-gray-900 w-full')} text-[clamp(1.1rem,2.6vw,1.7rem)] leading-tight break-all whitespace-pre-wrap text-center flex-shrink-0`}>{cellData.student.replace(/\n/g, ' ').replace(/부처님오신날/g, '부처님\n오신날').replace(/보조강사\s*/g, '보조강사\n').replace(/\//g, '/\n').trim()}</div>}
-                              {cellData.location && cellData.location !== "복지관" && team !== '취업팀' && <div className={`${isHoliday ? 'text-gray-100' : 'text-gray-600'} text-[clamp(0.9rem,2.1vw,1.35rem)] font-bold break-all whitespace-pre-wrap text-center max-w-full leading-tight mt-1`}>{cellData.location.replace(/대체공휴일/g, '대체\n공휴일')}</div>}
+                              {cellData.student && <div className={`font-bold ${isHoliday ? 'text-white w-full' : (cellData.isSpecial ? 'text-red-700 w-full' : 'text-gray-900 w-full')} text-[clamp(1.1rem,2.6vw,1.7rem)] leading-tight break-keep whitespace-pre-wrap text-center flex-shrink-0`}>{cellData.student.replace(/\n/g, ' ').replace(/부처님오신날/g, '부처님\n오신날').replace(/보조강사\s*/g, '보조강사\n').replace(/\//g, '/\n').trim()}</div>}
+                              {cellData.location && cellData.location !== "복지관" && team !== '취업팀' && <div className={`${isHoliday ? 'text-gray-100' : 'text-gray-600'} text-[clamp(0.9rem,2.1vw,1.35rem)] font-bold break-keep whitespace-pre-wrap text-center max-w-full leading-tight mt-1`}>{cellData.location.replace(/대체공휴일/g, '대체\n공휴일')}</div>}
                               {parsedStatus.memo && (
-                                <div className={`font-bold text-[clamp(0.9rem,2.1vw,1.35rem)] leading-snug break-words whitespace-pre-wrap text-center mt-1 w-full ${isHoliday ? 'text-gray-100' : (cellData.status && cellData.status.includes('결석') ? 'text-red-600' : 'text-gray-900')}`}>
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={() => toggleMemo(memoKey)}
+                                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMemo(memoKey); } }}
+                                  title={isMemoExpanded ? '접기' : '눌러서 전체 보기'}
+                                  className={`cursor-pointer font-bold text-[clamp(0.9rem,2.1vw,1.35rem)] leading-snug break-keep whitespace-pre-wrap text-center mt-1 w-full ${isMemoExpanded ? '' : 'line-clamp-3'} ${isHoliday ? 'text-gray-100' : (isAbsent ? 'text-red-600' : 'text-gray-900')}`}
+                                >
                                   {parsedStatus.memo.replace(/대체공휴일/g, '대체\n공휴일').split(/(\d+\s*회차)/g).map((part, i) => {
                                     if (/\d+\s*회차/.test(part)) {
                                       return <span key={i} className="text-blue-600">{part}</span>;
