@@ -1170,16 +1170,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
               <div className="flex items-center justify-between gap-1.5 px-1 py-0.5 flex-wrap">
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap text-xs sm:text-sm">
                   <span className="font-bold text-slate-600 dark:text-slate-400 mr-1 text-[13px] whitespace-nowrap">회차 색상</span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs">
                     1–6
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs">
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs">
                     7–9
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-indigo-950 text-white shadow-2xs">
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-indigo-950 text-white shadow-2xs">
                     10–14
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[12px] font-extrabold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
+                  <span className="px-2 py-0.5 rounded-md text-[12px] font-bold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs">
                     15 이상
                   </span>
                 </div>
@@ -1189,7 +1189,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[12px] sm:text-[12.5px] font-extrabold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
+                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[12px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
                       : 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95'
                     }`}
@@ -1223,7 +1223,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                           className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-400 dark:border-slate-500 shadow-sm overflow-hidden"
                         >
                           {/* 선생님 카드 헤더 */}
-                          <div className="bg-blue-600 text-white px-4 py-2.5 font-black text-[17px] sm:text-[18px] tracking-tight">
+                          <div className="bg-blue-600 text-white px-4 py-2.5 font-bold text-[17px] sm:text-[18px] tracking-tight">
                             {teacher.teacherName} 선생님
                           </div>
 
@@ -1282,7 +1282,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                       {/* 시간대 & 학생명 & 회차 */}
                                       <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
                                         {/* 시간대 */}
-                                        <span className="font-extrabold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
+                                        <span className="font-bold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
                                           {startTime}
                                         </span>
 
@@ -1293,7 +1293,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                           </span>
                                         ) : (
                                           <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="font-black text-slate-900 dark:text-slate-100 text-[17px] sm:text-[18px] tracking-tight">
+                                            <span className="font-bold text-slate-900 dark:text-slate-100 text-[17px] sm:text-[18px] tracking-tight">
                                               {studentStr}
                                             </span>
 
