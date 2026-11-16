@@ -1407,13 +1407,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   </span>
                 </div>
 
-                {/* 아직 출결을 체크하지 않은 인원 (확인 중) */}
+                {/* 아직 출결을 체크하지 않은 인원 (확인 전) */}
                 <div className="bg-slate-100/90 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
                   <span className="text-[22px] sm:text-[25px] font-black text-slate-900 dark:text-slate-100 leading-tight">
                     {isLoading ? '-' : `${stats.unconfirmedCount}명`}
                   </span>
                   <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
-                    확인 중
+                    확인 전
                   </span>
                 </div>
               </div>
