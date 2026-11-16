@@ -805,7 +805,7 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
                                   onClick={() => toggleMemo(memoKey)}
                                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMemo(memoKey); } }}
                                   title={isMemoExpanded ? '접기' : '눌러서 전체 보기'}
-                                  className={`cursor-pointer font-bold text-[clamp(0.9rem,2.1vw,1.35rem)] leading-snug break-keep whitespace-pre-wrap text-center mt-1 w-full ${isMemoExpanded ? '' : 'line-clamp-3'} ${isHoliday ? 'text-gray-100' : (isAbsent ? 'text-red-600' : 'text-gray-900')}`}
+                                  className={`cursor-pointer font-normal text-[clamp(0.9rem,2.1vw,1.35rem)] leading-snug break-keep whitespace-pre-wrap text-center mt-1 w-full ${isMemoExpanded ? '' : 'line-clamp-3'} ${isHoliday ? 'text-gray-100' : (isAbsent ? 'text-red-600' : 'text-gray-900')}`}
                                 >
                                   {parsedStatus.memo.replace(/대체공휴일/g, '대체\n공휴일').split(/(\d+\s*회차)/g).map((part, i) => {
                                     if (/\d+\s*회차/.test(part)) {
