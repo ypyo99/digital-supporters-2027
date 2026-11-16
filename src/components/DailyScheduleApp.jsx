@@ -1223,19 +1223,19 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                               let rowBgClass = '';
 
                               if (isUnassigned) {
-                                barColorClass = 'bg-slate-200 border-r-2 border-slate-300 dark:bg-slate-700 dark:border-slate-600'; // 배정 없음: 연한 회색 막대
+                                barColorClass = 'bg-slate-200 border-r border-slate-300 dark:bg-slate-700 dark:border-slate-600'; // 배정 없음: 연한 회색 막대
                                 rowBgClass = 'bg-slate-50/40 dark:bg-slate-800/40';
                               } else if (att === 'attended') {
-                                barColorClass = 'bg-emerald-100 border-r-2 border-emerald-300 dark:bg-emerald-950/80 dark:border-emerald-700'; // 출석: 출석 버튼과 동일한 소프트 민트톤
+                                barColorClass = 'bg-emerald-400 border-r border-emerald-500 dark:bg-emerald-600 dark:border-emerald-500'; // 출석: 선명하고 부드러운 초록색 막대
                                 rowBgClass = 'bg-emerald-50/20 dark:bg-emerald-950/10';
                               } else if (att === 'absent') {
-                                barColorClass = 'bg-rose-100 border-r-2 border-rose-300 dark:bg-rose-950/80 dark:border-rose-700'; // 결석: 결석 버튼과 동일한 소프트 로즈톤
+                                barColorClass = 'bg-rose-400 border-r border-rose-500 dark:bg-rose-600 dark:border-rose-500'; // 결석: 부드럽고 또렷한 빨간색(코랄로즈) 막대
                                 rowBgClass = 'bg-rose-50/20 dark:bg-rose-950/10';
                               } else if (att === 'vacation') {
-                                barColorClass = 'bg-amber-100 border-r-2 border-amber-300 dark:bg-amber-950/80 dark:border-amber-700'; // 휴가: 휴가 버튼과 동일한 웜 앰버톤
+                                barColorClass = 'bg-amber-400 border-r border-amber-500 dark:bg-amber-600 dark:border-amber-500'; // 휴가: 웜 앰버 막대
                                 rowBgClass = 'bg-amber-50/20 dark:bg-amber-950/10';
                               } else {
-                                barColorClass = 'bg-slate-100 border-r-2 border-slate-300 dark:bg-slate-700 dark:border-slate-600'; // 확인중: 확인 전 버튼과 동일한 슬레이트톤
+                                barColorClass = 'bg-slate-400 border-r border-slate-500 dark:bg-slate-500 dark:border-slate-400'; // 확인중: 진한 회색 막대
                                 rowBgClass = 'bg-white dark:bg-slate-800';
                               }
 
