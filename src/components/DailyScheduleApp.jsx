@@ -1407,49 +1407,14 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   </span>
                 </div>
 
-                {/* 출석률 / 미확인 (집계 중) */}
-                <div className={`rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center ${
-                  isLoading || stats.unconfirmedCount > 0 || stats.totalStudents === 0
-                    ? 'bg-slate-100/90 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600'
-                    : 'bg-indigo-50/90 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800'
-                }`}>
-                  {isLoading ? (
-                    <>
-                      <span className="text-[22px] sm:text-[25px] font-black text-slate-400 dark:text-slate-500 leading-tight">
-                        -
-                      </span>
-                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
-                        확인 중
-                      </span>
-                    </>
-                  ) : stats.unconfirmedCount > 0 ? (
-                    <>
-                      <span className="text-[22px] sm:text-[25px] font-black text-slate-900 dark:text-slate-100 leading-tight">
-                        {stats.unconfirmedCount}명
-                      </span>
-                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
-                        확인 중
-                      </span>
-                    </>
-                  ) : stats.totalStudents > 0 ? (
-                    <>
-                      <span className="text-[22px] sm:text-[25px] font-black text-indigo-700 dark:text-indigo-300 leading-tight">
-                        {stats.finalRate}%
-                      </span>
-                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-indigo-800 dark:text-indigo-300 mt-0.5">
-                        출석률
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-[22px] sm:text-[25px] font-black text-slate-400 dark:text-slate-500 leading-tight">
-                        -
-                      </span>
-                      <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
-                        출석률
-                      </span>
-                    </>
-                  )}
+                {/* 아직 출결을 체크하지 않은 인원 (확인 중) */}
+                <div className="bg-slate-100/90 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-600 rounded-2xl py-2.5 sm:py-3 px-3 text-center shadow-2xs flex flex-col items-center justify-center">
+                  <span className="text-[22px] sm:text-[25px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                    {isLoading ? '-' : `${stats.unconfirmedCount}명`}
+                  </span>
+                  <span className="text-[12.5px] sm:text-[13.5px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
+                    확인 중
+                  </span>
                 </div>
               </div>
 
