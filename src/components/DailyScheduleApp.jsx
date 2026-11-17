@@ -1232,16 +1232,19 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                 rowBgClass = 'bg-white dark:bg-slate-800';
                               }
 
+                              const canToggleMemo = !isUnassigned && att !== 'vacation' && hasMemo;
+
                               return (
                                 <div
                                   key={idx}
-                                  className={`relative p-3 sm:p-3.5 pl-3.5 sm:pl-4 transition-colors ${rowBgClass}`}
+                                  onClick={canToggleMemo ? () => toggleMemo(rowKey) : undefined}
+                                  className={`relative p-3 sm:p-3.5 pl-3.5 sm:pl-4 transition-colors ${rowBgClass} ${canToggleMemo ? 'cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-700/40' : ''}`}
                                 >
                                   {/* 시간대 좌측 상태 표시 막대 (우측 버튼과 동일한 색상 배색) */}
                                   <div className={`absolute left-0 top-0 bottom-0 w-2 sm:w-2.5 ${barColorClass} transition-colors`} />
 
                                   {/* 상단 라인: 시간대, 학생명, 회차 배지 및 우측 끝 출결 토글 버튼 */}
-                                  <div className="flex items-start justify-between gap-1.5 sm:gap-2">
+                                  <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                                     <div className="min-w-0 flex-1">
                                       {/* 시간대 & 학생명 & 회차 */}
                                       <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
@@ -1269,7 +1272,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                               <button
                                                 key={scIdx}
                                                 type="button"
-                                                onClick={() => setSelectedStudentDates(sc)}
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  setSelectedStudentDates(sc);
+                                                }}
                                                 title="출석 일자 보기"
                                                 className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[11.5px] sm:text-[12.5px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation whitespace-nowrap cursor-pointer ${getSessionBadgeStyle(sc.count)}`}
                                               >
@@ -1283,22 +1289,23 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                                 ({row.location})
                                               </span>
                                             )}
+
+                                            {/* 수업 메모 있음 아이콘 표시 */}
+                                            {canToggleMemo && (
+                                              <span
+                                                title={isExpanded ? '클릭하여 수업 내용 접기' : '클릭하여 수업 내용 보기'}
+                                                className={`inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[11px] font-bold transition-colors whitespace-nowrap ${
+                                                  isExpanded
+                                                    ? 'bg-blue-600 text-white'
+                                                    : 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                                                }`}
+                                              >
+                                                📝
+                                              </span>
+                                            )}
                                           </div>
                                         )}
                                       </div>
-
-                                      {/* 수업 내용 접기/펼치기 버튼 */}
-                                      {!isUnassigned && att !== 'vacation' && hasMemo && (
-                                        <div className="mt-1">
-                                          <button
-                                            type="button"
-                                            onClick={() => toggleMemo(rowKey)}
-                                            className="inline-flex items-center gap-1 text-[13px] sm:text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation cursor-pointer"
-                                          >
-                                            {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
-                                          </button>
-                                        </div>
-                                      )}
                                     </div>
 
                                     {/* 우측 끝: 출결 상태 버튼 (모바일 화면 폭 최적화: min-w-[48px]로 축소) */}
