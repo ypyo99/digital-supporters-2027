@@ -20,9 +20,7 @@ const parseDateLocal = (dateStr) => {
 };
 
 export default function AutoScheduleApp({ onNavigateBack }) {
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return getSavedItem('sungdong_admin_logged_in', 'false') === 'true';
-  });
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
@@ -980,13 +978,17 @@ export default function AutoScheduleApp({ onNavigateBack }) {
           </h2>
         </div>
         {!isAdmin ? (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center shadow-sm w-full mb-6">
-            <div className="text-3xl mb-2">💡</div>
-            <p className="font-extrabold text-amber-800 text-base">
-              시간표 자동 작성을 하시려면 상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.
-            </p>
-            <p className="text-xs text-amber-600 mt-2 font-bold">
-              * 담당자 전용 인증 후에만 시간표 자동 작성, 미리보기 수정 및 DB 저장이 가능합니다.
+          <div
+            onClick={() => {
+              setShowPwdModal(true);
+              setPwdInput("");
+              setPwdError(false);
+            }}
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mb-6"
+          >
+            <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
+              <span className="text-xl sm:text-2xl">💡</span>
+              <span>상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
             </p>
           </div>
         ) : (

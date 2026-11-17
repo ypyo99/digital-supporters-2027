@@ -1063,7 +1063,7 @@ export default function StudentFormsAdminApp({
               setPwdInput("");
               setPwdError(false);
             }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99]"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mb-6"
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>

@@ -449,14 +449,11 @@ export default function HolidayManagementApp({ onNavigateBack }) {
               setPwdInput("");
               setPwdError(false);
             }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99]"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mb-6"
           >
-            <div className="text-3xl mb-2">💡</div>
-            <p className="font-extrabold text-amber-800 text-base">
-              공휴일/휴무일 편집을 하시려면 상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.
-            </p>
-            <p className="text-xs text-amber-600 mt-2 font-bold">
-              * 담당자 전용 인증 후에만 공휴일 추가/수정/삭제 및 시간표 적용이 가능합니다.
+            <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
+              <span className="text-xl sm:text-2xl">💡</span>
+              <span>상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
             </p>
           </div>
         ) : (

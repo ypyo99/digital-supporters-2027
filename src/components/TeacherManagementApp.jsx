@@ -252,9 +252,12 @@ export default function TeacherManagementApp({ onNavigateBack }) {
               setPwdInput("");
               setPwdError(false);
             }}
-            className="bg-yellow-50 rounded-2xl border border-yellow-200 p-4 mb-6 text-center text-yellow-800 text-xs sm:text-sm font-bold shadow-xs cursor-pointer hover:bg-yellow-100 transition-all active:scale-[0.99]"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mb-6"
           >
-            💡 선생님 등록 및 수정을 하시려면 상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.
+            <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
+              <span className="text-xl sm:text-2xl">💡</span>
+              <span>상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
+            </p>
           </div>
         ) : (
           <>
