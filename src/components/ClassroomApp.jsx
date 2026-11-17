@@ -325,25 +325,42 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
   const endDay = currentDays[4].getDate();
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800">
-      <div className="shrink-0 app-header text-white px-[84px] pt-4 pb-12 z-20 relative flex items-start justify-center min-h-[104px]">
-        <h1 className="text-[17px] sm:text-lg md:text-xl font-bold flex items-center justify-center gap-2 mt-1 leading-tight text-center tracking-tight">
-          <LucideCalendar className="w-6 h-6 md:w-8 md:h-8" /> 평생교육실2 사용 현황
-        </h1>
-        <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
-          <button onClick={handleManagerClick} className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation ${isManagerMode ? 'is-on' : ''}`}>
-            {isManagerMode ? '저장/담당자 모드 종료' : '담당자 로그인'}
+    <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans text-gray-800">
+      <div className="shrink-0 app-header text-white z-40 relative">
+        <div className="max-w-5xl mx-auto px-4 pb-12 pt-safe-4 flex justify-between items-start relative min-h-[116px]">
+          <div>
+            <div className="flex items-center mb-1">
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+            </div>
+            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
+          </div>
+
+          <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
+            <button
+              onClick={handleManagerClick}
+              className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isManagerMode ? 'is-on' : ''}`}
+            >
+              {isManagerMode ? '저장/담당자 모드 종료' : '담당자 로그인'}
+            </button>
+          </div>
+
+          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
+            <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>
         </div>
-        <button onClick={onNavigateBack} className="absolute right-4 top-3 text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
-          <Home className="w-5 h-5 mb-1" /> 처음으로
-        </button>
       </div>
 
-      <div className="flex-1 flex flex-col p-3 md:p-8 pb-10">
-        <div className="max-w-5xl w-full mx-auto bg-white rounded-2xl shadow-lg overflow-hidden ring-1 ring-gray-900/5 flex flex-col">
-          <div className="shrink-0 z-10 bg-white px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-3 shadow-sm relative">
-            <div className="bg-white rounded-xl p-3 md:p-4 border border-gray-200 flex flex-col items-center shadow-sm">
+      <div className="flex-1 flex flex-col pb-10">
+        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+          <div className="pb-2 px-1">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+              <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 평생교육실2 사용 현황</span>
+            </h2>
+          </div>
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden ring-1 ring-gray-900/5 flex flex-col">
+            <div className="shrink-0 z-10 bg-white px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-3 shadow-sm relative">
+              <div className="bg-white rounded-xl p-3 md:p-4 border border-gray-200 flex flex-col items-center shadow-sm">
               {saveErrorMsg && (
                 <div className="w-full mb-3 p-3 bg-red-100 text-red-700 font-bold rounded-lg border border-red-300 text-[14px] md:text-sm text-center">
                   🚨 {saveErrorMsg}
@@ -535,6 +552,7 @@ CREATE POLICY "Allow public all access" ON public.classroom_schedules FOR ALL US
           </div>
         </div>
       </div>
+    </div>
 
       {showPwdModal && (
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
