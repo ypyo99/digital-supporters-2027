@@ -948,13 +948,10 @@ export default function AutoScheduleApp({ onNavigateBack }) {
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <LucideCalendar className="w-4 h-4 mr-1" /> 시간표 작성
-            </p>
+            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
           </div>
         </div>
 
@@ -970,13 +967,18 @@ export default function AutoScheduleApp({ onNavigateBack }) {
 
         <button
           onClick={onNavigateBack}
-          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
+          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0"
         >
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
       </header>
 
-      <main className="flex-1 px-4 sm:px-6 md:px-8 pt-4 pb-12 w-full max-w-full lg:max-w-[95%] xl:max-w-[92%] mx-auto overflow-y-auto">
+      <main className="flex-1 px-4 sm:px-6 md:px-8 pt-3 pb-12 w-full max-w-full lg:max-w-[95%] xl:max-w-[92%] mx-auto overflow-y-auto">
+        <div className="pb-2 px-1">
+          <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+            <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 시간표 작성</span>
+          </h2>
+        </div>
         {!isAdmin ? (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center shadow-sm w-full mb-6">
             <div className="text-3xl mb-2">💡</div>
