@@ -240,7 +240,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
       </header>
 
       <main className="flex-1 px-4 sm:px-6 md:px-8 pt-3 pb-12 w-full max-w-full lg:max-w-[95%] xl:max-w-[92%] mx-auto overflow-y-auto">
-        <div className="pb-1 px-1">
+        <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><User className="w-5 h-5 mr-2 text-blue-600" /> 선생님 명단 관리</span>
           </h2>
@@ -252,7 +252,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
               setPwdInput("");
               setPwdError(false);
             }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mt-2"
+            className="bg-amber-50 border border-amber-200 rounded-2xl py-3.5 px-4 sm:py-4 sm:px-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mt-1"
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>

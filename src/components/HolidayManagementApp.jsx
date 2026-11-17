@@ -430,17 +430,17 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         </button>
       </header>
 
-      <main className={`p-4 max-w-4xl mx-auto w-full flex-1 ${isAdmin ? 'space-y-6 mt-4' : 'space-y-2 mt-2'}`}>
-        <div className="pb-1 px-1">
+      <main className={`p-4 max-w-4xl mx-auto w-full flex-1 ${isAdmin ? 'space-y-6 mt-4' : 'mt-1'}`}>
+        <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 공휴일 관리</span>
           </h2>
         </div>
-        {notice && (
-          <div className={`p-4 rounded-xl font-bold shadow-sm animate-fadeIn ${notice.includes('실패') || notice.includes('오류') ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`}>
+        {notice ? (
+          <div className={`p-4 rounded-xl font-bold shadow-sm animate-fadeIn mb-2 ${notice.includes('실패') || notice.includes('오류') ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`}>
             {notice}
           </div>
-        )}
+        ) : null}
 
         {!isAdmin ? (
           <div
@@ -449,7 +449,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
               setPwdInput("");
               setPwdError(false);
             }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99]"
+            className="bg-amber-50 border border-amber-200 rounded-2xl py-3.5 px-4 sm:py-4 sm:px-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mt-1"
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>
