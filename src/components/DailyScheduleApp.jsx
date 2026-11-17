@@ -1194,9 +1194,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                           {/* 시간대별 수업 목록 */}
                           <div className="divide-y divide-slate-200 dark:divide-slate-700">
                             {teacher.shifts.map((row, idx) => {
-                              const startTime = typeof row.time === 'string'
+                              const rawStartTime = typeof row.time === 'string'
                                 ? row.time.split('~')[0].trim()
-                                : row.time;
+                                : String(row.time || '');
+                              const startTime = /^\d:\d{2}$/.test(rawStartTime) ? `0${rawStartTime}` : rawStartTime;
 
                               const studentStr = (row.student || "").trim();
                               const isUnassigned = !studentStr || studentStr === '-';
@@ -1250,7 +1251,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                       <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
                                         {/* 시간대와 학생이름: 무조건 같은 라인에 표시 */}
                                         <div className="inline-flex items-center gap-1.5 sm:gap-2 shrink-0">
-                                          <span className="font-bold text-slate-700 dark:text-slate-300 text-[14.5px] sm:text-[16px] whitespace-nowrap">
+                                          <span className="font-bold text-slate-700 dark:text-slate-300 text-[14.5px] sm:text-[16px] whitespace-nowrap tabular-nums">
                                             {startTime}
                                           </span>
                                           {isUnassigned ? (
