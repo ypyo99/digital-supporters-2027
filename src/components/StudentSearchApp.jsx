@@ -380,21 +380,6 @@ export default function StudentSearchApp({ onNavigateBack }) {
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
             <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              {(() => {
-                const savedTeacher = (getSavedItem('sungdong_teacher', '') || '').trim();
-                const savedTeam = (getSavedItem('sungdong_team', '') || '').trim();
-                return savedTeacher ? (
-                  <>
-                    <User className="w-4 h-4 mr-1 shrink-0" /> [{savedTeam || '전체'}] {savedTeacher.replace(/\n/g, ' ')} 선생님
-                  </>
-                ) : (
-                  <>
-                    <User className="w-4 h-4 mr-1 shrink-0" /> 대상자 검색
-                  </>
-                );
-              })()}
-            </p>
           </div>
           <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
             <Home className="w-5 h-5 mb-1" /> 처음으로
