@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
-import { Home } from './Icons';
+import { Home, LucideCalendar } from './Icons';
 import { getShiftWeight, getSavedItem, setSavedItem, removeSavedItem } from '../utils/helpers';
 
 export default function HolidayManagementApp({ onNavigateBack }) {
@@ -407,13 +407,10 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <svg className="w-4 h-4 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> 공휴일 관리
-            </p>
+            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
           </div>
         </div>
 
@@ -429,13 +426,18 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
         <button
           onClick={onNavigateBack}
-          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
+          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0"
         >
           <Home className="w-5 h-5 mb-1" /> 처음으로
         </button>
       </header>
 
       <main className="p-4 max-w-4xl mx-auto space-y-6 mt-4 w-full flex-1">
+        <div className="pb-2 px-1">
+          <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+            <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 공휴일 관리</span>
+          </h2>
+        </div>
         {notice && (
           <div className={`p-4 rounded-xl font-bold shadow-sm animate-fadeIn ${notice.includes('실패') || notice.includes('오류') ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-green-100 text-green-700 border border-green-200'}`}>
             {notice}
