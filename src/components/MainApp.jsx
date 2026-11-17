@@ -224,6 +224,13 @@ export default function MainApp({
   const [isFetchingSchedule, setIsFetchingSchedule] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isLoggedInRef = useRef(isLoggedIn);
+  useEffect(() => { isLoggedInRef.current = isLoggedIn; }, [isLoggedIn]);
+  const isSubmittingRef = useRef(isSubmitting);
+  useEffect(() => { isSubmittingRef.current = isSubmitting; }, [isSubmitting]);
+  const hasChangesRef = useRef(false);
+  const showLogoutConfirmRef = useRef(false);
+  useEffect(() => { showLogoutConfirmRef.current = showLogoutConfirm; }, [showLogoutConfirm]);
   const isDataLoading = isFetchingSchedule || isSyncing || isSubmitting;
   const [specialAlerts, setSpecialAlerts] = useState([]);
   const [studentCounts, setStudentCounts] = useState({});
@@ -1021,6 +1028,7 @@ export default function MainApp({
     }
   }, [selectedTeam, currentUser]);
 
+  // 1) 새로고침/창 닫기 시 데이터 저장 중 경고
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (isSubmitting) {
@@ -1029,24 +1037,60 @@ export default function MainApp({
       }
     };
 
-    const handlePopState = (e) => {
-      if (isSubmitting) {
-        window.history.pushState(null, null, window.location.href);
-        alert("데이터 저장 중입니다.\n안전한 저장을 위해 잠시만 기다려주세요.");
-      }
-    };
-
     if (isSubmitting) {
       window.addEventListener('beforeunload', handleBeforeUnload);
-      window.history.pushState(null, null, window.location.href);
-      window.addEventListener('popstate', handlePopState);
     }
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
     };
   }, [isSubmitting]);
+
+  // 2) 일지 작성 화면 마운트 시 세션 복원 대응
+  useEffect(() => {
+    if (isLoggedIn && (!window.history.state || window.history.state.subView !== 'logWrite')) {
+      window.history.pushState({ view: 'main', subView: 'logWrite' }, '', window.location.href);
+    }
+  }, []);
+
+  // 3) 스마트폰 뒤로가기 버튼(popstate) 처리: 일지 작성 중 뒤로가기 누를 시 메인메뉴 화면 복귀
+  useEffect(() => {
+    const handlePopState = (e) => {
+      // 데이터 저장 중 뒤로가기 시도 차단
+      if (isSubmittingRef.current) {
+        window.history.pushState({ view: 'main', subView: 'logWrite' }, '', window.location.href);
+        alert("데이터 저장 중입니다.\n안전한 저장을 위해 잠시만 기다려주세요.");
+        return;
+      }
+
+      // 일지 작성 화면에서 뒤로가기를 눌러 메인메뉴로 나가려는 경우
+      if (isLoggedInRef.current && (!e.state || e.state.subView !== 'logWrite')) {
+        // 이미 저장 확인 모달이 열려있는 상태에서 뒤로가기를 누르면 모달만 닫음
+        if (showLogoutConfirmRef.current) {
+          window.history.pushState({ view: 'main', subView: 'logWrite' }, '', window.location.href);
+          setShowLogoutConfirm(false);
+          return;
+        }
+
+        // 미저장 변경사항이 있으면 확인 모달 띄우고 상태 복원
+        if (hasChangesRef.current) {
+          window.history.pushState({ view: 'main', subView: 'logWrite' }, '', window.location.href);
+          setShowLogoutConfirm(true);
+          return;
+        }
+
+        // 변경사항이 없으면 메인메뉴 화면으로 복귀
+        isLoggedInRef.current = false;
+        setIsLoggedIn(false);
+        setRecords([]);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   const [logs, setLogs] = useState({
     0: { student: "", status: "", location: "", selectedTags: [[]], memo: "", headcount: "" },
@@ -1763,6 +1807,10 @@ export default function MainApp({
     });
   }, [logs, allScheduleData, date, selectedTeam, shifts]);
 
+  useEffect(() => {
+    hasChangesRef.current = hasChanges;
+  }, [hasChanges]);
+
   const isEmptySchedule = useMemo(() => {
     return Object.values(logs).every(log => !log.student?.trim() && !log.location?.trim());
   }, [logs]);
@@ -2142,8 +2190,12 @@ export default function MainApp({
   };
 
   const executeLogout = () => {
+    isLoggedInRef.current = false;
     setIsLoggedIn(false);
     setRecords([]);
+    if (window.history.state && window.history.state.subView === 'logWrite') {
+      window.history.back();
+    }
   };
 
   const handleLogout = async () => {
@@ -2996,7 +3048,9 @@ export default function MainApp({
     if (currentUser) {
       const todayStr = getInitialWeekday();
       setDate(todayStr);
+      isLoggedInRef.current = true;
       setIsLoggedIn(true);
+      window.history.pushState({ view: 'main', subView: 'logWrite' }, '', window.location.href);
       setRefreshTrigger(prev => prev + 1);
     }
   };

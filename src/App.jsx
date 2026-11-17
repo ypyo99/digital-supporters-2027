@@ -68,6 +68,54 @@ export default function App() {
   });
   const [selectedNoticeForView, setSelectedNoticeForView] = useState(null);
 
+  // [화면 전환 및 브라우저 History(뒤로가기) 연동]
+  const navigateTo = (viewName, replace = false) => {
+    if (viewName === currentView) return;
+    const targetUrl = viewName === 'main' ? window.location.pathname : `?view=${viewName}`;
+    if (replace) {
+      window.history.replaceState({ view: viewName }, '', targetUrl);
+    } else {
+      window.history.pushState({ view: viewName }, '', targetUrl);
+    }
+    setCurrentView(viewName);
+  };
+
+  const handleNavigateBack = () => {
+    setIsFormsAdminMode(false);
+    setSessionItem('sungdong_forms_admin_mode', 'false');
+    if (window.history.state && window.history.state.view && window.history.state.view !== 'main') {
+      window.history.back();
+    } else {
+      navigateTo('main', true);
+    }
+  };
+
+  useEffect(() => {
+    // 1. 초기 브라우저 History 설정: 작업화면 직접 진입 시에도 뒤로가기 누르면 메인으로 복귀할 수 있도록 스택 구성
+    const initialView = new URLSearchParams(window.location.search).get('view') || currentView || 'main';
+    if (initialView && initialView !== 'main') {
+      window.history.replaceState({ view: 'main' }, '', window.location.pathname);
+      window.history.pushState({ view: initialView }, '', `?view=${initialView}`);
+    } else {
+      window.history.replaceState({ view: 'main' }, '', window.location.pathname);
+    }
+
+    // 2. 스마트폰 하드웨어/제스처 뒤로가기(popstate) 이벤트 핸들러
+    const handlePopState = (e) => {
+      const stateView = e.state?.view || new URLSearchParams(window.location.search).get('view') || 'main';
+      if (stateView === 'main') {
+        setIsFormsAdminMode(false);
+        setSessionItem('sungdong_forms_admin_mode', 'false');
+      }
+      setCurrentView(stateView);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   useEffect(() => {
     setSessionItem('sungdong_current_view', currentView);
     // 메뉴(화면) 전환 시 구글 애널리틱스로 페이지 뷰 이벤트 전송
@@ -142,8 +190,8 @@ export default function App() {
     if (currentView === 'classroom') {
       return (
         <ClassroomApp
-          onNavigateBack={() => setCurrentView('main')}
-          onNavigateToNangmanStudio={() => setCurrentView('nangmanStudio')}
+          onNavigateBack={handleNavigateBack}
+          onNavigateToNangmanStudio={() => navigateTo('nangmanStudio')}
         />
       );
     }
@@ -152,14 +200,14 @@ export default function App() {
       return (
         <DailyScheduleApp
           initialTeam={selectedTeamForSchedule}
-          onNavigateBack={() => setCurrentView('main')}
+          onNavigateBack={handleNavigateBack}
           onTeamChange={(team) => setSelectedTeamForSchedule(team)}
         />
       );
     }
 
     if (currentView === 'teamSchedule') {
-      return <TeamScheduleApp team={selectedTeamForSchedule} onNavigateBack={() => setCurrentView('main')} />;
+      return <TeamScheduleApp team={selectedTeamForSchedule} onNavigateBack={handleNavigateBack} />;
     }
 
     if (currentView === 'myWeeklySchedule') {
@@ -169,48 +217,44 @@ export default function App() {
         <MyWeeklyScheduleApp
           team={activeTeam}
           teacher={activeTeacher}
-          onNavigateBack={() => setCurrentView('main')}
+          onNavigateBack={handleNavigateBack}
         />
       );
     }
 
     if (currentView === 'studentSearch') {
-      return <StudentSearchApp onNavigateBack={() => setCurrentView('main')} />;
+      return <StudentSearchApp onNavigateBack={handleNavigateBack} />;
     }
 
     if (currentView === 'teacherManagement') {
-      return <TeacherManagementApp onNavigateBack={() => setCurrentView('main')} />;
+      return <TeacherManagementApp onNavigateBack={handleNavigateBack} />;
     }
 
     if (currentView === 'autoSchedule') {
-      return <AutoScheduleApp onNavigateBack={() => setCurrentView('main')} />;
+      return <AutoScheduleApp onNavigateBack={handleNavigateBack} />;
     }
 
     if (currentView === 'holidayManagement') {
-      return <HolidayManagementApp onNavigateBack={() => setCurrentView('main')} />;
+      return <HolidayManagementApp onNavigateBack={handleNavigateBack} />;
     }
 
     if (currentView === 'nangmanStudio') {
       return (
         <NangmanStudioApp
-          onNavigateBack={() => setCurrentView('main')}
-          onNavigateToClassroom={() => setCurrentView('classroom')}
+          onNavigateBack={handleNavigateBack}
+          onNavigateToClassroom={() => navigateTo('classroom')}
         />
       );
     }
 
     if (currentView === 'noticeManagement') {
-      return <NoticeManagementApp onNavigateBack={() => setCurrentView('main')} initialNotice={selectedNoticeForView} />;
+      return <NoticeManagementApp onNavigateBack={handleNavigateBack} initialNotice={selectedNoticeForView} />;
     }
 
     if (currentView === 'studentFormsAdmin') {
       return (
         <StudentFormsAdminApp
-          onNavigateBack={() => {
-            setIsFormsAdminMode(false);
-            setSessionItem('sungdong_forms_admin_mode', 'false');
-            setCurrentView('main');
-          }}
+          onNavigateBack={handleNavigateBack}
           initialTeacher={selectedFormsTeacher || getSavedItem('sungdong_teacher', '')}
           initialTeam={selectedFormsTeam || getSavedItem('sungdong_team', '')}
           isAdminMode={isFormsAdminMode}
@@ -220,13 +264,13 @@ export default function App() {
 
     return (
       <MainApp
-        onNavigateToClassroom={() => setCurrentView('classroom')}
+        onNavigateToClassroom={() => navigateTo('classroom')}
         onNavigateToDailySchedule={(team) => {
           setSelectedTeamForSchedule(team);
           try {
             window.sessionStorage.removeItem('sungdong_daily_schedule_date');
           } catch (e) {}
-          setCurrentView('dailySchedule');
+          navigateTo('dailySchedule');
         }}
         onNavigateToMyWeeklySchedule={() => {
           const t = getSavedItem('sungdong_team', '') || selectedTeamForSchedule;
@@ -235,9 +279,9 @@ export default function App() {
           setSelectedTeacherForWeekly(th);
           if (t) setSavedItem('sungdong_schedule_team', t);
           if (th) setSavedItem('sungdong_weekly_teacher', th);
-          setCurrentView('myWeeklySchedule');
+          navigateTo('myWeeklySchedule');
         }}
-        onNavigateToStudentSearch={() => setCurrentView('studentSearch')}
+        onNavigateToStudentSearch={() => navigateTo('studentSearch')}
         onNavigateToStudentFormsAdmin={(options = {}) => {
           const t = options.team || getSavedItem('sungdong_team', '');
           const th = options.teacher || getSavedItem('sungdong_teacher', '');
@@ -246,19 +290,19 @@ export default function App() {
           const adminMode = !!options.isAdminMode;
           setIsFormsAdminMode(adminMode);
           setSessionItem('sungdong_forms_admin_mode', adminMode ? 'true' : 'false');
-          setCurrentView('studentFormsAdmin');
+          navigateTo('studentFormsAdmin');
         }}
         onNavigateToTeamSchedule={(team) => {
           setSelectedTeamForSchedule(team);
-          setCurrentView('teamSchedule');
+          navigateTo('teamSchedule');
         }}
-        onNavigateToTeacherManagement={() => setCurrentView('teacherManagement')}
-        onNavigateToAutoSchedule={() => setCurrentView('autoSchedule')}
-        onNavigateToHolidayManagement={() => setCurrentView('holidayManagement')}
-        onNavigateToNangmanStudio={() => setCurrentView('nangmanStudio')}
+        onNavigateToTeacherManagement={() => navigateTo('teacherManagement')}
+        onNavigateToAutoSchedule={() => navigateTo('autoSchedule')}
+        onNavigateToHolidayManagement={() => navigateTo('holidayManagement')}
+        onNavigateToNangmanStudio={() => navigateTo('nangmanStudio')}
         onNavigateToNoticeManagement={(notice = null) => {
           setSelectedNoticeForView(notice);
-          setCurrentView('noticeManagement');
+          navigateTo('noticeManagement');
         }}
       />
     );
