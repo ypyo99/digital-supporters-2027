@@ -402,10 +402,10 @@ CREATE POLICY "Allow public all access" ON public.classroom_schedules FOR ALL US
                 <div className="flex-1 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-blue-400 rounded-xl bg-[#f0f7ff] text-center shadow-sm overflow-hidden px-1 transition-all">
                   <h2 className="font-extrabold text-[#1e3a8a] text-[16px] min-[360px]:text-[18px] sm:text-[20px] tracking-tighter whitespace-nowrap text-center -translate-y-[1px]">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
                 </div>
+                <button onClick={handleCurrentWeekClick} className="text-[13px] sm:text-[15px] px-3 sm:px-4 h-10 sm:h-12 border border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 active:scale-95 touch-manipulation whitespace-nowrap shrink-0 transition-all">이번 주</button>
                 <button onClick={() => changeWeek(1)} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
                 </button>
-                <button onClick={handleCurrentWeekClick} className="text-[13px] sm:text-[15px] px-3 sm:px-4 h-10 sm:h-12 border border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 active:scale-95 touch-manipulation whitespace-nowrap shrink-0 transition-all">이번 주</button>
               </div>
               <p className="text-[14px] landscape:text-xl md:text-2xl text-gray-600 text-center mt-2 font-medium">
                 '<span className="bg-green-200 text-green-900 font-bold px-1.5 py-0.5 rounded">사용가능</span>'으로 표시된 날짜의 시간대에 이용 가능합니다.
