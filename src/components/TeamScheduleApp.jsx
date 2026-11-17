@@ -994,8 +994,8 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
   });
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col font-sans">
-      <div className="bg-white flex-1 flex flex-col overflow-hidden relative">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col font-sans overflow-y-auto">
+      <div className="bg-white flex-1 flex flex-col relative">
         {/* Header */}
         <div className="shrink-0 app-header text-white z-40 relative min-h-[152px] sm:min-h-[96px]">
           <div className="max-w-5xl mx-auto px-4 pt-3 pb-16 sm:pb-7 flex items-start justify-between relative">
@@ -1126,7 +1126,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
       </div>
 
         {/* 콘텐츠 영역 */}
-        <div className="flex-1 overflow-y-auto bg-slate-50">
+        <div className="flex-1 bg-slate-50 pb-12">
           <div className="max-w-5xl mx-auto w-full p-3 md:p-6">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-40 text-blue-500">
@@ -1142,7 +1142,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
                1. 구글시트형 격자 테이블 뷰
                ======================================================== */
             <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
-              <div className="overflow-x-auto overflow-y-auto max-h-[70vh]">
+              <div className="overflow-x-auto">
                 <table className="table-fixed text-center border-collapse text-[13px] sm:text-sm md:text-base lg:text-lg min-w-[900px] w-full">
                   <thead className="sticky top-0 z-30 bg-[#2b5ce6] text-white">
                     <tr>
