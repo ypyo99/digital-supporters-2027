@@ -17,9 +17,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   const [showApplyPopup, setShowApplyPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
-  const [isAdmin, setIsAdmin] = useState(() => {
-    return getSavedItem('sungdong_admin_logged_in', 'false') === 'true';
-  });
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
@@ -445,7 +443,14 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         )}
 
         {!isAdmin ? (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center shadow-sm w-full">
+          <div
+            onClick={() => {
+              setShowPwdModal(true);
+              setPwdInput("");
+              setPwdError(false);
+            }}
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99]"
+          >
             <div className="text-3xl mb-2">💡</div>
             <p className="font-extrabold text-amber-800 text-base">
               공휴일/휴무일 편집을 하시려면 상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.
@@ -455,7 +460,8 @@ export default function HolidayManagementApp({ onNavigateBack }) {
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 animate-fadeIn">
+          <>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 animate-fadeIn">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-base font-bold text-gray-800">새 공휴일/휴무일 입력</h2>
               <button
@@ -491,9 +497,8 @@ export default function HolidayManagementApp({ onNavigateBack }) {
               </div>
             </div>
           </div>
-        )}
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
           <div className="flex flex-row justify-between items-center mb-4 gap-3">
             <h2 className="text-base sm:text-lg font-bold text-gray-800"></h2>
             <div className="flex gap-2 shrink-0">
@@ -570,7 +575,9 @@ export default function HolidayManagementApp({ onNavigateBack }) {
             </div>
           )}
         </div>
-      </main>
+      </>
+    )}
+  </main>
 
       {showPwdModal && (
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
