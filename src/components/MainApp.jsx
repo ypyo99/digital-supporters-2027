@@ -3459,15 +3459,17 @@ export default function MainApp({
 
   return (
     <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
-      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-20 relative flex justify-between items-center gap-3 shrink-0 min-h-[70px]">
-        <div className="flex items-center gap-3 min-w-0">
-          <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-9 w-9 hdr-logo object-contain shrink-0" onError={(e) => e.target.style.display = 'none'} />
+      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-20 relative flex justify-between items-center gap-3 shrink-0">
+        <div className="flex items-center min-w-0">
           <div className="flex flex-col min-w-0">
-            <p className="text-[13px] sm:text-sm font-semibold text-blue-100 tracking-tight truncate">성동노인종합복지관 · 디지털교육 서포터즈</p>
-            <h1 className="flex items-center gap-2 mt-0.5 min-w-0">
-              <span className="shrink-0 px-2 py-0.5 rounded-md bg-white/20 ring-1 ring-inset ring-white/30 text-[13px] sm:text-sm font-bold">{selectedTeam}</span>
-              <span className="font-extrabold text-[20px] sm:text-[22px] leading-tight tracking-tight truncate">{currentUser.replace(/\n/g, ' ')} <span className="font-semibold text-blue-100 text-[16px] sm:text-[18px]">선생님</span></span>
-            </h1>
+            <div className="flex items-center mb-1">
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+            </div>
+            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+              <User className="w-4 h-4 mr-1 shrink-0" /> [{selectedTeam}] {currentUser.replace(/\n/g, ' ')} 선생님
+            </p>
           </div>
         </div>
 
