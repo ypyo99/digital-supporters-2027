@@ -1072,7 +1072,7 @@ export default function StudentFormsAdminApp({
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>
-              <span>상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
+              <span>[담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
             </p>
           </div>
         ) : (
