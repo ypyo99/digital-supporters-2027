@@ -430,7 +430,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans text-gray-800">
       <div className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 pb-14 pt-safe-4 flex justify-between items-start relative min-h-[120px]">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pb-14 pt-safe-4 flex justify-between items-start relative min-h-[120px]">
           <div>
             <div className="flex items-center mb-1">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -455,7 +455,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
       </div>
 
       <div className="flex-1 flex flex-col pb-10">
-        <div className="max-w-5xl lg:max-w-[1536px] w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+        <div className="max-w-5xl lg:max-w-[1536px] w-full mx-auto flex-1 flex flex-col px-4 md:px-6 py-3 md:py-6 mt-1">
           <div className="pb-2 px-1">
             <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
               <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 낭만스튜디오 사용 현황</span>

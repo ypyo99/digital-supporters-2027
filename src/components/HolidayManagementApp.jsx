@@ -401,36 +401,38 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
   return (
     <div className="min-h-[100dvh] bg-gray-50 font-sans pb-10 flex flex-col">
-      <header className="app-header text-white px-4 pt-safe-4 pb-14 z-40 flex justify-between items-start relative shrink-0 min-h-[120px]">
-        <div className="flex items-center">
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+      <header className="app-header text-white z-40 relative shrink-0">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pt-safe-4 pb-14 flex justify-between items-start relative min-h-[120px]">
+          <div className="flex items-center">
+            <div className="flex flex-col">
+              <div className="flex items-center mb-1">
+                <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+                <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+              </div>
+              <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
             </div>
-            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
           </div>
-        </div>
 
-        {/* 담당자 로그인 버튼 영역 */}
-        <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
+          {/* 담당자 로그인 버튼 영역 */}
+          <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
+            <button
+              onClick={handleAdminClick}
+              className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
+            >
+              {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
+            </button>
+          </div>
+
           <button
-            onClick={handleAdminClick}
-            className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
+            onClick={onNavigateBack}
+            className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0"
           >
-            {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
+            <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>
         </div>
-
-        <button
-          onClick={onNavigateBack}
-          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0"
-        >
-          <Home className="w-5 h-5 mb-1" /> 처음으로
-        </button>
       </header>
 
-      <main className={`p-4 max-w-4xl lg:max-w-[1344px] mx-auto w-full flex-1 ${isAdmin ? 'space-y-6 mt-4' : 'mt-1'}`}>
+      <main className={`px-4 md:px-6 py-4 max-w-5xl lg:max-w-[1536px] mx-auto w-full flex-1 ${isAdmin ? 'space-y-6 mt-4' : 'mt-1'}`}>
         <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 공휴일 관리</span>

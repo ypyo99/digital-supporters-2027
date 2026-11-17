@@ -651,58 +651,60 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
         }
       `}</style>
       {/* 헤더 영역 */}
-      <header className="app-header text-white px-4 pt-4 pb-16 sm:pb-12 z-20 relative flex justify-between items-start shrink-0 min-h-[148px] sm:min-h-[116px]">
-        <div className="flex items-center">
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+      <header className="app-header text-white z-20 relative shrink-0">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pt-4 pb-16 sm:pb-12 flex justify-between items-start relative min-h-[148px] sm:min-h-[116px]">
+          <div className="flex items-center">
+            <div className="flex flex-col">
+              <div className="flex items-center mb-1">
+                <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+                <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+              </div>
+              <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
+              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+                <LucideCalendar className="w-4 h-4 mr-1" /> 공지사항 관리
+              </p>
             </div>
-            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <LucideCalendar className="w-4 h-4 mr-1" /> 공지사항 관리
-            </p>
           </div>
-        </div>
 
-        {/* 담당자 로그인 및 새로작성 버튼 영역 */}
-        <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50 flex items-center gap-3">
-          <button
-            onClick={handleAdminClick}
-            className={`px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
-          >
-            {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
-          </button>
-          {isAdmin && (
+          {/* 담당자 로그인 및 새로작성 버튼 영역 */}
+          <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50 flex items-center gap-3">
             <button
-              onClick={handleNewNotice}
-              className="px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap"
+              onClick={handleAdminClick}
+              className={`px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
             >
-              새로 작성
+              {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
             </button>
-          )}
-        </div>
+            {isAdmin && (
+              <button
+                onClick={handleNewNotice}
+                className="px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap"
+              >
+                새로 작성
+              </button>
+            )}
+          </div>
 
-        <button
-          onClick={async () => {
-            if (isEditing && hasChanges) {
-              const wantsToSave = window.confirm("공지사항을 저장하시겠습니까?");
-              if (wantsToSave) {
-                try {
-                  await handleSave({ preventDefault: () => {} }, true);
-                } catch (e) {}
+          <button
+            onClick={async () => {
+              if (isEditing && hasChanges) {
+                const wantsToSave = window.confirm("공지사항을 저장하시겠습니까?");
+                if (wantsToSave) {
+                  try {
+                    await handleSave({ preventDefault: () => {} }, true);
+                  } catch (e) {}
+                }
               }
-            }
-            onNavigateBack();
-          }}
-          className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
-        >
-          <Home className="w-5 h-5 mb-1" /> 처음으로
-        </button>
+              onNavigateBack();
+            }}
+            className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
+          >
+            <Home className="w-5 h-5 mb-1" /> 처음으로
+          </button>
+        </div>
       </header>
 
       {/* 메인 콘텐츠 영역 */}
-      <main className="flex-1 px-3 sm:px-6 md:px-8 pt-4 pb-12 w-full max-w-7xl lg:max-w-[1536px] mx-auto flex flex-col gap-6">
+      <main className="flex-1 px-4 md:px-6 pt-4 pb-12 w-full max-w-5xl lg:max-w-[1536px] mx-auto flex flex-col gap-6">
 
         {/* Supabase 테이블 부재 경고 */}
         {supabaseTableMissing && (
