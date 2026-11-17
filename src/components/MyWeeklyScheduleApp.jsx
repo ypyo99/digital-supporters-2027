@@ -748,31 +748,34 @@ export default function MyWeeklyScheduleApp({
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans">
-      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-40 flex justify-between items-center relative">
-        <div className="flex items-center">
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+      <div className="shrink-0 app-header text-white z-40 relative">
+        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="flex flex-col">
+              <div className="flex items-center mb-1">
+                <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+                <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+              </div>
+              <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
+              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+                <User className="w-4 h-4 mr-1 shrink-0" /> [{team || getSavedItem('sungdong_team', '') || '2팀'}] {(teacher || getSavedItem('sungdong_teacher', '') || '').replace(/\n/g, ' ')} 선생님
+              </p>
             </div>
-            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <User className="w-4 h-4 mr-1 shrink-0" /> [{team || getSavedItem('sungdong_team', '') || '2팀'}] {(teacher || getSavedItem('sungdong_teacher', '') || '').replace(/\n/g, ' ')} 선생님
-            </p>
           </div>
+          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
+            <Home className="w-5 h-5 mb-1" /> 처음으로
+          </button>
         </div>
-        <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
-          <Home className="w-5 h-5 mb-1" /> 처음으로
-        </button>
-      </header>
+      </div>
 
-      <main className="flex-1 flex flex-col w-full mx-auto p-3 sm:p-5 lg:p-8">
-        <div className="pb-2 px-1 max-w-7xl w-full mx-auto">
-          <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
-            <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 나의 주간 일정</span>
-          </h2>
-        </div>
-        <div className="bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 flex flex-col flex-1 overflow-hidden">
+      <div className="flex-1 flex flex-col pb-4">
+        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+          <div className="pb-2 px-1">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+              <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 나의 주간 일정</span>
+            </h2>
+          </div>
+          <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 flex flex-col flex-1 overflow-hidden">
           <div className="shrink-0 bg-white px-4 sm:px-6 pt-5 pb-4 shadow-sm relative z-10 flex flex-col items-center border-b border-gray-100">
             <div className="flex items-center gap-2 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto">
               <button onClick={() => changeWeek(-1)} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center border-2 border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 text-gray-700 shrink-0 transition-all touch-manipulation">
@@ -791,8 +794,8 @@ export default function MyWeeklyScheduleApp({
             {isLoading && <div className="mt-3 text-sm sm:text-base text-red-600 font-bold flex items-center animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />일정 데이터를 불러오는 중...</div>}
           </div>
 
-          <div className="flex-1 overflow-x-auto overflow-y-auto bg-gray-50/50 p-0">
-            <div className="min-w-[650px] w-full md:w-[92%] lg:w-[88%] max-w-[1600px] bg-white rounded-xl shadow-sm border-2 border-gray-300 overflow-hidden mx-auto my-2 sm:my-4">
+          <div className="flex-1 overflow-x-auto overflow-y-auto bg-gray-50/50 p-2 sm:p-4">
+            <div className="min-w-[650px] w-full bg-white rounded-xl shadow-sm border-2 border-gray-300 overflow-hidden mx-auto">
               <table className="w-full table-fixed text-center border-collapse">
                 <thead>
                   <tr className="bg-[#eef2ff] border-b-2 border-gray-300">
@@ -913,7 +916,8 @@ export default function MyWeeklyScheduleApp({
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </div>
 
       {selectedStudentDates && (
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[60] p-3 sm:p-4" onClick={() => setSelectedStudentDates(null)}>

@@ -3459,37 +3459,39 @@ export default function MainApp({
 
   return (
     <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
-      <header className="app-header text-white px-4 pb-4 pt-safe-4 z-20 relative flex justify-between items-center gap-3 shrink-0">
-        <div className="flex items-center min-w-0">
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+      <div className="shrink-0 app-header text-white z-20 relative">
+        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center gap-3">
+          <div className="flex items-center min-w-0">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center mb-1">
+                <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+                <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+              </div>
+              <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
+              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+                <User className="w-4 h-4 mr-1 shrink-0" /> [{selectedTeam}] {currentUser.replace(/\n/g, ' ')} 선생님
+              </p>
             </div>
-            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <User className="w-4 h-4 mr-1 shrink-0" /> [{selectedTeam}] {currentUser.replace(/\n/g, ' ')} 선생님
-            </p>
           </div>
-        </div>
 
-        <button
-          onClick={(e) => {
-            if (isSubmitting) {
-              e.preventDefault();
-              alert("데이터 저장 중입니다. 잠시만 기다려주세요.");
-              return;
-            }
-            handleLogout();
-          }}
-          className={`text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation ${isSubmitting ? 'hdr-btn opacity-50 cursor-not-allowed' : 'hdr-btn'}`}
-        >
-          <Home className="w-5 h-5 mb-1" /> 처음으로
-        </button>
-      </header>
+          <button
+            onClick={(e) => {
+              if (isSubmitting) {
+                e.preventDefault();
+                alert("데이터 저장 중입니다. 잠시만 기다려주세요.");
+                return;
+              }
+              handleLogout();
+            }}
+            className={`text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation shrink-0 ${isSubmitting ? 'hdr-btn opacity-50 cursor-not-allowed' : 'hdr-btn'}`}
+          >
+            <Home className="w-5 h-5 mb-1" /> 처음으로
+          </button>
+        </div>
+      </div>
 
       <main
-        className="w-full max-w-md sm:max-w-2xl lg:max-w-4xl mx-auto flex flex-col px-4 sm:px-6 md:px-8 pt-2 mt-1 pb-32"
+        className="w-full max-w-5xl mx-auto flex flex-col p-3 md:p-6 pt-2 mt-1 pb-32"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -3518,7 +3520,7 @@ export default function MainApp({
               </div>
             </h2>
             <div className="contents">
-              <div className="sticky top-0 z-30 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
+              <div className="sticky top-0 z-30 -mx-3 md:-mx-6 px-3 md:px-6 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
                 <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md sm:max-w-xl mx-auto">
                   <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                     <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>

@@ -950,7 +950,7 @@ export default function StudentFormsAdminApp({
 
       {/* TOP HEADER */}
       <header className="sticky top-0 z-50 app-header text-white border-b border-blue-900/30 shadow-md">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex items-center justify-between gap-2">
           {/* Left: Title */}
           <div className="flex flex-col min-w-0">
             <div className="flex items-center mb-1">
@@ -1004,8 +1004,8 @@ export default function StudentFormsAdminApp({
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className={`flex-1 max-w-7xl w-full mx-auto ${isTeacherView ? 'p-2 sm:p-4' : 'p-3 sm:p-6 space-y-5 pb-12'}`}>
-        <div className="pb-1 px-1">
+      <main className={`flex-1 max-w-5xl w-full mx-auto p-3 md:p-6 pb-12 ${isTeacherView ? 'space-y-3' : 'space-y-5'}`}>
+        <div className="pb-2 px-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><IconDocumentCheck className="w-5 h-5 mr-2 text-blue-600" /> 참여자 서류 관리</span>
           </h2>

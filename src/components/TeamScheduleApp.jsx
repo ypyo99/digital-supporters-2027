@@ -997,63 +997,65 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
     <div className="w-full min-h-screen bg-gray-50 flex flex-col font-sans">
       <div className="bg-white flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <div className="shrink-0 app-header text-white z-40 relative flex items-start px-4 pt-3 pb-9 sm:pb-7 min-h-[110px] sm:min-h-[92px]">
-          <div>
-            <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-xl sm:text-2xl leading-tight">성동노인종합복지관</h1>
+        <div className="shrink-0 app-header text-white z-40 relative min-h-[110px] sm:min-h-[92px]">
+          <div className="max-w-5xl mx-auto px-4 pt-3 pb-9 sm:pb-7 flex items-start justify-between relative">
+            <div>
+              <div className="flex items-center mb-1">
+                <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+                <h1 className="font-black text-xl sm:text-2xl leading-tight">성동노인종합복지관</h1>
+              </div>
+              <p className="text-lg font-semibold text-yellow-300">
+                디지털교육 서포터즈
+              </p>
+              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+                {(() => {
+                  const savedTeacher = (getSavedItem('sungdong_teacher', '') || '').trim();
+                  const savedTeam = (getSavedItem('sungdong_team', '') || '').trim();
+                  return savedTeacher ? (
+                    <>
+                      <User className="w-4 h-4 mr-1 shrink-0" /> [{savedTeam || team || '전체'}] {savedTeacher.replace(/\n/g, ' ')} 선생님
+                    </>
+                  ) : (
+                    <>
+                      <User className="w-4 h-4 mr-1 shrink-0" /> [{team || '전체'}] 전체 일정 보기
+                    </>
+                  );
+                })()}
+              </p>
             </div>
-            <p className="text-lg font-semibold text-yellow-300">
-              디지털교육 서포터즈
-            </p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              {(() => {
-                const savedTeacher = (getSavedItem('sungdong_teacher', '') || '').trim();
-                const savedTeam = (getSavedItem('sungdong_team', '') || '').trim();
-                return savedTeacher ? (
-                  <>
-                    <User className="w-4 h-4 mr-1 shrink-0" /> [{savedTeam || team || '전체'}] {savedTeacher.replace(/\n/g, ' ')} 선생님
-                  </>
-                ) : (
-                  <>
-                    <User className="w-4 h-4 mr-1 shrink-0" /> [{team || '전체'}] 전체 일정 보기
-                  </>
-                );
-              })()}
-            </p>
-          </div>
 
-          {/* [다운로드] 버튼 */}
-          <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
-            <button
-              onClick={handleExportExcel}
-              disabled={exporting}
-              className="px-5 py-1.5 md:px-7 md:py-2 hdr-pill font-bold active:scale-95 text-sm md:text-base transition-all flex items-center gap-1.5 disabled:opacity-50"
-            >
-              <DownloadIcon className="w-4 h-4 md:w-5 md:h-5" />
-              <span
-                key={exporting ? 'exporting' : String(downloadTextToggle)}
-                style={{
-                  display: 'inline-block',
-                  animation: exporting ? 'none' : 'btnTextFade 0.4s ease-in-out'
-                }}
+            {/* [다운로드] 버튼 */}
+            <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
+              <button
+                onClick={handleExportExcel}
+                disabled={exporting}
+                className="px-5 py-1.5 md:px-7 md:py-2 hdr-pill font-bold active:scale-95 text-sm md:text-base transition-all flex items-center gap-1.5 disabled:opacity-50"
               >
-                {exporting ? "생성 중..." : (downloadTextToggle ? "엑셀화일" : "다운로드")}
-              </span>
-            </button>
-          </div>
+                <DownloadIcon className="w-4 h-4 md:w-5 md:h-5" />
+                <span
+                  key={exporting ? 'exporting' : String(downloadTextToggle)}
+                  style={{
+                    display: 'inline-block',
+                    animation: exporting ? 'none' : 'btnTextFade 0.4s ease-in-out'
+                  }}
+                >
+                  {exporting ? "생성 중..." : (downloadTextToggle ? "엑셀화일" : "다운로드")}
+                </span>
+              </button>
+            </div>
 
-          <div className="ml-auto">
-            <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn">
-              <Home className="w-5 h-5 mb-1" />
-              <span>처음으로</span>
-            </button>
+            <div className="ml-auto">
+              <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
+                <Home className="w-5 h-5 mb-1" />
+                <span>처음으로</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* 상단 섹션 제목 */}
-        <div className="bg-[#f1f5f9] border-b border-gray-200/80 px-4 py-2">
-          <div className="max-w-7xl mx-auto">
+        <div className="bg-[#f1f5f9] border-b border-gray-200/80">
+          <div className="max-w-5xl mx-auto px-4 py-2">
             <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
               <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 전체 일정 보기</span>
             </h2>
@@ -1061,7 +1063,8 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
         </div>
 
         {/* 필터 및 월 선택 */}
-        <div className="bg-white border-b border-gray-200 px-4 py-3 flex flex-col md:flex-row gap-3 justify-between items-center z-10 shadow-sm relative">
+        <div className="bg-white border-b border-gray-200 z-10 shadow-sm relative">
+          <div className="max-w-5xl mx-auto px-4 py-3 flex flex-col md:flex-row gap-3 justify-between items-center">
           <div className="flex flex-col items-center w-full md:w-auto">
             <div className="flex items-center gap-2 bg-blue-50 rounded-lg p-1 border border-blue-100 w-full md:w-auto justify-center">
               <button onClick={() => changeMonth(-1)} className="p-1.5 text-blue-600 hover:bg-blue-200 rounded-md transition-colors"><ChevronLeft className="w-5 h-5" /></button>
@@ -1120,9 +1123,11 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
             </div>
           </div>
         </div>
+      </div>
 
         {/* 콘텐츠 영역 */}
-        <div className="flex-1 overflow-y-auto p-2 sm:p-3 lg:p-1 bg-slate-50">
+        <div className="flex-1 overflow-y-auto bg-slate-50">
+          <div className="max-w-5xl mx-auto w-full p-3 md:p-6">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-40 text-blue-500">
               <RotateCcw className="w-8 h-8 animate-spin mb-3" />
@@ -1536,6 +1541,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
               })}
             </div>
           )}
+          </div>
         </div>
         {/* 엑셀 완료 안내 모달 */}
         {showExportModal && (
