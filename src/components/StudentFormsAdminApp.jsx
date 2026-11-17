@@ -1049,8 +1049,8 @@ export default function StudentFormsAdminApp({
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className={`flex-1 max-w-5xl w-full mx-auto p-3 md:p-6 pb-12 ${isTeacherView ? 'space-y-3' : 'space-y-5'}`}>
-        <div className="pb-2 px-1">
+      <main className={`flex-1 max-w-5xl w-full mx-auto p-3 md:p-6 pb-12 ${isTeacherView ? 'space-y-3' : (isAdmin ? 'space-y-5' : 'space-y-2')}`}>
+        <div className="pb-1 px-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><IconDocumentCheck className="w-5 h-5 mr-2 text-blue-600" /> {isTeacherView ? '참여자 서류 관리' : '참여자 서류 관리ㆍ인쇄'}</span>
           </h2>
@@ -1063,7 +1063,7 @@ export default function StudentFormsAdminApp({
               setPwdInput("");
               setPwdError(false);
             }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mb-6"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99]"
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>
