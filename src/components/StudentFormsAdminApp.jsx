@@ -977,7 +977,7 @@ export default function StudentFormsAdminApp({
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800">
 
       {/* TOP HEADER */}
-      <header className="sticky top-0 z-50 app-header text-white border-b border-blue-900/30 shadow-md">
+      <header className="app-header text-white border-b border-blue-900/30 shadow-md relative z-20 shrink-0">
         <div className={`max-w-5xl mx-auto px-4 pt-safe-4 flex items-start justify-between gap-2 relative shrink-0 ${!isTeacherView ? 'pb-14 min-h-[120px]' : 'pb-4'}`}>
           {/* Left: Title */}
           <div className="flex flex-col min-w-0">
@@ -1523,10 +1523,7 @@ export default function StudentFormsAdminApp({
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className={`overflow-x-auto overscroll-x-contain overflow-y-auto ${isTeacherView
-            ? 'max-h-[calc(100dvh-75px)] sm:max-h-[calc(100dvh-95px)]'
-            : 'max-h-[75vh]'
-            }`}>
+          <div className="overflow-x-auto overscroll-x-contain">
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
