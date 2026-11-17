@@ -1142,16 +1142,16 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
                1. 구글시트형 격자 테이블 뷰
                ======================================================== */
             <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto overflow-y-auto max-h-[70vh] sm:max-h-[75vh] relative">
                 <table className="table-fixed text-center border-collapse text-[13px] sm:text-sm md:text-base lg:text-lg min-w-[900px] w-full">
-                  <thead className="sticky top-0 z-30 bg-[#2b5ce6] text-white">
+                  <thead className="sticky top-0 z-30 bg-[#1E3A8A] text-white shadow-xs">
                     <tr>
-                      {/* 연번 열 고정 - left:0 */}
-                      <th className="border border-blue-700 py-2.5 w-[50px] sm:w-[60px] md:w-[70px] lg:w-[80px] font-bold text-white bg-[#1E3A8A] text-[13px] sm:text-sm md:text-base lg:text-lg" style={{ position: 'sticky', left: 0, zIndex: 40 }}>연번</th>
-                      {/* 성명 열 고정 - left: 연번열 너비만큼 */}
-                      <th className="border border-blue-700 py-2.5 w-[70px] sm:w-[80px] md:w-[90px] lg:w-[100px] font-bold text-white bg-[#1E3A8A] text-[13px] sm:text-sm md:text-base lg:text-lg" style={{ position: 'sticky', left: 50, zIndex: 40 }}>성명</th>
-                      {/* 수업시간 열 - 고정 없음 */}
-                      <th className="border border-blue-700 border-r-2 border-r-gray-700 py-2.5 w-[90px] sm:w-[100px] md:w-[115px] lg:w-[130px] font-bold text-white bg-[#1E3A8A] text-[13px] sm:text-sm md:text-base lg:text-lg">수업시간</th>
+                      {/* 연번 열 고정 - left:0, top:0 */}
+                      <th className="border border-blue-700 py-2.5 w-[50px] sm:w-[60px] md:w-[70px] lg:w-[80px] font-bold text-white bg-[#1E3A8A] text-[13px] sm:text-sm md:text-base lg:text-lg" style={{ position: 'sticky', top: 0, left: 0, zIndex: 50 }}>연번</th>
+                      {/* 성명 열 고정 - left: 연번열 너비만큼, top:0 */}
+                      <th className="border border-blue-700 py-2.5 w-[70px] sm:w-[80px] md:w-[90px] lg:w-[100px] font-bold text-white bg-[#1E3A8A] text-[13px] sm:text-sm md:text-base lg:text-lg" style={{ position: 'sticky', top: 0, left: 50, zIndex: 50 }}>성명</th>
+                      {/* 수업시간 열 - top:0 고정 */}
+                      <th className="sticky top-0 z-30 border border-blue-700 border-r-2 border-r-gray-700 py-2.5 w-[90px] sm:w-[100px] md:w-[115px] lg:w-[130px] font-bold text-white bg-[#1E3A8A] text-[13px] sm:text-sm md:text-base lg:text-lg">수업시간</th>
                       {uniqueDates.map(dateStr => {
                         const m = dateStr.split('-')[1];
                         const d = dateStr.split('-')[2];
@@ -1165,7 +1165,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
                           ? "3px solid #4B5563"
                           : (isFriday ? "2px solid #2563EB" : "1px solid #D1D5DB");
                         return (
-                          <th key={dateStr} className="border border-blue-700 py-2 w-[90px] sm:w-[105px] md:w-[120px] lg:w-[135px] font-bold text-white bg-[#1E3A8A] whitespace-nowrap text-[13px] sm:text-sm md:text-base lg:text-lg" style={{ borderRight: rightBorderStyle }}>
+                          <th key={dateStr} className="sticky top-0 z-30 border border-blue-700 py-2 w-[90px] sm:w-[105px] md:w-[120px] lg:w-[135px] font-bold text-white bg-[#1E3A8A] whitespace-nowrap text-[13px] sm:text-sm md:text-base lg:text-lg" style={{ borderRight: rightBorderStyle }}>
                             {parseInt(m)}/{parseInt(d)} ({dayName})
                           </th>
                         );
