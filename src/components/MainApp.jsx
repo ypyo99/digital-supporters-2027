@@ -229,8 +229,6 @@ export default function MainApp({
   const isSubmittingRef = useRef(isSubmitting);
   useEffect(() => { isSubmittingRef.current = isSubmitting; }, [isSubmitting]);
   const hasChangesRef = useRef(false);
-  const showLogoutConfirmRef = useRef(false);
-  useEffect(() => { showLogoutConfirmRef.current = showLogoutConfirm; }, [showLogoutConfirm]);
   const isDataLoading = isFetchingSchedule || isSyncing || isSubmitting;
   const [specialAlerts, setSpecialAlerts] = useState([]);
   const [studentCounts, setStudentCounts] = useState({});
@@ -258,6 +256,8 @@ export default function MainApp({
   const [showAssistantConflictModal, setShowAssistantConflictModal] = useState(false);
   const [assistantConflictData, setAssistantConflictData] = useState(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const showLogoutConfirmRef = useRef(false);
+  useEffect(() => { showLogoutConfirmRef.current = showLogoutConfirm; }, [showLogoutConfirm]);
   const [repeatTargetDates, setRepeatTargetDates] = useState([]);
   const [repeatMode, setRepeatMode] = useState('all');
   const [repeatShiftIndex, setRepeatShiftIndex] = useState(null);
