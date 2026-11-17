@@ -651,6 +651,23 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     }));
   };
 
+  // 학생별 출결 상태 판정
+  const getRowAttendance = useCallback((row, studentName) => {
+    const s = (row.status || "").trim();
+    if (!s || s === "-") return 'unconfirmed';
+
+    if (s.includes("선생님휴가") || (s.includes("휴가") && (!row.student || row.student.trim() === '-'))) {
+      return 'vacation';
+    }
+    if (s.includes("결석") || checkIsCanceled(s)) {
+      return 'absent';
+    }
+    if (hasIndependentKeyword(s, ["1", "출석"]) || /^[1-9]\d*/.test(s) || s.length > 2) {
+      return 'attended';
+    }
+    return 'unconfirmed';
+  }, []);
+
   // 현재 일정 중 수업 내용 메모가 있는 모든 행의 고유 키 목록
   const memoRowKeys = useMemo(() => {
     const keys = [];
@@ -666,7 +683,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       }
     });
     return Array.from(new Set(keys));
-  }, [scheduleData]);
+  }, [scheduleData, getRowAttendance]);
 
   // 모든 수업 메모가 펼쳐져 있는지 여부
   const isAllExpanded = memoRowKeys.length > 0 && memoRowKeys.every(k => !!expandedMemos[k]);
@@ -684,23 +701,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       setExpandedMemos(next);
     }
   };
-
-  // 학생별 출결 상태 판정
-  const getRowAttendance = useCallback((row, studentName) => {
-    const s = (row.status || "").trim();
-    if (!s || s === "-") return 'unconfirmed';
-
-    if (s.includes("선생님휴가") || (s.includes("휴가") && (!row.student || row.student.trim() === '-'))) {
-      return 'vacation';
-    }
-    if (s.includes("결석") || checkIsCanceled(s)) {
-      return 'absent';
-    }
-    if (hasIndependentKeyword(s, ["1", "출석"]) || /^[1-9]\d*/.test(s) || s.length > 2) {
-      return 'attended';
-    }
-    return 'unconfirmed';
-  }, []);
 
   // 통계 계산
   const stats = useMemo(() => {
