@@ -1581,7 +1581,6 @@ export default function StudentFormsAdminApp({
                     )}
                   </th>
                   <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 whitespace-nowrap">소속 팀</th>
-                  <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 whitespace-nowrap">등록/수업일</th>
                   {selectedDocTypes.has('app') && (
                     <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">① 참여 신청서</th>
                   )}
@@ -1597,14 +1596,14 @@ export default function StudentFormsAdminApp({
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={(!isTeacherView ? 6 : 5) + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
+                    <td colSpan={(!isTeacherView ? 5 : 4) + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
                       <div className="inline-block w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
                       <p className="text-xs font-semibold whitespace-nowrap">참여자 서류 데이터를 집계하는 중입니다...</p>
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={(!isTeacherView ? 6 : 5) + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
+                    <td colSpan={(!isTeacherView ? 5 : 4) + selectedDocTypes.size} className="py-12 text-center text-slate-400 whitespace-nowrap border-b border-slate-100">
                       <p className="text-sm font-semibold whitespace-nowrap">
                         {isTeacherView
                           ? `${teacherFilter} 선생님의 담당 참여자 내역이 없습니다.`
@@ -1684,11 +1683,6 @@ export default function StudentFormsAdminApp({
                         {/* Team */}
                         <td className="py-2.5 px-3 border-b border-slate-100 whitespace-nowrap">
                           <div className="font-semibold text-slate-800 text-[13px] whitespace-nowrap">{s.team}</div>
-                        </td>
-
-                        {/* Registration Date / Last Lesson */}
-                        <td className="py-2.5 px-3 border-b border-slate-100 text-[13px] text-slate-600 whitespace-nowrap">
-                          <div className="whitespace-nowrap">{s.regDate || s.lastDate || '-'}</div>
                         </td>
 
                         {/* 1. Application Form Status Button */}
