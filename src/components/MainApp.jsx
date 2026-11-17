@@ -70,7 +70,7 @@ const parseStatusString = (statusStr, cleanMyStudent) => {
 
 // 메인메뉴, 일지 작성 프로그램
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef, useCallback } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
@@ -3107,9 +3107,35 @@ export default function MainApp({
     touchStartY.current = null;
   };
 
+  const mainMenuScrollRef = useRef(null);
+
+  const handleMainScroll = (e) => {
+    try {
+      window.sessionStorage.setItem('sungdong_main_menu_scroll', String(e.currentTarget.scrollTop));
+    } catch (err) {}
+  };
+
+  useLayoutEffect(() => {
+    if (!isLoggedIn && mainMenuScrollRef.current) {
+      try {
+        const savedScroll = parseInt(window.sessionStorage.getItem('sungdong_main_menu_scroll') || '0', 10);
+        if (savedScroll > 0) {
+          mainMenuScrollRef.current.scrollTop = savedScroll;
+          requestAnimationFrame(() => {
+            if (mainMenuScrollRef.current && mainMenuScrollRef.current.scrollTop !== savedScroll) {
+              mainMenuScrollRef.current.scrollTop = savedScroll;
+            }
+          });
+        }
+      } catch (err) {}
+    }
+  }, [isLoggedIn]);
+
   if (!isLoggedIn) {
     return (
       <div
+        ref={mainMenuScrollRef}
+        onScroll={handleMainScroll}
         className="fixed inset-0 overflow-y-auto overflow-x-hidden bg-transparent flex flex-col items-center sm:py-10"
         onTouchStart={handleMainTouchStart}
         onTouchMove={handleMainTouchMove}
