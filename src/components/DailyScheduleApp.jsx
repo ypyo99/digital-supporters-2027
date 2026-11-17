@@ -1282,23 +1282,26 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                   <div className="flex items-start justify-between gap-2">
                                     <div className="min-w-0 flex-1">
                                       {/* 시간대 & 학생명 & 회차 */}
-                                      <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-                                        {/* 시간대 */}
-                                        <span className="font-bold text-slate-700 dark:text-slate-300 text-[15.5px] sm:text-[16.5px] w-12 shrink-0">
-                                          {startTime}
-                                        </span>
-
-                                        {/* 학생 이름 & 회차 */}
-                                        {isUnassigned ? (
-                                          <span className="text-slate-400 dark:text-slate-500 font-semibold text-[15.5px]">
-                                            배정 없음
+                                      <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap min-w-0">
+                                        {/* 시간대와 학생이름: 무조건 같은 라인에 표시 */}
+                                        <div className="inline-flex items-center gap-2 shrink-0">
+                                          <span className="font-bold text-slate-700 dark:text-slate-300 text-[15px] sm:text-[16.5px] whitespace-nowrap">
+                                            {startTime}
                                           </span>
-                                        ) : (
-                                          <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="font-bold text-slate-900 dark:text-slate-100 text-[17px] sm:text-[18px] tracking-tight">
+                                          {isUnassigned ? (
+                                            <span className="text-slate-400 dark:text-slate-500 font-semibold text-[14.5px] sm:text-[15.5px] whitespace-nowrap">
+                                              배정 없음
+                                            </span>
+                                          ) : (
+                                            <span className="font-bold text-slate-900 dark:text-slate-100 text-[16.5px] sm:text-[18px] tracking-tight whitespace-nowrap">
                                               {studentStr}
                                             </span>
+                                          )}
+                                        </div>
 
+                                        {/* 회차 배지 및 장소 (공간 부족 시 줄바꿈되더라도 학생이름은 시간대와 항상 같은 라인 유지) */}
+                                        {!isUnassigned && (
+                                          <div className="inline-flex items-center gap-1.5 flex-wrap">
                                             {/* 회차 배지 */}
                                             {row.sessionCounts && row.sessionCounts.map((sc, scIdx) => (
                                               <button
@@ -1306,7 +1309,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(sc)}
                                                 title="출석 일자 보기"
-                                                className={`px-2 py-0.5 rounded-md text-[13px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation ${getSessionBadgeStyle(sc.count)}`}
+                                                className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[12px] sm:text-[13px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation whitespace-nowrap cursor-pointer ${getSessionBadgeStyle(sc.count)}`}
                                               >
                                                 {sc.count}회차
                                               </button>
@@ -1314,7 +1317,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                             {/* 장소 표시 (있을 경우) */}
                                             {row.location && row.location !== '-' && row.location !== '복지관' && !row.location.startsWith('http') && (
-                                              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
                                                 ({row.location})
                                               </span>
                                             )}
@@ -1322,13 +1325,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                         )}
                                       </div>
 
-                                      {/* 수업 내용 접기/펼치기 버튼 (학생이름 바로 아래 여백 최소화) */}
+                                      {/* 수업 내용 접기/펼치기 버튼 */}
                                       {!isUnassigned && hasMemo && (
-                                        <div className="mt-0.5 pl-[58px] sm:pl-[60px]">
+                                        <div className="mt-1">
                                           <button
                                             type="button"
                                             onClick={() => toggleMemo(rowKey)}
-                                            className="inline-flex items-center gap-1 text-[13px] sm:text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation"
+                                            className="inline-flex items-center gap-1 text-[13px] sm:text-[13.5px] font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-0.5 touch-manipulation cursor-pointer"
                                           >
                                             {isExpanded ? '수업 내용 접기 ▴' : '수업 내용 보기 ▾'}
                                           </button>
@@ -1370,16 +1373,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                     )}
                                   </div>
 
-                                  {/* 펼쳐진 수업 메모 내용 (수업 내용 보기 텍스트와 왼쪽 정렬) */}
+                                  {/* 펼쳐진 수업 메모 내용 */}
                                   {!isUnassigned && hasMemo && isExpanded && (
-                                    <div className="mt-1.5 ml-[58px] sm:ml-[60px] p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14.5px] leading-relaxed break-keep animate-fadeIn">
+                                    <div className="mt-1.5 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14px] sm:text-[14.5px] leading-relaxed break-keep animate-fadeIn">
                                       {rawStatus}
                                     </div>
                                   )}
 
                                   {/* 취업팀 서명 이미지 (있을 경우) */}
                                   {row.location && (row.location.startsWith('http') || row.location.startsWith('data:')) && (
-                                    <div className="mt-2 ml-[58px] sm:ml-[60px]">
+                                    <div className="mt-2">
                                       <img
                                         src={getDirectImageUrl(row.location)}
                                         alt="서명"
