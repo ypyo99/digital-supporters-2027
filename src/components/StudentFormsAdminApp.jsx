@@ -785,7 +785,14 @@ export default function StudentFormsAdminApp({
       wb.created = new Date();
 
       const ws = wb.addWorksheet('참여자_서류작성현황', {
-        pageSetup: { paperSize: 9, orientation: 'landscape', fitToPage: true, fitToWidth: 1 }
+        pageSetup: {
+          paperSize: 9,
+          orientation: 'portrait',
+          fitToPage: true,
+          fitToWidth: 1,
+          fitToHeight: 0,
+          margins: { left: 0.3, right: 0.3, top: 0.4, bottom: 0.4, header: 0.2, footer: 0.2 }
+        }
       });
 
       // Title Row
@@ -905,6 +912,11 @@ export default function StudentFormsAdminApp({
         { width: 18 }, // 사후점수
         { width: 14 }  // 완결여부
       ];
+
+      // 데이터가 있는 셀 범위만 인쇄 영역으로 지정 및 상단 제목/헤더 행 반복 설정
+      const lastDataRow = 3 + filteredStudents.length;
+      ws.pageSetup.printArea = `A1:L${lastDataRow}`;
+      ws.pageSetup.printTitlesRow = '1:3';
 
       const buffer = await wb.xlsx.writeBuffer();
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
