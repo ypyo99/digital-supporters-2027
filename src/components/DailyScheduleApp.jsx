@@ -18,7 +18,7 @@ import {
   attachYiYe,
   joinKoreanWithWaGwa
 } from '../utils/helpers';
-import { Home, LucideCalendar, Clock, BookOpen, Sparkles } from './Icons';
+import { Home, LucideCalendar, Clock, BookOpen, Sparkles, User } from './Icons';
 
 // 문자열 내에 콤마나 슬래시로 구분된 특정 키워드가 정확히 일치하는지 검사하는 유틸리티 함수
 const hasIndependentKeyword = (str, keywords) => {
@@ -927,12 +927,29 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       {/* 1. 상단 메인 헤더 (원본 헤더 유지) */}
       <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3.5 pt-safe-4 flex justify-between items-center">
-          <div>
-            <div className="flex items-center mb-0.5 sm:mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-5 sm:h-7 hdr-logo object-contain mr-1.5 sm:mr-2" onError={(e) => e.target.style.display = 'none'} />
-              <h1 className="font-black text-lg sm:text-xl md:text-2xl leading-tight">성동노인종합복지관</h1>
+          <div className="flex items-center min-w-0">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center mb-1">
+                <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+                <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+              </div>
+              <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
+              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+                {(() => {
+                  const savedTeacher = (getSavedItem('sungdong_teacher', '') || '').trim();
+                  const savedTeam = (getSavedItem('sungdong_team', '') || '').trim();
+                  return savedTeacher ? (
+                    <>
+                      <User className="w-4 h-4 mr-1 shrink-0" /> [{savedTeam || selectedTeam}] {savedTeacher.replace(/\n/g, ' ')} 선생님
+                    </>
+                  ) : (
+                    <>
+                      <User className="w-4 h-4 mr-1 shrink-0" /> [{selectedTeam}] 팀별 오늘 일정
+                    </>
+                  );
+                })()}
+              </p>
             </div>
-            <p className="text-xs sm:text-base md:text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
           </div>
           <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
             <Home className="w-4 h-4 sm:w-5 sm:h-5 mb-0.5" /> 처음으로

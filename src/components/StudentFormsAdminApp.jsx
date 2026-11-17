@@ -16,7 +16,8 @@ import {
   RefreshCw,
   DownloadIcon,
   ChevronLeft,
-  UsersIcon
+  UsersIcon,
+  User
 } from './Icons';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -82,6 +83,14 @@ export default function StudentFormsAdminApp({
       setTeamFilter("전체");
     }
   }, [isTeacherView, currentSavedTeacher]);
+
+  const displayTeam = useMemo(() => {
+    if (currentSavedTeam && currentSavedTeam !== '전체') return currentSavedTeam;
+    if (teamFilter && teamFilter !== '전체') return teamFilter;
+    const found = dbTeachers.find(t => t.name === (teacherFilter || currentSavedTeacher));
+    if (found && found.team) return found.team;
+    return getSavedItem('sungdong_team', '') || '2팀';
+  }, [currentSavedTeam, teamFilter, dbTeachers, teacherFilter, currentSavedTeacher]);
 
   // 2-Dimensional Multi-Select Status Filters
   // 1. 작성 여부: filterSubmitted (작성 완료), filterUnsubmitted (미작성)
@@ -939,22 +948,24 @@ export default function StudentFormsAdminApp({
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800">
 
       {/* TOP HEADER */}
-      <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-50 app-header text-white border-b border-blue-900/30 shadow-md">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
           {/* Left: Title */}
-          <div className="flex items-center gap-2 min-w-0 shrink">
-            {!isTeacherView && (
-              <h1 className="text-lg sm:text-2xl font-bold text-slate-900 whitespace-nowrap tracking-tight">
-                참여자 서류 관리ㆍ인쇄
-              </h1>
-            )}
-            {isTeacherView && teacherFilter && teacherFilter !== "전체" && (
-              <span className="text-sm font-extrabold bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-xl shrink-0 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                <span>{teacherFilter} 선생님</span>
-                <span className="text-slate-600 font-bold">({filteredStudents.length}명)</span>
-              </span>
-            )}
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center mb-1">
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
+              <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
+            </div>
+            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
+            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+              {isTeacherView ? (
+                <>
+                  <User className="w-4 h-4 mr-1 shrink-0" /> [{displayTeam}] {teacherFilter || currentSavedTeacher} 선생님 <span className="text-blue-100 font-semibold ml-1.5">({filteredStudents.length}명)</span>
+                </>
+              ) : (
+                <span>참여자 서류 관리ㆍ인쇄</span>
+              )}
+            </p>
           </div>
 
           {/* Right: Actions */}
@@ -963,7 +974,7 @@ export default function StudentFormsAdminApp({
               type="button"
               onClick={() => loadData(true)}
               disabled={refreshing || loading}
-              className="p-2 sm:px-2.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0 border border-slate-200/80"
+              className="p-2 sm:px-2.5 sm:py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0 border border-white/30 shadow-sm"
               title="최신 서류 작성 데이터 다시 불러오기"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -972,7 +983,7 @@ export default function StudentFormsAdminApp({
             <button
               type="button"
               onClick={handleExportExcel}
-              className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-xs shrink-0"
+              className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50"
               title="현재 목록 엑셀 파일로 다운로드"
             >
               <DownloadIcon className="w-3.5 h-3.5 text-white" />
@@ -981,7 +992,7 @@ export default function StudentFormsAdminApp({
             <button
               type="button"
               onClick={onNavigateBack}
-              className="hdr-btn-blue text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation shrink-0 cursor-pointer"
+              className="hdr-btn text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation shrink-0 cursor-pointer"
               title="메인 화면(처음)으로 돌아가기"
             >
               <Home className="w-5 h-5 mb-1" />

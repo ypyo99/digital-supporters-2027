@@ -670,10 +670,10 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
+            <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
             <p className="text-base opacity-95 flex items-center mt-1 font-bold">
               <User className="w-4 h-4 mr-1" /> [{team}] {teacher.replace(/\n/g, ' ')} 선생님
             </p>

@@ -5,6 +5,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { supabaseClient } from '../utils/supabase';
 import {
+  getSavedItem,
   getTeamTeacherNames,
   getTeacherSortWeight,
   getTeacherGroup,
@@ -22,7 +23,8 @@ import {
   ChevronRight,
   RotateCcw,
   DownloadIcon,
-  CalendarIcon
+  CalendarIcon,
+  User
 } from './Icons';
 
 const mapShiftToOfficial = (team, teacherName, originalShift) => {
@@ -997,11 +999,26 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
         <div className="shrink-0 app-header text-white z-40 relative flex items-start px-4 pt-3 pb-9 sm:pb-7 min-h-[110px] sm:min-h-[92px]">
           <div>
             <div className="flex items-center mb-1">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2" onError={(e) => e.target.style.display = 'none'} />
+              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
               <h1 className="font-black text-xl sm:text-2xl leading-tight">성동노인종합복지관</h1>
             </div>
-            <p className="text-[18px] font-semibold text-blue-100">
+            <p className="text-lg font-semibold text-yellow-300">
               디지털교육 서포터즈
+            </p>
+            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+              {(() => {
+                const savedTeacher = (getSavedItem('sungdong_teacher', '') || '').trim();
+                const savedTeam = (getSavedItem('sungdong_team', '') || '').trim();
+                return savedTeacher ? (
+                  <>
+                    <User className="w-4 h-4 mr-1 shrink-0" /> [{savedTeam || team || '전체'}] {savedTeacher.replace(/\n/g, ' ')} 선생님
+                  </>
+                ) : (
+                  <>
+                    <User className="w-4 h-4 mr-1 shrink-0" /> [{team || '전체'}] 전체 일정 보기
+                  </>
+                );
+              })()}
             </p>
           </div>
 
