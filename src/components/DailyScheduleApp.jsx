@@ -998,6 +998,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
             </div>
 
             <button
+              onClick={handleToday}
+              className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap"
+            >
+              오늘
+            </button>
+
+            <button
               onClick={() => handleDateChange(1)}
               title="다음 날짜"
               className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation"
@@ -1005,13 +1012,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
               </svg>
-            </button>
-
-            <button
-              onClick={handleToday}
-              className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap"
-            >
-              오늘
             </button>
           </div>
 
