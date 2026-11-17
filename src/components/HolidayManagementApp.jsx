@@ -430,7 +430,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         </button>
       </header>
 
-      <main className={`p-4 max-w-4xl mx-auto w-full flex-1 ${isAdmin ? 'space-y-6 mt-4' : 'mt-1'}`}>
+      <main className={`p-4 max-w-4xl lg:max-w-[1344px] mx-auto w-full flex-1 ${isAdmin ? 'space-y-6 mt-4' : 'mt-1'}`}>
         <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 공휴일 관리</span>

@@ -702,7 +702,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
       </header>
 
       {/* 메인 콘텐츠 영역 */}
-      <main className="flex-1 px-3 sm:px-6 md:px-8 pt-4 pb-12 w-full max-w-7xl mx-auto flex flex-col gap-6">
+      <main className="flex-1 px-3 sm:px-6 md:px-8 pt-4 pb-12 w-full max-w-7xl lg:max-w-[1536px] mx-auto flex flex-col gap-6">
 
         {/* Supabase 테이블 부재 경고 */}
         {supabaseTableMissing && (

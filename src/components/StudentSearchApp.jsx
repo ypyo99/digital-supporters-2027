@@ -373,7 +373,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800">
       <div className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
           <div>
             <div className="flex items-center mb-1">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -388,7 +388,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
       </div>
 
       <div className="flex-1 flex flex-col pb-4">
-        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+        <div className="max-w-5xl lg:max-w-[1536px] w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
           <div className="pb-2 px-1">
             <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
               <span className="flex items-center"><IconSearchUser className="w-5 h-5 mr-2 text-blue-600" /> 대상자 검색</span>

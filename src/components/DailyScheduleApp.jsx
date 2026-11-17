@@ -926,7 +926,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     <div className="min-h-[100dvh] flex flex-col bg-[#f4f6f9] dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100">
       {/* 1. 상단 메인 헤더 (원본 헤더 유지) */}
       <div className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
           <div className="flex items-center min-w-0">
             <div className="flex flex-col min-w-0">
               <div className="flex items-center mb-1">
@@ -963,7 +963,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+        <div className="max-w-5xl lg:max-w-[1536px] w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
 
           {/* 날짜 선택 바 위에 섹션 제목 */}
           <div className="pb-2 px-1">

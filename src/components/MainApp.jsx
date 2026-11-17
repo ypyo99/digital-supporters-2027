@@ -3129,7 +3129,7 @@ export default function MainApp({
         </div>
 
         <div
-          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-5 pb-8 pt-safe-4 sm:px-9 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
+          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-5 pb-8 pt-safe-4 sm:px-9 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
           style={{
             transform: `translateY(${pullDistance * 0.1}px)`,
             transition: pullDistance === 0 ? 'transform 0.3s ease-out' : 'none'
@@ -3287,28 +3287,30 @@ export default function MainApp({
 
             {/* 팀/선생님 선택 및 일지 작성하기 박스 */}
             <div className="bg-white border-2 border-blue-500 rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-[0_4px_16px_-4px_rgba(59,130,246,0.14),0_2px_6px_-1px_rgba(0,0,0,0.04)] flex flex-col gap-3 sm:gap-3.5 w-full">
-              <div className="w-full">
-                <label className="flex items-center gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
-                <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
-                  setSelectedTeam(e.target.value);
-                  setCurrentUser("");
-                }}>
-                  <option value="">팀을 선택하세요</option>
-                  {teamList.map(team => <option key={team} value={team}>{team}</option>)}
-                </select>
-              </div>
-              {selectedTeam && (
+              <div className={`grid grid-cols-1 ${selectedTeam ? 'sm:grid-cols-2' : ''} gap-3 sm:gap-3.5 w-full`}>
                 <div className="w-full">
-                  <label className="text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight flex justify-between items-end">
-                    <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
-                    {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
-                  </label>
-                  <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
-                    <option value="">선생님을 선택하세요</option>
-                    {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
+                  <label className="flex items-center gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
+                  <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
+                    setSelectedTeam(e.target.value);
+                    setCurrentUser("");
+                  }}>
+                    <option value="">팀을 선택하세요</option>
+                    {teamList.map(team => <option key={team} value={team}>{team}</option>)}
                   </select>
                 </div>
-              )}
+                {selectedTeam && (
+                  <div className="w-full">
+                    <label className="text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[17.5px] sm:text-xl tracking-tight flex justify-between items-end">
+                      <span className="flex items-center gap-2"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
+                      {isFetchingTeachers && <span className="text-[14px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse"><Clock className="w-4 h-4 mr-1 animate-spin" />불러오는 중…</span>}
+                    </label>
+                    <select className={`w-full select-refined h-[54px] sm:h-[58px] md:h-[62px] px-4 border-2 rounded-2xl text-[19px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
+                      <option value="">선생님을 선택하세요</option>
+                      {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
+                    </select>
+                  </div>
+                )}
+              </div>
 
               <div className="pt-0.5 sm:pt-1 flex">
                 {!isLoginReady ? (
@@ -3513,7 +3515,7 @@ export default function MainApp({
   return (
     <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
       <div className="shrink-0 app-header text-white z-20 relative">
-        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center gap-3">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center gap-3">
           <div className="flex items-center min-w-0">
             <div className="flex flex-col min-w-0">
               <div className="flex items-center mb-1">
@@ -3544,7 +3546,7 @@ export default function MainApp({
       </div>
 
       <main
-        className="w-full max-w-5xl mx-auto flex flex-col p-3 md:p-6 pt-2 mt-1 pb-32"
+        className="w-full max-w-5xl lg:max-w-[1536px] mx-auto flex flex-col p-3 md:p-6 pt-2 mt-1 pb-32"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >

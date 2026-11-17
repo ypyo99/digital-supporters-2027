@@ -749,7 +749,7 @@ export default function MyWeeklyScheduleApp({
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans">
       <div className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
           <div className="flex items-center">
             <div className="flex flex-col">
               <div className="flex items-center mb-1">
@@ -769,7 +769,7 @@ export default function MyWeeklyScheduleApp({
       </div>
 
       <div className="flex-1 flex flex-col pb-4">
-        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+        <div className="max-w-5xl lg:max-w-[1536px] w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
           <div className="pb-2 px-1">
             <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
               <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 나의 주간 일정</span>

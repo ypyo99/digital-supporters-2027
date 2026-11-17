@@ -978,7 +978,7 @@ export default function StudentFormsAdminApp({
 
       {/* TOP HEADER */}
       <header className="app-header text-white border-b border-blue-900/30 shadow-md relative z-20 shrink-0">
-        <div className={`max-w-5xl mx-auto px-4 pt-safe-4 flex items-start justify-between gap-2 relative shrink-0 ${!isTeacherView ? 'pb-14 min-h-[120px]' : 'pb-4'}`}>
+        <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-4 pt-safe-4 flex items-start justify-between gap-2 relative shrink-0 ${!isTeacherView ? 'pb-14 min-h-[120px]' : 'pb-4'}`}>
           {/* Left: Title */}
           <div className="flex flex-col min-w-0">
             <div className="flex items-center mb-1">
@@ -1054,7 +1054,7 @@ export default function StudentFormsAdminApp({
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className={`flex-1 max-w-5xl w-full mx-auto p-3 md:p-6 pb-12 ${isTeacherView ? 'space-y-3' : (isAdmin ? 'space-y-5' : '')}`}>
+      <main className={`flex-1 max-w-5xl lg:max-w-[1536px] w-full mx-auto p-3 md:p-6 pb-12 ${isTeacherView ? 'space-y-3' : (isAdmin ? 'space-y-5' : '')}`}>
         <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><IconDocumentCheck className="w-5 h-5 mr-2 text-blue-600" /> {isTeacherView ? '참여자 서류 관리' : '참여자 서류 관리ㆍ인쇄'}</span>
