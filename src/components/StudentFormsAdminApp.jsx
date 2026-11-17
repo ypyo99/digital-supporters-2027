@@ -1040,17 +1040,6 @@ export default function StudentFormsAdminApp({
 
           {/* Right: Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {(isTeacherView || isAdmin) && (
-              <button
-                type="button"
-                onClick={handleExportExcel}
-                className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50"
-                title="현재 목록 엑셀 파일로 다운로드"
-              >
-                <DownloadIcon className="w-3.5 h-3.5 text-white" />
-                <span className="hidden lg:inline">엑셀</span>
-              </button>
-            )}
             <button
               type="button"
               onClick={onNavigateBack}
@@ -1066,10 +1055,21 @@ export default function StudentFormsAdminApp({
 
       {/* MAIN CONTENT AREA */}
       <main className={`flex-1 max-w-5xl lg:max-w-[1536px] w-full mx-auto px-4 md:px-6 py-3 md:py-4 pb-12 ${isTeacherView ? 'space-y-3' : (isAdmin ? 'space-y-3' : '')}`}>
-        <div className="px-1 mb-1">
-          <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+        <div className="px-1 mb-1 flex items-center justify-between gap-2">
+          <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight whitespace-nowrap">
             <span className="flex items-center"><IconDocumentCheck className="w-5 h-5 mr-2 text-blue-600" /> {isTeacherView ? '참여자 서류 관리' : '참여자 서류 관리ㆍ인쇄'}</span>
           </h2>
+          {(isTeacherView || isAdmin) && (
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50 touch-manipulation whitespace-nowrap"
+              title="현재 목록 엑셀 파일로 다운로드"
+            >
+              <DownloadIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+              <span>엑셀</span>
+            </button>
+          )}
         </div>
 
         {(!isTeacherView && !isAdmin) ? (
