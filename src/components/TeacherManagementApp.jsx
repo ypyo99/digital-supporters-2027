@@ -10,7 +10,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [formData, setFormData] = useState({
     team: '1팀',
     group: '1조',
@@ -245,9 +245,21 @@ export default function TeacherManagementApp({ onNavigateBack }) {
             <span className="flex items-center"><User className="w-5 h-5 mr-2 text-blue-600" /> 선생님 명단 관리</span>
           </h2>
         </div>
-        {isAdmin ? (
-          <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+        {!isAdmin ? (
+          <div
+            onClick={() => {
+              setShowPwdModal(true);
+              setPwdInput("");
+              setPwdError(false);
+            }}
+            className="bg-yellow-50 rounded-2xl border border-yellow-200 p-4 mb-6 text-center text-yellow-800 text-xs sm:text-sm font-bold shadow-xs cursor-pointer hover:bg-yellow-100 transition-all active:scale-[0.99]"
+          >
+            💡 선생님 등록 및 수정을 하시려면 상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.
+          </div>
+        ) : (
+          <>
+            <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex justify-between items-center mb-4 border-b pb-2">
                 <h2 className="text-lg font-bold text-gray-800">
                   {isEditing ? '선생님 정보 수정' : '새 선생님 등록'}
@@ -309,13 +321,8 @@ export default function TeacherManagementApp({ onNavigateBack }) {
               </div>
             </form>
           </div>
-        ) : (
-          <div className="bg-yellow-50 rounded-2xl border border-yellow-200 p-4 mb-6 text-center text-yellow-800 text-xs sm:text-sm font-bold shadow-sm">
-            💡 선생님 등록 및 수정을 하시려면 상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.
-          </div>
-        )}
 
-        <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 overflow-hidden">
           <div className="px-5 py-3 border-b bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800"></h2>
           </div>
@@ -377,7 +384,9 @@ export default function TeacherManagementApp({ onNavigateBack }) {
             </table>
           </div>
         </div>
-      </main>
+      </>
+    )}
+  </main>
 
       {showPwdModal && (
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
