@@ -3521,7 +3521,7 @@ export default function MainApp({
             </h2>
             <div className="contents">
               <div className="sticky top-0 z-30 -mx-3 md:-mx-6 px-3 md:px-6 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
-                <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md sm:max-w-xl mx-auto">
+                <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                   <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                     <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
                   </button>

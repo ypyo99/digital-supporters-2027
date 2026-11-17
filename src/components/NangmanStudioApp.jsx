@@ -498,7 +498,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 </div>
               )}
 
-              <div className="flex items-center gap-1.5 sm:gap-2 w-full max-w-md mx-auto mb-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 w-full mb-2">
                 <button onClick={() => changeWeek(-1)} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
                 </button>
