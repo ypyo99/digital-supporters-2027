@@ -958,15 +958,11 @@ export default function StudentFormsAdminApp({
               <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
             </div>
             <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
-            <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              {isTeacherView ? (
-                <>
-                  <User className="w-4 h-4 mr-1 shrink-0" /> [{displayTeam}] {teacherFilter || currentSavedTeacher} 선생님 <span className="text-blue-100 font-semibold ml-1.5">({filteredStudents.length}명)</span>
-                </>
-              ) : (
-                <span>참여자 서류 관리ㆍ인쇄</span>
-              )}
-            </p>
+            {isTeacherView && (
+              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
+                <User className="w-4 h-4 mr-1 shrink-0" /> [{displayTeam}] {teacherFilter || currentSavedTeacher} 선생님 <span className="text-blue-100 font-semibold ml-1.5">({filteredStudents.length}명)</span>
+              </p>
+            )}
           </div>
 
           {/* Right: Actions */}
