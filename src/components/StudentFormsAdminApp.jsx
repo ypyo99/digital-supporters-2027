@@ -1056,31 +1056,7 @@ export default function StudentFormsAdminApp({
           </h2>
         </div>
 
-        {!isTeacherView && !isAdmin ? (
-          <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 p-8 sm:p-12 text-center max-w-lg w-full mx-auto my-8 flex flex-col items-center animate-fadeIn">
-            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 text-3xl shadow-xs">
-              🔒
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              담당자 전용 관리 화면
-            </h3>
-            <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-              참여자 서류 관리 및 일괄 인쇄 기능은 복지관 담당자 전용입니다.<br />
-              아래의 <b>[담당자 로그인]</b> 버튼을 눌러 비밀번호를 입력해 주세요.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setShowPwdModal(true);
-                setPwdInput("");
-                setPwdError(false);
-              }}
-              className="w-full py-3.5 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-xl shadow-md shadow-blue-500/25 active:scale-95 transition-all text-base flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
-            >
-              담당자 로그인
-            </button>
-          </div>
-        ) : (
+        {(!isTeacherView && !isAdmin) ? null : (
           <>
             {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
             {!isTeacherView && (
