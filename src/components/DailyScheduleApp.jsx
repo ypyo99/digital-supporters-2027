@@ -923,7 +923,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   const datePickerValue = `${y}-${m}-${d}`;
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-[#f4f6f9] dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100 overflow-y-auto">
+    <div className="min-h-[100dvh] flex flex-col bg-[#f4f6f9] dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100">
       {/* 1. 상단 메인 헤더 (원본 헤더 유지) */}
       <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex justify-between items-center">
@@ -972,90 +972,97 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
             </h2>
           </div>
 
-          {/* 날짜 선택 바 */}
-          <div className="flex items-center justify-between gap-1.5 sm:gap-2 w-full mb-2">
-            <button
-              onClick={() => handleDateChange(-1)}
-              title="이전 날짜"
-              className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" />
-              </svg>
-            </button>
+          {/* 상단 고정 영역: 날짜 선택 바 + 팀 선택 필 + 일정/요약 탭 스위처 */}
+          <div
+            className="sticky top-0 z-30 bg-[#f4f6f9] dark:bg-slate-900 pt-1.5 pb-2 -mx-3 px-3 md:-mx-6 md:px-6 shadow-xs border-b border-slate-200/60 dark:border-slate-800"
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+          >
+            {/* 날짜 선택 바 */}
+            <div className="flex items-center justify-between gap-1.5 sm:gap-2 w-full mb-2">
+              <button
+                onClick={() => handleDateChange(-1)}
+                title="이전 날짜"
+                className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation cursor-pointer"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" />
+                </svg>
+              </button>
 
-            <div className="flex-1 h-10 sm:h-11 relative flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-center shadow-sm">
-              <input
-                type="date"
-                value={datePickerValue}
-                onChange={handleDatePick}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                title="달력 열기"
-              />
-              <span className="font-extrabold text-slate-800 dark:text-slate-100 text-[16px] sm:text-[18px] tracking-tight whitespace-nowrap">
-                {currentDisplayDate.getMonth() + 1}/{currentDisplayDate.getDate()} ({day})
-              </span>
+              <div className="flex-1 h-10 sm:h-11 relative flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-center shadow-sm">
+                <input
+                  type="date"
+                  value={datePickerValue}
+                  onChange={handleDatePick}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  title="달력 열기"
+                />
+                <span className="font-extrabold text-slate-800 dark:text-slate-100 text-[16px] sm:text-[18px] tracking-tight whitespace-nowrap">
+                  {currentDisplayDate.getMonth() + 1}/{currentDisplayDate.getDate()} ({day})
+                </span>
+              </div>
+
+              <button
+                onClick={handleToday}
+                className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap cursor-pointer"
+              >
+                오늘
+              </button>
+
+              <button
+                onClick={() => handleDateChange(1)}
+                title="다음 날짜"
+                className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation cursor-pointer"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+                </svg>
+              </button>
             </div>
 
-            <button
-              onClick={handleToday}
-              className="h-10 sm:h-11 px-3.5 sm:px-4 border border-blue-600 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[14.5px] sm:text-[15.5px] shrink-0 transition-all shadow-sm touch-manipulation whitespace-nowrap"
-            >
-              오늘
-            </button>
+            {/* 팀 선택 필 (1팀 / 2팀 / 3팀 / 취업팀) */}
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full mb-2">
+              {["1팀", "2팀", "3팀", "취업팀"].map(team => (
+                <button
+                  key={team}
+                  onClick={() => {
+                    setSelectedTeam(team);
+                    if (onTeamChange) onTeamChange(team);
+                  }}
+                  className={`py-2 text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation cursor-pointer ${selectedTeam === team
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
+                    }`}
+                >
+                  {team}
+                </button>
+              ))}
+            </div>
 
-            <button
-              onClick={() => handleDateChange(1)}
-              title="다음 날짜"
-              className="w-10 sm:w-11 h-10 sm:h-11 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 shrink-0 transition-all touch-manipulation"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-              </svg>
-            </button>
-          </div>
-
-          {/* 팀 선택 필 (1팀 / 2팀 / 3팀 / 취업팀) */}
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full mb-2.5">
-            {["1팀", "2팀", "3팀", "취업팀"].map(team => (
+            {/* 일정 / 요약 탭 스위처 */}
+            <div className="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl flex items-center w-full shadow-inner">
               <button
-                key={team}
-                onClick={() => {
-                  setSelectedTeam(team);
-                  if (onTeamChange) onTeamChange(team);
-                }}
-                className={`py-2 text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation ${selectedTeam === team
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
+                type="button"
+                onClick={() => setActiveTab('schedule')}
+                className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center cursor-pointer ${activeTab === 'schedule'
+                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
                   }`}
               >
-                {team}
+                일정
               </button>
-            ))}
-          </div>
-
-          {/* 일정 / 요약 탭 스위처 */}
-          <div className="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl flex items-center w-full mb-3 shadow-inner">
-            <button
-              type="button"
-              onClick={() => setActiveTab('schedule')}
-              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${activeTab === 'schedule'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
-            >
-              일정
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('summary')}
-              className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center ${activeTab === 'summary'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                }`}
-            >
-              요약
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('summary')}
+                className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center cursor-pointer ${activeTab === 'summary'
+                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                  }`}
+              >
+                요약
+              </button>
+            </div>
           </div>
 
           {/* 로딩 및 안내 메시지 */}
