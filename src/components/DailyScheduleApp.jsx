@@ -657,9 +657,11 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     scheduleData.forEach(row => {
       const studentStr = (row.student || "").trim();
       const isUnassigned = !studentStr || studentStr === "-" || studentStr.includes("자체학습") || studentStr.includes("대상자발굴");
+      const names = studentStr ? studentStr.split(/[/,]/).map(s => s.trim()).filter(Boolean) : [];
+      const att = isUnassigned ? 'unassigned' : getRowAttendance(row, names[0]);
       const rawStatus = (row.status || "").trim();
       const hasMemo = rawStatus && rawStatus !== '-' && rawStatus !== '출석' && rawStatus !== '1' && rawStatus.length > 2;
-      if (!isUnassigned && hasMemo) {
+      if (!isUnassigned && att !== 'vacation' && hasMemo) {
         keys.push(`${row.teacher}_${row.time}`);
       }
     });
@@ -1286,7 +1288,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                       </div>
 
                                       {/* 수업 내용 접기/펼치기 버튼 */}
-                                      {!isUnassigned && hasMemo && (
+                                      {!isUnassigned && att !== 'vacation' && hasMemo && (
                                         <div className="mt-1">
                                           <button
                                             type="button"
@@ -1334,7 +1336,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                   </div>
 
                                   {/* 펼쳐진 수업 메모 내용 */}
-                                  {!isUnassigned && hasMemo && isExpanded && (
+                                  {!isUnassigned && att !== 'vacation' && hasMemo && isExpanded && (
                                     <div className="mt-1.5 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[14px] sm:text-[14.5px] leading-relaxed break-keep animate-fadeIn">
                                       {rawStatus}
                                     </div>
