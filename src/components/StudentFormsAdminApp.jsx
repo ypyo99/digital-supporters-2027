@@ -862,7 +862,12 @@ export default function StudentFormsAdminApp({
         const isEvenRow = idx % 2 === 1;
         row.height = 22;
         row.eachCell((cell, colNum) => {
-          cell.font = { name: '맑은 고딕', size: 10, color: { argb: 'FF1E293B' } };
+          cell.font = {
+            name: '맑은 고딕',
+            size: 10,
+            bold: colNum >= 2 && colNum <= 4,
+            color: { argb: (colNum >= 2 && colNum <= 4) ? 'FF0F172A' : 'FF1E293B' }
+          };
           cell.alignment = { horizontal: 'center', vertical: 'middle' };
           if (isEvenRow) {
             cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
