@@ -512,18 +512,18 @@ export default function HolidayManagementApp({ onNavigateBack }) {
           ) : holidays.length === 0 ? (
             <div className="text-center py-10 text-gray-500 text-sm font-medium bg-gray-50 rounded-xl border border-dashed border-gray-300">저장된 공휴일/휴무일이 없습니다.</div>
           ) : (
-            <div className="overflow-x-auto border border-gray-200 rounded-xl">
+            <div className="overflow-x-auto overflow-y-auto max-h-[70vh] sm:max-h-[75vh] border border-gray-200 rounded-xl relative">
               <table className="w-full text-left border-collapse text-sm">
-                <thead>
+                <thead className="sticky top-0 z-20 shadow-xs bg-gray-200">
                   <tr className="bg-gray-200 text-gray-700 border-b border-gray-300 font-bold whitespace-nowrap">
-                    <th rowSpan={2} className="p-3 w-28 sm:w-32 border-r border-gray-300 align-middle text-center">날짜</th>
-                    <th className="p-3 w-32 sm:w-40 border-r border-gray-300">공휴일 이름</th>
-                    <th className="p-3 min-w-[100px] border-r border-gray-300">내용1</th>
-                    <th rowSpan={2} className="p-3 w-24 text-center border-r border-gray-300 align-middle">개별수업<br />가능여부</th>
-                    <th rowSpan={2} className="p-3 text-center align-middle">{isAdmin ? '관리' : ''}</th>
+                    <th rowSpan={2} className="sticky top-0 z-20 bg-gray-200 p-3 w-28 sm:w-32 border-r border-gray-300 align-middle text-center">날짜</th>
+                    <th className="sticky top-0 z-20 bg-gray-200 p-3 w-32 sm:w-40 border-r border-gray-300">공휴일 이름</th>
+                    <th className="sticky top-0 z-20 bg-gray-200 p-3 min-w-[100px] border-r border-gray-300">내용1</th>
+                    <th rowSpan={2} className="sticky top-0 z-20 bg-gray-200 p-3 w-24 text-center border-r border-gray-300 align-middle">개별수업<br />가능여부</th>
+                    <th rowSpan={2} className="sticky top-0 z-20 bg-gray-200 p-3 text-center align-middle">{isAdmin ? '관리' : ''}</th>
                   </tr>
                   <tr className="bg-gray-200 text-gray-700 border-b-2 border-gray-400 font-bold whitespace-nowrap">
-                    <th colSpan={2} className="p-3 border-r border-gray-300">내용2</th>
+                    <th colSpan={2} className="sticky top-[45px] z-20 bg-gray-200 p-3 border-r border-gray-300">내용2</th>
                   </tr>
                 </thead>
                 <tbody>
