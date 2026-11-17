@@ -519,7 +519,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 <button onClick={() => changeWeek(-1)} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
                 </button>
-                <div className="flex-1 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-blue-300 rounded-xl bg-blue-50 text-center shadow-sm overflow-hidden px-1 transition-all">
+                <div className="flex-1 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-blue-300 rounded-xl bg-white text-center shadow-sm overflow-hidden px-1 transition-all">
                   <h2 className="font-extrabold text-[#1e3a8a] text-[16px] min-[360px]:text-[18px] sm:text-[20px] tracking-tighter whitespace-nowrap text-center -translate-y-[1px]">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
                 </div>
                 <button onClick={handleCurrentWeekClick} className="text-[13px] sm:text-[15px] px-3 sm:px-4 h-10 sm:h-12 border border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 active:scale-95 touch-manipulation whitespace-nowrap shrink-0 transition-all">이번 주</button>
