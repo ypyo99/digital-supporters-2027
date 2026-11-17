@@ -216,6 +216,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   const [notice, setNotice] = useState("");
   const [holidaysDbList, setHolidaysDbList] = useState([]);
   const [selectedStudentDates, setSelectedStudentDates] = useState(null);
+  const [showLegend, setShowLegend] = useState(false);
 
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
@@ -1107,93 +1108,43 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           {/* TAB 1: 일정 탭                                                 */}
           {/* ============================================================== */}
           {activeTab === 'schedule' && (
-            <div className="space-y-4 animate-fadeIn">
+            <div className="space-y-2.5 animate-fadeIn">
 
-              {/* 1. 출석 확인 카드 & 진행 막대 */}
-              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100 tracking-tight">
-                    출석 확인
-                  </span>
-                  <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100">
-                    {isLoading ? '- / -명' : `${stats.checkedCount} / ${stats.totalStudents}명`}
-                  </span>
+              {/* 1. 슬림 1줄 출석 현황 요약 바 */}
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 shadow-2xs flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2 sm:gap-3 text-[12.5px] sm:text-[13.5px] font-bold flex-wrap">
+                  <span className="text-emerald-700 dark:text-emerald-400">출석 <strong className="font-black">{isLoading ? '-' : stats.attendedCount}</strong></span>
+                  <span className="text-slate-300 dark:text-slate-600">·</span>
+                  <span className="text-rose-700 dark:text-rose-400">결석 <strong className="font-black">{isLoading ? '-' : stats.absentCount}</strong></span>
+                  <span className="text-slate-300 dark:text-slate-600">·</span>
+                  <span className="text-amber-700 dark:text-amber-400">휴가 <strong className="font-black">{isLoading ? '-' : stats.vacationCount}</strong></span>
+                  <span className="text-slate-300 dark:text-slate-600">·</span>
+                  <span className="text-slate-600 dark:text-slate-300">확인 전 <strong className="font-black">{isLoading ? '-' : stats.unconfirmedCount}</strong></span>
                 </div>
-
-                {/* 진행 막대 */}
-                <div className="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden mb-3.5">
-                  <div
-                    className="bg-blue-600 h-full rounded-full transition-all duration-300 ease-out"
-                    style={{ width: `${isLoading ? 0 : stats.currentPercent}%` }}
-                  />
-                </div>
-
-                {/* 4개 출결 상태 통계 박스 */}
-                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
-                  <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl py-2 flex flex-col items-center justify-center">
-                    <span className="text-[20px] font-black text-emerald-800 dark:text-emerald-400 leading-tight">
-                      {isLoading ? '-' : stats.attendedCount}
-                    </span>
-                    <span className="text-[12px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
-                      출석
-                    </span>
-                  </div>
-
-                  <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl py-2 flex flex-col items-center justify-center">
-                    <span className="text-[20px] font-black text-rose-800 dark:text-rose-400 leading-tight">
-                      {isLoading ? '-' : stats.absentCount}
-                    </span>
-                    <span className="text-[12px] font-bold text-rose-700 dark:text-rose-400 mt-0.5">
-                      결석
-                    </span>
-                  </div>
-
-                  <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl py-2 flex flex-col items-center justify-center">
-                    <span className="text-[20px] font-black text-amber-800 dark:text-amber-400 leading-tight">
-                      {isLoading ? '-' : stats.vacationCount}
-                    </span>
-                    <span className="text-[12px] font-bold text-amber-700 dark:text-amber-400 mt-0.5">
-                      휴가
-                    </span>
-                  </div>
-
-                  <div className="bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 rounded-xl py-2 flex flex-col items-center justify-center">
-                    <span className="text-[20px] font-black text-slate-800 dark:text-slate-200 leading-tight">
-                      {isLoading ? '-' : stats.unconfirmedCount}
-                    </span>
-                    <span className="text-[12px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
-                      확인 전
-                    </span>
-                  </div>
-                </div>
+                <span className="text-[12.5px] sm:text-[13.5px] font-extrabold text-blue-600 dark:text-blue-400 shrink-0">
+                  {isLoading ? '- / -명' : `${stats.checkedCount} / ${stats.totalStudents}명`}
+                </span>
               </div>
 
-              {/* 2. 회차 색상 범례 및 우측 전체 수업 내용 토글 버튼 (모바일에서도 항상 한 줄 유지) */}
-              <div className="flex items-center justify-between gap-1 px-0.5 sm:px-1 py-0.5">
-                <div className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm shrink-0">
-                  <span className="font-bold text-slate-600 dark:text-slate-400 mr-0.5 sm:mr-1 text-[11.5px] sm:text-[13px] whitespace-nowrap shrink-0">회차 색상</span>
-                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-slate-200 text-slate-800 border border-slate-300 shadow-2xs whitespace-nowrap shrink-0">
-                    1–6
-                  </span>
-                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-purple-100 text-purple-900 border border-purple-200 shadow-2xs whitespace-nowrap shrink-0">
-                    7–9
-                  </span>
-                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-indigo-950 text-white shadow-2xs whitespace-nowrap shrink-0">
-                    10–14
-                  </span>
-                  <span className="px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-amber-100 text-amber-950 border border-amber-300 shadow-2xs whitespace-nowrap shrink-0">
-                    15 이상
-                  </span>
-                </div>
+              {/* 2. 회차 색상 안내 토글 & 우측 전체 수업 내용 보기 토글 버튼 */}
+              <div className="flex items-center justify-between gap-2 px-0.5 sm:px-1">
+                <button
+                  type="button"
+                  onClick={() => setShowLegend(prev => !prev)}
+                  className="inline-flex items-center gap-1 px-2 py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200/70 transition-all touch-manipulation cursor-pointer"
+                >
+                  <span>회차 색상</span>
+                  <span className="text-[10px] leading-none">{showLegend ? '▴' : '▾'}</span>
+                </button>
 
                 {/* 우측 끝: 전체 수업 내용 보기 / 수업 내용 접기 토글버튼 */}
                 <button
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
+                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
-                      : 'text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95'
+                      : 'text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95 cursor-pointer'
                     }`}
                   title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
                 >
@@ -1201,6 +1152,15 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   <span className="text-[10px] leading-none">{isAllExpanded ? '▴' : '▾'}</span>
                 </button>
               </div>
+
+              {showLegend && (
+                <div className="flex items-center gap-1.5 flex-wrap px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl animate-fadeIn">
+                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-slate-200 text-slate-800 border border-slate-300">1–6회</span>
+                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-purple-100 text-purple-900 border border-purple-200">7–9회</span>
+                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-indigo-950 text-white">10–14회</span>
+                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-amber-100 text-amber-950 border border-amber-300">15회 이상</span>
+                </div>
+              )}
 
               {/* 3. 조별 & 선생님별 카드 목록 */}
               {groupedByGroup.length === 0 ? (
@@ -1408,6 +1368,65 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           {/* ============================================================== */}
           {activeTab === 'summary' && (
             <div className="space-y-4 animate-fadeIn">
+
+              {/* 0. 출석 확인 현황 카드 & 진행 막대 */}
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100 tracking-tight">
+                    출석 확인
+                  </span>
+                  <span className="font-extrabold text-[17px] text-slate-800 dark:text-slate-100">
+                    {isLoading ? '- / -명' : `${stats.checkedCount} / ${stats.totalStudents}명`}
+                  </span>
+                </div>
+
+                {/* 진행 막대 */}
+                <div className="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden mb-3.5">
+                  <div
+                    className="bg-blue-600 h-full rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${isLoading ? 0 : stats.currentPercent}%` }}
+                  />
+                </div>
+
+                {/* 4개 출결 상태 통계 박스 */}
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
+                  <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-emerald-800 dark:text-emerald-400 leading-tight">
+                      {isLoading ? '-' : stats.attendedCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
+                      출석
+                    </span>
+                  </div>
+
+                  <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-rose-800 dark:text-rose-400 leading-tight">
+                      {isLoading ? '-' : stats.absentCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-rose-700 dark:text-rose-400 mt-0.5">
+                      결석
+                    </span>
+                  </div>
+
+                  <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-amber-800 dark:text-amber-400 leading-tight">
+                      {isLoading ? '-' : stats.vacationCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-amber-700 dark:text-amber-400 mt-0.5">
+                      휴가
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-100 dark:bg-slate-700/60 border border-slate-200 dark:border-slate-700 rounded-xl py-2 flex flex-col items-center justify-center">
+                    <span className="text-[20px] font-black text-slate-800 dark:text-slate-200 leading-tight">
+                      {isLoading ? '-' : stats.unconfirmedCount}
+                    </span>
+                    <span className="text-[12px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">
+                      확인 전
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               {/* 1. 오늘 다룬 주제 */}
               <div className="pt-0.5">
