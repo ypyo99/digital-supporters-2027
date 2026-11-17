@@ -3554,7 +3554,7 @@ export default function MainApp({
                     </div>
                   </div>
 
-                  <button type="button" onClick={handleTodayClick} disabled={isDataLoading} className={`text-[14px] sm:text-[15px] px-3 sm:px-4 h-11 sm:h-12 rounded-xl font-bold flex items-center justify-center active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation whitespace-nowrap shrink-0 transition-all ${date === getLocalDateString(new Date()) ? 'bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200' : 'bg-blue-600 text-white shadow-sm shadow-blue-600/30 hover:bg-blue-700'}`}>오늘</button>
+                  <button type="button" onClick={handleTodayClick} disabled={isDataLoading} className="text-[14px] sm:text-[15px] px-3 sm:px-4 h-11 sm:h-12 rounded-xl font-bold flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-600/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation whitespace-nowrap shrink-0 transition-all">오늘</button>
                   <button type="button" onClick={handleNextDay} disabled={isDataLoading} aria-label="다음 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                     <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
                   </button>
