@@ -824,19 +824,20 @@ export default function StudentFormsAdminApp({
       ws.addRow(headers);
       const headerRow = ws.getRow(3);
       headerRow.height = 28;
-      headerRow.eachCell((cell) => {
+      headerRow.eachCell((cell, colNum) => {
         cell.font = { name: '맑은 고딕', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
         cell.alignment = { horizontal: 'center', vertical: 'middle' };
         cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'medium' },
-          right: { style: 'thin' }
+          top: { style: 'medium', color: { argb: 'FF1E293B' } },
+          left: colNum === 1 ? { style: 'medium', color: { argb: 'FF1E293B' } } : { style: 'thin', color: { argb: 'FF475569' } },
+          bottom: { style: 'medium', color: { argb: 'FF0F172A' } },
+          right: colNum === headers.length ? { style: 'medium', color: { argb: 'FF1E293B' } } : { style: 'thin', color: { argb: 'FF475569' } }
         };
       });
 
       // Data Rows
+      const totalRows = filteredStudents.length;
       filteredStudents.forEach((s, idx) => {
         const appDate = s.app?.sign_date || s.app?.created_at?.slice(0, 10) || '-';
         const preScore = s.preSurvey ? `${s.preSurvey.score_total ?? '-'}점 (${s.preSurvey.score_average ?? '-'}점)` : '-';
@@ -857,23 +858,28 @@ export default function StudentFormsAdminApp({
           s.isAllSubmitted ? '★ 완결' : '미완결'
         ]);
 
+        const isLastRow = idx === totalRows - 1;
+        const isEvenRow = idx % 2 === 1;
         row.height = 22;
         row.eachCell((cell, colNum) => {
-          cell.font = { name: '맑은 고딕', size: 10 };
+          cell.font = { name: '맑은 고딕', size: 10, color: { argb: 'FF1E293B' } };
           cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          if (isEvenRow) {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+          }
           cell.border = {
-            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-            right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+            top: { style: 'thin', color: { argb: 'FF94A3B8' } },
+            left: colNum === 1 ? { style: 'medium', color: { argb: 'FF334155' } } : { style: 'thin', color: { argb: 'FF94A3B8' } },
+            bottom: isLastRow ? { style: 'medium', color: { argb: 'FF334155' } } : { style: 'thin', color: { argb: 'FF94A3B8' } },
+            right: colNum === headers.length ? { style: 'medium', color: { argb: 'FF334155' } } : { style: 'thin', color: { argb: 'FF94A3B8' } }
           };
 
           // Highlights for completion
-          if (colNum === 6 && s.isAppSubmitted) cell.font = { bold: true, color: { argb: 'FF15803D' } };
-          if (colNum === 8 && s.isPreSubmitted) cell.font = { bold: true, color: { argb: 'FF1D4ED8' } };
-          if (colNum === 10 && s.isPostSubmitted) cell.font = { bold: true, color: { argb: 'FF7E22CE' } };
+          if (colNum === 6 && s.isAppSubmitted) cell.font = { name: '맑은 고딕', size: 10, bold: true, color: { argb: 'FF15803D' } };
+          if (colNum === 8 && s.isPreSubmitted) cell.font = { name: '맑은 고딕', size: 10, bold: true, color: { argb: 'FF1D4ED8' } };
+          if (colNum === 10 && s.isPostSubmitted) cell.font = { name: '맑은 고딕', size: 10, bold: true, color: { argb: 'FF7E22CE' } };
           if (colNum === 12) {
-            cell.font = { bold: true, color: { argb: s.isAllSubmitted ? 'FF16A34A' : 'FFDC2626' } };
+            cell.font = { name: '맑은 고딕', size: 10, bold: true, color: { argb: s.isAllSubmitted ? 'FF16A34A' : 'FFDC2626' } };
             if (s.isAllSubmitted) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
           }
         });
