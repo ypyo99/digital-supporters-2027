@@ -1279,21 +1279,21 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                   <div className={`absolute left-0 top-0 bottom-0 w-2 sm:w-2.5 ${barColorClass} transition-colors`} />
 
                                   {/* 상단 라인: 시간대, 학생명, 회차 배지 및 우측 끝 출결 토글 버튼 */}
-                                  <div className="flex items-start justify-between gap-2">
+                                  <div className="flex items-start justify-between gap-1.5 sm:gap-2">
                                     <div className="min-w-0 flex-1">
                                       {/* 시간대 & 학생명 & 회차 */}
-                                      <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap min-w-0">
+                                      <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
                                         {/* 시간대와 학생이름: 무조건 같은 라인에 표시 */}
-                                        <div className="inline-flex items-center gap-2 shrink-0">
-                                          <span className="font-bold text-slate-700 dark:text-slate-300 text-[15px] sm:text-[16.5px] whitespace-nowrap">
+                                        <div className="inline-flex items-center gap-1.5 sm:gap-2 shrink-0">
+                                          <span className="font-bold text-slate-700 dark:text-slate-300 text-[14.5px] sm:text-[16px] whitespace-nowrap">
                                             {startTime}
                                           </span>
                                           {isUnassigned ? (
-                                            <span className="text-slate-400 dark:text-slate-500 font-semibold text-[14.5px] sm:text-[15.5px] whitespace-nowrap">
+                                            <span className="text-slate-400 dark:text-slate-500 font-semibold text-[14px] sm:text-[15px] whitespace-nowrap">
                                               배정 없음
                                             </span>
                                           ) : (
-                                            <span className="font-bold text-slate-900 dark:text-slate-100 text-[16.5px] sm:text-[18px] tracking-tight whitespace-nowrap">
+                                            <span className="font-bold text-slate-900 dark:text-slate-100 text-[16px] sm:text-[17.5px] tracking-tight whitespace-nowrap">
                                               {studentStr}
                                             </span>
                                           )}
@@ -1301,7 +1301,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                         {/* 회차 배지 및 장소 (공간 부족 시 줄바꿈되더라도 학생이름은 시간대와 항상 같은 라인 유지) */}
                                         {!isUnassigned && (
-                                          <div className="inline-flex items-center gap-1.5 flex-wrap">
+                                          <div className="inline-flex items-center gap-1 sm:gap-1.5 flex-wrap">
                                             {/* 회차 배지 */}
                                             {row.sessionCounts && row.sessionCounts.map((sc, scIdx) => (
                                               <button
@@ -1309,7 +1309,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(sc)}
                                                 title="출석 일자 보기"
-                                                className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[12px] sm:text-[13px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation whitespace-nowrap cursor-pointer ${getSessionBadgeStyle(sc.count)}`}
+                                                className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[11.5px] sm:text-[12.5px] tracking-tight shadow-2xs hover:brightness-95 active:scale-95 transition-all touch-manipulation whitespace-nowrap cursor-pointer ${getSessionBadgeStyle(sc.count)}`}
                                               >
                                                 {sc.count}회차
                                               </button>
@@ -1339,9 +1339,9 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                       )}
                                     </div>
 
-                                    {/* 우측 끝: 출결 상태 토글 버튼 (회차와 같은 라인 우측 끝) */}
+                                    {/* 우측 끝: 출결 상태 버튼 (모바일 화면 폭 최적화: min-w-[48px]로 축소) */}
                                     {!isUnassigned && (
-                                      <div className="shrink-0 ml-1.5 pt-0.5">
+                                      <div className="shrink-0 ml-1 pt-0.5">
                                         {(() => {
                                           const att = getRowAttendance(row, names[0]);
                                           let btnClass = '';
@@ -1363,7 +1363,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                           return (
                                             <div
-                                              className={`min-h-[38px] sm:min-h-[40px] min-w-[78px] sm:min-w-[82px] px-3 sm:px-3.5 py-1.5 sm:py-2 text-[14.5px] sm:text-[15.5px] font-bold rounded-xl shadow-2xs select-none flex items-center justify-center cursor-default ${btnClass}`}
+                                              className={`min-h-[30px] sm:min-h-[36px] min-w-[48px] sm:min-w-[62px] px-2 sm:px-3 py-1 sm:py-1.5 text-[13px] sm:text-[14.5px] font-bold rounded-lg sm:rounded-xl shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
                                             >
                                               {btnLabel}
                                             </div>
