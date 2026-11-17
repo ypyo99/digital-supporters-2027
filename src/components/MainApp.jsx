@@ -4154,7 +4154,7 @@ export default function MainApp({
                                           }}
                                           onBlur={handleInputBlur}
                                           disabled={isDataLoading || isInfoMissing}
-                                          className={`w-12 md:w-14 px-0.5 text-center border-[1.5px] border-sky-300 rounded-xl outline-none font-bold text-sky-900 placeholder-sky-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] md:text-[22px] leading-tight shrink-0 caret-blue-600 focus:ring-4 focus:ring-sky-500/15 ${isSparkling ? 'animate-sparkle border-red-500 shadow-md' : 'bg-sky-50'}`}
+                                          className={`w-12 md:w-14 px-0.5 text-center border-[1.5px] border-sky-400 rounded-xl outline-none font-bold text-sky-950 placeholder-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-[18px] md:text-[22px] leading-tight shrink-0 caret-blue-600 focus:ring-4 focus:ring-sky-500/15 ${isSparkling ? 'animate-sparkle border-red-500 shadow-md' : 'bg-sky-50'}`}
                                         />
                                       );
                                     })()}
