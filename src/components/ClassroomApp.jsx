@@ -327,7 +327,7 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans text-gray-800">
       <div className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl mx-auto px-4 pb-12 pt-safe-4 flex justify-between items-start relative min-h-[116px]">
+        <div className="max-w-5xl mx-auto px-4 pb-14 pt-safe-4 flex justify-between items-start relative min-h-[120px]">
           <div>
             <div className="flex items-center mb-1">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -336,7 +336,7 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
             <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
           </div>
 
-          <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
+          <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
             <button
               onClick={handleManagerClick}
               className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isManagerMode ? 'is-on' : ''}`}

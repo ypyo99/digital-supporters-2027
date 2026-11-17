@@ -974,7 +974,7 @@ export default function StudentFormsAdminApp({
 
       {/* TOP HEADER */}
       <header className="sticky top-0 z-50 app-header text-white border-b border-blue-900/30 shadow-md">
-        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex items-center justify-between gap-2 relative">
+        <div className={`max-w-5xl mx-auto px-4 pt-safe-4 flex items-start justify-between gap-2 relative shrink-0 ${!isTeacherView ? 'pb-14 min-h-[120px]' : 'pb-4'}`}>
           {/* Left: Title */}
           <div className="flex flex-col min-w-0">
             <div className="flex items-center mb-1">

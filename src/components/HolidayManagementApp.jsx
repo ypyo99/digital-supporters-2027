@@ -401,7 +401,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
   return (
     <div className="min-h-[100dvh] bg-gray-50 font-sans pb-10 flex flex-col">
-      <header className="app-header text-white px-4 pt-4 pb-12 z-40 flex justify-between items-start relative shrink-0 min-h-[116px]">
+      <header className="app-header text-white px-4 pt-safe-4 pb-14 z-40 flex justify-between items-start relative shrink-0 min-h-[120px]">
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
@@ -413,7 +413,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         </div>
 
         {/* 담당자 로그인 버튼 영역 */}
-        <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
+        <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
           <button
             onClick={handleAdminClick}
             className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
