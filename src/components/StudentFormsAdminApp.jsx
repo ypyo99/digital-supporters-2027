@@ -1065,7 +1065,7 @@ export default function StudentFormsAdminApp({
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className={`flex-1 max-w-5xl lg:max-w-[1536px] w-full mx-auto px-4 md:px-6 py-3 md:py-6 pb-12 ${isTeacherView ? 'space-y-3' : (isAdmin ? 'space-y-5' : '')}`}>
+      <main className={`flex-1 max-w-5xl lg:max-w-[1536px] w-full mx-auto px-4 md:px-6 py-3 md:py-4 pb-12 ${isTeacherView ? 'space-y-3' : (isAdmin ? 'space-y-3' : '')}`}>
         <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><IconDocumentCheck className="w-5 h-5 mr-2 text-blue-600" /> {isTeacherView ? '참여자 서류 관리' : '참여자 서류 관리ㆍ인쇄'}</span>
@@ -1092,34 +1092,30 @@ export default function StudentFormsAdminApp({
             {!isTeacherView && (
           <>
             {/* 1. KPI SUMMARY DASHBOARD CARDS */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
               {/* Total Students */}
               <div
                 onClick={handleResetStatusFilter}
-                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${!isCustomStatusFilterActive
+                className={`px-3 py-2 rounded-xl border transition cursor-pointer shadow-xs flex flex-col justify-between ${!isCustomStatusFilterActive
                   ? "bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm"
                   : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs"
                   }`}
               >
-                <div className="text-xs font-bold text-slate-600">
+                <div className="text-xs font-bold text-slate-600 truncate">
                   {teacherFilter !== "전체"
                     ? `${teacherFilter} 선생님 대상자`
                     : teamFilter === "전체"
                       ? "전체 대상자"
                       : `${teamFilter} 대상자`}
                 </div>
-                <div className="text-2xl font-black mt-1 text-slate-900">
-                  {stats.total}
-                  <span className="text-sm font-normal ml-0.5 text-slate-500">
-                    명
+                <div className="flex items-baseline justify-between gap-1 mt-1">
+                  <div className="text-lg sm:text-xl font-black text-slate-900 whitespace-nowrap">
+                    {stats.total}
+                    <span className="text-xs font-normal ml-0.5 text-slate-500">명</span>
+                  </div>
+                  <span className="text-[11px] text-blue-600 font-semibold whitespace-nowrap truncate">
+                    전체 보기
                   </span>
-                </div>
-                <div className="text-[11px] mt-0.5 text-blue-600 font-medium">
-                  {teacherFilter !== "전체"
-                    ? `클릭 시 ${teacherFilter} 선생님 전체 보기`
-                    : teamFilter === "전체"
-                      ? "클릭 시 전체 보기"
-                      : `클릭 시 ${teamFilter} 전체 보기`}
                 </div>
               </div>
 
@@ -1131,33 +1127,35 @@ export default function StudentFormsAdminApp({
                   setSelectedDocTypes(new Set(['app']));
                   setDocMatchMode('or');
                 }}
-                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app'))
+                className={`px-3 py-2 rounded-xl border transition cursor-pointer shadow-xs flex flex-col justify-between ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app'))
                   ? "bg-blue-600 text-white border-blue-600 ring-2 ring-blue-500 ring-offset-2 shadow-md"
                   : "bg-white border-slate-200 text-slate-800 hover:border-blue-300 hover:shadow-xs"
                   }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-blue-600"}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <span className={`text-xs font-bold whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-blue-600"}`}>
                     신청서 작성
                   </span>
                   <span
-                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
+                    className={`text-[11px] font-extrabold px-1.5 py-px rounded shrink-0 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "bg-white/25 text-white" : "bg-blue-50 text-blue-700"
                       }`}
                   >
                     {stats.appPct}%
                   </span>
                 </div>
-                <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-slate-900"}`}>
-                  {stats.appCount}
-                  <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-blue-100" : "text-slate-500"}`}>
-                    / {stats.total}명
+                <div className="flex items-baseline justify-between gap-1 mt-1">
+                  <div className={`text-lg sm:text-xl font-black whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-white" : "text-slate-900"}`}>
+                    {stats.appCount}
+                    <span className={`text-xs font-normal ml-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-blue-100" : "text-slate-500"}`}>
+                      /{stats.total}명
+                    </span>
+                  </div>
+                  <span
+                    className={`text-[11px] font-bold whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-amber-200" : "text-rose-500"
+                      }`}
+                  >
+                    미작성 {stats.total - stats.appCount}
                   </span>
-                </div>
-                <div
-                  className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('app')) ? "text-amber-200" : "text-rose-500"
-                    }`}
-                >
-                  미작성: {stats.total - stats.appCount}명
                 </div>
               </div>
 
@@ -1169,33 +1167,35 @@ export default function StudentFormsAdminApp({
                   setSelectedDocTypes(new Set(['pre']));
                   setDocMatchMode('or');
                 }}
-                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre'))
+                className={`px-3 py-2 rounded-xl border transition cursor-pointer shadow-xs flex flex-col justify-between ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre'))
                   ? "bg-indigo-600 text-white border-indigo-600 ring-2 ring-indigo-500 ring-offset-2 shadow-md"
                   : "bg-white border-slate-200 text-slate-800 hover:border-indigo-300 hover:shadow-xs"
                   }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-indigo-600"}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <span className={`text-xs font-bold whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-indigo-600"}`}>
                     사전설문 작성
                   </span>
                   <span
-                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
+                    className={`text-[11px] font-extrabold px-1.5 py-px rounded shrink-0 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "bg-white/25 text-white" : "bg-indigo-50 text-indigo-700"
                       }`}
                   >
                     {stats.prePct}%
                   </span>
                 </div>
-                <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-slate-900"}`}>
-                  {stats.preCount}
-                  <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-indigo-100" : "text-slate-500"}`}>
-                    / {stats.total}명
+                <div className="flex items-baseline justify-between gap-1 mt-1">
+                  <div className={`text-lg sm:text-xl font-black whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-white" : "text-slate-900"}`}>
+                    {stats.preCount}
+                    <span className={`text-xs font-normal ml-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-indigo-100" : "text-slate-500"}`}>
+                      /{stats.total}명
+                    </span>
+                  </div>
+                  <span
+                    className={`text-[11px] font-bold whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-amber-200" : "text-rose-500"
+                      }`}
+                  >
+                    미작성 {stats.total - stats.preCount}
                   </span>
-                </div>
-                <div
-                  className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('pre')) ? "text-amber-200" : "text-rose-500"
-                    }`}
-                >
-                  미작성: {stats.total - stats.preCount}명
                 </div>
               </div>
 
@@ -1207,33 +1207,35 @@ export default function StudentFormsAdminApp({
                   setSelectedDocTypes(new Set(['post']));
                   setDocMatchMode('or');
                 }}
-                className={`p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post'))
+                className={`px-3 py-2 rounded-xl border transition cursor-pointer shadow-xs flex flex-col justify-between ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post'))
                   ? "bg-purple-600 text-white border-purple-600 ring-2 ring-purple-500 ring-offset-2 shadow-md"
                   : "bg-white border-slate-200 text-slate-800 hover:border-purple-300 hover:shadow-xs"
                   }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-bold ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-purple-600"}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <span className={`text-xs font-bold whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-purple-600"}`}>
                     사후설문 작성
                   </span>
                   <span
-                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
+                    className={`text-[11px] font-extrabold px-1.5 py-px rounded shrink-0 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "bg-white/25 text-white" : "bg-purple-50 text-purple-700"
                       }`}
                   >
                     {stats.postPct}%
                   </span>
                 </div>
-                <div className={`text-2xl font-black mt-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-slate-900"}`}>
-                  {stats.postCount}
-                  <span className={`text-sm font-normal ml-1 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-purple-100" : "text-slate-500"}`}>
-                    / {stats.total}명
+                <div className="flex items-baseline justify-between gap-1 mt-1">
+                  <div className={`text-lg sm:text-xl font-black whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-white" : "text-slate-900"}`}>
+                    {stats.postCount}
+                    <span className={`text-xs font-normal ml-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-purple-100" : "text-slate-500"}`}>
+                      /{stats.total}명
+                    </span>
+                  </div>
+                  <span
+                    className={`text-[11px] font-bold whitespace-nowrap ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-amber-200" : "text-rose-500"
+                      }`}
+                  >
+                    미작성 {stats.total - stats.postCount}
                   </span>
-                </div>
-                <div
-                  className={`text-[11px] font-bold mt-0.5 ${(!filterSubmitted && filterUnsubmitted && selectedDocTypes.size === 1 && selectedDocTypes.has('post')) ? "text-amber-200" : "text-rose-500"
-                    }`}
-                >
-                  미작성: {stats.total - stats.postCount}명
                 </div>
               </div>
 
@@ -1245,33 +1247,35 @@ export default function StudentFormsAdminApp({
                   setSelectedDocTypes(new Set(['app', 'pre', 'post']));
                   setDocMatchMode('and');
                 }}
-                className={`col-span-2 sm:col-span-1 p-3.5 rounded-xl border transition cursor-pointer shadow-xs ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and')
+                className={`col-span-2 sm:col-span-1 px-3 py-2 rounded-xl border transition cursor-pointer shadow-xs flex flex-col justify-between ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and')
                   ? "bg-emerald-600 text-white border-emerald-600 ring-2 ring-emerald-500 ring-offset-2 shadow-md"
                   : "bg-white border-slate-200 text-slate-800 hover:border-emerald-300 hover:shadow-xs"
                   }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-bold ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-emerald-700"}`}>
+                <div className="flex items-center justify-between gap-1">
+                  <span className={`text-xs font-bold whitespace-nowrap ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-emerald-700"}`}>
                     3종 완결
                   </span>
                   <span
-                    className={`text-xs font-extrabold px-1.5 py-0.5 rounded ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
+                    className={`text-[11px] font-extrabold px-1.5 py-px rounded shrink-0 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "bg-white/25 text-white" : "bg-emerald-50 text-emerald-700"
                       }`}
                   >
                     {stats.allPct}%
                   </span>
                 </div>
-                <div className={`text-2xl font-black mt-1 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-slate-900"}`}>
-                  {stats.allCount}
-                  <span className={`text-sm font-normal ml-1 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"}`}>
-                    / {stats.total}명
+                <div className="flex items-baseline justify-between gap-1 mt-1">
+                  <div className={`text-lg sm:text-xl font-black whitespace-nowrap ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-white" : "text-slate-900"}`}>
+                    {stats.allCount}
+                    <span className={`text-xs font-normal ml-0.5 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"}`}>
+                      /{stats.total}명
+                    </span>
+                  </div>
+                  <span
+                    className={`text-[11px] font-semibold whitespace-nowrap ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"
+                      }`}
+                  >
+                    3종 완료
                   </span>
-                </div>
-                <div
-                  className={`text-[11px] font-semibold mt-0.5 ${(filterSubmitted && !filterUnsubmitted && selectedDocTypes.size === 3 && docMatchMode === 'and') ? "text-emerald-100" : "text-slate-500"
-                    }`}
-                >
-                  신청서+사전+사후 완료
                 </div>
               </div>
             </div>
