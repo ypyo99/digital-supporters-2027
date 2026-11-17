@@ -1523,15 +1523,15 @@ export default function StudentFormsAdminApp({
 
         {/* 4. STUDENTS DOCUMENT STATUS TABLE */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-          <div className="overflow-x-auto overscroll-x-contain">
+          <div className={`overflow-x-auto overscroll-x-contain overflow-y-auto relative ${isTeacherView ? 'max-h-[calc(100dvh-150px)] sm:max-h-[80vh]' : 'max-h-[70vh] sm:max-h-[75vh]'}`}>
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
-              <thead className="sticky top-0 z-30 shadow-xs">
+              <thead className="sticky top-0 z-30 shadow-xs bg-slate-50">
                 <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
                   {/* Checkbox (관리자 모드 전용) */}
                   {!isTeacherView && (
                     <th
-                      className="sticky left-0 z-30 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
-                      style={{ width: '40px', minWidth: '40px', maxWidth: '40px' }}
+                      className="sticky top-0 left-0 z-50 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
+                      style={{ width: '40px', minWidth: '40px', maxWidth: '40px', position: 'sticky', top: 0, left: 0, zIndex: 50 }}
                     >
                       <input
                         type="checkbox"
@@ -1543,20 +1543,26 @@ export default function StudentFormsAdminApp({
                   )}
                   {/* Index (연번: 스크롤) */}
                   <th
-                    className="py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
+                    className="sticky top-0 z-30 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
                     style={{
                       width: '48px',
                       minWidth: '48px',
-                      maxWidth: '48px'
+                      maxWidth: '48px',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 30
                     }}
                   >
                     연번
                   </th>
                   {/* Sticky Student Name (학생 성명 고정 & 너비 조절 가능) */}
                   <th
-                    className="sticky z-40 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
+                    className="sticky top-0 z-50 bg-slate-50 py-3 px-3 whitespace-nowrap border-b border-slate-200 border-r border-slate-200 shadow-[3px_0_6px_-2px_rgba(0,0,0,0.08)] relative select-none"
                     style={{
+                      position: 'sticky',
+                      top: 0,
                       left: `${!isTeacherView ? 40 : 0}px`,
+                      zIndex: 50,
                       width: `${nameColWidth}px`,
                       minWidth: `${nameColWidth}px`,
                       maxWidth: `${nameColWidth}px`
@@ -1586,18 +1592,18 @@ export default function StudentFormsAdminApp({
                       </div>
                     )}
                   </th>
-                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap bg-slate-50">소속 팀</th>
-                  <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap bg-slate-50">등록/수업일</th>
+                  <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 whitespace-nowrap">소속 팀</th>
+                  <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 whitespace-nowrap">등록/수업일</th>
                   {selectedDocTypes.has('app') && (
-                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">① 참여 신청서</th>
+                    <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">① 참여 신청서</th>
                   )}
                   {selectedDocTypes.has('pre') && (
-                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">② 사전 설문지</th>
+                    <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">② 사전 설문지</th>
                   )}
                   {selectedDocTypes.has('post') && (
-                    <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">③ 사후 설문지</th>
+                    <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">③ 사후 설문지</th>
                   )}
-                  <th className="py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap bg-slate-50">개별 출력</th>
+                  <th className="sticky top-0 z-30 bg-slate-50 py-3 px-3 border-b border-slate-200 text-center whitespace-nowrap">개별 출력</th>
                 </tr>
               </thead>
               <tbody>
