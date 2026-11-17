@@ -59,8 +59,8 @@ export default function App() {
     if (urlView) return urlView;
     return getSessionItem('sungdong_current_view', 'main');
   });
-  const [selectedTeamForSchedule, setSelectedTeamForSchedule] = useState(() => getSavedItem('sungdong_schedule_team', ''));
-  const [selectedTeacherForWeekly, setSelectedTeacherForWeekly] = useState(() => getSavedItem('sungdong_weekly_teacher', ''));
+  const [selectedTeamForSchedule, setSelectedTeamForSchedule] = useState(() => getSavedItem('sungdong_schedule_team', '') || getSavedItem('sungdong_team', ''));
+  const [selectedTeacherForWeekly, setSelectedTeacherForWeekly] = useState(() => getSavedItem('sungdong_weekly_teacher', '') || getSavedItem('sungdong_teacher', ''));
   const [selectedFormsTeacher, setSelectedFormsTeacher] = useState(() => getSavedItem('sungdong_teacher', ''));
   const [selectedFormsTeam, setSelectedFormsTeam] = useState(() => getSavedItem('sungdong_team', ''));
   const [isFormsAdminMode, setIsFormsAdminMode] = useState(false);
@@ -78,11 +78,15 @@ export default function App() {
   }, [currentView]);
 
   useEffect(() => {
-    setSavedItem('sungdong_schedule_team', selectedTeamForSchedule);
+    if (selectedTeamForSchedule) {
+      setSavedItem('sungdong_schedule_team', selectedTeamForSchedule);
+    }
   }, [selectedTeamForSchedule]);
 
   useEffect(() => {
-    setSavedItem('sungdong_weekly_teacher', selectedTeacherForWeekly);
+    if (selectedTeacherForWeekly) {
+      setSavedItem('sungdong_weekly_teacher', selectedTeacherForWeekly);
+    }
   }, [selectedTeacherForWeekly]);
 
   useEffect(() => {
@@ -157,10 +161,12 @@ export default function App() {
     }
 
     if (currentView === 'myWeeklySchedule') {
+      const activeTeam = selectedTeamForSchedule || getSavedItem('sungdong_schedule_team', '') || getSavedItem('sungdong_team', '');
+      const activeTeacher = selectedTeacherForWeekly || getSavedItem('sungdong_weekly_teacher', '') || getSavedItem('sungdong_teacher', '');
       return (
         <MyWeeklyScheduleApp
-          team={selectedTeamForSchedule}
-          teacher={selectedTeacherForWeekly}
+          team={activeTeam}
+          teacher={activeTeacher}
           onNavigateBack={() => setCurrentView('main')}
         />
       );
@@ -217,10 +223,12 @@ export default function App() {
           setCurrentView('dailySchedule');
         }}
         onNavigateToMyWeeklySchedule={() => {
-          const t = getSavedItem('sungdong_team', '');
-          const th = getSavedItem('sungdong_teacher', '');
+          const t = getSavedItem('sungdong_team', '') || selectedTeamForSchedule;
+          const th = getSavedItem('sungdong_teacher', '') || selectedTeacherForWeekly;
           setSelectedTeamForSchedule(t);
           setSelectedTeacherForWeekly(th);
+          if (t) setSavedItem('sungdong_schedule_team', t);
+          if (th) setSavedItem('sungdong_weekly_teacher', th);
           setCurrentView('myWeeklySchedule');
         }}
         onNavigateToStudentSearch={() => setCurrentView('studentSearch')}

@@ -7,7 +7,10 @@ import {
   getTeacherShifts,
   getTeamDefaultShifts,
   getGlobalTeachersList,
-  getTeacherGroup
+  getTeacherGroup,
+  getSavedItem,
+  setSavedItem,
+  normalizeTeacherName
 } from '../utils/helpers';
 import { User, Home, Clock, CalendarDaysIcon } from './Icons';
 
@@ -42,7 +45,86 @@ const mapShiftToOfficial = (team, teacherName, originalShift) => {
   return originalShift;
 };
 
-export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
+export default function MyWeeklyScheduleApp({
+  team: initialTeam,
+  teacher: initialTeacher,
+  onNavigateBack
+}) {
+  const [team, setTeam] = useState(() => {
+    return (
+      initialTeam ||
+      getSavedItem('sungdong_weekly_team', '') ||
+      getSavedItem('sungdong_team', '') ||
+      getSavedItem('sungdong_schedule_team', '') ||
+      ''
+    ).trim();
+  });
+
+  const [teacher, setTeacher] = useState(() => {
+    return (
+      initialTeacher ||
+      getSavedItem('sungdong_weekly_teacher', '') ||
+      getSavedItem('sungdong_teacher', '') ||
+      ''
+    ).trim();
+  });
+
+  useEffect(() => {
+    if (initialTeam && initialTeam.trim() && initialTeam.trim() !== team) {
+      setTeam(initialTeam.trim());
+    }
+  }, [initialTeam, team]);
+
+  useEffect(() => {
+    if (initialTeacher && initialTeacher.trim() && initialTeacher.trim() !== teacher) {
+      setTeacher(initialTeacher.trim());
+    }
+  }, [initialTeacher, teacher]);
+
+  useEffect(() => {
+    if (team) {
+      setSavedItem('sungdong_weekly_team', team);
+    }
+    if (teacher) {
+      setSavedItem('sungdong_weekly_teacher', teacher);
+    }
+  }, [team, teacher]);
+
+  // 팀 정보가 비어있고 선생님 이름이 있을 때, 선생님 테이블에서 소속팀 자동 복구
+  useEffect(() => {
+    if ((!team || team === '전체') && teacher) {
+      const cleanTeacher = normalizeTeacherName(teacher);
+      const list = getGlobalTeachersList();
+      const found = list.find(t => normalizeTeacherName(t.name) === cleanTeacher);
+      if (found && found.team) {
+        setTeam(found.team);
+        setSavedItem('sungdong_team', found.team);
+        setSavedItem('sungdong_weekly_team', found.team);
+        return;
+      }
+
+      const lookupTeacherTeam = async () => {
+        try {
+          const { data, error } = await supabaseClient
+            .from('teachers')
+            .select('name, team')
+            .limit(100);
+          if (!error && data && data.length > 0) {
+            const match = data.find(t => normalizeTeacherName(t.name) === cleanTeacher);
+            if (match && match.team) {
+              setTeam(match.team);
+              setSavedItem('sungdong_team', match.team);
+              setSavedItem('sungdong_weekly_team', match.team);
+            }
+          }
+        } catch (err) {
+          console.warn('선생님 소속팀 조회 오류:', err);
+        }
+      };
+      lookupTeacherTeam();
+    }
+  }, [team, teacher]);
+
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const d = new Date();
     const day = d.getDay();
@@ -675,7 +757,7 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
             </div>
             <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
             <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-              <User className="w-4 h-4 mr-1" /> [{team}] {teacher.replace(/\n/g, ' ')} 선생님
+              <User className="w-4 h-4 mr-1 shrink-0" /> [{team || getSavedItem('sungdong_team', '') || '2팀'}] {(teacher || getSavedItem('sungdong_teacher', '') || '').replace(/\n/g, ' ')} 선생님
             </p>
           </div>
         </div>

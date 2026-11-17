@@ -46,7 +46,7 @@ const mapShiftToOfficial = (team, teacherName, originalShift) => {
 };
 
 export default function TeamScheduleApp({ team, onNavigateBack }) {
-  const [currentTeam, setCurrentTeam] = useState(team);
+  const [currentTeam, setCurrentTeam] = useState(() => team || getSavedItem('sungdong_schedule_team', '') || getSavedItem('sungdong_team', '') || "1팀");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().substring(0, 7)); // YYYY-MM
