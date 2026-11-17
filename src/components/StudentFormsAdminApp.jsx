@@ -1018,27 +1018,15 @@ export default function StudentFormsAdminApp({
           {/* Right: Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {(isTeacherView || isAdmin) && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => loadData(true)}
-                  disabled={refreshing || loading}
-                  className="p-2 sm:px-2.5 sm:py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0 border border-white/30 shadow-sm"
-                  title="최신 서류 작성 데이터 다시 불러오기"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-                  <span className="hidden lg:inline">새로고침</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleExportExcel}
-                  className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50"
-                  title="현재 목록 엑셀 파일로 다운로드"
-                >
-                  <DownloadIcon className="w-3.5 h-3.5 text-white" />
-                  <span className="hidden lg:inline">엑셀</span>
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50"
+                title="현재 목록 엑셀 파일로 다운로드"
+              >
+                <DownloadIcon className="w-3.5 h-3.5 text-white" />
+                <span className="hidden lg:inline">엑셀</span>
+              </button>
             )}
             <button
               type="button"
