@@ -3406,7 +3406,7 @@ export default function MainApp({
             </section>
 
             <div className="mt-8 sm:mt-10 text-center text-[10px] text-gray-300/80 font-medium tracking-wider select-none" aria-hidden="true">
-              v260825-holidays
+              v261117-rebuild
             </div>
           </div>
         </div>
