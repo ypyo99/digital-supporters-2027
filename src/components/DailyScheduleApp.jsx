@@ -1171,10 +1171,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 </div>
               ) : (
                 groupedByGroup.map(grp => (
-                  <div key={grp.groupName} className="space-y-3">
+                  <div key={grp.groupName} className="space-y-2">
                     {/* 조 배지 */}
-                    <div className="pt-2">
-                      <span className="bg-blue-600 text-white font-black text-[14px] px-3 py-1 rounded-full shadow-sm">
+                    <div className="pt-1">
+                      <span className="bg-blue-600 text-white font-black text-[13px] px-2.5 py-0.5 rounded-full shadow-sm">
                         {grp.groupName}
                       </span>
                     </div>
@@ -1184,10 +1184,10 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                       return (
                         <div
                           key={teacher.teacherName}
-                          className="bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-400 dark:border-slate-500 shadow-sm overflow-hidden"
+                          className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl border-2 border-slate-400 dark:border-slate-500 shadow-sm overflow-hidden"
                         >
                           {/* 선생님 카드 헤더 */}
-                          <div className="bg-blue-600 text-white px-4 py-2.5 font-bold text-[17px] sm:text-[18px] tracking-tight">
+                          <div className="bg-blue-600 text-white px-3.5 py-1.5 font-bold text-[15.5px] sm:text-[16.5px] tracking-tight">
                             {teacher.teacherName} 선생님
                           </div>
 
@@ -1238,7 +1238,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                 <div
                                   key={idx}
                                   onClick={canToggleMemo ? () => toggleMemo(rowKey) : undefined}
-                                  className={`relative p-3 sm:p-3.5 pl-3.5 sm:pl-4 transition-colors ${rowBgClass} ${canToggleMemo ? 'cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-700/40' : ''}`}
+                                  className={`relative py-1.5 px-2.5 sm:py-2 sm:px-3 pl-3 sm:pl-3.5 transition-colors ${rowBgClass} ${canToggleMemo ? 'cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-700/40' : ''}`}
                                 >
                                   {/* 시간대 좌측 상태 표시 막대 (우측 버튼과 동일한 색상 배색) */}
                                   <div className={`absolute left-0 top-0 bottom-0 w-2 sm:w-2.5 ${barColorClass} transition-colors`} />
@@ -1310,7 +1310,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                     {/* 우측 끝: 출결 상태 버튼 (모바일 화면 폭 최적화: min-w-[48px]로 축소) */}
                                     {!isUnassigned && (
-                                      <div className="shrink-0 ml-1 pt-0.5">
+                                      <div className="shrink-0 ml-1">
                                         {(() => {
                                           const att = getRowAttendance(row, names[0]);
                                           let btnClass = '';
@@ -1332,7 +1332,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                           return (
                                             <div
-                                              className={`min-h-[30px] sm:min-h-[36px] min-w-[48px] sm:min-w-[62px] px-2 sm:px-3 py-1 sm:py-1.5 text-[13px] sm:text-[14.5px] font-bold rounded-lg sm:rounded-xl shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
+                                              className={`min-h-[26px] sm:min-h-[30px] min-w-[48px] sm:min-w-[60px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
                                             >
                                               {btnLabel}
                                             </div>
