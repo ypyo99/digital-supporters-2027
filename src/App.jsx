@@ -63,7 +63,9 @@ export default function App() {
   const [selectedTeacherForWeekly, setSelectedTeacherForWeekly] = useState(() => getSavedItem('sungdong_weekly_teacher', '') || getSavedItem('sungdong_teacher', ''));
   const [selectedFormsTeacher, setSelectedFormsTeacher] = useState(() => getSavedItem('sungdong_teacher', ''));
   const [selectedFormsTeam, setSelectedFormsTeam] = useState(() => getSavedItem('sungdong_team', ''));
-  const [isFormsAdminMode, setIsFormsAdminMode] = useState(false);
+  const [isFormsAdminMode, setIsFormsAdminMode] = useState(() => {
+    return getSessionItem('sungdong_forms_admin_mode', 'false') === 'true';
+  });
   const [selectedNoticeForView, setSelectedNoticeForView] = useState(null);
 
   useEffect(() => {
@@ -204,7 +206,11 @@ export default function App() {
     if (currentView === 'studentFormsAdmin') {
       return (
         <StudentFormsAdminApp
-          onNavigateBack={() => setCurrentView('main')}
+          onNavigateBack={() => {
+            setIsFormsAdminMode(false);
+            setSessionItem('sungdong_forms_admin_mode', 'false');
+            setCurrentView('main');
+          }}
           initialTeacher={selectedFormsTeacher || getSavedItem('sungdong_teacher', '')}
           initialTeam={selectedFormsTeam || getSavedItem('sungdong_team', '')}
           isAdminMode={isFormsAdminMode}
@@ -237,7 +243,9 @@ export default function App() {
           const th = options.teacher || getSavedItem('sungdong_teacher', '');
           setSelectedFormsTeam(t);
           setSelectedFormsTeacher(th);
-          setIsFormsAdminMode(!!options.isAdminMode);
+          const adminMode = !!options.isAdminMode;
+          setIsFormsAdminMode(adminMode);
+          setSessionItem('sungdong_forms_admin_mode', adminMode ? 'true' : 'false');
           setCurrentView('studentFormsAdmin');
         }}
         onNavigateToTeamSchedule={(team) => {

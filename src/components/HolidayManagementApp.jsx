@@ -17,7 +17,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   const [showApplyPopup, setShowApplyPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);

@@ -8,6 +8,9 @@ import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
   setSavedItem,
+  removeSavedItem,
+  setSessionItem,
+  getSessionItem,
   formatTeacherRow,
   setGlobalTeachersList,
   getTeacherSortWeight
@@ -120,7 +123,7 @@ export default function StudentFormsAdminApp({
   const [isPrinting, setIsPrinting] = useState(false);
 
   // 담당자 인증 상태 (isTeacherView가 아닌 경우 보호)
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
@@ -135,6 +138,7 @@ export default function StudentFormsAdminApp({
   const checkPassword = () => {
     if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
       setIsAdmin(true);
+      setSavedItem('sungdong_admin_logged_in', 'true');
       setShowPwdModal(false);
       setPwdError(false);
     } else {
@@ -997,6 +1001,7 @@ export default function StudentFormsAdminApp({
                 onClick={() => {
                   if (isAdmin) {
                     setIsAdmin(false);
+                    removeSavedItem('sungdong_admin_logged_in');
                   } else {
                     setShowPwdModal(true);
                     setPwdInput("");
@@ -1819,6 +1824,7 @@ export default function StudentFormsAdminApp({
                 setPwdInput(val);
                 if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
                   setIsAdmin(true);
+                  setSavedItem('sungdong_admin_logged_in', 'true');
                   setShowPwdModal(false);
                   setPwdError(false);
                 }

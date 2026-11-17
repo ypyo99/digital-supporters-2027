@@ -10,7 +10,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [formData, setFormData] = useState({
     team: '1팀',
     group: '1조',

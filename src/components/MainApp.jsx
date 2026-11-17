@@ -2144,7 +2144,6 @@ export default function MainApp({
   const executeLogout = () => {
     setIsLoggedIn(false);
     setRecords([]);
-    removeSavedItem('sungdong_admin_logged_in');
   };
 
   const handleLogout = async () => {

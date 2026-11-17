@@ -20,7 +20,7 @@ const parseDateLocal = (dateStr) => {
 };
 
 export default function AutoScheduleApp({ onNavigateBack }) {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
