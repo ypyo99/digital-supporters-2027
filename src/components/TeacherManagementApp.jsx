@@ -329,20 +329,20 @@ export default function TeacherManagementApp({ onNavigateBack }) {
           <div className="px-5 py-3 border-b bg-gray-50">
             <h2 className="text-lg font-bold text-gray-800"></h2>
           </div>
-          <div className="p-0 overflow-x-auto">
+          <div className="p-0 overflow-x-auto overflow-y-auto max-h-[70vh] sm:max-h-[75vh] relative">
             <table className="w-full text-center border-collapse min-w-[600px]">
-              <thead>
+              <thead className="sticky top-0 z-20 shadow-xs">
                 <tr className="bg-indigo-50 border-b border-gray-200 text-indigo-900 font-bold">
-                  <th className="py-2.5 px-1 border-r border-gray-200 w-10 whitespace-nowrap">팀</th>
-                  <th className="py-2.5 px-1 border-r border-gray-200 w-10 whitespace-nowrap">조</th>
-                  <th className="py-2.5 px-1 border-r border-gray-200 w-12 whitespace-nowrap">번호</th>
-                  <th className="py-2.5 px-2 border-r border-gray-200">이름</th>
-                  <th className="py-2.5 px-2 border-r border-gray-200 w-24 whitespace-nowrap">입사일</th>
-                  <th className="py-2.5 px-2 border-r border-gray-200 w-24 whitespace-nowrap">퇴사일</th>
-                  {isAdmin && <th className="py-2.5 px-2 border-r border-gray-200">관리</th>}
-                  <th className="py-2.5 px-2 border-r border-gray-200">시간대 1</th>
-                  <th className="py-2.5 px-2 border-r border-gray-200">시간대 2</th>
-                  <th className="py-2.5 px-2">시간대 3</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-1 border-r border-gray-200 w-10 whitespace-nowrap">팀</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-1 border-r border-gray-200 w-10 whitespace-nowrap">조</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-1 border-r border-gray-200 w-12 whitespace-nowrap">번호</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">이름</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200 w-24 whitespace-nowrap">입사일</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200 w-24 whitespace-nowrap">퇴사일</th>
+                  {isAdmin && <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">관리</th>}
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">시간대 1</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">시간대 2</th>
+                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2">시간대 3</th>
                 </tr>
               </thead>
               <tbody>
