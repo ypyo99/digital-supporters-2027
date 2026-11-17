@@ -519,10 +519,10 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 <button onClick={() => changeWeek(-1)} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
                 </button>
-                <div className="flex-1 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-pink-400 rounded-xl bg-pink-50 text-center shadow-sm overflow-hidden px-1 transition-all">
-                  <h2 className="font-extrabold text-pink-900 text-[16px] min-[360px]:text-[18px] sm:text-[20px] tracking-tighter whitespace-nowrap text-center -translate-y-[1px]">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
+                <div className="flex-1 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-blue-300 rounded-xl bg-blue-50 text-center shadow-sm overflow-hidden px-1 transition-all">
+                  <h2 className="font-extrabold text-[#1e3a8a] text-[16px] min-[360px]:text-[18px] sm:text-[20px] tracking-tighter whitespace-nowrap text-center -translate-y-[1px]">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
                 </div>
-                <button onClick={handleCurrentWeekClick} className="text-[13px] sm:text-[15px] px-3 sm:px-4 h-10 sm:h-12 border border-pink-600 rounded-xl font-bold bg-pink-600 text-white shadow-sm flex items-center justify-center hover:bg-pink-700 active:bg-pink-800 active:scale-95 touch-manipulation whitespace-nowrap shrink-0 transition-all">이번 주</button>
+                <button onClick={handleCurrentWeekClick} className="text-[13px] sm:text-[15px] px-3 sm:px-4 h-10 sm:h-12 border border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm flex items-center justify-center hover:bg-blue-700 active:bg-blue-800 active:scale-95 touch-manipulation whitespace-nowrap shrink-0 transition-all">이번 주</button>
                 <button onClick={() => changeWeek(1)} className="w-10 sm:w-12 h-10 sm:h-12 flex items-center justify-center border-[1.5px] border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 touch-manipulation text-gray-700 shrink-0 transition-all">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
                 </button>
@@ -539,7 +539,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
             <div className="border-2 border-gray-400 rounded-lg shadow-sm overflow-hidden">
               <table className="w-full table-fixed text-center border-collapse">
                 <thead>
-                  <tr className="bg-pink-100 border-b-2 border-gray-400">
+                  <tr className="bg-sky-100 border-b-2 border-gray-400">
                     <th
                       className="pt-1 pb-1.5 px-0 border-r border-gray-400 font-extrabold text-gray-700 w-[14%] sm:w-28 select-none text-[11px] min-[360px]:text-[13px] landscape:text-[21px] md:text-[23px] leading-tight touch-manipulation"
                     >
@@ -567,7 +567,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                       return (
                         <th
                           key={i}
-                          className={`pt-0.5 pb-1.5 px-0 font-extrabold text-gray-900 select-none text-[11px] min-[360px]:text-[13px] landscape:text-[21px] md:text-[23px] leading-tight touch-manipulation tracking-tighter sm:tracking-normal ${isToday ? 'border-x-[4px] sm:border-x-[6px] border-t-[4px] sm:border-t-[6px] border-pink-500 relative z-10' : 'border-r border-gray-400'}`}
+                          className={`pt-0.5 pb-1.5 px-0 font-extrabold text-gray-900 select-none text-[11px] min-[360px]:text-[13px] landscape:text-[21px] md:text-[23px] leading-tight touch-manipulation tracking-tighter sm:tracking-normal ${isToday ? 'border-x-[4px] sm:border-x-[6px] border-t-[4px] sm:border-t-[6px] border-red-500 relative z-10' : 'border-r border-gray-400'}`}
                         >
                           {day.getMonth() + 1}/{day.getDate()}<br className="block md:hidden" /> ({weekDays[i]})
                         </th>
@@ -579,7 +579,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                   {timeSlots.map((time, ti) => (
                     <tr key={ti} className={`${ti === 2 ? 'border-b-[3px] border-gray-500' : 'border-b border-gray-400 last:border-0'}`}>
                       <td
-                        className="p-0.5 sm:p-1.5 bg-pink-100 border-r border-gray-400 font-extrabold select-none text-[13px] min-[360px]:text-[15px] landscape:text-[21px] md:text-[25px] tracking-tighter sm:tracking-normal touch-manipulation text-pink-700"
+                        className={`p-0.5 sm:p-1.5 bg-sky-100 border-r border-gray-400 font-extrabold select-none text-[13px] min-[360px]:text-[15px] landscape:text-[21px] md:text-[25px] tracking-tighter sm:tracking-normal touch-manipulation ${ti === 0 ? 'text-blue-800' : 'text-indigo-800'}`}
                       >
                         {time}
                       </td>
@@ -599,10 +599,11 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                         const isLastRow = ti === timeSlots.length - 1;
 
                         const isHolidayStr = typeof state === 'string' && state.startsWith('holiday:');
-                        const isCustomStr = typeof state === 'string' && state !== 'nangman' && state !== 'pending' && state !== 'disabled' && state !== '' && !state.startsWith('disabled:') && !state.startsWith('holiday:');
+                        const isBlankStr = typeof state === 'string' && state.trim() === '';
+                        const isCustomStr = typeof state === 'string' && !isBlankStr && state !== 'nangman' && state !== 'pending' && state !== 'disabled' && !state.startsWith('disabled:') && !state.startsWith('holiday:');
                         const isDisabledStr = typeof state === 'string' && (state.startsWith('disabled:') || state === 'disabled');
-                        const cellBg = state === true ? 'bg-green-200' : state === 'nangman' ? 'bg-pink-500' : state === 'pending' ? 'bg-gray-300' : isHolidayStr ? 'bg-red-50' : isCustomStr ? 'bg-pink-200' : 'bg-pink-50';
-                        const textCol = state === true ? 'text-green-900' : state === 'nangman' ? 'text-white' : state === 'pending' ? 'text-gray-800' : isHolidayStr ? 'text-red-500' : isCustomStr ? 'text-pink-900' : 'text-pink-800';
+                        const cellBg = state === true ? 'bg-green-200' : state === 'nangman' ? 'bg-indigo-600' : state === 'pending' ? 'bg-gray-200' : isHolidayStr ? 'bg-red-50' : isBlankStr ? 'bg-white' : isCustomStr ? 'bg-emerald-100' : 'bg-rose-50';
+                        const textCol = state === true ? 'text-green-900' : state === 'nangman' ? 'text-white' : state === 'pending' ? 'text-gray-700' : isHolidayStr ? 'text-red-600' : isBlankStr ? 'text-gray-500' : isCustomStr ? 'text-emerald-900' : 'text-rose-600';
                         const cellPadding = (state === 'nangman' || isCustomStr) ? 'px-0 py-1' : 'p-0.5 sm:p-2';
 
                         let cellContent = null;
@@ -620,7 +621,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                         }
                         return (
                           <td key={di}
-                            className={`${cellPadding} transition-all h-10 min-[360px]:h-12 md:h-16 touch-manipulation ${(isManagerMode && !isSystemHoliday) ? 'hover:brightness-95 active:scale-95' : 'cursor-default'} ${cellBg} ${isToday ? (isLastRow ? 'border-x-[4px] sm:border-x-[6px] border-b-[4px] sm:border-b-[6px] border-pink-500 relative z-10' : 'border-x-[4px] sm:border-x-[6px] border-pink-500 relative z-10') : 'border-r border-gray-400 relative'}`}>
+                            className={`${cellPadding} transition-all h-10 min-[360px]:h-12 md:h-16 touch-manipulation ${(isManagerMode && !isSystemHoliday) ? 'hover:brightness-95 active:scale-95' : 'cursor-default'} ${cellBg} ${isToday ? (isLastRow ? 'border-x-[4px] sm:border-x-[6px] border-b-[4px] sm:border-b-[6px] border-red-500 relative z-10' : 'border-x-[4px] sm:border-x-[6px] border-red-500 relative z-10') : 'border-r border-gray-400 relative'}`}>
                             <span className={`text-[12px] min-[360px]:text-[13px] landscape:text-[22px] md:text-[24px] leading-tight inline-block font-semibold ${textCol} relative z-0 pointer-events-none`}>
                               {cellContent}
                             </span>
@@ -658,7 +659,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 <h3 className="font-bold text-gray-700 flex items-center gap-2 text-sm landscape:text-[20px] md:text-[22px]">📢 공지 및 메모</h3>
                 <button
                   onClick={onNavigateToClassroom}
-                  className="px-3.5 py-1.5 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-xs md:text-sm font-bold shadow-sm transition-all active:scale-95 touch-manipulation"
+                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs md:text-sm font-bold shadow-sm transition-all active:scale-95 touch-manipulation"
                 >
                   평생교육실2
                 </button>
@@ -673,9 +674,9 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 }}
                 readOnly={!isManagerMode}
                 placeholder={isManagerMode ? "모든 선생님 화면에 실시간으로 보입니다." : "담당자 모드에서만 작성 가능합니다."}
-                className={`w-full p-3 md:p-4 border rounded-xl font-bold h-24 md:h-32 outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] text-black bg-white ${isManagerMode ? 'border-pink-300' : 'border-gray-300'}`}
+                className={`w-full p-3 md:p-4 border rounded-xl font-bold h-24 md:h-32 outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] text-black bg-white ${isManagerMode ? 'border-blue-300' : 'border-gray-300'}`}
               />
-              {isTyping && <div className="text-[10px] text-pink-500 mt-1 font-bold animate-pulse text-right">자동 저장 중...</div>}
+              {isTyping && <div className="text-[10px] text-blue-600 mt-1 font-bold animate-pulse text-right">자동 저장 중...</div>}
             </div>
           </div>
         </div>
@@ -686,11 +687,11 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
-            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) { setIsManagerMode(true); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-pink-500" placeholder="••••" />
+            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) { setIsManagerMode(true); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500" placeholder="••••" />
             {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
             <div className="flex gap-2">
               <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>
-              <button onClick={checkPassword} className="flex-1 py-3 bg-pink-600 text-white rounded-lg font-bold touch-manipulation">확인</button>
+              <button onClick={checkPassword} className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold touch-manipulation">확인</button>
             </div>
           </div>
         </div>
