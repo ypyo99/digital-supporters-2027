@@ -784,10 +784,10 @@ export default function MyWeeklyScheduleApp({
               <div className="flex-1 h-12 md:h-14 flex items-center justify-center border-2 border-blue-400 rounded-xl bg-[#f0f7ff] text-center shadow-sm">
                 <h2 className="font-extrabold text-[#1e3a8a] text-[18px] sm:text-[22px] md:text-[24px] tracking-tight">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
               </div>
-              <button onClick={handleCurrentWeekClick} className="px-4 h-12 md:h-14 border-2 border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 shrink-0 text-[16px] md:text-[18px] transition-all touch-manipulation">이번 주</button>
               <button onClick={() => changeWeek(1)} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center border-2 border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 text-gray-700 shrink-0 transition-all touch-manipulation">
                 <svg className="w-7 h-7 md:w-8 md:h-8" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
               </button>
+              <button onClick={handleCurrentWeekClick} className="px-4 h-12 md:h-14 border-2 border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 shrink-0 text-[16px] md:text-[18px] transition-all touch-manipulation">이번 주</button>
             </div>
             {noDataMessage && <div className="mt-2 text-red-600 font-bold text-base text-center animate-fadeIn">{noDataMessage}</div>}
             {notice && <div className="mt-2 text-red-600 font-bold text-center animate-fadeIn">{notice}</div>}
