@@ -1349,7 +1349,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                           if (att === 'attended') {
                                             btnClass = 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
-                                            btnLabel = '✓ 출석';
+                                            btnLabel = '출석';
                                           } else if (att === 'absent') {
                                             btnClass = 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700';
                                             btnLabel = '결석';
