@@ -966,14 +966,38 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       >
         <div className="max-w-5xl lg:max-w-[1536px] w-full mx-auto flex-1 flex flex-col px-4 md:px-6 py-3 md:py-6 mt-1">
 
-          {/* 날짜 선택 바 위에 섹션 제목 */}
-          <div className="pb-2 px-1">
-            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center tracking-tight">
+          {/* 날짜 선택 바 위에 섹션 제목 + 일정/요약 탭 스위처 */}
+          <div className="pb-2 px-1 flex items-center justify-between gap-2">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center tracking-tight whitespace-nowrap">
               <span className="flex items-center"><CalendarClockIcon className="w-5 h-5 mr-2 text-blue-600" /> 팀별 오늘 일정</span>
             </h2>
+
+            {/* 일정 / 요약 탭 스위처 */}
+            <div className="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl flex items-center shadow-inner shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveTab('schedule')}
+                className={`px-3.5 sm:px-5 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg transition-all touch-manipulation text-center cursor-pointer whitespace-nowrap ${activeTab === 'schedule'
+                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                  }`}
+              >
+                일정
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('summary')}
+                className={`px-3.5 sm:px-5 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg transition-all touch-manipulation text-center cursor-pointer whitespace-nowrap ${activeTab === 'summary'
+                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                  }`}
+              >
+                요약
+              </button>
+            </div>
           </div>
 
-          {/* 상단 고정 영역: 날짜 선택 바 + 팀 선택 필 + 일정/요약 탭 스위처 */}
+          {/* 상단 고정 영역: 날짜 선택 바 + 팀 선택 필 */}
           <div
             className="sticky top-0 z-30 bg-[#f4f6f9] dark:bg-slate-900 pt-1.5 pb-2 -mx-3 px-3 md:-mx-6 md:px-6 shadow-xs border-b border-slate-200/60 dark:border-slate-800"
             onTouchStart={(e) => e.stopPropagation()}
@@ -1023,7 +1047,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
             </div>
 
             {/* 팀 선택 필 (1팀 / 2팀 / 3팀 / 취업팀) */}
-            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full mb-2">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full">
               {["1팀", "2팀", "3팀", "취업팀"].map(team => (
                 <button
                   key={team}
@@ -1039,30 +1063,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   {team}
                 </button>
               ))}
-            </div>
-
-            {/* 일정 / 요약 탭 스위처 */}
-            <div className="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl flex items-center w-full shadow-inner">
-              <button
-                type="button"
-                onClick={() => setActiveTab('schedule')}
-                className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center cursor-pointer ${activeTab === 'schedule'
-                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                  }`}
-              >
-                일정
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('summary')}
-                className={`flex-1 py-2 sm:py-2.5 text-[15.5px] sm:text-[16.5px] font-bold rounded-xl transition-all touch-manipulation text-center cursor-pointer ${activeTab === 'summary'
-                    ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
-                  }`}
-              >
-                요약
-              </button>
             </div>
           </div>
 
