@@ -1514,7 +1514,7 @@ export default function StudentFormsAdminApp({
           <div className={`overflow-x-auto overscroll-x-contain overflow-y-auto relative ${isTeacherView ? 'max-h-[calc(100dvh-150px)] sm:max-h-[80vh]' : 'max-h-[70vh] sm:max-h-[75vh]'}`}>
             <table className="w-full min-w-max text-left border-separate border-spacing-0 text-xs sm:text-sm whitespace-nowrap">
               <thead className="sticky top-0 z-30 shadow-xs bg-slate-50">
-                <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap">
+                <tr className="bg-slate-50 text-slate-700 font-bold whitespace-nowrap text-[13px] sm:text-[15px]">
                   {/* Checkbox (관리자 모드 전용) */}
                   {!isTeacherView && (
                     <th
@@ -1533,9 +1533,9 @@ export default function StudentFormsAdminApp({
                   <th
                     className="sticky top-0 z-30 py-3 px-3 text-center whitespace-nowrap shrink-0 border-b border-slate-200 border-r border-slate-200 bg-slate-50"
                     style={{
-                      width: '48px',
-                      minWidth: '48px',
-                      maxWidth: '48px',
+                      width: '54px',
+                      minWidth: '54px',
+                      maxWidth: '54px',
                       position: 'sticky',
                       top: 0,
                       zIndex: 30
@@ -1655,9 +1655,9 @@ export default function StudentFormsAdminApp({
                           className={`py-2.5 px-3 text-center text-slate-500 text-[13px] font-bold border-b border-slate-100 border-r border-slate-100 whitespace-nowrap shrink-0 select-none ${isSelected ? 'bg-blue-50 group-hover:bg-blue-100/70' : 'bg-white group-hover:bg-slate-50'
                             }`}
                           style={{
-                            width: '48px',
-                            minWidth: '48px',
-                            maxWidth: '48px'
+                            width: '54px',
+                            minWidth: '54px',
+                            maxWidth: '54px'
                           }}
                         >
                           {idx + 1}
