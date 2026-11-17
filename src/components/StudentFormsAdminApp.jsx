@@ -1056,7 +1056,21 @@ export default function StudentFormsAdminApp({
           </h2>
         </div>
 
-        {(!isTeacherView && !isAdmin) ? null : (
+        {(!isTeacherView && !isAdmin) ? (
+          <div
+            onClick={() => {
+              setShowPwdModal(true);
+              setPwdInput("");
+              setPwdError(false);
+            }}
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-5 sm:p-6 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99]"
+          >
+            <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
+              <span className="text-xl sm:text-2xl">💡</span>
+              <span>상단의 [담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
+            </p>
+          </div>
+        ) : (
           <>
             {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
             {!isTeacherView && (
