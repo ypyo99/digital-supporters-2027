@@ -997,8 +997,8 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
     <div className="w-full min-h-screen bg-gray-50 flex flex-col font-sans">
       <div className="bg-white flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <div className="shrink-0 app-header text-white z-40 relative min-h-[110px] sm:min-h-[92px]">
-          <div className="max-w-5xl mx-auto px-4 pt-3 pb-9 sm:pb-7 flex items-start justify-between relative">
+        <div className="shrink-0 app-header text-white z-40 relative min-h-[152px] sm:min-h-[96px]">
+          <div className="max-w-5xl mx-auto px-4 pt-3 pb-16 sm:pb-7 flex items-start justify-between relative">
             <div>
               <div className="flex items-center mb-1">
                 <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -1025,7 +1025,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
             </div>
 
             {/* [다운로드] 버튼 */}
-            <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50">
+            <div className="absolute left-1/2 bottom-2.5 sm:bottom-2 transform -translate-x-1/2 z-50">
               <button
                 onClick={handleExportExcel}
                 disabled={exporting}
