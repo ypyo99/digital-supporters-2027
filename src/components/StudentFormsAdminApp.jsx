@@ -1,5 +1,6 @@
 // ==============================================================
 // 담당복지사용 참여자 서류 관리 및 일괄 인쇄 (신청서·사전/사후설문지)
+// 선생님용 화면 + 담당자용 화면이 공통으로 사용하는 프로그램
 // ==============================================================
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
@@ -117,6 +118,29 @@ export default function StudentFormsAdminApp({
   const [includePre, setIncludePre] = useState(true);
   const [includePost, setIncludePost] = useState(true);
   const [isPrinting, setIsPrinting] = useState(false);
+
+  // 담당자 인증 상태 (isTeacherView가 아닌 경우 보호)
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showPwdModal, setShowPwdModal] = useState(false);
+  const [pwdInput, setPwdInput] = useState("");
+  const [pwdError, setPwdError] = useState(false);
+  const pwdInputRef = useRef(null);
+
+  useEffect(() => {
+    if (showPwdModal && pwdInputRef.current) {
+      pwdInputRef.current.focus();
+    }
+  }, [showPwdModal]);
+
+  const checkPassword = () => {
+    if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+      setIsAdmin(true);
+      setShowPwdModal(false);
+      setPwdError(false);
+    } else {
+      setPwdError(true);
+    }
+  };
 
   // -------------------------------------------------------------
   // Data Loading: daily_logs + application_forms + surveys
@@ -950,7 +974,7 @@ export default function StudentFormsAdminApp({
 
       {/* TOP HEADER */}
       <header className="sticky top-0 z-50 app-header text-white border-b border-blue-900/30 shadow-md">
-        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex items-center justify-between gap-2">
+        <div className="max-w-5xl mx-auto px-4 pb-4 pt-safe-4 flex items-center justify-between gap-2 relative">
           {/* Left: Title */}
           <div className="flex flex-col min-w-0">
             <div className="flex items-center mb-1">
@@ -965,27 +989,52 @@ export default function StudentFormsAdminApp({
             )}
           </div>
 
+          {/* Center: Admin Login/Logout Button for Admin Mode */}
+          {!isTeacherView && (
+            <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isAdmin) {
+                    setIsAdmin(false);
+                  } else {
+                    setShowPwdModal(true);
+                    setPwdInput("");
+                    setPwdError(false);
+                  }
+                }}
+                className={`px-5 py-1.5 md:px-7 md:py-2 hdr-pill font-bold active:scale-95 text-xs md:text-sm transition-all whitespace-nowrap cursor-pointer ${isAdmin ? 'is-on' : ''}`}
+              >
+                {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
+              </button>
+            </div>
+          )}
+
           {/* Right: Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => loadData(true)}
-              disabled={refreshing || loading}
-              className="p-2 sm:px-2.5 sm:py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0 border border-white/30 shadow-sm"
-              title="최신 서류 작성 데이터 다시 불러오기"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              <span className="hidden lg:inline">새로고침</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleExportExcel}
-              className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50"
-              title="현재 목록 엑셀 파일로 다운로드"
-            >
-              <DownloadIcon className="w-3.5 h-3.5 text-white" />
-              <span className="hidden lg:inline">엑셀</span>
-            </button>
+            {(isTeacherView || isAdmin) && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => loadData(true)}
+                  disabled={refreshing || loading}
+                  className="p-2 sm:px-2.5 sm:py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0 border border-white/30 shadow-sm"
+                  title="최신 서류 작성 데이터 다시 불러오기"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span className="hidden lg:inline">새로고침</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportExcel}
+                  className="p-2 sm:px-2.5 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-sm shrink-0 border border-emerald-500/50"
+                  title="현재 목록 엑셀 파일로 다운로드"
+                >
+                  <DownloadIcon className="w-3.5 h-3.5 text-white" />
+                  <span className="hidden lg:inline">엑셀</span>
+                </button>
+              </>
+            )}
             <button
               type="button"
               onClick={onNavigateBack}
@@ -1007,8 +1056,34 @@ export default function StudentFormsAdminApp({
           </h2>
         </div>
 
-        {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
-        {!isTeacherView && (
+        {!isTeacherView && !isAdmin ? (
+          <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 p-8 sm:p-12 text-center max-w-lg w-full mx-auto my-8 flex flex-col items-center animate-fadeIn">
+            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 text-3xl shadow-xs">
+              🔒
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              담당자 전용 관리 화면
+            </h3>
+            <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+              참여자 서류 관리 및 일괄 인쇄 기능은 복지관 담당자 전용입니다.<br />
+              아래의 <b>[담당자 로그인]</b> 버튼을 눌러 비밀번호를 입력해 주세요.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setShowPwdModal(true);
+                setPwdInput("");
+                setPwdError(false);
+              }}
+              className="w-full py-3.5 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-xl shadow-md shadow-blue-500/25 active:scale-95 transition-all text-base flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
+            >
+              담당자 로그인
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* ADMIN MODE ONLY: 1. KPI Cards, 2. Filter Bar, 3. Batch Print Bar */}
+            {!isTeacherView && (
           <>
             {/* 1. KPI SUMMARY DASHBOARD CARDS */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
@@ -1730,8 +1805,58 @@ export default function StudentFormsAdminApp({
             </table>
           </div>
         </div>
+          </>
+        )}
 
       </main>
+
+      {/* 담당자 암호 입력 모달 */}
+      {showPwdModal && (
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-100 flex flex-col items-center animate-fadeIn">
+            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4 text-xl font-bold">
+              🔑
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2 text-center">담당자 암호</h3>
+            <p className="text-xs text-gray-500 mb-4 text-center">비밀번호를 입력하시면 관리 화면이 열립니다.</p>
+            <input
+              ref={pwdInputRef}
+              autoFocus
+              type="password"
+              value={pwdInput}
+              onChange={(e) => {
+                const val = e.target.value;
+                setPwdInput(val);
+                if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+                  setIsAdmin(true);
+                  setShowPwdModal(false);
+                  setPwdError(false);
+                }
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && checkPassword()}
+              className="w-full border-2 p-3 rounded-lg mb-2 text-center text-2xl tracking-widest outline-none focus:border-blue-500 text-black"
+              placeholder="••••"
+            />
+            {pwdError && <p className="text-red-500 text-xs text-center mb-3 font-bold">비밀번호가 틀렸습니다.</p>}
+            <div className="flex gap-2 w-full mt-2">
+              <button
+                type="button"
+                onClick={() => { setShowPwdModal(false); setPwdError(false); setPwdInput(''); }}
+                className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition active:scale-95 touch-manipulation cursor-pointer"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={checkPassword}
+                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 transition active:scale-95 touch-manipulation cursor-pointer"
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ============================================================== */}
       {/* BATCH PRINT CONFIGURATION MODAL                                */}
