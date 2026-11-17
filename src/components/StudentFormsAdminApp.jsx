@@ -873,7 +873,7 @@ export default function StudentFormsAdminApp({
             name: '맑은 고딕',
             size: 10,
             bold: colNum >= 2 && colNum <= 4,
-            color: { argb: (colNum >= 2 && colNum <= 4) ? 'FF0F172A' : 'FF1E293B' }
+            color: { argb: colNum === 2 ? 'FF1D4ED8' : (colNum >= 3 && colNum <= 4) ? 'FF0F172A' : 'FF1E293B' }
           };
           cell.alignment = { horizontal: 'center', vertical: 'middle' };
           if (isEvenRow) {
