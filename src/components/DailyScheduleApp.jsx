@@ -18,7 +18,7 @@ import {
   attachYiYe,
   joinKoreanWithWaGwa
 } from '../utils/helpers';
-import { Home, LucideCalendar, Clock, BookOpen, Sparkles, User } from './Icons';
+import { Home, LucideCalendar, Clock, BookOpen, Sparkles, User, CalendarClockIcon } from './Icons';
 
 // 문자열 내에 콤마나 슬래시로 구분된 특정 키워드가 정확히 일치하는지 검사하는 유틸리티 함수
 const hasIndependentKeyword = (str, keywords) => {
@@ -964,6 +964,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
         onTouchEnd={handleTouchEnd}
       >
         <div className="max-w-xl w-full mx-auto flex flex-col pt-3 sm:pt-4">
+
+          {/* 날짜 선택 바 위에 섹션 제목 */}
+          <div className="pb-2 px-1">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center tracking-tight">
+              <span className="flex items-center"><CalendarClockIcon className="w-5 h-5 mr-2 text-blue-600" /> 팀별 오늘 일정</span>
+            </h2>
+          </div>
 
           {/* 날짜 선택 바 */}
           <div className="flex items-center justify-between gap-1.5 sm:gap-2 w-full mb-2">

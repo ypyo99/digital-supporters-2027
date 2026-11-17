@@ -24,6 +24,7 @@ import {
   RotateCcw,
   DownloadIcon,
   CalendarIcon,
+  CalendarDaysIcon,
   User
 } from './Icons';
 
@@ -1047,6 +1048,15 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
               <Home className="w-5 h-5 mb-1" />
               <span>처음으로</span>
             </button>
+          </div>
+        </div>
+
+        {/* 상단 섹션 제목 */}
+        <div className="bg-[#f1f5f9] border-b border-gray-200/80 px-4 py-2">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+              <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 전체 일정 보기</span>
+            </h2>
           </div>
         </div>
 

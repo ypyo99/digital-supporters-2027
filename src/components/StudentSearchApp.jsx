@@ -13,7 +13,7 @@ import {
   removeSavedItem,
   safeJsonSetItem
 } from '../utils/helpers';
-import { Home, Clock, User } from './Icons';
+import { Home, Clock, User, IconSearchUser } from './Icons';
 
 export default function StudentSearchApp({ onNavigateBack }) {
   const [allRecords, setAllRecords] = useState([]);
@@ -403,7 +403,12 @@ export default function StudentSearchApp({ onNavigateBack }) {
       </div>
 
       <div className="flex-1 flex flex-col pb-4">
-        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-2">
+        <div className="max-w-5xl w-full mx-auto flex-1 flex flex-col p-3 md:p-6 mt-1">
+          <div className="pb-2 px-1">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+              <span className="flex items-center"><IconSearchUser className="w-5 h-5 mr-2 text-blue-600" /> 대상자 검색</span>
+            </h2>
+          </div>
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 overflow-hidden">
             <div className="bg-gradient-to-r from-blue-700 to-indigo-700 px-3 md:px-6 py-2.5">
               <div className="flex flex-col gap-1.5">

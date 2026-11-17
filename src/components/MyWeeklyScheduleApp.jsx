@@ -9,7 +9,7 @@ import {
   getGlobalTeachersList,
   getTeacherGroup
 } from '../utils/helpers';
-import { User, Home, Clock } from './Icons';
+import { User, Home, Clock, CalendarDaysIcon } from './Icons';
 
 // 회차 배지 스타일 (팀별 오늘 일정보기와 동일)
 const getSessionBadgeStyle = (count) => {
@@ -685,6 +685,11 @@ export default function MyWeeklyScheduleApp({ team, teacher, onNavigateBack }) {
       </header>
 
       <main className="flex-1 flex flex-col w-full mx-auto p-3 sm:p-5 lg:p-8">
+        <div className="pb-2 px-1 max-w-7xl w-full mx-auto">
+          <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
+            <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 나의 주간 일정</span>
+          </h2>
+        </div>
         <div className="bg-white rounded-2xl shadow-xl ring-1 ring-gray-900/5 flex flex-col flex-1 overflow-hidden">
           <div className="shrink-0 bg-white px-4 sm:px-6 pt-5 pb-4 shadow-sm relative z-10 flex flex-col items-center border-b border-gray-100">
             <div className="flex items-center gap-2 w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto">
