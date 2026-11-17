@@ -1162,7 +1162,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   disabled={memoRowKeys.length === 0}
                   className={`shrink-0 inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
-                      : 'text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-slate-700 active:scale-95'
+                      : 'text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95'
                     }`}
                   title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
                 >
