@@ -762,7 +762,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   value={form.phone}
                   onChange={e => setForm(prev => ({ ...prev, phone: formatPhoneNumber(e.target.value) }))}
                   placeholder="010-0000-0000"
-                  className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-semibold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
@@ -773,7 +773,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   value={form.preferred_time}
                   onChange={e => setForm(prev => ({ ...prev, preferred_time: e.target.value }))}
                   placeholder="예: 화 13:00, 목 오후 1시 이후 가능"
-                  className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-semibold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
