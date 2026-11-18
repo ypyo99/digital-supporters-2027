@@ -627,7 +627,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     return (
                       <div
                         key={item.id}
-                        className={`bg-white rounded-2xl border p-3.5 shadow-2xs space-y-2 ${isUrgent ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'}`}
+                        className={`bg-white rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 ${isUrgent ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'}`}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0 flex-1">
