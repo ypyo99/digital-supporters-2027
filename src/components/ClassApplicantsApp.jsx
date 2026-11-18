@@ -679,18 +679,18 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-bold text-slate-400">#{idx + 1}</span>
+                            <div className="flex items-center gap-1.5 flex-nowrap min-w-0">
+                              <span className="text-xs font-bold text-slate-400 shrink-0">#{idx + 1}</span>
                               {isUrgent && (
-                                <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold">
+                                <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold shrink-0">
                                   긴급
                                 </span>
                               )}
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
-                                title="클릭하여 수정"
-                                className={`font-extrabold text-[16px] text-left cursor-pointer hover:underline active:opacity-70 ${isUrgent ? 'text-rose-700' : 'text-slate-900 hover:text-blue-600'}`}
+                                title={item.name}
+                                className={`font-extrabold text-[15px] text-left whitespace-nowrap truncate min-w-0 cursor-pointer hover:underline active:opacity-70 ${isUrgent ? 'text-rose-700' : 'text-slate-900 hover:text-blue-600'}`}
                               >
                                 {item.name}
                               </button>
