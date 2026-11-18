@@ -135,24 +135,30 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
   // Filtered list
   const filteredList = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return applicants.filter(item => {
-      const isAssigned = (item.assigned_group || '').trim() !== '';
-      const isUrgent = Boolean(item.is_urgent || (item.name || '').includes('긴급'));
+    return applicants
+      .filter(item => {
+        const isAssigned = (item.assigned_group || '').trim() !== '';
+        const isUrgent = Boolean(item.is_urgent || (item.name || '').includes('긴급'));
 
-      if (statusFilter === 'unassigned' && isAssigned) return false;
-      if (statusFilter === 'assigned' && !isAssigned) return false;
-      if (statusFilter === 'urgent' && !isUrgent) return false;
+        if (statusFilter === 'unassigned' && isAssigned) return false;
+        if (statusFilter === 'assigned' && !isAssigned) return false;
+        if (statusFilter === 'urgent' && !isUrgent) return false;
 
-      if (!q) return true;
-      return (
-        (item.name || '').toLowerCase().includes(q) ||
-        (item.phone || '').toLowerCase().includes(q) ||
-        (item.preferred_time || '').toLowerCase().includes(q) ||
-        (item.assigned_group || '').toLowerCase().includes(q) ||
-        (item.note || '').toLowerCase().includes(q) ||
-        (item.source || '').toLowerCase().includes(q)
-      );
-    });
+        if (!q) return true;
+        return (
+          (item.name || '').toLowerCase().includes(q) ||
+          (item.phone || '').toLowerCase().includes(q) ||
+          (item.preferred_time || '').toLowerCase().includes(q) ||
+          (item.assigned_group || '').toLowerCase().includes(q) ||
+          (item.note || '').toLowerCase().includes(q) ||
+          (item.source || '').toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => {
+        const aAssigned = (a.assigned_group || '').trim() !== '' ? 1 : 0;
+        const bAssigned = (b.assigned_group || '').trim() !== '' ? 1 : 0;
+        return aAssigned - bAssigned;
+      });
   }, [applicants, statusFilter, searchQuery]);
 
   // MainApp에서 선택된 팀/선생님 기본값 가져오기
