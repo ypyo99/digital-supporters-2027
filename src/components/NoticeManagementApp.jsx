@@ -693,7 +693,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
               }
               onNavigateBack();
             }}
-            className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn"
+            className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0"
           >
             <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>

@@ -954,8 +954,8 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
               </p>
             </div>
           </div>
-          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
-            <Home className="w-4 h-4 sm:w-5 sm:h-5 mb-0.5" /> 처음으로
+          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
+            <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>
         </div>
       </div>
