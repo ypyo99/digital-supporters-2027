@@ -777,16 +777,16 @@ export default function MyWeeklyScheduleApp({
           </div>
           <div className="bg-white rounded-2xl shadow-lg ring-1 ring-gray-900/5 flex flex-col flex-1 overflow-hidden">
           <div className="shrink-0 bg-white px-2 sm:px-4 pt-4 pb-3 shadow-sm relative z-10 flex flex-col items-center border-b border-gray-100">
-            <div className="flex items-center gap-2 w-full">
-              <button onClick={() => changeWeek(-1)} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center border-2 border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 text-gray-700 shrink-0 transition-all touch-manipulation">
-                <svg className="w-7 h-7 md:w-8 md:h-8" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
+            <div className="flex items-center gap-1.5 sm:gap-2 w-full">
+              <button onClick={() => changeWeek(-1)} className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 text-gray-600 shrink-0 transition-all touch-manipulation">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>
               </button>
-              <div className="flex-1 h-12 md:h-14 flex items-center justify-center border-2 border-blue-400 rounded-xl bg-white text-center shadow-sm">
-                <h2 className="font-extrabold text-[#1e3a8a] text-[18px] sm:text-[22px] md:text-[24px] tracking-tight">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
+              <div className="flex-1 h-11 sm:h-12 flex items-center justify-center ring-1 ring-blue-200 rounded-xl bg-white text-center shadow-sm">
+                <h2 className="font-extrabold text-[#1e3a8a] text-[15px] min-[360px]:text-[17px] sm:text-[20px] tracking-tighter whitespace-nowrap">{startMonth}/{startDay} ~ {endMonth}/{endDay}</h2>
               </div>
-              <button onClick={handleCurrentWeekClick} className="px-4 h-12 md:h-14 border-2 border-blue-600 rounded-xl font-bold bg-blue-600 text-white shadow-sm hover:bg-blue-700 active:bg-blue-800 shrink-0 text-[16px] md:text-[18px] transition-all touch-manipulation">이번 주</button>
-              <button onClick={() => changeWeek(1)} className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center border-2 border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 active:bg-gray-100 text-gray-700 shrink-0 transition-all touch-manipulation">
-                <svg className="w-7 h-7 md:w-8 md:h-8" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
+              <button onClick={handleCurrentWeekClick} className="text-[14px] sm:text-[15px] px-3 sm:px-4 h-11 sm:h-12 rounded-xl font-bold bg-blue-600 text-white shadow-sm shadow-blue-600/30 hover:bg-blue-700 active:scale-95 shrink-0 transition-all touch-manipulation whitespace-nowrap">이번 주</button>
+              <button onClick={() => changeWeek(1)} className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 text-gray-600 shrink-0 transition-all touch-manipulation">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" /></svg>
               </button>
             </div>
             {noDataMessage && <div className="mt-2 text-red-600 font-bold text-base text-center animate-fadeIn">{noDataMessage}</div>}
