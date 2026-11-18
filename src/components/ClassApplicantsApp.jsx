@@ -357,7 +357,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
             color: { argb: (colNum === 2 && isUrgent) ? 'FFDC2626' : (colNum === 2 ? 'FF1D4ED8' : 'FF1E293B') },
           };
           cell.alignment = {
-            horizontal: (colNum === 4 || colNum === 5) ? 'left' : 'center',
+            horizontal: (colNum === 4 || colNum === 5 || colNum === 7) ? 'left' : 'center',
             vertical: 'middle',
             wrapText: true,
           };
