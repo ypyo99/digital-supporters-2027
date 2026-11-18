@@ -677,9 +677,9 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                         onClick={() => handleOpenEdit(item)}
                         className={`rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 cursor-pointer transition active:scale-[0.995] hover:border-blue-400 ${isAssigned ? 'bg-sky-50 border-sky-300' : isUrgent ? 'bg-rose-50/20 border-rose-400' : 'bg-white border-slate-300'}`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5 flex-nowrap min-w-0">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5 flex-nowrap min-w-0 flex-1">
                               <span className="text-xs font-bold text-slate-400 shrink-0">#{idx + 1}</span>
                               {isUrgent && (
                                 <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold shrink-0">
@@ -695,54 +695,62 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                 {item.name}
                               </button>
                             </div>
-                            {item.phone && (
+
+                            <div className="shrink-0">
+                              {isAssigned ? (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
+                                  title="클릭하여 수정"
+                                  className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs whitespace-nowrap cursor-pointer hover:bg-emerald-100 active:scale-95 transition"
+                                >
+                                  {item.assigned_group}
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
+                                  title="클릭하여 수정"
+                                  className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-bold text-xs whitespace-nowrap cursor-pointer hover:bg-amber-100 active:scale-95 transition"
+                                >
+                                  미배정
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2">
+                            {item.phone ? (
                               <a
                                 href={`tel:${item.phone.replace(/[^0-9]/g, '')}`}
                                 onClick={e => e.stopPropagation()}
-                                className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 mt-1"
+                                className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600"
                               >
                                 <Phone className="w-3.5 h-3.5" />
                                 {formatPhoneNumber(item.phone)}
                               </a>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-1 shrink-0">
-                            {isAssigned ? (
-                              <button
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
-                                title="클릭하여 수정"
-                                className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs cursor-pointer hover:bg-emerald-100 active:scale-95 transition"
-                              >
-                                {item.assigned_group}
-                              </button>
                             ) : (
+                              <span />
+                            )}
+
+                            <div className="flex items-center gap-1 shrink-0">
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
-                                title="클릭하여 수정"
-                                className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-bold text-xs cursor-pointer hover:bg-amber-100 active:scale-95 transition"
+                                className="p-1 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50"
+                                title="수정"
                               >
-                                미배정
+                                <Edit2 className="w-4 h-4" />
                               </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
-                              className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50"
-                              title="수정"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50"
-                              title="삭제"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
+                                className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50"
+                                title="삭제"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         </div>
 
