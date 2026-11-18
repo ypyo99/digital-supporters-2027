@@ -580,7 +580,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                           const isUrgent = Boolean(item.is_urgent || (item.name || '').includes('긴급'));
                           const isAssigned = (item.assigned_group || '').trim() !== '';
                           return (
-                            <tr key={item.id} className="hover:bg-blue-50/40 transition-colors">
+                            <tr key={item.id} className={`transition-colors ${isAssigned ? 'bg-sky-50/80 hover:bg-sky-100/70' : 'hover:bg-blue-50/40'}`}>
                               <td className="py-1.5 px-2.5 text-center text-slate-400 font-bold border-b border-slate-100">
                                 {idx + 1}
                               </td>
@@ -676,7 +676,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                       <div
                         key={item.id}
                         onClick={() => handleOpenEdit(item)}
-                        className={`bg-white rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 cursor-pointer transition active:scale-[0.995] hover:border-blue-400 ${isUrgent ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'}`}
+                        className={`rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 cursor-pointer transition active:scale-[0.995] hover:border-blue-400 ${isAssigned ? 'bg-sky-50 border-sky-300' : isUrgent ? 'bg-rose-50/20 border-rose-400' : 'bg-white border-slate-300'}`}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0 flex-1">
