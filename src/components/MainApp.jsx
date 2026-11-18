@@ -313,6 +313,154 @@ export default function MainApp({
   const [selectedStudentHistory, setSelectedStudentHistory] = useState(null);
   const [studentHistoryLogs, setStudentHistoryLogs] = useState([]);
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
+  const [roomStatusPopup, setRoomStatusPopup] = useState(null);
+
+  const closeRoomStatusPopup = (hideToday = false) => {
+    if (roomStatusPopup) {
+      const seenKey = `sungdong_room_popup_seen_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`;
+      try { window.sessionStorage.setItem(seenKey, 'true'); } catch (_) {}
+      if (hideToday) {
+        setSavedItem(`sungdong_room_popup_hide_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`, 'true');
+      }
+    }
+    setRoomStatusPopup(null);
+  };
+
+  useEffect(() => {
+    if (isLoggedIn || !selectedTeam) return;
+
+    const now = new Date();
+    const minutesOfDay = now.getHours() * 60 + now.getMinutes();
+    const isBefore0930 = minutesOfDay < (9 * 60 + 30);
+    const isBefore1300 = minutesOfDay < (13 * 60);
+
+    let showClassroom = false;
+    let showNangman = false;
+    let teamKey = '';
+    let teamLabel = selectedTeam;
+
+    if (selectedTeam === '1팀' || selectedTeam === '2팀') {
+      if (isBefore0930) {
+        showClassroom = true;
+        teamKey = selectedTeam;
+      }
+    } else if (selectedTeam === '3팀') {
+      if (isBefore1300) {
+        showClassroom = true;
+        teamKey = '3팀';
+      }
+    } else if (selectedTeam === '취업팀' && currentUser) {
+      const group = getTeacherGroup('취업팀', currentUser, dbTeachers) || '';
+      if (group.includes('오전') && isBefore0930) {
+        showClassroom = true;
+        showNangman = true;
+        teamKey = '취업팀-오전';
+        teamLabel = '취업팀 오전조';
+      } else if (group.includes('오후') && isBefore1300) {
+        showClassroom = true;
+        showNangman = true;
+        teamKey = '취업팀-오후';
+        teamLabel = '취업팀 오후조';
+      }
+    }
+
+    if (!showClassroom && !showNangman) {
+      setRoomStatusPopup(null);
+      return;
+    }
+
+    const todayStr = getLocalDateString(now);
+    const hideKey = `sungdong_room_popup_hide_${todayStr}_${teamKey}`;
+    const seenKey = `sungdong_room_popup_seen_${todayStr}_${teamKey}`;
+    if (getSavedItem(hideKey, '') === 'true') return;
+    try {
+      if (window.sessionStorage.getItem(seenKey) === 'true') return;
+    } catch (_) {}
+
+    let isMounted = true;
+    const loadRoomStatus = async () => {
+      try {
+        const roomAppId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'default-app-id';
+        const mmdd = todayStr.substring(5);
+        const holidayInfo = holidaysFullList.find(h => h && h.date && (h.date === todayStr || h.date === mmdd || h.date.endsWith(mmdd)));
+
+        const classroomSlotsList = [
+          "09:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30",
+          "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00"
+        ];
+        const nangmanSlotsList = ["1팀", "2팀"];
+
+        const [classroomRes, nangmanRes] = await Promise.all([
+          showClassroom
+            ? supabaseClient.from('classroom_schedules').select('data, memo').eq('id', roomAppId).maybeSingle()
+            : Promise.resolve({ data: null }),
+          showNangman
+            ? supabaseClient.from('nangman_schedules').select('data, memo').eq('id', roomAppId).maybeSingle()
+            : Promise.resolve({ data: null })
+        ]);
+
+        if (!isMounted) return;
+
+        const cData = classroomRes?.data?.data || {};
+        const cMemo = classroomRes?.data?.memo || '';
+        const classroomSlots = classroomSlotsList.map(slot => {
+          const key = `${todayStr}_${slot.replace(/\s+/g, '').replace(/~/g, '-').replace(/:/g, '')}`;
+          const val = cData[key];
+          const isAvailable = val === '사용가능';
+          return {
+            slot: slot.replace(' - ', '~'),
+            isAvailable,
+            label: isAvailable ? '사용 가능' : '사용 불가'
+          };
+        });
+
+        const nData = nangmanRes?.data?.data || {};
+        const nMemo = nangmanRes?.data?.memo || '';
+        const nangmanSlots = nangmanSlotsList.map(slot => {
+          const key = `${todayStr}_${slot}`;
+          const state = nData[key];
+          let label = '사용 불가';
+          let tone = 'rose';
+          if (state === true) {
+            label = '사용 가능';
+            tone = 'emerald';
+          } else if (state === 'nangman') {
+            label = '낭만스튜디오';
+            tone = 'indigo';
+          } else if (state === 'pending') {
+            label = '미정';
+            tone = 'slate';
+          } else if (typeof state === 'string' && state.trim() === '') {
+            label = '미입력';
+            tone = 'slate';
+          } else if (typeof state === 'string' && !state.startsWith('disabled:') && state !== 'disabled') {
+            label = state.replace(/\\n/g, ' ');
+            tone = 'emerald';
+          }
+          return { slot, label, tone };
+        });
+
+        setRoomStatusPopup({
+          dateStr: todayStr,
+          dateLabel: now.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }),
+          teamKey,
+          teamLabel,
+          showClassroom,
+          showNangman,
+          classroomSlots,
+          classroomMemo: cMemo,
+          nangmanSlots,
+          nangmanMemo: nMemo,
+          holidayName: holidayInfo ? (holidayInfo.name || '휴무일') : ''
+        });
+      } catch (err) {
+        console.error('교육실 사용현황 로드 실패:', err);
+      }
+    };
+
+    loadRoomStatus();
+    return () => { isMounted = false; };
+  }, [isLoggedIn, selectedTeam, currentUser, dbTeachers, holidaysFullList]);
 
   useEffect(() => {
     if (!selectedStudentHistory || !selectedStudentHistory.name) {
@@ -3599,6 +3747,145 @@ export default function MainApp({
             </div>
           </div>
         </div>
+
+        {/* 시간·팀 조건별 교육실 사용현황 자동 안내 팝업 */}
+        {roomStatusPopup && (
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-[3px] flex items-center justify-center z-[70] p-3 sm:p-4"
+            onClick={() => closeRoomStatusPopup(false)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[86vh] animate-fadeIn border border-slate-200"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3.5 flex items-center justify-between shrink-0">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-extrabold text-[17px] sm:text-[19px] tracking-tight">오늘의 교육실 사용현황</h3>
+                    <span className="px-2 py-0.5 rounded-full bg-white/20 text-[12px] font-bold whitespace-nowrap">{roomStatusPopup.teamLabel}</span>
+                  </div>
+                  <p className="text-blue-100 text-[13px] sm:text-[14px] font-semibold mt-0.5">{roomStatusPopup.dateLabel}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => closeRoomStatusPopup(false)}
+                  className="p-1 rounded-lg text-white/90 hover:bg-white/20 active:scale-90 transition"
+                  aria-label="닫기"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+
+              <div className="p-4 overflow-y-auto space-y-4">
+                {roomStatusPopup.holidayName && (
+                  <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-3.5 py-2.5 text-[14px] font-bold text-center">
+                    오늘은 <span className="font-extrabold">{roomStatusPopup.holidayName}</span>입니다.
+                  </div>
+                )}
+
+                {roomStatusPopup.showClassroom && (
+                  <div className="border border-slate-200 rounded-xl p-3 bg-slate-50/70 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="p-1.5 rounded-lg bg-sky-100 text-sky-800 border border-sky-200">
+                          <IconClassroom className="w-4 h-4" />
+                        </span>
+                        <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900">평생교육실2 (지하1층)</h4>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { closeRoomStatusPopup(false); handleLogout(); onNavigateToClassroom(); }}
+                        className="text-[12.5px] font-bold text-blue-600 hover:underline whitespace-nowrap"
+                      >
+                        주간 보기 &rarr;
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {roomStatusPopup.classroomSlots.map(item => (
+                        <div
+                          key={item.slot}
+                          className={`rounded-lg border px-2.5 py-2 flex items-center justify-between gap-1.5 ${item.isAvailable ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-800'}`}
+                        >
+                          <span className="text-[12.5px] sm:text-[13px] font-bold tabular-nums whitespace-nowrap">{item.slot}</span>
+                          <span className={`text-[12px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap ${item.isAvailable ? 'bg-emerald-200/80 text-emerald-950' : 'bg-rose-200/70 text-rose-900'}`}>
+                            {item.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {roomStatusPopup.classroomMemo && (
+                      <div className="bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-[12.5px] text-slate-700 font-medium whitespace-pre-wrap">
+                        📢 {roomStatusPopup.classroomMemo}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {roomStatusPopup.showNangman && (
+                  <div className="border border-slate-200 rounded-xl p-3 bg-slate-50/70 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="p-1.5 rounded-lg bg-pink-100 text-pink-800 border border-pink-200">
+                          <IconStudio className="w-4 h-4" />
+                        </span>
+                        <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900">낭만스튜디오</h4>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { closeRoomStatusPopup(false); handleLogout(); onNavigateToNangmanStudio(); }}
+                        className="text-[12.5px] font-bold text-blue-600 hover:underline whitespace-nowrap"
+                      >
+                        주간 보기 &rarr;
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {roomStatusPopup.nangmanSlots.map(item => {
+                        const toneClass = item.tone === 'emerald'
+                          ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                          : item.tone === 'indigo'
+                            ? 'bg-indigo-50 border-indigo-300 text-indigo-900'
+                            : item.tone === 'slate'
+                              ? 'bg-slate-100 border-slate-300 text-slate-700'
+                              : 'bg-rose-50 border-rose-200 text-rose-800';
+                        return (
+                          <div
+                            key={item.slot}
+                            className={`rounded-lg border px-2.5 py-2 flex items-center justify-between gap-1.5 ${toneClass}`}
+                          >
+                            <span className="text-[13.5px] font-extrabold whitespace-nowrap">{item.slot}</span>
+                            <span className="text-[13px] font-bold whitespace-nowrap truncate">{item.label}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {roomStatusPopup.nangmanMemo && (
+                      <div className="bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-[12.5px] text-slate-700 font-medium whitespace-pre-wrap">
+                        📢 {roomStatusPopup.nangmanMemo}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => closeRoomStatusPopup(true)}
+                  className="px-3 py-2 rounded-xl text-[13px] sm:text-[14px] font-bold text-slate-600 hover:bg-slate-200/70 transition cursor-pointer whitespace-nowrap"
+                >
+                  오늘 그만 보기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => closeRoomStatusPopup(false)}
+                  className="px-5 py-2 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer"
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
