@@ -534,33 +534,33 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
               <>
                 {/* PC / 태블릿 테이블 뷰 */}
                 <div className="hidden md:block bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-                  <div className="overflow-x-auto max-h-[72vh] overflow-y-auto">
+                  <div className="overflow-x-auto max-h-[76vh] overflow-y-auto">
                     <table className="w-full text-left border-separate border-spacing-0">
                       <thead className="sticky top-0 z-20 bg-slate-100 shadow-2xs">
-                        <tr className="text-slate-700 font-bold text-[14px]">
-                          <th className="py-3 px-3 border-b border-slate-200 text-center w-14">연번</th>
-                          <th className="py-3 px-3 border-b border-slate-200 min-w-[150px]">성명</th>
-                          <th className="py-3 px-3 border-b border-slate-200 whitespace-nowrap w-36">전화번호</th>
-                          <th className="py-3 px-3 border-b border-slate-200 min-w-[170px]">희망요일 및 시간</th>
-                          <th className="py-3 px-3 border-b border-slate-200 min-w-[130px]">배정된 조(선생님)</th>
-                          <th className="py-3 px-3 border-b border-slate-200 min-w-[200px]">비고</th>
-                          <th className="py-3 px-3 border-b border-slate-200 min-w-[120px]">출처</th>
-                          <th className="py-3 px-3 border-b border-slate-200 text-center w-24">관리</th>
+                        <tr className="text-slate-700 font-bold text-[13.5px]">
+                          <th className="py-2 px-2.5 border-b border-slate-200 text-center w-12 whitespace-nowrap">연번</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 whitespace-nowrap">성명</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 whitespace-nowrap w-32">전화번호</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 min-w-[160px]">희망요일 및 시간</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 whitespace-nowrap">배정된 조(선생님)</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 min-w-[200px]">비고</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 whitespace-nowrap">출처</th>
+                          <th className="py-2 px-2.5 border-b border-slate-200 text-center w-20 whitespace-nowrap">관리</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 text-[14px]">
+                      <tbody className="divide-y divide-slate-100 text-[13.5px]">
                         {filteredList.map((item, idx) => {
                           const isUrgent = Boolean(item.is_urgent || (item.name || '').includes('긴급'));
                           const isAssigned = (item.assigned_group || '').trim() !== '';
                           return (
                             <tr key={item.id} className="hover:bg-blue-50/40 transition-colors">
-                              <td className="py-2.5 px-3 text-center text-slate-400 font-bold border-b border-slate-100">
+                              <td className="py-1.5 px-2.5 text-center text-slate-400 font-bold border-b border-slate-100">
                                 {idx + 1}
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100">
-                                <div className="flex items-center gap-1.5 flex-wrap">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap">
+                                <div className="flex items-center gap-1.5 flex-nowrap">
                                   {isUrgent && (
-                                    <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold shrink-0">
+                                    <span className="px-1.5 py-px rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold shrink-0">
                                       긴급
                                     </span>
                                   )}
@@ -569,40 +569,40 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                   </span>
                                 </div>
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100 whitespace-nowrap font-semibold text-slate-700 tabular-nums">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap font-semibold text-slate-700 tabular-nums">
                                 {item.phone ? (
                                   <a href={`tel:${item.phone.replace(/[^0-9]/g, '')}`} className="hover:text-blue-600 hover:underline">
                                     {item.phone}
                                   </a>
                                 ) : '-'}
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100 font-medium text-slate-800 break-keep">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 font-medium text-slate-800 break-keep">
                                 {item.preferred_time || '-'}
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap">
                                 {isAssigned ? (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[13px]">
+                                  <span className="inline-flex items-center gap-1 px-2 py-px rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[12.5px]">
                                     <CheckCircle2 className="w-3.5 h-3.5" />
                                     {item.assigned_group}
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-slate-100 text-slate-400 font-semibold text-[12.5px]">
+                                  <span className="inline-flex items-center px-2 py-px rounded-md bg-slate-100 text-slate-400 font-semibold text-[12px]">
                                     미배정
                                   </span>
                                 )}
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100 text-slate-600 text-[13px] leading-snug break-keep">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-600 text-[13px] leading-snug break-keep">
                                 {item.note || '-'}
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100 text-slate-600 text-[13px] whitespace-nowrap">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-600 text-[13px] whitespace-nowrap">
                                 {item.source || '-'}
                               </td>
-                              <td className="py-2.5 px-3 border-b border-slate-100 text-center">
-                                <div className="inline-flex items-center gap-1">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-center">
+                                <div className="inline-flex items-center gap-0.5">
                                   <button
                                     type="button"
                                     onClick={() => handleOpenEdit(item)}
-                                    className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                                    className="p-1 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition cursor-pointer"
                                     title="수정"
                                   >
                                     <Edit2 className="w-4 h-4" />
@@ -610,7 +610,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                   <button
                                     type="button"
                                     onClick={() => handleDelete(item)}
-                                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                    className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                                     title="삭제"
                                   >
                                     <Trash2 className="w-4 h-4" />
