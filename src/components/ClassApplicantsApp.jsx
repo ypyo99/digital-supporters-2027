@@ -353,7 +353,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
           cell.font = {
             name: '맑은 고딕',
             size: 10,
-            bold: colNum === 2,
+            bold: colNum === 2 || colNum === 7,
             color: { argb: (colNum === 2 && isUrgent) ? 'FFDC2626' : (colNum === 2 ? 'FF1D4ED8' : 'FF1E293B') },
           };
           cell.alignment = {
