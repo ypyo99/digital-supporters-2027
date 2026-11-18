@@ -194,11 +194,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
 
   // Open modal for new applicant
   const handleOpenAdd = () => {
-    const defaultAssign = getMainAppSelectedAssignment();
     setEditingId(null);
-    setForm({ ...EMPTY_FORM, assigned_group: defaultAssign.assignedGroup });
-    setAssignTeam(defaultAssign.team);
-    setAssignTeacher(defaultAssign.teacher);
+    setForm(EMPTY_FORM);
+    setAssignTeam('');
+    setAssignTeacher('');
     setShowFormModal(true);
   };
 
