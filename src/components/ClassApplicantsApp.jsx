@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { supabaseClient } from '../utils/supabase';
@@ -77,6 +77,32 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
   const [allTeachers, setAllTeachers] = useState(() => getGlobalTeachersList());
   const [assignTeam, setAssignTeam] = useState('');
   const [assignTeacher, setAssignTeacher] = useState('');
+
+  // Long press to delete on mobile card
+  const longPressTimerRef = useRef(null);
+  const longPressTriggeredRef = useRef(false);
+  const longPressStartPosRef = useRef({ x: 0, y: 0 });
+
+  const clearLongPress = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const startLongPress = (item, clientX = 0, clientY = 0) => {
+    clearLongPress();
+    longPressTriggeredRef.current = false;
+    longPressStartPosRef.current = { x: clientX, y: clientY };
+    longPressTimerRef.current = setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      longPressTimerRef.current = null;
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(30);
+      }
+      handleDelete(item);
+    }, 650);
+  };
 
   const teamTeachers = useMemo(() => {
     if (!assignTeam) return [];
@@ -674,8 +700,33 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     return (
                       <div
                         key={item.id}
-                        onClick={() => handleOpenEdit(item)}
-                        className={`rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 cursor-pointer transition active:scale-[0.995] hover:border-blue-400 ${isAssigned ? 'bg-sky-50 border-sky-300' : isUrgent ? 'bg-rose-50/20 border-rose-400' : 'bg-white border-slate-300'}`}
+                        onClick={() => {
+                          if (longPressTriggeredRef.current) {
+                            longPressTriggeredRef.current = false;
+                            return;
+                          }
+                          handleOpenEdit(item);
+                        }}
+                        onTouchStart={(e) => {
+                          const t = e.touches[0];
+                          startLongPress(item, t?.clientX || 0, t?.clientY || 0);
+                        }}
+                        onTouchMove={(e) => {
+                          const t = e.touches[0];
+                          if (!t) return;
+                          const dx = Math.abs(t.clientX - longPressStartPosRef.current.x);
+                          const dy = Math.abs(t.clientY - longPressStartPosRef.current.y);
+                          if (dx > 10 || dy > 10) clearLongPress();
+                        }}
+                        onTouchEnd={clearLongPress}
+                        onTouchCancel={clearLongPress}
+                        onMouseDown={(e) => {
+                          if (e.button === 0) startLongPress(item, e.clientX, e.clientY);
+                        }}
+                        onMouseUp={clearLongPress}
+                        onMouseLeave={clearLongPress}
+                        onContextMenu={(e) => e.preventDefault()}
+                        className={`rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 cursor-pointer select-none transition active:scale-[0.995] hover:border-blue-400 ${isAssigned ? 'bg-sky-50 border-sky-300' : isUrgent ? 'bg-rose-50/20 border-rose-400' : 'bg-white border-slate-300'}`}
                       >
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
@@ -687,7 +738,14 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                               )}
                               <button
                                 type="button"
-                                onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (longPressTriggeredRef.current) {
+                                    longPressTriggeredRef.current = false;
+                                    return;
+                                  }
+                                  handleOpenEdit(item);
+                                }}
                                 title={item.name}
                                 className={`font-extrabold text-[15px] text-left whitespace-nowrap truncate min-w-0 cursor-pointer hover:underline active:opacity-70 ${isUrgent ? 'text-rose-700' : 'text-slate-900 hover:text-blue-600'}`}
                               >
@@ -699,7 +757,14 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                               {isAssigned ? (
                                 <button
                                   type="button"
-                                  onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (longPressTriggeredRef.current) {
+                                      longPressTriggeredRef.current = false;
+                                      return;
+                                    }
+                                    handleOpenEdit(item);
+                                  }}
                                   title="클릭하여 수정"
                                   className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs whitespace-nowrap cursor-pointer hover:bg-emerald-100 active:scale-95 transition"
                                 >
@@ -708,7 +773,14 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                               ) : (
                                 <button
                                   type="button"
-                                  onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (longPressTriggeredRef.current) {
+                                      longPressTriggeredRef.current = false;
+                                      return;
+                                    }
+                                    handleOpenEdit(item);
+                                  }}
                                   title="클릭하여 수정"
                                   className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-bold text-xs whitespace-nowrap cursor-pointer hover:bg-amber-100 active:scale-95 transition"
                                 >
