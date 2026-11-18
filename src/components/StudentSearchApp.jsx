@@ -578,15 +578,15 @@ export default function StudentSearchApp({ onNavigateBack }) {
                       const isAbsent = rec.attendanceTag.includes("결석") && !hasAttUi;
                       const isCanceled = rec.attendanceTag.includes("종료") || rec.attendanceTag.includes("취소");
                       const borderColor = isAbsent ? "border-l-red-400" : isCanceled ? "border-l-gray-400" : isAttended ? "border-l-blue-400" : "border-l-blue-300";
-                      const bgColor = isAbsent ? "bg-red-50/50" : isCanceled ? "bg-gray-50/50" : "bg-white";
+                      const bgColor = "bg-white";
 
                       return (
                         <div key={idx} className={`${bgColor} rounded-xl border border-gray-200 border-l-4 ${borderColor} shadow-sm overflow-hidden transition-all hover:shadow-md`}>
                           <div className="px-3 md:px-4 py-2.5 md:py-3">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-extrabold text-[16px] md:text-[18px] text-gray-900 whitespace-nowrap">{rec.dateStr}</span>
-                              <span className="text-[15px] md:text-[17px] text-[#2563eb] font-extrabold bg-[#eff6ff] px-2.5 py-0.5 rounded-lg border border-[#bfdbfe] whitespace-nowrap">{rec.name}</span>
-                              <span className="text-[14px] md:text-[16px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 whitespace-nowrap">{rec.team}</span>
+                              <span className="text-[18px] md:text-[20px] text-[#2563eb] font-extrabold whitespace-nowrap">{rec.name}</span>
+                              <span className="text-[16px] md:text-[18px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 whitespace-nowrap">{rec.team}</span>
                               {rec.attendanceTag ? (
                                 <span className={`text-[14px] md:text-[16px] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${rec.attendanceTag.includes('선생님휴가') ? 'bg-gray-400 text-white border border-gray-500' : isAbsent ? 'bg-red-100 text-red-700 border border-red-300' : isCanceled ? 'bg-orange-300 text-white border border-orange-400' : 'bg-blue-100 text-blue-700 border border-blue-300'}`}>
                                   {rec.attendanceTag}
