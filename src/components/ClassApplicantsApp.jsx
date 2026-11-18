@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { supabaseClient } from '../utils/supabase';
-import { teamList, fetchAllTeachersFromDb, getGlobalTeachersList } from '../utils/helpers';
+import { teamList, fetchAllTeachersFromDb, getGlobalTeachersList, getSavedItem } from '../utils/helpers';
 import { Home, Clock, UsersIcon, DownloadIcon } from './Icons';
 
 const Search = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>;
@@ -155,12 +155,38 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     });
   }, [applicants, statusFilter, searchQuery]);
 
+  // MainApp에서 선택된 팀/선생님 기본값 가져오기
+  const getMainAppSelectedAssignment = () => {
+    const savedTeam = getSavedItem('sungdong_team', '');
+    const savedTeacher = getSavedItem('sungdong_teacher', '');
+    if (!savedTeam || !teamList.includes(savedTeam)) {
+      return { team: '', teacher: '', assignedGroup: '' };
+    }
+    const cleanSavedTeacher = (savedTeacher || '').replace(/\n/g, ' ').trim();
+    const found = allTeachers.find(t => {
+      if (t.team !== savedTeam || t.is_active === false) return false;
+      const cleanName = (t.name || '').replace(/\n/g, ' ').trim();
+      return t.name === savedTeacher || (cleanSavedTeacher && cleanName === cleanSavedTeacher);
+    });
+    if (found) {
+      const cleanName = (found.name || '').replace(/\n/g, ' ').trim();
+      const groupLabel = found.group ? `${found.group} ` : '';
+      return {
+        team: savedTeam,
+        teacher: found.name,
+        assignedGroup: `${savedTeam} ${groupLabel}${cleanName}`.trim(),
+      };
+    }
+    return { team: savedTeam, teacher: '', assignedGroup: savedTeam };
+  };
+
   // Open modal for new applicant
   const handleOpenAdd = () => {
+    const defaultAssign = getMainAppSelectedAssignment();
     setEditingId(null);
-    setForm(EMPTY_FORM);
-    setAssignTeam('');
-    setAssignTeacher('');
+    setForm({ ...EMPTY_FORM, assigned_group: defaultAssign.assignedGroup });
+    setAssignTeam(defaultAssign.team);
+    setAssignTeacher(defaultAssign.teacher);
     setShowFormModal(true);
   };
 
@@ -170,6 +196,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     const ag = (item.assigned_group || '').trim();
     let matchedTeam = teamList.find(t => ag.includes(t)) || '';
     let matchedTeacher = '';
+    let resolvedAssignedGroup = ag;
     if (ag) {
       const candidates = matchedTeam ? allTeachers.filter(t => t.team === matchedTeam) : allTeachers;
       const found = candidates.find(t => {
@@ -180,6 +207,11 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
         matchedTeam = found.team;
         matchedTeacher = found.name;
       }
+    } else {
+      const defaultAssign = getMainAppSelectedAssignment();
+      matchedTeam = defaultAssign.team;
+      matchedTeacher = defaultAssign.teacher;
+      resolvedAssignedGroup = defaultAssign.assignedGroup;
     }
     setAssignTeam(matchedTeam);
     setAssignTeacher(matchedTeacher);
@@ -187,7 +219,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
       name: item.name || '',
       phone: formatPhoneNumber(item.phone || ''),
       preferred_time: item.preferred_time || '',
-      assigned_group: ag,
+      assigned_group: resolvedAssignedGroup,
       note: item.note || '',
       source: item.source || '',
       is_urgent: Boolean(item.is_urgent || (item.name || '').includes('긴급')),
