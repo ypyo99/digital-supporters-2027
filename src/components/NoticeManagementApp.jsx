@@ -185,7 +185,6 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
   }, [scrollTrigger, loading]);
 
   const execFormat = (command, value = null) => {
-    if (navigator.vibrate) navigator.vibrate(30);
     if (editorRef.current) {
       editorRef.current.focus({ preventScroll: true });
       restoreSelection();

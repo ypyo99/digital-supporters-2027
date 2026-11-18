@@ -97,9 +97,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     longPressTimerRef.current = setTimeout(() => {
       longPressTriggeredRef.current = true;
       longPressTimerRef.current = null;
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate(10);
-      }
       handleDelete(item);
     }, 650);
   };

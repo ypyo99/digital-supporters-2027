@@ -149,14 +149,6 @@ const MenuGroup = ({ title, icon, children }) => (
   </section>
 );
 
-const triggerHaptic = (ms = 10) => {
-  try {
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      navigator.vibrate(ms);
-    }
-  } catch (_) {}
-};
-
 // 목록형 메뉴 한 줄 (아이콘 + 이름/설명 + 외부링크 표시)
 const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant, chipColor = "chip-blue" }) => {
   const className = `menu-row${variant === 'admin' ? ' is-admin' : ''}${disabled ? ' is-disabled' : ''}`;
@@ -171,14 +163,14 @@ const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant, chipColo
     </>
   );
   if (href) {
-    return <a href={href} target="_blank" rel="noopener noreferrer" onClick={() => triggerHaptic(3)} className={className}>{content}</a>;
+    return <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{content}</a>;
   }
-  return <button type="button" onClick={(e) => { if (!disabled) triggerHaptic(3); onClick?.(e); }} className={className} aria-disabled={disabled || undefined}>{content}</button>;
+  return <button type="button" onClick={onClick} className={className} aria-disabled={disabled || undefined}>{content}</button>;
 };
 
 // 타일형 메뉴 (2칸 나란히)
 const MenuTile = ({ icon, label, sub, onClick, chipColor = "chip-blue" }) => (
-  <button type="button" onClick={(e) => { triggerHaptic(3); onClick?.(e); }} className="menu-tile">
+  <button type="button" onClick={onClick} className="menu-tile">
     <span className={`row-chip ${chipColor}`}>{icon}</span>
     <span className="tile-text">
       <span className="row-label">{label}</span>
@@ -272,7 +264,6 @@ export default function MainApp({
   }, [isAdminMenuOpen]);
 
   const toggleAdminMenu = () => {
-    triggerHaptic(3);
     setIsAdminMenuOpen(prev => {
       const next = !prev;
       setSavedItem('sungdong_admin_menu_open', String(next));
@@ -290,12 +281,6 @@ export default function MainApp({
 
   const [saveProgress, setSaveProgress] = useState([]);
   const [isSaveComplete, setIsSaveComplete] = useState(false);
-
-  useEffect(() => {
-    if (isSaveComplete) {
-      triggerHaptic(8);
-    }
-  }, [isSaveComplete]);
 
   const [showRepeatConfirm, setShowRepeatConfirm] = useState(false);
   const [showAssistantConflictModal, setShowAssistantConflictModal] = useState(false);
@@ -3142,7 +3127,6 @@ export default function MainApp({
     if (!isLoginReady) return;
 
     if (currentUser) {
-      triggerHaptic(3);
       const todayStr = getInitialWeekday();
       setDate(todayStr);
       isLoggedInRef.current = true;

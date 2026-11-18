@@ -384,8 +384,6 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   };
 
   const handleManagerClick = async () => {
-    if (navigator.vibrate) navigator.vibrate(50);
-
     if (isManagerMode) {
       try {
         const { error } = await supabaseClient
