@@ -6,6 +6,7 @@ import { saveAs } from 'file-saver';
 import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
+  setSavedItem,
   getTeamTeacherNames,
   getTeacherSortWeight,
   getTeacherGroup,
@@ -46,11 +47,19 @@ const mapShiftToOfficial = (team, teacherName, originalShift) => {
 };
 
 export default function TeamScheduleApp({ team, onNavigateBack }) {
-  const [currentTeam, setCurrentTeam] = useState(() => team || getSavedItem('sungdong_schedule_team', '') || getSavedItem('sungdong_team', '') || "1팀");
+  const [currentTeam, setCurrentTeam] = useState(() => getSavedItem('sungdong_team_schedule_team', '') || team || getSavedItem('sungdong_schedule_team', '') || getSavedItem('sungdong_team', '') || "1팀");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().substring(0, 7)); // YYYY-MM
-  const [teacherFilter, setTeacherFilter] = useState("전체");
+  const [teacherFilter, setTeacherFilter] = useState(() => getSavedItem('sungdong_team_schedule_teacher', '') || getSavedItem('sungdong_teacher', '') || "전체");
+
+  useEffect(() => {
+    setSavedItem('sungdong_team_schedule_team', currentTeam);
+  }, [currentTeam]);
+
+  useEffect(() => {
+    setSavedItem('sungdong_team_schedule_teacher', teacherFilter);
+  }, [teacherFilter]);
   const [uniqueTeachers, setUniqueTeachers] = useState([]);
   const [viewMode, setViewMode] = useState("sheet"); // "sheet" or "list"
   const [exporting, setExporting] = useState(false);
