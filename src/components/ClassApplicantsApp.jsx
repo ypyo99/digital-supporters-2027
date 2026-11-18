@@ -80,7 +80,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
 
   const teamTeachers = useMemo(() => {
     if (!assignTeam) return [];
-    return allTeachers.filter(t => t.team === assignTeam);
+    return allTeachers.filter(t => t.team === assignTeam && t.is_active !== false);
   }, [allTeachers, assignTeam]);
 
   // Load data from Supabase
