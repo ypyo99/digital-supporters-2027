@@ -897,7 +897,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                       const cleanName = (t.name || '').replace(/\n/g, ' ').trim();
                       return (
                         <option key={`${t.team}-${t.name}`} value={t.name}>
-                          {t.group_name ? `[${t.group_name}] ` : ''}{cleanName}
+                          {cleanName}
                         </option>
                       );
                     })}
