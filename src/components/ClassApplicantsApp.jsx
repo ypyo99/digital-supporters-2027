@@ -157,7 +157,13 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
       .sort((a, b) => {
         const aAssigned = (a.assigned_group || '').trim() !== '' ? 1 : 0;
         const bAssigned = (b.assigned_group || '').trim() !== '' ? 1 : 0;
-        return aAssigned - bAssigned;
+        if (aAssigned !== bAssigned) return aAssigned - bAssigned;
+        if (aAssigned === 1) {
+          const aTime = new Date(a.updated_at || a.created_at || 0).getTime();
+          const bTime = new Date(b.updated_at || b.created_at || 0).getTime();
+          return aTime - bTime;
+        }
+        return 0;
       });
   }, [applicants, statusFilter, searchQuery]);
 
