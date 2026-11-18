@@ -470,11 +470,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     key={tab.key}
                     type="button"
                     onClick={() => setStatusFilter(tab.key)}
-                    className={`px-3 py-1.5 rounded-xl text-xs sm:text-[13px] font-bold border transition cursor-pointer touch-manipulation whitespace-nowrap ${
-                      statusFilter === tab.key
-                        ? `${tab.activeClass} shadow-xs`
-                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                    }`}
+                    className={`px-3 py-1.5 rounded-xl text-xs sm:text-[13px] font-bold border transition cursor-pointer touch-manipulation whitespace-nowrap ${statusFilter === tab.key
+                      ? `${tab.activeClass} shadow-xs`
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -742,7 +741,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     value={form.name}
                     onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="예: 홍길동 또는 (긴급)OO경로당"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-bold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                   />
                 </div>
                 <label className="flex items-center gap-1.5 pt-5 px-2 cursor-pointer select-none">
@@ -763,7 +762,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   value={form.phone}
                   onChange={e => setForm(prev => ({ ...prev, phone: formatPhoneNumber(e.target.value) }))}
                   placeholder="010-0000-0000"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-semibold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
@@ -774,7 +773,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   value={form.preferred_time}
                   onChange={e => setForm(prev => ({ ...prev, preferred_time: e.target.value }))}
                   placeholder="예: 화 13:00, 목 오후 1시 이후 가능"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 bg-blue-50/70 border border-blue-200 rounded-xl text-sm font-semibold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
@@ -818,11 +817,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                       setAssignTeacher('');
                       setForm(prev => ({ ...prev, assigned_group: nextTeam }));
                     }}
-                    className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer ${
-                      assignTeam
-                        ? 'bg-blue-50/70 border-blue-400 text-blue-700'
-                        : 'bg-white border-slate-300 text-blue-600'
-                    } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
+                    className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer ${assignTeam
+                      ? 'bg-blue-50/70 border-blue-400 text-blue-700'
+                      : 'bg-white border-slate-300 text-blue-600'
+                      } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
                   >
                     <option value="">미배정 (팀 선택)</option>
                     {teamList.map(t => (
@@ -847,11 +845,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                         setForm(prev => ({ ...prev, assigned_group: formatted }));
                       }
                     }}
-                    className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer disabled:bg-slate-100 disabled:text-blue-400 disabled:cursor-not-allowed ${
-                      assignTeacher
-                        ? 'bg-blue-50/70 border-blue-400 text-blue-700'
-                        : 'bg-white border-slate-300 text-blue-600'
-                    } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
+                    className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer disabled:bg-slate-100 disabled:text-blue-400 disabled:cursor-not-allowed ${assignTeacher
+                      ? 'bg-blue-50/70 border-blue-400 text-blue-700'
+                      : 'bg-white border-slate-300 text-blue-600'
+                      } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
                   >
                     <option value="">{assignTeam ? '선생님 선택' : '팀 먼저 선택'}</option>
                     {teamTeachers.map(t => {
