@@ -221,7 +221,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
   // Open modal for new applicant
   const handleOpenAdd = () => {
     setEditingId(null);
-    setForm(EMPTY_FORM);
+    setForm({ ...EMPTY_FORM, phone: '010-' });
     setAssignTeam('');
     setAssignTeacher('');
     setShowFormModal(true);
@@ -252,9 +252,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     }
     setAssignTeam(matchedTeam);
     setAssignTeacher(matchedTeacher);
+    const formattedPhone = formatPhoneNumber(item.phone || '');
     setForm({
       name: item.name || '',
-      phone: formatPhoneNumber(item.phone || ''),
+      phone: formattedPhone || '010-',
       preferred_time: item.preferred_time || '',
       assigned_group: resolvedAssignedGroup,
       note: item.note || '',
@@ -275,9 +276,11 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
 
     setSaving(true);
     try {
+      const rawPhone = (form.phone || '').trim();
+      const normalizedPhone = (rawPhone === '010-' || rawPhone === '010') ? '' : formatPhoneNumber(rawPhone);
       const payload = {
         name: cleanName,
-        phone: formatPhoneNumber(form.phone),
+        phone: normalizedPhone,
         preferred_time: form.preferred_time.trim(),
         assigned_group: form.assigned_group.trim(),
         note: form.note.trim(),
