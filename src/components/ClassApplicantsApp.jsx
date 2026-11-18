@@ -864,7 +864,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                       : 'bg-white border-slate-300 text-blue-600'
                       } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
                   >
-                    <option value="">미배정 (팀 선택)</option>
+                    <option value="">팀 선택</option>
                     {teamList.map(t => (
                       <option key={t} value={t}>{t}</option>
                     ))}
