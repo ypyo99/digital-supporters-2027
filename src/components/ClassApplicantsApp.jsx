@@ -565,14 +565,24 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                               </td>
                               <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap">
                                 {isAssigned ? (
-                                  <span className="inline-flex items-center gap-1 px-2 py-px rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[12.5px]">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenEdit(item)}
+                                    title="클릭하여 수정"
+                                    className="inline-flex items-center gap-1 px-2 py-px rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[12.5px] cursor-pointer hover:bg-emerald-100 transition"
+                                  >
                                     <CheckCircle2 className="w-3.5 h-3.5" />
                                     {item.assigned_group}
-                                  </span>
+                                  </button>
                                 ) : (
-                                  <span className="inline-flex items-center px-2 py-px rounded-md bg-slate-100 text-slate-400 font-semibold text-[12px]">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenEdit(item)}
+                                    title="클릭하여 수정"
+                                    className="inline-flex items-center px-2 py-px rounded-md bg-slate-100 text-slate-400 font-semibold text-[12px] cursor-pointer hover:bg-amber-50 hover:text-amber-700 hover:border hover:border-amber-200 transition"
+                                  >
                                     미배정
-                                  </span>
+                                  </button>
                                 )}
                               </td>
                               <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-600 text-[13px] leading-snug break-keep">
@@ -645,13 +655,23 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
 
                           <div className="flex items-center gap-1 shrink-0">
                             {isAssigned ? (
-                              <span className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(item)}
+                                title="클릭하여 수정"
+                                className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs cursor-pointer hover:bg-emerald-100 active:scale-95 transition"
+                              >
                                 {item.assigned_group}
-                              </span>
+                              </button>
                             ) : (
-                              <span className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-bold text-xs">
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(item)}
+                                title="클릭하여 수정"
+                                className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-bold text-xs cursor-pointer hover:bg-amber-100 active:scale-95 transition"
+                              >
                                 미배정
-                              </span>
+                              </button>
                             )}
                             <button
                               type="button"
