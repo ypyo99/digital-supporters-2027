@@ -943,7 +943,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans pb-6 overflow-y-auto">
       <header className="app-header text-white z-40 relative shrink-0">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pt-safe-4 pb-14 flex justify-between items-start relative min-h-[120px]">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-safe-4 pb-14 flex justify-between items-start relative min-h-[120px]">
           <div className="flex items-center">
             <div className="flex flex-col">
               <div className="flex items-center mb-1">
@@ -973,7 +973,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
         </div>
       </header>
 
-      <main className="flex-1 px-4 md:px-6 pt-3 pb-12 w-full max-w-5xl lg:max-w-[1536px] mx-auto">
+      <main className="flex-1 px-2.5 sm:px-5 pt-3 pb-12 w-full max-w-5xl lg:max-w-[1536px] mx-auto">
         <div className="px-1 mb-1">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <span className="flex items-center"><LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 시간표 작성</span>

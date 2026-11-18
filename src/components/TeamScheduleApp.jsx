@@ -998,7 +998,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
       <div className="bg-white flex-1 flex flex-col relative">
         {/* Header */}
         <div className="shrink-0 app-header text-white z-40 relative min-h-[152px] sm:min-h-[96px]">
-          <div className="w-full max-w-full mx-auto px-4 md:px-6 pt-3 pb-16 sm:pb-7 flex items-start justify-between relative">
+          <div className="w-full max-w-full mx-auto px-2.5 sm:px-5 pt-3 pb-16 sm:pb-7 flex items-start justify-between relative">
             <div>
               <div className="flex items-center mb-1">
                 <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -1055,7 +1055,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
 
         {/* 상단 섹션 제목 */}
         <div className="bg-[#f1f5f9] border-b border-gray-200/80">
-          <div className="w-full max-w-full mx-auto px-4 md:px-6 py-2">
+          <div className="w-full max-w-full mx-auto px-2.5 sm:px-5 py-2">
             <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
               <span className="flex items-center"><CalendarDaysIcon className="w-5 h-5 mr-2 text-blue-600" /> 전체 일정 보기</span>
             </h2>
@@ -1064,7 +1064,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
 
         {/* 필터 및 월 선택 */}
         <div className="bg-white border-b border-gray-200 z-10 shadow-sm relative">
-          <div className="w-full max-w-full mx-auto px-4 md:px-6 py-3 flex flex-col md:flex-row gap-3 justify-between items-center">
+          <div className="w-full max-w-full mx-auto px-2.5 sm:px-5 py-3 flex flex-col md:flex-row gap-3 justify-between items-center">
           <div className="flex flex-col items-center w-full md:w-auto">
             <div className="flex items-center gap-2 bg-blue-50 rounded-lg p-1 border border-blue-100 w-full md:w-auto justify-center">
               <button onClick={() => changeMonth(-1)} className="p-1.5 text-blue-600 hover:bg-blue-200 rounded-md transition-colors"><ChevronLeft className="w-5 h-5" /></button>
@@ -1127,7 +1127,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
 
         {/* 콘텐츠 영역 */}
         <div className="flex-1 bg-slate-50 pb-12">
-          <div className="w-full max-w-full mx-auto px-4 md:px-6 py-3 md:py-6">
+          <div className="w-full max-w-full mx-auto px-2.5 sm:px-5 py-3 md:py-6">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-40 text-blue-500">
               <RotateCcw className="w-8 h-8 animate-spin mb-3" />

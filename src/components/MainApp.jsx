@@ -3547,7 +3547,7 @@ export default function MainApp({
   return (
     <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
       <div className="shrink-0 app-header text-white z-20 relative">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pb-4 pt-safe-4 flex justify-between items-center gap-3">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pb-4 pt-safe-4 flex justify-between items-center gap-3">
           <div className="flex items-center min-w-0">
             <div className="flex flex-col min-w-0">
               <div className="flex items-center mb-1">
@@ -3578,7 +3578,7 @@ export default function MainApp({
       </div>
 
       <main
-        className="w-full max-w-5xl lg:max-w-[1536px] mx-auto flex flex-col px-4 md:px-6 pt-2 mt-1 pb-32"
+        className="w-full max-w-5xl lg:max-w-[1536px] mx-auto flex flex-col px-2.5 sm:px-5 pt-2 mt-1 pb-32"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
@@ -3607,7 +3607,7 @@ export default function MainApp({
               </div>
             </h2>
             <div className="contents">
-              <div className="sticky top-0 z-30 -mx-4 md:-mx-6 px-4 md:px-6 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
+              <div className="sticky top-0 z-30 -mx-2.5 sm:-mx-5 px-2.5 sm:px-5 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
                 <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                   <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                     <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>

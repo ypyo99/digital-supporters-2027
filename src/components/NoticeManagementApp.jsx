@@ -652,7 +652,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
       `}</style>
       {/* 헤더 영역 */}
       <header className="app-header text-white z-20 relative shrink-0">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pt-4 pb-16 sm:pb-12 flex justify-between items-start relative min-h-[148px] sm:min-h-[116px]">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-4 pb-16 sm:pb-12 flex justify-between items-start relative min-h-[148px] sm:min-h-[116px]">
           <div className="flex items-center">
             <div className="flex flex-col">
               <div className="flex items-center mb-1">
@@ -704,7 +704,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
       </header>
 
       {/* 메인 콘텐츠 영역 */}
-      <main className="flex-1 px-4 md:px-6 pt-4 pb-12 w-full max-w-5xl lg:max-w-[1536px] mx-auto flex flex-col gap-6">
+      <main className="flex-1 px-2.5 sm:px-5 pt-4 pb-12 w-full max-w-5xl lg:max-w-[1536px] mx-auto flex flex-col gap-6">
 
         {/* Supabase 테이블 부재 경고 */}
         {supabaseTableMissing && (
