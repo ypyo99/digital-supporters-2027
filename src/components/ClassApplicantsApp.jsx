@@ -547,9 +547,14 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                       긴급
                                     </span>
                                   )}
-                                  <span className={`font-extrabold ${isUrgent ? 'text-rose-700' : 'text-slate-900'}`}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenEdit(item)}
+                                    title="클릭하여 수정"
+                                    className={`font-extrabold text-left cursor-pointer hover:underline ${isUrgent ? 'text-rose-700' : 'text-slate-900 hover:text-blue-600'}`}
+                                  >
                                     {item.name}
-                                  </span>
+                                  </button>
                                 </div>
                               </td>
                               <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap font-semibold text-slate-700 tabular-nums">
@@ -637,9 +642,14 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                   긴급
                                 </span>
                               )}
-                              <span className={`font-extrabold text-[16px] ${isUrgent ? 'text-rose-700' : 'text-slate-900'}`}>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEdit(item)}
+                                title="클릭하여 수정"
+                                className={`font-extrabold text-[16px] text-left cursor-pointer hover:underline active:opacity-70 ${isUrgent ? 'text-rose-700' : 'text-slate-900 hover:text-blue-600'}`}
+                              >
                                 {item.name}
-                              </span>
+                              </button>
                             </div>
                             {item.phone && (
                               <a
