@@ -786,7 +786,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 content-start items-start flex-1 min-w-0">
           {/* 좌측: 공지사항 목록 */}
           <section ref={listRef} className={`bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-4 transition-all duration-350 min-w-0 ${(selectedNotice || isEditing) ? 'md:col-span-5' : 'md:col-span-12'} ${isEditing ? 'hidden md:flex md:flex-col' : 'flex flex-col'}`}>
-            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 pb-2 border-b flex items-center gap-2">
+            <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 tracking-tight mb-3 pb-2 border-b flex items-center gap-2">
               <svg className="w-5 h-5 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m3 11 18-5v12L3 14v-3z" />
                 <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
