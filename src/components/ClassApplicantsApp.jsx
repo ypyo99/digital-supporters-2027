@@ -884,17 +884,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
               </div>
 
               <div>
-                <label className="block text-[15px] sm:text-base font-bold text-slate-700 mb-1.5">출처</label>
-                <input
-                  type="text"
-                  value={form.source}
-                  onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
-                  placeholder="예: 복지관접수(11/18), 이혜섭 선생님"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                />
-              </div>
-
-              <div>
                 <label className="block text-[15px] sm:text-base font-bold text-slate-700 mb-1.5">비고</label>
                 <textarea
                   rows={3}
@@ -902,6 +891,17 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))}
                   placeholder="특이사항, 요청사항, 통화 전 문자 요망 등"
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[15px] sm:text-base font-bold text-slate-700 mb-1.5">출처</label>
+                <input
+                  type="text"
+                  value={form.source}
+                  onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
+                  placeholder="예: 복지관접수(11/18), 이혜섭 선생님"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
