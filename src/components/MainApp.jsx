@@ -235,11 +235,42 @@ export default function MainApp({
   const [studentCounts, setStudentCounts] = useState({});
   const [records, setRecords] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(() => getSavedItem('sungdong_admin_menu_open', '') === 'true');
+  const ADMIN_MENU_TTL_MS = 60 * 60 * 1000;
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(() => {
+    if (getSavedItem('sungdong_admin_menu_open', '') !== 'true') return false;
+    const openedAt = Number(getSavedItem('sungdong_admin_menu_opened_at', '0'));
+    if (!openedAt || Date.now() - openedAt >= ADMIN_MENU_TTL_MS) {
+      setSavedItem('sungdong_admin_menu_open', 'false');
+      setSavedItem('sungdong_admin_menu_opened_at', '');
+      return false;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (!isAdminMenuOpen) return;
+    const openedAt = Number(getSavedItem('sungdong_admin_menu_opened_at', '0')) || Date.now();
+    const remaining = ADMIN_MENU_TTL_MS - (Date.now() - openedAt);
+    if (remaining <= 0) {
+      setIsAdminMenuOpen(false);
+      setSavedItem('sungdong_admin_menu_open', 'false');
+      setSavedItem('sungdong_admin_menu_opened_at', '');
+      return;
+    }
+    const timer = setTimeout(() => {
+      setIsAdminMenuOpen(false);
+      setSavedItem('sungdong_admin_menu_open', 'false');
+      setSavedItem('sungdong_admin_menu_opened_at', '');
+    }, remaining);
+    return () => clearTimeout(timer);
+  }, [isAdminMenuOpen]);
+
   const toggleAdminMenu = () => {
     setIsAdminMenuOpen(prev => {
-      setSavedItem('sungdong_admin_menu_open', String(!prev));
-      return !prev;
+      const next = !prev;
+      setSavedItem('sungdong_admin_menu_open', String(next));
+      setSavedItem('sungdong_admin_menu_opened_at', next ? String(Date.now()) : '');
+      return next;
     });
   };
   const [showSavePopup, setShowSavePopup] = useState(false);
