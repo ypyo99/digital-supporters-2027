@@ -211,7 +211,8 @@ export default function MainApp({
   onNavigateToHolidayManagement,
   onNavigateToNangmanStudio,
   onNavigateToNoticeManagement,
-  onNavigateToStudentFormsAdmin
+  onNavigateToStudentFormsAdmin,
+  onNavigateToClassApplicants
 }) {
   const [selectedTeam, setSelectedTeam] = useState(() => getSavedItem('sungdong_team', ""));
   const [currentUser, setCurrentUser] = useState(() => getSavedItem('sungdong_teacher', ""));
@@ -3416,11 +3417,11 @@ export default function MainApp({
                 desc="학생별 서류 작성 현황 파악"
               />
               <MenuRow
-                href="https://docs.google.com/spreadsheets/d/1e4g_HIsmAQbLK8n0eMz_RGX3okou75tqKSSAkbWDsBk/edit?gid=936021842#gid=936021842"
+                onClick={onNavigateToClassApplicants}
                 icon={<IconPeople />}
                 chipColor="chip-teal"
                 label="수업 희망자 관리"
-                desc="구글 시트에서 열립니다"
+                desc="신규 수업 신청 · 조 배정 현황"
               />
             </MenuGroup>
 

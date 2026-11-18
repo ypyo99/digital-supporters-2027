@@ -45,6 +45,7 @@ const HolidayManagementApp = lazyWithRetry(() => import('./components/HolidayMan
 const NangmanStudioApp = lazyWithRetry(() => import('./components/NangmanStudioApp'));
 const NoticeManagementApp = lazyWithRetry(() => import('./components/NoticeManagementApp'));
 const StudentFormsAdminApp = lazyWithRetry(() => import('./components/StudentFormsAdminApp'));
+const ClassApplicantsApp = lazyWithRetry(() => import('./components/ClassApplicantsApp'));
 
 const LoadingFallback = () => (
   <div className="min-h-[100dvh] flex flex-col items-center justify-center">
@@ -262,6 +263,10 @@ export default function App() {
       );
     }
 
+    if (currentView === 'classApplicants') {
+      return <ClassApplicantsApp onNavigateBack={handleNavigateBack} />;
+    }
+
     return (
       <MainApp
         onNavigateToClassroom={() => navigateTo('classroom')}
@@ -292,6 +297,7 @@ export default function App() {
           setSessionItem('sungdong_forms_admin_mode', adminMode ? 'true' : 'false');
           navigateTo('studentFormsAdmin');
         }}
+        onNavigateToClassApplicants={() => navigateTo('classApplicants')}
         onNavigateToTeamSchedule={(team) => {
           setSelectedTeamForSchedule(team);
           navigateTo('teamSchedule');
