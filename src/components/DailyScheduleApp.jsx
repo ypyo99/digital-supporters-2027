@@ -1156,11 +1156,11 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
               </div>
 
               {showLegend && (
-                <div className="flex items-center gap-1.5 flex-wrap px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl animate-fadeIn">
-                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-slate-200 text-slate-800 border border-slate-300">1–6회</span>
-                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-purple-100 text-purple-900 border border-purple-200">7–9회</span>
-                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-indigo-950 text-white">10–14회</span>
-                  <span className="px-2 py-0.5 rounded-md text-[11px] sm:text-[12px] font-bold bg-amber-100 text-amber-950 border border-amber-300">15회 이상</span>
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap px-2.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl animate-fadeIn">
+                  <span className="px-2.5 py-0.5 rounded-md text-[13px] sm:text-[14px] font-bold bg-slate-200 text-slate-800 border border-slate-300">1–6회</span>
+                  <span className="px-2.5 py-0.5 rounded-md text-[13px] sm:text-[14px] font-bold bg-purple-100 text-purple-900 border border-purple-200">7–9회</span>
+                  <span className="px-2.5 py-0.5 rounded-md text-[13px] sm:text-[14px] font-bold bg-indigo-950 text-white">10–14회</span>
+                  <span className="px-2.5 py-0.5 rounded-md text-[13px] sm:text-[14px] font-bold bg-amber-100 text-amber-950 border border-amber-300">15회 이상</span>
                 </div>
               )}
 
