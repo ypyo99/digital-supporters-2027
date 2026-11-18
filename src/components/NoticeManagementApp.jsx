@@ -164,7 +164,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
   useEffect(() => {
     if (scrollTrigger > 0 && scrollTrigger !== lastScrolledTriggerRef.current && !loading && detailsRef.current) {
       lastScrolledTriggerRef.current = scrollTrigger;
-      const timer = setTimeout(() => {
+      const rafId = requestAnimationFrame(() => {
         if (detailsRef.current) {
           const header = document.querySelector('header');
           const headerOffset = header ? header.offsetHeight : 116;
@@ -173,11 +173,11 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
 
           window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth'
+            behavior: 'instant'
           });
         }
-      }, 400);
-      return () => clearTimeout(timer);
+      });
+      return () => cancelAnimationFrame(rafId);
     }
   }, [scrollTrigger, loading]);
 
