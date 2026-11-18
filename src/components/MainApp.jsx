@@ -159,9 +159,7 @@ const MenuRow = ({ icon, label, desc, onClick, href, disabled, variant, chipColo
         <span className="row-label">{label}</span>
         {desc && <span className="row-desc">{desc}</span>}
       </span>
-      {href
-        ? <IconExternal className="row-trail" aria-label="새 창에서 열림" />
-        : <IconChevronRight className="row-trail" />}
+      {href && <IconExternal className="row-trail" aria-label="새 창에서 열림" />}
     </>
   );
   if (href) {
