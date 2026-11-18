@@ -327,142 +327,6 @@ export default function MainApp({
   };
 
   useEffect(() => {
-    if (isLoggedIn || !selectedTeam) return;
-
-    const now = new Date();
-    const minutesOfDay = now.getHours() * 60 + now.getMinutes();
-    const isBefore0930 = minutesOfDay < (9 * 60 + 30);
-    const isBefore1300 = minutesOfDay < (13 * 60);
-
-    let showClassroom = false;
-    let showNangman = false;
-    let teamKey = '';
-    let teamLabel = selectedTeam;
-
-    if (selectedTeam === '1팀' || selectedTeam === '2팀') {
-      if (isBefore0930) {
-        showClassroom = true;
-        teamKey = selectedTeam;
-      }
-    } else if (selectedTeam === '3팀') {
-      if (isBefore1300) {
-        showClassroom = true;
-        teamKey = '3팀';
-      }
-    } else if (selectedTeam === '취업팀' && currentUser) {
-      const group = getTeacherGroup('취업팀', currentUser, dbTeachers) || '';
-      if (group.includes('오전') && isBefore0930) {
-        showClassroom = true;
-        showNangman = true;
-        teamKey = '취업팀-오전';
-        teamLabel = '취업팀 오전조';
-      } else if (group.includes('오후') && isBefore1300) {
-        showClassroom = true;
-        showNangman = true;
-        teamKey = '취업팀-오후';
-        teamLabel = '취업팀 오후조';
-      }
-    }
-
-    if (!showClassroom && !showNangman) {
-      setRoomStatusPopup(null);
-      return;
-    }
-
-    const todayStr = getLocalDateString(now);
-    const hideKey = `sungdong_room_popup_hide_${todayStr}_${teamKey}`;
-    const seenKey = `sungdong_room_popup_seen_${todayStr}_${teamKey}`;
-    if (getSavedItem(hideKey, '') === 'true') return;
-    try {
-      if (window.sessionStorage.getItem(seenKey) === 'true') return;
-    } catch (_) {}
-
-    let isMounted = true;
-    const loadRoomStatus = async () => {
-      try {
-        const roomAppId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'default-app-id';
-        const mmdd = todayStr.substring(5);
-        const holidayInfo = holidaysFullList.find(h => h && h.date && (h.date === todayStr || h.date === mmdd || h.date.endsWith(mmdd)));
-
-        const classroomSlotsList = [
-          "09:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30",
-          "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00"
-        ];
-        const nangmanSlotsList = ["1팀", "2팀"];
-
-        const [classroomRes, nangmanRes] = await Promise.all([
-          showClassroom
-            ? supabaseClient.from('classroom_schedules').select('data, memo').eq('id', roomAppId).maybeSingle()
-            : Promise.resolve({ data: null }),
-          showNangman
-            ? supabaseClient.from('nangman_schedules').select('data, memo').eq('id', roomAppId).maybeSingle()
-            : Promise.resolve({ data: null })
-        ]);
-
-        if (!isMounted) return;
-
-        const cData = classroomRes?.data?.data || {};
-        const cMemo = classroomRes?.data?.memo || '';
-        const classroomSlots = classroomSlotsList.map(slot => {
-          const key = `${todayStr}_${slot.replace(/\s+/g, '').replace(/~/g, '-').replace(/:/g, '')}`;
-          const val = cData[key];
-          const isAvailable = val === '사용가능';
-          return {
-            slot: slot.replace(' - ', '~'),
-            isAvailable,
-            label: isAvailable ? '사용 가능' : '사용 불가'
-          };
-        });
-
-        const nData = nangmanRes?.data?.data || {};
-        const nMemo = nangmanRes?.data?.memo || '';
-        const nangmanSlots = nangmanSlotsList.map(slot => {
-          const key = `${todayStr}_${slot}`;
-          const state = nData[key];
-          let label = '사용 불가';
-          let tone = 'rose';
-          if (state === true) {
-            label = '사용 가능';
-            tone = 'emerald';
-          } else if (state === 'nangman') {
-            label = '낭만스튜디오';
-            tone = 'indigo';
-          } else if (state === 'pending') {
-            label = '미정';
-            tone = 'slate';
-          } else if (typeof state === 'string' && state.trim() === '') {
-            label = '미입력';
-            tone = 'slate';
-          } else if (typeof state === 'string' && !state.startsWith('disabled:') && state !== 'disabled') {
-            label = state.replace(/\\n/g, ' ');
-            tone = 'emerald';
-          }
-          return { slot, label, tone };
-        });
-
-        setRoomStatusPopup({
-          dateStr: todayStr,
-          dateLabel: now.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }),
-          teamKey,
-          teamLabel,
-          showClassroom,
-          showNangman,
-          classroomSlots,
-          classroomMemo: cMemo,
-          nangmanSlots,
-          nangmanMemo: nMemo,
-          holidayName: holidayInfo ? (holidayInfo.name || '휴무일') : ''
-        });
-      } catch (err) {
-        console.error('교육실 사용현황 로드 실패:', err);
-      }
-    };
-
-    loadRoomStatus();
-    return () => { isMounted = false; };
-  }, [isLoggedIn, selectedTeam, currentUser, dbTeachers, holidaysFullList]);
-
-  useEffect(() => {
     if (!selectedStudentHistory || !selectedStudentHistory.name) {
       setStudentHistoryLogs([]);
       return;
@@ -1025,6 +889,142 @@ export default function MainApp({
 
   // holidays 전체 정보(이름/내용 포함)를 저장하는 상태
   const [holidaysFullList, setHolidaysFullList] = useState([]);
+
+  useEffect(() => {
+    if (isLoggedIn || !selectedTeam) return;
+
+    const now = new Date();
+    const minutesOfDay = now.getHours() * 60 + now.getMinutes();
+    const isBefore0930 = minutesOfDay < (9 * 60 + 30);
+    const isBefore1300 = minutesOfDay < (13 * 60);
+
+    let showClassroom = false;
+    let showNangman = false;
+    let teamKey = '';
+    let teamLabel = selectedTeam;
+
+    if (selectedTeam === '1팀' || selectedTeam === '2팀') {
+      if (isBefore0930) {
+        showClassroom = true;
+        teamKey = selectedTeam;
+      }
+    } else if (selectedTeam === '3팀') {
+      if (isBefore1300) {
+        showClassroom = true;
+        teamKey = '3팀';
+      }
+    } else if (selectedTeam === '취업팀' && currentUser) {
+      const group = getTeacherGroup('취업팀', currentUser, dbTeachers) || '';
+      if (group.includes('오전') && isBefore0930) {
+        showClassroom = true;
+        showNangman = true;
+        teamKey = '취업팀-오전';
+        teamLabel = '취업팀 오전조';
+      } else if (group.includes('오후') && isBefore1300) {
+        showClassroom = true;
+        showNangman = true;
+        teamKey = '취업팀-오후';
+        teamLabel = '취업팀 오후조';
+      }
+    }
+
+    if (!showClassroom && !showNangman) {
+      setRoomStatusPopup(null);
+      return;
+    }
+
+    const todayStr = getLocalDateString(now);
+    const hideKey = `sungdong_room_popup_hide_${todayStr}_${teamKey}`;
+    const seenKey = `sungdong_room_popup_seen_${todayStr}_${teamKey}`;
+    if (getSavedItem(hideKey, '') === 'true') return;
+    try {
+      if (window.sessionStorage.getItem(seenKey) === 'true') return;
+    } catch (_) {}
+
+    let isMounted = true;
+    const loadRoomStatus = async () => {
+      try {
+        const roomAppId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'default-app-id';
+        const mmdd = todayStr.substring(5);
+        const holidayInfo = holidaysFullList.find(h => h && h.date && (h.date === todayStr || h.date === mmdd || h.date.endsWith(mmdd)));
+
+        const classroomSlotsList = [
+          "09:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30",
+          "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00"
+        ];
+        const nangmanSlotsList = ["1팀", "2팀"];
+
+        const [classroomRes, nangmanRes] = await Promise.all([
+          showClassroom
+            ? supabaseClient.from('classroom_schedules').select('data, memo').eq('id', roomAppId).maybeSingle()
+            : Promise.resolve({ data: null }),
+          showNangman
+            ? supabaseClient.from('nangman_schedules').select('data, memo').eq('id', roomAppId).maybeSingle()
+            : Promise.resolve({ data: null })
+        ]);
+
+        if (!isMounted) return;
+
+        const cData = classroomRes?.data?.data || {};
+        const cMemo = classroomRes?.data?.memo || '';
+        const classroomSlots = classroomSlotsList.map(slot => {
+          const key = `${todayStr}_${slot.replace(/\s+/g, '').replace(/~/g, '-').replace(/:/g, '')}`;
+          const val = cData[key];
+          const isAvailable = val === '사용가능';
+          return {
+            slot: slot.replace(' - ', '~'),
+            isAvailable,
+            label: isAvailable ? '사용 가능' : '사용 불가'
+          };
+        });
+
+        const nData = nangmanRes?.data?.data || {};
+        const nMemo = nangmanRes?.data?.memo || '';
+        const nangmanSlots = nangmanSlotsList.map(slot => {
+          const key = `${todayStr}_${slot}`;
+          const state = nData[key];
+          let label = '사용 불가';
+          let tone = 'rose';
+          if (state === true) {
+            label = '사용 가능';
+            tone = 'emerald';
+          } else if (state === 'nangman') {
+            label = '낭만스튜디오';
+            tone = 'indigo';
+          } else if (state === 'pending') {
+            label = '미정';
+            tone = 'slate';
+          } else if (typeof state === 'string' && state.trim() === '') {
+            label = '미입력';
+            tone = 'slate';
+          } else if (typeof state === 'string' && !state.startsWith('disabled:') && state !== 'disabled') {
+            label = state.replace(/\\n/g, ' ');
+            tone = 'emerald';
+          }
+          return { slot, label, tone };
+        });
+
+        setRoomStatusPopup({
+          dateStr: todayStr,
+          dateLabel: now.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }),
+          teamKey,
+          teamLabel,
+          showClassroom,
+          showNangman,
+          classroomSlots,
+          classroomMemo: cMemo,
+          nangmanSlots,
+          nangmanMemo: nMemo,
+          holidayName: holidayInfo ? (holidayInfo.name || '휴무일') : ''
+        });
+      } catch (err) {
+        console.error('교육실 사용현황 로드 실패:', err);
+      }
+    };
+
+    loadRoomStatus();
+    return () => { isMounted = false; };
+  }, [isLoggedIn, selectedTeam, currentUser, dbTeachers, holidaysFullList]);
 
   useEffect(() => {
     const loadHolidays = async () => {
