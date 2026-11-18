@@ -799,14 +799,14 @@ export default function MyWeeklyScheduleApp({
               <table className="w-full table-fixed text-center border-collapse">
                 <thead>
                   <tr className="bg-[#eef2ff] border-b-2 border-gray-300">
-                    <th className="w-[66px] sm:w-[80px] py-2 md:py-3 px-1 border-r-2 border-gray-300 font-black text-gray-800 text-xs sm:text-sm md:text-base whitespace-nowrap">수업시간</th>
+                    <th className="w-[12%] py-2 md:py-3 border-r-2 border-gray-300 font-black text-gray-800 text-[clamp(1rem,2.2vw,1.3rem)]">수업시간</th>
                     {currentDays.map((day, i) => {
                       const dateStr = getLocalDateString(day);
                       const todayStr = getLocalDateString(new Date());
                       const isToday = dateStr === todayStr;
 
                       return (
-                        <th key={i} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : 'border-r-2 border-gray-300 text-blue-900 last:border-0'}`}>
+                        <th key={i} style={{ width: '17.6%' }} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : 'border-r-2 border-gray-300 text-blue-900 last:border-0'}`}>
                           {day.getMonth() + 1}/{day.getDate()} ({weekDays[i]})
                         </th>
                       );
@@ -816,7 +816,7 @@ export default function MyWeeklyScheduleApp({
                 <tbody>
                   {timeSlots.map((time, idx) => (
                     <tr key={idx} className="border-b-2 border-gray-300 last:border-0">
-                      <td className="py-2.5 md:py-4 px-0.5 border-r-2 border-gray-300 bg-[#f8fafc] font-black text-blue-800 text-[13px] sm:text-[15px] md:text-base whitespace-pre-line leading-tight">
+                      <td className="py-3 md:py-5 px-1 border-r-2 border-gray-300 bg-[#f8fafc] font-black text-blue-800 text-[clamp(0.95rem,2.1vw,1.25rem)] whitespace-pre-line leading-tight">
                         {time.replace('~', '\n~\n')}
                       </td>
                       {currentDays.map((day, i) => {
