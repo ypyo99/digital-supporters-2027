@@ -339,6 +339,7 @@ export default function MyWeeklyScheduleApp({
 
     const excludeKeywords = ["보조강사", "자체학습", "대상자발굴", "도선복지관", "소양교육", "간담회", "수업", "준비", "컴기초", "공휴일", "근로자의날", "근로자의 날", "삼일절", "3.1절", "어린이날", "현충일", "광복절", "개천절", "한글날", "석가탄신일", "부처님오신날", "성탄절", "제헌절", "추석", "설날", "신정", "대체공휴일", "지방선거일", "지방 선거일", "선거일", "안전교육", "안전교율", "직무교육", "왕초보", "왕초보컴퓨터", "왕초보검퓨터", "왕초보컴퓨터반", "왕초보검퓨터반"];
     const studentHistoryMap = {};
+    const studentExtraDatesMap = {};
     const studentOffsetsMap = {};
     const seenDateShiftMap = {}; // name -> Set of "date|shift" already processed
     
@@ -381,9 +382,10 @@ export default function MyWeeklyScheduleApp({
         
         const hasEndOrCancel = hasIndependentKeyword(personalStatus, ["취소"]);
         const hasAttendance = hasIndependentKeyword(personalStatus, ["1"]);
-        const isAbsent = (personalStatus.includes("결석") && !hasAttendance) || (personalStatus.includes("선생님휴가") && !hasAttendance) || (hasEndOrCancel && !hasAttendance);
+        const isVacationOnly = (personalStatus.includes("선생님휴가") || personalStatus.includes("휴가")) && !hasAttendance;
+        const isAbsent = (personalStatus.includes("결석") && !hasAttendance) || isVacationOnly || (hasEndOrCancel && !hasAttendance);
         // 취업팀: 결석 단독(선생님휴가/취소 제외)이면 회차 포함
-        const isOnlyAbsent = (personalStatus.includes("결석") && !hasAttendance) && !(personalStatus.includes("선생님휴가") && !hasAttendance) && !(hasEndOrCancel && !hasAttendance);
+        const isOnlyAbsent = (personalStatus.includes("결석") && !hasAttendance) && !isVacationOnly && !(hasEndOrCancel && !hasAttendance);
         
         const textToMatch = (hRow.memo || hRow.status || "");
         const memoMatches = Array.from(textToMatch.matchAll(/(\d+)\s*회차(?![가-힣a-zA-Z0-9])/g));
@@ -403,6 +405,24 @@ export default function MyWeeklyScheduleApp({
           isValidDay = true;
         } else {
           isValidDay = !isAbsent;
+        }
+
+        if (!isValidDay && (isOnlyAbsent || isVacationOnly)) {
+          if (!studentExtraDatesMap[name]) studentExtraDatesMap[name] = [];
+          const hGroup = getTeacherGroup(team, hRow.teacher);
+          const hShift = mapShiftToOfficial(team, hRow.teacher, hRow.shift);
+          const dup = studentExtraDatesMap[name].some(d => d.date === dateObj && d.shift === hShift && d.group === hGroup);
+          if (!dup) {
+            studentExtraDatesMap[name].push({
+              date: dateObj,
+              shift: hShift,
+              group: hGroup,
+              teacher: hRow.teacher,
+              isAbsent: isOnlyAbsent,
+              isVacation: isVacationOnly,
+              excludeFromCount: true
+            });
+          }
         }
 
         if (hasExplicitCount || isValidDay) {
@@ -665,7 +685,32 @@ export default function MyWeeklyScheduleApp({
                         isEnd: !!h.isEnd
                       };
                     });
-                    countsForCell.push({ name: name, count: count + applicableOffset, dates: dateObjList });
+                    const extraDatesForCell = (studentExtraDatesMap[name] || []).filter(h => {
+                      if (h.date < dateStr) return true;
+                      if (h.date === dateStr) {
+                        return team === '취업팀' ? getTLocal(h.shift) <= currentShiftT : true;
+                      }
+                      return false;
+                    }).map(h => {
+                      const dParts = h.date.split('-');
+                      const dateObj2 = new Date(parseInt(dParts[0], 10), parseInt(dParts[1], 10) - 1, parseInt(dParts[2], 10));
+                      return {
+                        date: dateObj2,
+                        shift: h.shift,
+                        group: h.group,
+                        teacher: h.teacher,
+                        isAbsent: !!h.isAbsent,
+                        isVacation: !!h.isVacation,
+                        excludeFromCount: true
+                      };
+                    });
+                    const combinedDates = [...dateObjList, ...extraDatesForCell].sort((a, b) => {
+                      const ta = a.date.getTime();
+                      const tb = b.date.getTime();
+                      if (ta !== tb) return ta - tb;
+                      return getTLocal(a.shift) - getTLocal(b.shift);
+                    });
+                    countsForCell.push({ name: name, count: count + applicableOffset, dates: combinedDates });
                 }
             });
 
@@ -934,12 +979,13 @@ export default function MyWeeklyScheduleApp({
                   const today = new Date();
                   const isToday = d.date.getFullYear() === today.getFullYear() && d.date.getMonth() === today.getMonth() && d.date.getDate() === today.getDate();
                   const isAbsentDay = !!d.isAbsent;
+                  const isVacationDay = !!d.isVacation;
                   const isEndDay = !!d.isEnd;
                   let cellClass = '';
-                  if (isEndDay) {
-                    cellClass = 'bg-gray-400 border-gray-500 shadow-md text-white';
+                  if (isEndDay || isVacationDay) {
+                    cellClass = 'bg-gray-100 border-gray-300 shadow-sm text-gray-700';
                   } else if (isAbsentDay) {
-                    cellClass = 'bg-orange-400 border-orange-500 shadow-md text-white';
+                    cellClass = 'bg-orange-50 border-orange-200 shadow-sm text-orange-900';
                   } else if (isToday) {
                     cellClass = 'bg-purple-300 border-purple-500 shadow-md text-purple-950';
                   } else {
@@ -947,12 +993,18 @@ export default function MyWeeklyScheduleApp({
                   }
                   return (
                     <div key={idx} className={`${cellClass} border rounded-lg py-2 sm:py-2.5 px-0.5 sm:px-1 text-center text-[13.5px] min-[360px]:text-[15.5px] sm:text-[18px] font-bold flex justify-center items-center whitespace-nowrap tracking-tighter sm:tracking-normal relative`}>
-                      <span className="absolute top-0.5 left-1 text-[11px] sm:text-[13px] font-black leading-none opacity-90 flex items-center gap-0.5">
-                        {d.sessionNum !== undefined ? d.sessionNum : (idx + 1)}
-                        {(isAbsentDay || isEndDay) && (
-                          <span className="text-[9px] sm:text-[10px] font-bold opacity-90 ml-0.5">
-                            {isEndDay ? '종료' : '결석'}
-                          </span>
+                      <span className="absolute top-0.5 left-1 text-[11px] sm:text-[13px] font-normal leading-none opacity-90 flex items-center gap-0.5">
+                        {d.excludeFromCount ? (
+                          <span>{isVacationDay ? '휴가' : '결석'}</span>
+                        ) : (
+                          <>
+                            {d.sessionNum !== undefined ? d.sessionNum : (idx + 1)}
+                            {(isAbsentDay || isEndDay) && (
+                              <span className="text-[9px] sm:text-[10px] font-normal opacity-90 ml-0.5">
+                                {isEndDay ? '종료' : '결석'}
+                              </span>
+                            )}
+                          </>
                         )}
                       </span>
                       {d.date.getMonth() + 1}/{d.date.getDate()} ({['일', '월', '화', '수', '목', '금', '토'][d.date.getDay()]})
