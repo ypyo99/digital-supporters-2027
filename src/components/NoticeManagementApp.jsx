@@ -660,9 +660,6 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
                 <h1 className="font-black text-xl leading-tight">성동노인종합복지관</h1>
               </div>
               <p className="text-lg font-semibold text-blue-100">디지털교육 서포터즈</p>
-              <p className="text-base opacity-95 flex items-center mt-1 font-bold">
-                <LucideCalendar className="w-4 h-4 mr-1" /> 공지사항 관리
-              </p>
             </div>
           </div>
 
@@ -789,7 +786,13 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 content-start items-start flex-1 min-w-0">
           {/* 좌측: 공지사항 목록 */}
           <section ref={listRef} className={`bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-4 transition-all duration-350 min-w-0 ${(selectedNotice || isEditing) ? 'md:col-span-5' : 'md:col-span-12'} ${isEditing ? 'hidden md:flex md:flex-col' : 'flex flex-col'}`}>
-            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 pb-2 border-b">공지사항 목록</h2>
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 pb-2 border-b flex items-center gap-2">
+              <svg className="w-5 h-5 text-rose-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m3 11 18-5v12L3 14v-3z" />
+                <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+              </svg>
+              <span>공지사항 관리</span>
+            </h2>
             {loading ? (
               <div className="flex-1 flex items-center justify-center text-gray-400 font-bold">
                 로딩 중...
