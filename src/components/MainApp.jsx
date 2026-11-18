@@ -3142,7 +3142,7 @@ export default function MainApp({
     if (!isLoginReady) return;
 
     if (currentUser) {
-      triggerHaptic(6);
+      triggerHaptic(3);
       const todayStr = getInitialWeekday();
       setDate(todayStr);
       isLoggedInRef.current = true;
