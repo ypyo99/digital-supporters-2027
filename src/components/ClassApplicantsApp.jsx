@@ -34,6 +34,22 @@ ALTER TABLE public.class_applicants ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access" ON public.class_applicants FOR SELECT USING (true);
 CREATE POLICY "Allow public all access" ON public.class_applicants FOR ALL USING (true) WITH CHECK (true);`;
 
+const formatPhoneNumber = (val) => {
+  if (!val) return '';
+  const digits = String(val).replace(/[^0-9]/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('02')) {
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 5) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 2)}-${digits.slice(2, 5)}-${digits.slice(5)}`;
+    return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6, 10)}`;
+  }
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  if (digits.length <= 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+};
+
 const EMPTY_FORM = {
   name: '',
   phone: '',
@@ -174,7 +190,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     setAssignTeacher(matchedTeacher);
     setForm({
       name: item.name || '',
-      phone: item.phone || '',
+      phone: formatPhoneNumber(item.phone || ''),
       preferred_time: item.preferred_time || '',
       assigned_group: ag,
       note: item.note || '',
@@ -197,7 +213,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     try {
       const payload = {
         name: cleanName,
-        phone: form.phone.trim(),
+        phone: formatPhoneNumber(form.phone),
         preferred_time: form.preferred_time.trim(),
         assigned_group: form.assigned_group.trim(),
         note: form.note.trim(),
@@ -258,7 +274,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
       if (!name) return;
       rows.push({
         name,
-        phone: cols[1] || '',
+        phone: formatPhoneNumber(cols[1] || ''),
         preferred_time: cols[2] || '',
         assigned_group: cols[3] || '',
         note: cols[4] || '',
@@ -344,7 +360,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
         const row = ws.addRow([
           idx + 1,
           item.name || '',
-          item.phone || '',
+          formatPhoneNumber(item.phone || ''),
           item.preferred_time || '',
           item.assigned_group || '',
           item.note || '',
@@ -602,7 +618,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                               <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap font-semibold text-slate-700 tabular-nums">
                                 {item.phone ? (
                                   <a href={`tel:${item.phone.replace(/[^0-9]/g, '')}`} className="hover:text-blue-600 hover:underline">
-                                    {item.phone}
+                                    {formatPhoneNumber(item.phone)}
                                   </a>
                                 ) : '-'}
                               </td>
@@ -684,7 +700,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                 className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 mt-1"
                               >
                                 <Phone className="w-3.5 h-3.5" />
-                                {item.phone}
+                                {formatPhoneNumber(item.phone)}
                               </a>
                             )}
                           </div>
@@ -787,7 +803,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                 <input
                   type="text"
                   value={form.phone}
-                  onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={e => setForm(prev => ({ ...prev, phone: formatPhoneNumber(e.target.value) }))}
                   placeholder="010-0000-0000"
                   className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
