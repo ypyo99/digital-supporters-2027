@@ -3162,11 +3162,16 @@ export default function MainApp({
           }}
         >
           <div className="text-center mb-4 sm:mb-6 shrink-0 mt-2 sm:mt-1">
-            <div className="flex justify-center mb-3 sm:mb-4">
-              <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-[38px] sm:h-[46px] object-contain mix-blend-multiply" onError={(e) => e.target.style.display = 'none'} />
-            </div>
-            <div className="flex items-center justify-center mb-2 sm:mb-3">
-              <h1 className="text-[28px] sm:text-[40px] md:text-[44px] leading-tight font-extrabold tracking-[-0.035em] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 bg-clip-text text-transparent">성동노인종합복지관</h1>
+            <div className="flex items-center justify-center gap-2 sm:gap-2.5 mb-2.5 sm:mb-3.5">
+              <img
+                src="/Logo_of_Seoul.jpg"
+                alt="서울시 로고"
+                className="h-[28px] sm:h-[38px] md:h-[42px] object-contain mix-blend-multiply shrink-0"
+                onError={(e) => e.target.style.display = 'none'}
+              />
+              <h1 className="text-[26px] sm:text-[38px] md:text-[42px] leading-tight font-extrabold tracking-[-0.035em] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap">
+                성동노인종합복지관
+              </h1>
             </div>
             <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white ring-1 ring-gray-200/80 shadow-sm pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-semibold text-gray-600 whitespace-nowrap tracking-tight">
               <svg

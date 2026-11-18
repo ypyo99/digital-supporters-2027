@@ -1345,7 +1345,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                   {/* 펼쳐진 수업 메모 내용 */}
                                   {!isUnassigned && att !== 'vacation' && hasMemo && isExpanded && (
-                                    <div className="mt-1.5 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-950 dark:text-white font-medium text-[15.5px] sm:text-[16.5px] leading-relaxed break-keep animate-fadeIn">
+                                    <div className="mt-1.5 p-3 rounded-xl bg-blue-50/80 dark:bg-slate-700/60 border border-blue-100 dark:border-slate-600 text-slate-950 dark:text-white font-medium text-[15.5px] sm:text-[16.5px] leading-relaxed whitespace-pre-wrap break-words animate-fadeIn">
                                       {rawStatus}
                                     </div>
                                   )}
