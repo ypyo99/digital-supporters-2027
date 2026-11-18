@@ -828,7 +828,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-bold text-slate-600">배정된 조(선생님)</label>
+                  <label className="block text-xs font-bold text-blue-600">배정된 조(선생님)</label>
                   {form.assigned_group && (
                     <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
                       배정: {form.assigned_group}
@@ -846,8 +846,8 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     }}
                     className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer ${
                       assignTeam
-                        ? 'bg-blue-50/70 border-blue-400 text-slate-900'
-                        : 'bg-white border-slate-300 text-slate-600'
+                        ? 'bg-blue-50/70 border-blue-400 text-blue-700'
+                        : 'bg-white border-slate-300 text-blue-600'
                     } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
                   >
                     <option value="">미배정 (팀 선택)</option>
@@ -873,10 +873,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                         setForm(prev => ({ ...prev, assigned_group: formatted }));
                       }
                     }}
-                    className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed ${
+                    className={`w-full px-3 py-2 border rounded-xl text-sm font-bold outline-none transition cursor-pointer disabled:bg-slate-100 disabled:text-blue-400 disabled:cursor-not-allowed ${
                       assignTeacher
-                        ? 'bg-blue-50/70 border-blue-400 text-slate-900'
-                        : 'bg-white border-slate-300 text-slate-600'
+                        ? 'bg-blue-50/70 border-blue-400 text-blue-700'
+                        : 'bg-white border-slate-300 text-blue-600'
                     } focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20`}
                   >
                     <option value="">{assignTeam ? '선생님 선택' : '팀 먼저 선택'}</option>
