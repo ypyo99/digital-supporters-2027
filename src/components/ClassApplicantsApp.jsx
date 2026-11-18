@@ -10,7 +10,6 @@ const Plus = ({ className }) => <svg className={className} xmlns="http://www.w3.
 const Edit2 = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>;
 const Trash2 = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>;
 const Phone = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>;
-const ClipboardPaste = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H9a1 1 0 0 0-1 1v2c0 .6.4 1 1 1h6c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1Z" /><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M16 4h2a2 2 0 0 1 2 2v2M11 14h10" /><path d="m17 10 4 4-4 4" /></svg>;
 const X = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>;
 const AlertCircle = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg>;
 const CheckCircle2 = ({ className }) => <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>;
@@ -83,10 +82,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     if (!assignTeam) return [];
     return allTeachers.filter(t => t.team === assignTeam);
   }, [allTeachers, assignTeam]);
-
-  // Bulk paste import modal (from Google Sheets)
-  const [showPasteModal, setShowPasteModal] = useState(false);
-  const [pasteText, setPasteText] = useState('');
 
   // Load data from Supabase
   const loadApplicants = async () => {
@@ -259,54 +254,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     }
   };
 
-  // Parse pasted tab-separated rows from Google Sheets
-  const parsedPasteRows = useMemo(() => {
-    if (!pasteText.trim()) return [];
-    const lines = pasteText.split(/\r?\n/).filter(l => l.trim() !== '');
-    const rows = [];
-    lines.forEach((line, idx) => {
-      const cols = line.split('\t').map(c => c.trim());
-      const name = cols[0] || '';
-      // Skip header row if user copied the header too
-      if (idx === 0 && (name === '성명' || name === '이름') && (cols[1] || '').includes('전화')) {
-        return;
-      }
-      if (!name) return;
-      rows.push({
-        name,
-        phone: formatPhoneNumber(cols[1] || ''),
-        preferred_time: cols[2] || '',
-        assigned_group: cols[3] || '',
-        note: cols[4] || '',
-        source: cols[5] || '',
-        is_urgent: name.includes('긴급'),
-      });
-    });
-    return rows;
-  }, [pasteText]);
-
-  const handleBulkImport = async () => {
-    if (parsedPasteRows.length === 0) {
-      alert('가져올 유효한 데이터가 없습니다.');
-      return;
-    }
-    setSaving(true);
-    try {
-      const { error } = await supabaseClient
-        .from('class_applicants')
-        .insert(parsedPasteRows);
-      if (error) throw error;
-      setShowPasteModal(false);
-      setPasteText('');
-      await loadApplicants();
-      alert(`${parsedPasteRows.length}명의 수업 희망자 데이터를 등록했습니다.`);
-    } catch (err) {
-      alert('일괄 등록 중 오류가 발생했습니다: ' + (err.message || err));
-    } finally {
-      setSaving(false);
-    }
-  };
-
   // Export to Excel
   const handleExportExcel = async () => {
     try {
@@ -448,15 +395,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
             <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 type="button"
-                onClick={() => setShowPasteModal(true)}
-                className="px-2.5 sm:px-3 py-1.5 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs touch-manipulation whitespace-nowrap"
-                title="구글 시트 또는 엑셀에서 복사한 데이터를 일괄 등록합니다"
-              >
-                <ClipboardPaste className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />
-                <span>시트 붙여넣기</span>
-              </button>
-              <button
-                type="button"
                 onClick={handleExportExcel}
                 className="px-2.5 sm:px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1 cursor-pointer shadow-sm touch-manipulation whitespace-nowrap"
                 title="현재 목록 엑셀 파일로 다운로드"
@@ -573,7 +511,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
             ) : filteredList.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400 font-semibold">
                 {applicants.length === 0
-                  ? '등록된 수업 희망자가 없습니다. 상단의 [희망자 등록] 또는 [시트 붙여넣기]를 눌러 추가해 주세요.'
+                  ? '등록된 수업 희망자가 없습니다. 상단의 [희망자 등록]을 눌러 추가해 주세요.'
                   : '검색 조건에 일치하는 수업 희망자가 없습니다.'}
               </div>
             ) : (
@@ -925,54 +863,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* 구글 시트 붙여넣기 일괄 등록 모달 */}
-      {showPasteModal && (
-        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4" onClick={() => setShowPasteModal(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden animate-fadeIn" onClick={e => e.stopPropagation()}>
-            <div className="bg-slate-800 px-5 py-3.5 flex items-center justify-between text-white">
-              <h3 className="text-lg font-bold">구글 시트 / 엑셀 붙여넣기 일괄 등록</h3>
-              <button type="button" onClick={() => setShowPasteModal(false)} className="p-1 rounded-lg hover:bg-white/20 cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-5 space-y-3">
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                구글 시트에서 <b>[성명 · 전화번호 · 희망요일 및 시간 · 배정된 조(선생님) · 비고 · 출처]</b> 열을 드래그해 복사(`Ctrl+C`)한 뒤 아래 칸에 붙여넣기(`Ctrl+V`) 해주세요.
-              </p>
-              <textarea
-                rows={7}
-                value={pasteText}
-                onChange={e => setPasteText(e.target.value)}
-                placeholder="여기에 구글 시트에서 복사한 내용을 붙여넣으세요..."
-                className="w-full p-3 border border-slate-300 rounded-xl text-xs font-mono outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              />
-              {parsedPasteRows.length > 0 && (
-                <div className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
-                  ✅ {parsedPasteRows.length}명의 데이터가 인식되었습니다. (첫 번째: {parsedPasteRows[0].name})
-                </div>
-              )}
-              <div className="flex gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setShowPasteModal(false)}
-                  className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition cursor-pointer"
-                >
-                  취소
-                </button>
-                <button
-                  type="button"
-                  disabled={saving || parsedPasteRows.length === 0}
-                  onClick={handleBulkImport}
-                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-sm transition cursor-pointer disabled:opacity-50"
-                >
-                  {saving ? '등록 중...' : `${parsedPasteRows.length}명 일괄 등록`}
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}
