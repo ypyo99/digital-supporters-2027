@@ -585,10 +585,10 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                   </button>
                                 )}
                               </td>
-                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-600 text-[13px] leading-snug break-keep">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-900 font-medium text-[13px] leading-snug break-keep">
                                 {item.note || '-'}
                               </td>
-                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-600 text-[13px] whitespace-nowrap">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 text-slate-900 font-medium text-[13px] whitespace-nowrap">
                                 {item.source || '-'}
                               </td>
                               <td className="py-1.5 px-2.5 border-b border-slate-100 text-center">
@@ -701,14 +701,14 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                           )}
                           {item.note && (
                             <div className="flex items-start gap-1.5">
-                              <span className="text-slate-400 font-bold shrink-0">비고:</span>
-                              <span className="text-slate-600 break-keep">{item.note}</span>
+                              <span className="text-slate-600 font-bold shrink-0">비고:</span>
+                              <span className="text-slate-900 font-medium break-keep">{item.note}</span>
                             </div>
                           )}
                           {item.source && (
                             <div className="flex items-start gap-1.5">
-                              <span className="text-slate-400 font-bold shrink-0">출처:</span>
-                              <span className="text-slate-600">{item.source}</span>
+                              <span className="text-slate-600 font-bold shrink-0">출처:</span>
+                              <span className="text-slate-900 font-medium">{item.source}</span>
                             </div>
                           )}
                         </div>
@@ -785,7 +785,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   value={form.source}
                   onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
                   placeholder="예: 복지관접수(11/18), 이혜섭 선생님"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
 
@@ -796,7 +796,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                   value={form.note}
                   onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))}
                   placeholder="특이사항, 요청사항, 통화 전 문자 요망 등"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none"
                 />
               </div>
 
