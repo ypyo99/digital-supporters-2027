@@ -680,7 +680,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1.5 flex-nowrap min-w-0 flex-1">
-                              <span className="text-xs font-bold text-slate-400 shrink-0">#{idx + 1}</span>
                               {isUrgent && (
                                 <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold shrink-0">
                                   긴급
