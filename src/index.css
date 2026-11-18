@@ -70,7 +70,7 @@ body {
   display: inline-block;
   width: 4px;
   height: 14px;
-  background: #2563eb;
+  background: #475569;
   border-radius: 2px;
 }
 .menu-list {
@@ -92,7 +92,7 @@ body {
   background: #ffffff;
   color: #0f172a;
   text-align: left;
-  transition: background-color .15s ease;
+  transition: background-color .15s ease, transform .1s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
@@ -107,10 +107,11 @@ body {
   background: #e2e8f0;
 }
 .menu-row:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
 }
 .menu-row:active {
-  background: #f1f5f9;
+  background: #e2e8f0;
+  transform: scale(0.992);
 }
 
 .row-chip {
@@ -121,66 +122,67 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 0.875rem;
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 .row-chip svg {
   width: 24px;
   height: 24px;
+  stroke-width: 2.3;
 }
 
-/* 항목별 특화 컬러 칩 (시각적 구분감 극대화) */
+/* 항목별 특화 컬러 칩 (시인성 강화) */
 .chip-blue {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border-color: #bfdbfe;
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
 }
 .chip-emerald {
-  background: #ecfdf5;
-  color: #047857;
-  border-color: #a7f3d0;
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #6ee7b7;
 }
 .chip-indigo {
-  background: #eef2ff;
-  color: #4338ca;
-  border-color: #c7d2fe;
+  background: #e0e7ff;
+  color: #3730a3;
+  border-color: #a5b4fc;
 }
 .chip-amber {
-  background: #fffbeb;
-  color: #b45309;
-  border-color: #fde68a;
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
 }
 .chip-teal {
-  background: #f0fdfa;
-  color: #0f766e;
-  border-color: #99f6e4;
+  background: #ccfbf1;
+  color: #115e59;
+  border-color: #5eead4;
 }
 .chip-sky {
-  background: #f0f9ff;
-  color: #0369a1;
-  border-color: #bae6fd;
+  background: #e0f2fe;
+  color: #075985;
+  border-color: #7dd3fc;
 }
 .chip-pink {
-  background: #fdf2f8;
-  color: #be185d;
-  border-color: #fbcfe8;
+  background: #fce7f3;
+  color: #9d174d;
+  border-color: #f9a8d4;
 }
 .chip-purple {
-  background: #faf5ff;
-  color: #7e22ce;
-  border-color: #e9d5ff;
+  background: #f3e8ff;
+  color: #6b21a8;
+  border-color: #d8b4fe;
 }
 .chip-rose {
-  background: #fff1f2;
-  color: #be123c;
-  border-color: #fecdd3;
+  background: #ffe4e6;
+  color: #9f1239;
+  border-color: #fda4af;
 }
 .chip-slate {
-  background: #f1f5f9;
-  color: #475569;
-  border-color: #cbd5e1;
+  background: #e2e8f0;
+  color: #334155;
+  border-color: #94a3b8;
 }
 
 .row-text,
@@ -200,22 +202,22 @@ body {
 }
 .row-desc {
   margin-top: 2px;
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 600;
   line-height: 1.35;
   letter-spacing: -0.01em;
-  color: #475569;
+  color: #374151;
   word-break: keep-all;
 }
 .row-trail {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
-  color: #64748b;
+  color: #475569;
   transition: transform .18s ease, color .18s ease;
 }
 .menu-row:hover .row-trail {
-  color: #2563eb;
+  color: #0f172a;
   transform: translateX(2px);
 }
 a.menu-row:hover .row-trail {
@@ -280,12 +282,13 @@ a.menu-row:hover .row-trail {
   touch-action: manipulation;
 }
 .menu-tile:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 4px 14px -4px rgba(37, 99, 235, 0.2);
+  border-color: #94a3b8;
+  background: #f8fafc;
+  box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.14);
 }
 .menu-tile:active {
   transform: scale(0.97);
-  background: #f8fafc;
+  background: #e2e8f0;
 }
 
 /* 관리자 메뉴 펼치기 버튼 */
@@ -309,16 +312,16 @@ a.menu-row:hover .row-trail {
   border-color: #94a3b8;
 }
 .admin-toggle .toggle-sub {
-  font-size: 13.5px;
+  font-size: 14.5px;
   font-weight: 600;
-  color: #64748b;
+  color: #4b5563;
   margin-left: 0.25rem;
 }
 .admin-toggle .toggle-caret {
   margin-left: auto;
   width: 20px;
   height: 20px;
-  color: #64748b;
+  color: #4b5563;
   transition: transform .2s ease;
   transform: rotate(90deg);
 }
@@ -326,20 +329,20 @@ a.menu-row:hover .row-trail {
   transform: rotate(-90deg);
 }
 
-/* 단계 배지 (① → ✓) */
+/* 단계 배지 (빈 원 → ✓) */
 .step-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 9999px;
   background: #ffffff;
-  color: #2563eb;
-  box-shadow: inset 0 0 0 2px #2563eb;
+  color: #475569;
+  box-shadow: inset 0 0 0 2px #94a3b8;
   font-size: 13px;
   font-weight: 800;
-  transition: background-color .2s ease, color .2s ease;
+  transition: background-color .2s ease, color .2s ease, box-shadow .2s ease;
 }
 .step-badge.is-done {
   background: #2563eb;

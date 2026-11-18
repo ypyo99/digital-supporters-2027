@@ -181,10 +181,10 @@ const MenuTile = ({ icon, label, sub, onClick, chipColor = "chip-blue" }) => (
   </button>
 );
 
-// 단계 표시 배지: 선택 전에는 번호, 선택 후에는 체크
-const StepBadge = ({ n, done }) => (
+// 단계 표시 배지: 선택 전에는 빈 원, 선택 후에만 체크
+const StepBadge = ({ done }) => (
   <span className={`step-badge${done ? ' is-done' : ''}`} aria-hidden="true">
-    {done ? <IconCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : n}
+    {done ? <IconCheck className="w-3.5 h-3.5" /> : null}
   </span>
 );
 
@@ -3238,7 +3238,7 @@ export default function MainApp({
         </div>
 
         <div
-          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-2.5 pb-8 pt-safe-4 sm:px-5 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
+          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-2.5 pb-4 pt-safe-4 sm:px-5 sm:pb-6 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
           style={{
             transform: `translateY(${pullDistance * 0.1}px)`,
             transition: pullDistance === 0 ? 'transform 0.3s ease-out' : 'none'
@@ -3335,9 +3335,9 @@ export default function MainApp({
                 {new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
               </span>
               {!weatherData ? (
-                <span className="text-[13px] sm:text-[14px] text-gray-400 font-medium">날씨 불러오는 중…</span>
+                <span className="text-[14px] sm:text-[15px] text-gray-600 font-medium">날씨 불러오는 중…</span>
               ) : weatherData.error ? (
-                <span className="text-[13px] sm:text-[14px] text-gray-400 font-medium truncate">날씨 정보 준비 중</span>
+                <span className="text-[14px] sm:text-[15px] text-gray-600 font-medium truncate">날씨 정보 준비 중</span>
               ) : (
                 <button
                   type="button"
@@ -3380,23 +3380,35 @@ export default function MainApp({
                     onTouchEnd={(e) => e.stopPropagation()}
                   >
                     {todayNotices.map((notice, idx) => {
-                      const isToday = notice.start_date && notice.start_date.substring(0, 10) === getLocalDateString(new Date());
+                      const todayStr = getLocalDateString(new Date());
+                      const startStr = notice.start_date ? notice.start_date.substring(0, 10) : '';
+                      const isToday = startStr === todayStr;
+                      const diffDays = startStr ? Math.floor((new Date(todayStr) - new Date(startStr)) / (1000 * 60 * 60 * 24)) : 999;
+                      const isNewNotice = diffDays >= 0 && diffDays <= 2;
                       const textClass = isToday
                         ? (notice.is_top ? 'shine-text-top' : 'shine-text-normal')
                         : (notice.is_top ? 'text-rose-800' : 'text-slate-800');
+                      const rawTitle = notice.title || '';
+                      const datePrefixMatch = rawTitle.match(/^(\d{1,2}\/\d{1,2}(?:\([^)]+\))?(?:\s*~\s*\d{1,2}\/\d{1,2}(?:\([^)]+\))?)?)(.*)$/);
                       return (
                         <p
                           key={idx}
-                          className={`${isToday || notice.is_top ? 'font-bold' : 'font-semibold'} text-[14.5px] min-[380px]:text-[15.5px] sm:text-[17px] leading-snug tracking-tight whitespace-nowrap overflow-x-auto scrollbar-hide w-full block cursor-pointer hover:underline hover:opacity-80 active:scale-[0.99] transition-all`}
+                          className={`${isToday || notice.is_top ? 'font-bold' : 'font-medium'} text-[15px] min-[380px]:text-[16px] sm:text-[17px] leading-snug tracking-tight whitespace-nowrap overflow-x-auto scrollbar-hide w-full block cursor-pointer hover:underline hover:opacity-80 active:scale-[0.99] transition-all`}
                           onClick={async (e) => {
                             e.stopPropagation();
                             const { data } = await supabaseClient.from('notices').select('*').eq('id', notice.id).single();
                             onNavigateToNoticeManagement(data || notice);
                           }}
                         >
-                          {isToday && <span className="inline-block align-middle mr-1.5 px-1.5 py-px rounded-md bg-rose-500 text-white text-[11px] sm:text-[12px] font-bold tracking-normal">NEW</span>}
+                          {isNewNotice && <span className="inline-block align-middle mr-1.5 px-1.5 py-px rounded-md bg-rose-500 text-white text-[11px] sm:text-[12px] font-bold tracking-normal">NEW</span>}
                           <span className={textClass}>
-                            {notice.is_top ? '📌 ' : '· '}{notice.title}
+                            {notice.is_top ? '📌 ' : '· '}
+                            {datePrefixMatch && !isToday ? (
+                              <>
+                                <strong className="font-extrabold text-slate-950">{datePrefixMatch[1]}</strong>
+                                {datePrefixMatch[2]}
+                              </>
+                            ) : rawTitle}
                           </span>
                         </p>
                       );
@@ -3409,11 +3421,11 @@ export default function MainApp({
             </div>
 
             {/* 팀/선생님 선택 및 일지 작성하기 박스 */}
-            <div className="bg-white border-2 border-blue-500 rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-[0_4px_16px_-4px_rgba(59,130,246,0.14),0_2px_6px_-1px_rgba(0,0,0,0.04)] flex flex-col gap-3 sm:gap-3.5 w-full">
+            <div className="bg-white border border-slate-300 rounded-[1.25rem] sm:rounded-[1.5rem] p-3.5 sm:p-5 shadow-[0_4px_16px_-4px_rgba(15,23,42,0.08),0_2px_6px_-1px_rgba(0,0,0,0.04)] flex flex-col gap-3 sm:gap-3.5 w-full">
               <div className={`grid ${selectedTeam ? 'grid-cols-2' : 'grid-cols-1'} gap-2.5 sm:gap-3.5 w-full`}>
                 <div className="w-full min-w-0">
                   <label className="flex items-center gap-1.5 sm:gap-2 text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[15.5px] sm:text-xl tracking-tight whitespace-nowrap"><StepBadge n={1} done={!!selectedTeam} />팀 선택</label>
-                  <select className={`w-full select-refined h-[50px] sm:h-[58px] md:h-[62px] px-3 sm:px-4 border-2 rounded-2xl text-[17px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
+                  <select className={`w-full select-refined h-[50px] sm:h-[58px] md:h-[62px] px-3 sm:px-4 border-2 rounded-2xl text-[17px] sm:text-2xl tracking-tight ${selectedTeam ? 'bg-slate-50 border-slate-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer`} value={selectedTeam} onChange={(e) => {
                     setSelectedTeam(e.target.value);
                     setCurrentUser("");
                   }}>
@@ -3425,9 +3437,9 @@ export default function MainApp({
                   <div className="w-full min-w-0">
                     <label className="text-slate-800 font-extrabold mb-1.5 sm:mb-2 text-[15.5px] sm:text-xl tracking-tight flex justify-between items-end gap-1">
                       <span className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"><StepBadge n={2} done={!!currentUser} />선생님 선택</span>
-                      {isFetchingTeachers && <span className="text-[12px] sm:text-base text-blue-600 font-bold flex items-center mb-0.5 animate-pulse whitespace-nowrap"><Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-0.5 sm:mr-1 animate-spin" />불러오는 중</span>}
+                      {isFetchingTeachers && <span className="text-[12px] sm:text-base text-slate-600 font-bold flex items-center mb-0.5 animate-pulse whitespace-nowrap"><Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-0.5 sm:mr-1 animate-spin" />불러오는 중</span>}
                     </label>
-                    <select className={`w-full select-refined h-[50px] sm:h-[58px] md:h-[62px] px-3 sm:px-4 border-2 rounded-2xl text-[17px] sm:text-2xl tracking-tight ${currentUser ? 'bg-blue-50/80 border-blue-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
+                    <select className={`w-full select-refined h-[50px] sm:h-[58px] md:h-[62px] px-3 sm:px-4 border-2 rounded-2xl text-[17px] sm:text-2xl tracking-tight ${currentUser ? 'bg-slate-50 border-slate-400 text-slate-900 font-extrabold' : 'bg-white border-slate-300 text-slate-600 font-bold'} outline-none shadow-sm transition-colors focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15 cursor-pointer disabled:opacity-60`} value={currentUser} onChange={(e) => setCurrentUser(e.target.value)} disabled={isFetchingTeachers}>
                       <option value="">선생님 선택</option>
                       {teachers.map(name => <option key={name} value={name}>{name.replace(/\n/g, ' ')}</option>)}
                     </select>
@@ -3449,7 +3461,7 @@ export default function MainApp({
             </div>
           </div>
 
-          <div className="menu-backdrop flex-1 flex flex-col min-h-[180px] mt-8 sm:mt-10">
+          <div className="menu-backdrop flex-1 flex flex-col min-h-[180px] mt-5 sm:mt-6">
             <MenuGroup title="일정">
               <MenuRow
                 disabled={!selectedTeam || !currentUser}
@@ -3584,7 +3596,7 @@ export default function MainApp({
               )}
             </section>
 
-            <div className="mt-8 sm:mt-10 text-center text-[10px] text-gray-300/80 font-medium tracking-wider select-none" aria-hidden="true">
+            <div className="mt-4 sm:mt-5 text-center text-[12px] text-gray-600 font-semibold tracking-wider select-none" aria-hidden="true">
               v261117-rebuild
             </div>
           </div>
