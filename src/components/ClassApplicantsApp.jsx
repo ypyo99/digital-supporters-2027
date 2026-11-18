@@ -286,7 +286,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
       metaCell.alignment = { horizontal: 'right', vertical: 'middle' };
       ws.getRow(2).height = 20;
 
-      const headers = ['연번', '성명', '전화번호', '희망요일 및 시간', '배정된 조(선생님)', '비고', '출처'];
+      const headers = ['연번', '성명', '전화번호', '희망요일 및 시간', '비고', '출처', '배정된 조(선생님)'];
       ws.addRow(headers);
       const headerRow = ws.getRow(3);
       headerRow.height = 26;
@@ -309,9 +309,9 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
           item.name || '',
           formatPhoneNumber(item.phone || ''),
           item.preferred_time || '',
-          item.assigned_group || '',
           item.note || '',
           item.source || '',
+          item.assigned_group || '',
         ]);
         const isLastRow = idx === totalRows - 1;
         const isEvenRow = idx % 2 === 1;
@@ -325,7 +325,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
             color: { argb: (colNum === 2 && isUrgent) ? 'FFDC2626' : (colNum === 2 ? 'FF1D4ED8' : 'FF1E293B') },
           };
           cell.alignment = {
-            horizontal: (colNum === 4 || colNum === 6) ? 'left' : 'center',
+            horizontal: (colNum === 4 || colNum === 5) ? 'left' : 'center',
             vertical: 'middle',
             wrapText: true,
           };
@@ -346,9 +346,9 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
         { width: 22 }, // 성명
         { width: 16 }, // 전화번호
         { width: 24 }, // 희망요일 및 시간
-        { width: 18 }, // 배정된 조(선생님)
         { width: 32 }, // 비고
         { width: 18 }, // 출처
+        { width: 18 }, // 배정된 조(선생님)
       ];
 
       ws.pageSetup.printArea = `A1:G${3 + totalRows}`;
