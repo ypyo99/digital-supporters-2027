@@ -3213,18 +3213,27 @@ export default function MainApp({
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <defs>
-                  <linearGradient id="bulbGrad" x1="0" y1="0" x2="1" y2="1">
+                  <linearGradient id="phoneGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#2563EB" />
+                    <stop offset="100%" stopColor="#7C3AED" />
+                  </linearGradient>
+                  <linearGradient id="aiSparkleGrad" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#F0476B" />
-                    <stop offset="1" stopColor="#5B4BF0" />
+                    <stop offset="100%" stopColor="#6366F1" />
                   </linearGradient>
                 </defs>
-                <path d="M64 14 a36 36 0 0 0 -22 64.5 c4 3.2 6 7 6 11.5 v4 h32 v-4 c0 -4.5 2 -8.3 6 -11.5 A36 36 0 0 0 64 14 z" fill="url(#bulbGrad)" />
-                <rect x="48" y="99" width="32" height="7" rx="3.5" fill="#5B4BF0" />
-                <rect x="53" y="109" width="22" height="7" rx="3.5" fill="#5B4BF0" />
-                <path d="M44 50 a28 28 0 0 1 40 0" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" />
-                <path d="M52 59 a16 16 0 0 1 24 0" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" />
-                <circle cx="64" cy="69" r="5" fill="#fff" />
-                <path d="M108 10 C109.3 18 111 19.7 119 21 C111 22.3 109.3 24 108 32 C106.7 24 105 22.3 97 21 C105 19.7 106.7 18 108 10 Z" fill="#F7B733" />
+                {/* 스마트폰 본체 */}
+                <rect x="28" y="14" width="68" height="102" rx="16" fill="url(#phoneGrad)" />
+                {/* 상단 스피커 / 하단 홈 바 */}
+                <rect x="52" y="18.5" width="20" height="3.5" rx="1.75" fill="#DBEAFE" opacity="0.9" />
+                <rect x="51" y="106" width="22" height="4" rx="2" fill="#DBEAFE" opacity="0.85" />
+                {/* 스마트폰 화면 */}
+                <rect x="35" y="25" width="54" height="76" rx="9" fill="#FFFFFF" />
+                {/* 화면 내 AI 스파클 */}
+                <path d="M62 43 C64.2 57.5 67.5 60.8 82 63 C67.5 65.2 64.2 68.5 62 83 C59.8 68.5 56.5 65.2 42 63 C56.5 60.8 59.8 57.5 62 43 Z" fill="url(#aiSparkleGrad)" />
+                <circle cx="47" cy="41" r="4" fill="#F59E0B" />
+                {/* 우측 상단 AI 별빛 */}
+                <path d="M104 8 C105.6 18 108 20.4 118 22 C108 23.6 105.6 26 104 36 C102.4 26 100 23.6 90 22 C100 20.4 102.4 18 104 8 Z" fill="#F59E0B" />
               </svg>
               <span>2027 디지털교육 서포터즈 · 업무일지</span>
             </h2>
