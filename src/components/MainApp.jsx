@@ -3156,7 +3156,7 @@ export default function MainApp({
         </div>
 
         <div
-          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-5 pb-8 pt-safe-4 sm:px-9 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
+          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-2.5 pb-8 pt-safe-4 sm:px-5 sm:pb-10 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
           style={{
             transform: `translateY(${pullDistance * 0.1}px)`,
             transition: pullDistance === 0 ? 'transform 0.3s ease-out' : 'none'
