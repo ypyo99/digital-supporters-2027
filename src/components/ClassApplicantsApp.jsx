@@ -794,6 +794,39 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
               </div>
 
               <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">희망요일 및 시간</label>
+                <input
+                  type="text"
+                  value={form.preferred_time}
+                  onChange={e => setForm(prev => ({ ...prev, preferred_time: e.target.value }))}
+                  placeholder="예: 화 13:00, 목 오후 1시 이후 가능"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">출처</label>
+                <input
+                  type="text"
+                  value={form.source}
+                  onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
+                  placeholder="예: 복지관접수(11/18), 이혜섭 선생님"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">비고</label>
+                <textarea
+                  rows={3}
+                  value={form.note}
+                  onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))}
+                  placeholder="특이사항, 요청사항, 통화 전 문자 요망 등"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none"
+                />
+              </div>
+
+              <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-xs font-bold text-slate-600">배정된 조(선생님)</label>
                   {form.assigned_group && (
@@ -857,39 +890,6 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     })}
                   </select>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">희망요일 및 시간</label>
-                <input
-                  type="text"
-                  value={form.preferred_time}
-                  onChange={e => setForm(prev => ({ ...prev, preferred_time: e.target.value }))}
-                  placeholder="예: 화 13:00, 목 오후 1시 이후 가능"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">출처</label>
-                <input
-                  type="text"
-                  value={form.source}
-                  onChange={e => setForm(prev => ({ ...prev, source: e.target.value }))}
-                  placeholder="예: 복지관접수(11/18), 이혜섭 선생님"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">비고</label>
-                <textarea
-                  rows={3}
-                  value={form.note}
-                  onChange={e => setForm(prev => ({ ...prev, note: e.target.value }))}
-                  placeholder="특이사항, 요청사항, 통화 전 문자 요망 등"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none"
-                />
               </div>
 
               <div className="flex gap-2 pt-2">
