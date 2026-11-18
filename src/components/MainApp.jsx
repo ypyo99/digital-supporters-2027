@@ -3226,7 +3226,7 @@ export default function MainApp({
                 <circle cx="64" cy="69" r="5" fill="#fff" />
                 <path d="M108 10 C109.3 18 111 19.7 119 21 C111 22.3 109.3 24 108 32 C106.7 24 105 22.3 97 21 C105 19.7 106.7 18 108 10 Z" fill="#F7B733" />
               </svg>
-              <span className="font-bold text-gray-800">2027 디지털교육 서포터즈</span> <span className="font-bold text-gray-400">·</span> <span className="font-bold text-gray-800">업무일지</span>
+              <span>2027 디지털교육 서포터즈 · 업무일지</span>
             </h2>
           </div>
 
