@@ -17,12 +17,20 @@ import { Home, Clock, User, IconSearchUser } from './Icons';
 
 export default function StudentSearchApp({ onNavigateBack }) {
   const [allRecords, setAllRecords] = useState([]);
-  const [teamFilter, setTeamFilter] = useState("전체");
+  const [teamFilter, setTeamFilter] = useState(() => getSavedItem('sungdong_search_team', '') || getSavedItem('sungdong_team', '') || "전체");
   const [selectedName, setSelectedName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState("");
   const [teacherListByTeam, setTeacherListByTeam] = useState({});
-  const [teacherFilter, setTeacherFilter] = useState("전체");
+  const [teacherFilter, setTeacherFilter] = useState(() => (getSavedItem('sungdong_search_teacher', '') || getSavedItem('sungdong_teacher', '') || "전체").replace(/\n/g, ' ').trim());
+
+  useEffect(() => {
+    setSavedItem('sungdong_search_team', teamFilter);
+  }, [teamFilter]);
+
+  useEffect(() => {
+    setSavedItem('sungdong_search_teacher', teacherFilter);
+  }, [teacherFilter]);
   const [searchTerm, setSearchTerm] = useState("");
   const [recentSearches, setRecentSearches] = useState(() => {
     try {
