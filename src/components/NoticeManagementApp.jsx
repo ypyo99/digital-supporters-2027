@@ -166,10 +166,8 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
       lastScrolledTriggerRef.current = scrollTrigger;
       const rafId = requestAnimationFrame(() => {
         if (detailsRef.current) {
-          const header = document.querySelector('header');
-          const headerOffset = header ? header.offsetHeight : 116;
           const elementPosition = detailsRef.current.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.scrollY - headerOffset - 2;
+          const offsetPosition = Math.max(0, elementPosition + window.scrollY - 8);
 
           window.scrollTo({
             top: offsetPosition,
