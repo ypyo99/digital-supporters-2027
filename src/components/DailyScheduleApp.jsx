@@ -1057,7 +1057,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                     setSelectedTeam(team);
                     if (onTeamChange) onTeamChange(team);
                   }}
-                  className={`py-2 text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation cursor-pointer ${selectedTeam === team
+                  className={`h-10 sm:h-11 flex items-center justify-center text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation cursor-pointer ${selectedTeam === team
                       ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
                       : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                     }`}
@@ -1113,7 +1113,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
             <div className="space-y-2.5 animate-fadeIn">
 
               {/* 1. 슬림 1줄 출석 현황 요약 바 */}
-              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 shadow-2xs flex items-center justify-between gap-2 flex-wrap">
+              <div className="min-h-[40px] sm:min-h-[44px] bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-800 rounded-xl px-3 py-1 sm:py-1.5 shadow-2xs flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-2 sm:gap-3 text-[12.5px] sm:text-[13.5px] font-bold flex-wrap">
                   <span className="text-emerald-700 dark:text-emerald-400">출석 <strong className="font-black">{isLoading ? '-' : stats.attendedCount}</strong></span>
                   <span className="text-slate-300 dark:text-slate-600">·</span>
@@ -1123,7 +1123,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   <span className="text-slate-300 dark:text-slate-600">·</span>
                   <span className="text-slate-600 dark:text-slate-300">확인 전 <strong className="font-black">{isLoading ? '-' : stats.unconfirmedCount}</strong></span>
                 </div>
-                <span className="text-[12.5px] sm:text-[13.5px] font-extrabold text-blue-600 dark:text-blue-400 shrink-0">
+                <span className="text-[12.5px] sm:text-[13.5px] font-extrabold text-blue-700 dark:text-blue-400 shrink-0">
                   {isLoading ? '- / -명' : `${stats.checkedCount} / ${stats.totalStudents}명`}
                 </span>
               </div>
