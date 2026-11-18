@@ -622,7 +622,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                                   </a>
                                 ) : '-'}
                               </td>
-                              <td className="py-1.5 px-2.5 border-b border-slate-100 font-medium text-slate-800 break-keep">
+                              <td className="py-1.5 px-2.5 border-b border-slate-100 bg-amber-50/50 font-bold text-slate-900 break-keep">
                                 {item.preferred_time || '-'}
                               </td>
                               <td className="py-1.5 px-2.5 border-b border-slate-100 whitespace-nowrap">
@@ -736,9 +736,9 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
 
                         <div className="text-[13.5px] space-y-1 pt-1 border-t border-slate-100">
                           {item.preferred_time && (
-                            <div className="flex items-start gap-1.5">
-                              <span className="text-slate-400 font-bold shrink-0">희망:</span>
-                              <span className="text-slate-800 font-semibold">{item.preferred_time}</span>
+                            <div className="flex items-start gap-1.5 bg-amber-50 border border-amber-200/80 rounded-lg px-2.5 py-1">
+                              <span className="text-amber-700 font-bold shrink-0">희망:</span>
+                              <span className="text-slate-900 font-extrabold">{item.preferred_time}</span>
                             </div>
                           )}
                           {item.note && (
