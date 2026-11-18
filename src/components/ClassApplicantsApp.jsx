@@ -663,7 +663,8 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                     return (
                       <div
                         key={item.id}
-                        className={`bg-white rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 ${isUrgent ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'}`}
+                        onClick={() => handleOpenEdit(item)}
+                        className={`bg-white rounded-2xl border-[1.5px] p-3.5 shadow-xs space-y-2 cursor-pointer transition active:scale-[0.995] hover:border-blue-400 ${isUrgent ? 'border-rose-400 bg-rose-50/20' : 'border-slate-300'}`}
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0 flex-1">
@@ -676,7 +677,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                               )}
                               <button
                                 type="button"
-                                onClick={() => handleOpenEdit(item)}
+                                onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
                                 title="클릭하여 수정"
                                 className={`font-extrabold text-[16px] text-left cursor-pointer hover:underline active:opacity-70 ${isUrgent ? 'text-rose-700' : 'text-slate-900 hover:text-blue-600'}`}
                               >
@@ -686,6 +687,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                             {item.phone && (
                               <a
                                 href={`tel:${item.phone.replace(/[^0-9]/g, '')}`}
+                                onClick={e => e.stopPropagation()}
                                 className="inline-flex items-center gap-1 text-[13.5px] font-bold text-blue-600 mt-1"
                               >
                                 <Phone className="w-3.5 h-3.5" />
@@ -698,7 +700,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                             {isAssigned ? (
                               <button
                                 type="button"
-                                onClick={() => handleOpenEdit(item)}
+                                onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
                                 title="클릭하여 수정"
                                 className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs cursor-pointer hover:bg-emerald-100 active:scale-95 transition"
                               >
@@ -707,7 +709,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                             ) : (
                               <button
                                 type="button"
-                                onClick={() => handleOpenEdit(item)}
+                                onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
                                 title="클릭하여 수정"
                                 className="px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 font-bold text-xs cursor-pointer hover:bg-amber-100 active:scale-95 transition"
                               >
@@ -716,7 +718,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                             )}
                             <button
                               type="button"
-                              onClick={() => handleOpenEdit(item)}
+                              onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
                               className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50"
                               title="수정"
                             >
@@ -724,7 +726,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleDelete(item)}
+                              onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
                               className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                               title="삭제"
                             >
