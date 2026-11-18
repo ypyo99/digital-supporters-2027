@@ -409,7 +409,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
     <div className="min-h-[100dvh] flex flex-col bg-[#f4f6f9] font-sans text-slate-800">
       {/* 상단 헤더 */}
       <header className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-4 md:px-6 pb-4 pt-safe-4 flex justify-between items-center">
+        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pb-4 pt-safe-4 flex justify-between items-center">
           <div>
             <div className="flex items-center mb-1">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -428,7 +428,7 @@ export default function ClassApplicantsApp({ onNavigateBack }) {
       </header>
 
       {/* 본문 영역 */}
-      <main className="flex-1 max-w-5xl lg:max-w-[1536px] w-full mx-auto px-4 md:px-6 py-3 md:py-5 space-y-3 pb-12">
+      <main className="flex-1 max-w-5xl lg:max-w-[1536px] w-full mx-auto px-2.5 sm:px-5 py-3 md:py-5 space-y-3 pb-12">
         {/* 섹션 타이틀 + 우측 액션 버튼 */}
         <div className="px-1 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight whitespace-nowrap">
