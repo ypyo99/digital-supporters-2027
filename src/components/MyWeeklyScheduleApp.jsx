@@ -795,18 +795,18 @@ export default function MyWeeklyScheduleApp({
           </div>
 
           <div className="flex-1 overflow-x-auto overflow-y-auto bg-gray-50/50 p-2 sm:p-4">
-            <div className="min-w-[650px] w-full bg-white rounded-xl shadow-sm border-2 border-gray-300 overflow-hidden mx-auto">
+            <div className="min-w-[740px] w-full bg-white rounded-xl shadow-sm border-2 border-gray-300 overflow-hidden mx-auto">
               <table className="w-full table-fixed text-center border-collapse">
                 <thead>
                   <tr className="bg-[#eef2ff] border-b-2 border-gray-300">
-                    <th className="w-[12%] py-2 md:py-3 border-r-2 border-gray-300 font-black text-gray-800 text-[clamp(1rem,2.2vw,1.3rem)]">수업시간</th>
+                    <th className="w-[66px] sm:w-[80px] py-2 md:py-3 px-1 border-r-2 border-gray-300 font-black text-gray-800 text-xs sm:text-sm md:text-base whitespace-nowrap">수업시간</th>
                     {currentDays.map((day, i) => {
                       const dateStr = getLocalDateString(day);
                       const todayStr = getLocalDateString(new Date());
                       const isToday = dateStr === todayStr;
 
                       return (
-                        <th key={i} style={{ width: '17.6%' }} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : 'border-r-2 border-gray-300 text-blue-900 last:border-0'}`}>
+                        <th key={i} className={`py-2 md:py-3 font-black text-[clamp(1rem,2.2vw,1.3rem)] tracking-tight transition-all ${isToday ? 'border-l-4 border-r-4 border-t-4 border-blue-600 text-blue-700 bg-blue-50' : 'border-r-2 border-gray-300 text-blue-900 last:border-0'}`}>
                           {day.getMonth() + 1}/{day.getDate()} ({weekDays[i]})
                         </th>
                       );
@@ -816,7 +816,7 @@ export default function MyWeeklyScheduleApp({
                 <tbody>
                   {timeSlots.map((time, idx) => (
                     <tr key={idx} className="border-b-2 border-gray-300 last:border-0">
-                      <td className="py-3 md:py-5 px-1 border-r-2 border-gray-300 bg-[#f8fafc] font-black text-blue-800 text-[clamp(0.95rem,2.1vw,1.25rem)] whitespace-pre-line leading-tight">
+                      <td className="py-2.5 md:py-4 px-0.5 border-r-2 border-gray-300 bg-[#f8fafc] font-black text-blue-800 text-[13px] sm:text-[15px] md:text-base whitespace-pre-line leading-tight">
                         {time.replace('~', '\n~\n')}
                       </td>
                       {currentDays.map((day, i) => {
@@ -858,7 +858,7 @@ export default function MyWeeklyScheduleApp({
 
                         return (
                           <td key={i} className={`${cellBgClass} p-0 align-top transition-all overflow-hidden h-full hover:brightness-95 ${todayBorderClass}`}>
-                            <div className={`flex flex-col gap-1 justify-start items-center h-full min-h-[110px] overflow-hidden w-full max-w-full ${isHoliday ? 'p-3 bg-red-300 text-white' : 'p-3'}`}>
+                            <div className={`flex flex-col gap-1 justify-start items-center h-full min-h-[110px] overflow-hidden w-full max-w-full ${isHoliday ? 'px-2 py-2.5 sm:p-3 bg-red-300 text-white' : 'px-1.5 py-2.5 sm:p-3'}`}>
                               {(showTags || showSessions) && (
                                 <div className="flex flex-wrap gap-1 justify-center items-center w-full mb-1">
                                   {showTags && parsedStatus.tags.map((tag, tIdx) => {
@@ -868,7 +868,7 @@ export default function MyWeeklyScheduleApp({
                                     else if (tag.includes('휴가')) tagStyle = "bg-gray-200 text-gray-700 border-gray-400";
                                     else if (tag.includes('출석') || /^\d+/.test(tag)) tagStyle = "bg-blue-500 text-white border-blue-600 shadow-inner";
                                     return (
-                                      <span key={`t${tIdx}`} className={`px-2 py-0.5 rounded-md text-[clamp(0.75rem,1.5vw,1rem)] font-extrabold border shadow-sm leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full ${tagStyle}`}>
+                                      <span key={`t${tIdx}`} className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[12px] sm:text-[13px] font-extrabold border shadow-sm leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-full ${tagStyle}`}>
                                         {tag}
                                       </span>
                                     );
@@ -879,7 +879,7 @@ export default function MyWeeklyScheduleApp({
                                       type="button"
                                       onClick={() => setSelectedStudentDates(sc)}
                                       title="출석 일자 보기"
-                                      className={`px-2 py-0.5 rounded-md text-[clamp(0.75rem,1.5vw,1rem)] leading-tight whitespace-nowrap shadow-2xs cursor-pointer hover:brightness-95 active:scale-95 transition-all ${getSessionBadgeStyle(sc.count)}`}
+                                      className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[12px] sm:text-[13px] leading-tight whitespace-nowrap shadow-2xs cursor-pointer hover:brightness-95 active:scale-95 transition-all ${getSessionBadgeStyle(sc.count)}`}
                                     >
                                       {sc.count}회차
                                     </button>
