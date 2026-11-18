@@ -3205,7 +3205,7 @@ export default function MainApp({
                 성동노인종합복지관
               </h1>
             </div>
-            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white ring-1 ring-gray-200/80 shadow-sm pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-semibold text-gray-600 whitespace-nowrap tracking-tight">
+            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white ring-1 ring-gray-200/80 shadow-sm pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-bold text-gray-800 whitespace-nowrap tracking-tight">
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-transform duration-300 hover:scale-110"
                 viewBox="0 0 128 128"
@@ -3226,7 +3226,7 @@ export default function MainApp({
                 <circle cx="64" cy="69" r="5" fill="#fff" />
                 <path d="M108 10 C109.3 18 111 19.7 119 21 C111 22.3 109.3 24 108 32 C106.7 24 105 22.3 97 21 C105 19.7 106.7 18 108 10 Z" fill="#F7B733" />
               </svg>
-              <span className="font-bold text-gray-800">2027 디지털교육 서포터즈</span> <span className="text-gray-300">·</span> <span>업무일지</span>
+              <span className="font-bold text-gray-800">2027 디지털교육 서포터즈</span> <span className="font-bold text-gray-400">·</span> <span className="font-bold text-gray-800">업무일지</span>
             </h2>
           </div>
 
