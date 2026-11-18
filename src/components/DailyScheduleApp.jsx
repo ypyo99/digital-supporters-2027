@@ -833,7 +833,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
       if (vacationCount > 0) {
         const vacTeachers = Array.from(new Set(stats.vacationDetails.map(d => d.teacher))).filter(Boolean);
         const vacTeacherStr = vacTeachers.length > 0 ? `${vacTeachers.join(', ')} 선생님` : '';
-        parts.push(vacTeacherStr ? `휴가 ${vacationCount}건은 ${vacTeacherStr} 조 수업` : `휴가 ${vacationCount}건은 선생님 휴가 일정`);
+        parts.push(vacTeacherStr ? `휴가 ${vacationCount}건은 ${vacTeacherStr} 수업` : `휴가 ${vacationCount}건은 선생님 휴가 일정`);
       }
 
       if (parts.length === 1) {
