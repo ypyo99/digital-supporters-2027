@@ -25,7 +25,12 @@ const FloatingScrollButton = ({ listRef, show }) => {
     <div
       className="fixed top-[170px] right-5 sm:right-8 z-[60] flex flex-col items-center animate-bounce cursor-pointer touch-manipulation"
       onClick={() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (listRef.current) {
+          const top = Math.max(0, listRef.current.getBoundingClientRect().top + window.scrollY - 8);
+          window.scrollTo({ top, behavior: 'instant' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
       }}
       title="공지사항 목록 보기"
     >
