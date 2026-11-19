@@ -911,7 +911,7 @@ export default function MainApp({
       scheduleType = 'morning';
     } else if (selectedTeam === '3팀') {
       showClassroom = true;
-      showNangman = true;
+      showNangman = false;
       teamKey = '3팀';
       teamLabel = '3팀 (오후)';
       scheduleType = 'afternoon';
@@ -919,7 +919,7 @@ export default function MainApp({
       const group = (currentUser ? getTeacherGroup('취업팀', currentUser, dbTeachers) : '') || '';
       if (group.includes('오후')) {
         showClassroom = true;
-        showNangman = true;
+        showNangman = false;
         teamKey = '취업팀-오후';
         teamLabel = '취업팀 오후조';
         scheduleType = 'afternoon';
