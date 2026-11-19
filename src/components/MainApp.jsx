@@ -895,6 +895,12 @@ export default function MainApp({
       return;
     }
 
+    // 취업팀은 선생님 이름까지 선택해야 팝업 표시
+    if (selectedTeam === '취업팀' && !currentUser) {
+      setRoomStatusPopup(null);
+      return;
+    }
+
     const teamUserKey = `${selectedTeam}_${currentUser || ''}`;
     if (roomPopupDismissedRef.current === teamUserKey) {
       return;
@@ -930,8 +936,8 @@ export default function MainApp({
       } else {
         showClassroom = true;
         showNangman = true;
-        teamKey = currentUser ? '취업팀-오전' : '취업팀';
-        teamLabel = currentUser ? '취업팀 오전조' : '취업팀';
+        teamKey = '취업팀-오전';
+        teamLabel = '취업팀 오전조';
         scheduleType = 'morning';
       }
     }
