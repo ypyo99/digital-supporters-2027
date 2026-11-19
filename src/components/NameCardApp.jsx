@@ -687,43 +687,6 @@ export default function NameCardApp({ onNavigateBack }) {
             </div>
           </div>
 
-          {/* 저장 경로 안내 및 폴더 연결 바 */}
-          <div className="mt-3 p-2.5 sm:px-3.5 rounded-xl bg-slate-50 border border-slate-300 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-1.5 min-w-0 text-slate-700 font-semibold flex-wrap">
-              <span className="shrink-0">📁 저장 위치:</span>
-              <code className="text-[11.5px] font-bold text-[#13386E] bg-white px-2 py-0.5 rounded border border-slate-200 truncate">
-                {TARGET_NAMECARD_DIR}
-              </code>
-              <a
-                href={GOOGLE_DRIVE_FOLDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2 py-0.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-[11px] shrink-0 transition"
-              >
-                구글 드라이브 폴더 열기 ↗
-              </a>
-              {localApiAvailable ? (
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-extrabold text-[11px] shrink-0">
-                  자동 저장 연결됨
-                </span>
-              ) : dirHandle ? (
-                <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-extrabold text-[11px] shrink-0">
-                  폴더 연결됨 ({dirHandle.name})
-                </span>
-              ) : null}
-            </div>
-
-            {!localApiAvailable && typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function' && (
-              <button
-                type="button"
-                onClick={handleConnectFolder}
-                className="px-2.5 py-1 rounded-lg bg-white hover:bg-blue-50 text-[#13386E] border border-slate-300 font-bold text-xs transition cursor-pointer shrink-0"
-              >
-                {dirHandle ? '저장 폴더 변경' : '저장 폴더 연결'}
-              </button>
-            )}
-          </div>
-
           {saveFeedback && (
             <div className={`mt-2.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border ${
               saveFeedback.type === 'error'
