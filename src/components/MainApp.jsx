@@ -316,8 +316,12 @@ export default function MainApp({
   const [roomStatusPopup, setRoomStatusPopup] = useState(null);
   const roomPopupDismissedRef = useRef(null);
 
-  const closeRoomStatusPopup = () => {
+  const closeRoomStatusPopup = (hideToday = false) => {
     roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
+    if (hideToday && roomStatusPopup) {
+      const hideKey = `sungdong_room_popup_hide_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`;
+      setSavedItem(hideKey, 'true');
+    }
     setRoomStatusPopup(null);
   };
 
@@ -933,6 +937,10 @@ export default function MainApp({
     }
 
     const todayStr = getLocalDateString(now);
+    const hideKey = `sungdong_room_popup_hide_${todayStr}_${teamKey}`;
+    if (getSavedItem(hideKey, '') === 'true') {
+      return;
+    }
     let isMounted = true;
     const loadRoomStatus = async () => {
       try {
@@ -3870,11 +3878,18 @@ export default function MainApp({
                 )}
               </div>
 
-              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
+              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0">
                 <button
                   type="button"
-                  onClick={closeRoomStatusPopup}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer text-center"
+                  onClick={() => closeRoomStatusPopup(true)}
+                  className="px-3.5 py-2 rounded-xl text-[13px] sm:text-[14px] font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/70 transition cursor-pointer whitespace-nowrap active:scale-95"
+                >
+                  오늘 다시 보지 않기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => closeRoomStatusPopup(false)}
+                  className="px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer text-center"
                 >
                   확인
                 </button>
