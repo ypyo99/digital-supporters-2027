@@ -821,7 +821,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         ) : (
           <>
             {/* 빠른 추가 카드 */}
-            <form onSubmit={handleAdd} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-5 space-y-3 animate-fadeIn overflow-hidden">
+            <form onSubmit={handleAdd} className="bg-white rounded-2xl shadow-sm border border-slate-300 p-3.5 sm:p-5 space-y-3 animate-fadeIn overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-sm sm:text-base font-extrabold text-slate-800">새 공휴일 / 휴무일 빠른 등록</span>
                 <div className="flex items-center gap-2 shrink-0">
@@ -914,7 +914,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
             </form>
 
             {/* 검색 및 월별 필터 바 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-5 space-y-3 animate-fadeIn">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-300 p-3.5 sm:p-5 space-y-3 animate-fadeIn">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div className="relative flex-1 max-w-md">
                   <input
@@ -1012,8 +1012,8 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       return (
                         <div
                           key={h.id ?? h.date}
-                          className={`rounded-2xl border p-3.5 transition ${
-                            isPast ? 'bg-slate-50/70 border-slate-200 opacity-90' : 'bg-white border-slate-200 shadow-xs'
+                          className={`rounded-2xl border-[1.5px] p-3.5 transition ${
+                            isPast ? 'bg-slate-50/80 border-slate-400 opacity-90' : 'bg-white border-slate-400 shadow-xs'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
@@ -1021,12 +1021,12 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                               <div className="flex items-center flex-wrap gap-1.5">
                                 <span className="text-base font-black text-slate-900 tabular-nums">{meta.mmdd}</span>
                                 {meta.weekday && (
-                                  <span className={`px-2 py-0.5 rounded-md text-xs font-black ${
+                                  <span className={`px-2 py-0.5 rounded-md text-xs font-black border ${
                                     meta.isSunday
-                                      ? 'bg-rose-100 text-rose-700'
+                                      ? 'bg-rose-100 text-rose-700 border-rose-300'
                                       : meta.isSaturday
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'bg-slate-100 text-slate-700'
+                                        ? 'bg-blue-100 text-blue-700 border-blue-300'
+                                        : 'bg-slate-100 text-slate-700 border-slate-300'
                                   }`}>
                                     {meta.weekday}
                                   </span>
@@ -1046,8 +1046,8 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                               disabled={saving || loading}
                               className={`px-2.5 py-1 rounded-full text-xs font-bold shrink-0 transition cursor-pointer active:scale-95 ${
                                 h.vacation_available
-                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                  : 'bg-slate-100 text-slate-500 border border-slate-200'
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-400'
+                                  : 'bg-slate-100 text-slate-600 border border-slate-300'
                               }`}
                               title="클릭하여 개별수업 가능 여부 변경"
                             >
@@ -1056,28 +1056,28 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                           </div>
 
                           {(h.content1 || h.content2) && (
-                            <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2 border-t border-slate-100 text-xs font-medium">
+                            <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2.5 border-t border-slate-300 text-xs font-medium">
                               {h.content1 && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700">
-                                  <span className="font-extrabold text-slate-400">내용1</span>
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-300 text-slate-700">
+                                  <span className="font-extrabold text-slate-500">내용1</span>
                                   <span className="font-bold text-slate-900">{h.content1}</span>
                                 </span>
                               )}
                               {h.content2 && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700">
-                                  <span className="font-extrabold text-slate-400">내용2</span>
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-300 text-slate-700">
+                                  <span className="font-extrabold text-slate-500">내용2</span>
                                   <span className="font-bold text-slate-900">{h.content2}</span>
                                 </span>
                               )}
                             </div>
                           )}
 
-                          <div className="flex items-center justify-end gap-1.5 mt-3 pt-2.5 border-t border-slate-100">
+                          <div className="flex items-center justify-end gap-1.5 mt-3 pt-2.5 border-t border-slate-300">
                             <button
                               type="button"
                               onClick={() => handleOpenEditModal(h)}
                               disabled={saving || loading}
-                              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold active:scale-95 transition cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-bold active:scale-95 transition cursor-pointer"
                             >
                               수정
                             </button>
@@ -1085,7 +1085,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                               type="button"
                               onClick={() => handleDelete(h)}
                               disabled={saving || loading}
-                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 text-xs font-bold active:scale-95 transition cursor-pointer"
                             >
                               삭제
                             </button>
@@ -1093,7 +1093,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                               type="button"
                               onClick={() => handleApplyToSchedule([h])}
                               disabled={applying || saving || loading}
-                              className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold active:scale-95 transition cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300 text-xs font-bold active:scale-95 transition cursor-pointer"
                             >
                               일정적용
                             </button>
@@ -1104,19 +1104,19 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                   </div>
 
                   {/* 데스크톱 테이블 뷰 (1행 레이아웃 + 인라인 클릭 수정) */}
-                  <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[68vh] border border-slate-200 rounded-xl relative">
+                  <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[68vh] border border-slate-300 rounded-xl relative">
                     <table className="w-full text-left border-collapse text-sm">
                       <thead className="sticky top-0 z-20 bg-slate-100 shadow-xs">
-                        <tr className="text-slate-700 border-b-2 border-slate-300 font-bold whitespace-nowrap">
-                          <th className="p-3 w-40 border-r border-slate-200 text-center">날짜 · 요일</th>
-                          <th className="p-3 w-48 border-r border-slate-200">공휴일 / 일정 이름</th>
-                          <th className="p-3 min-w-[120px] border-r border-slate-200">내용1</th>
-                          <th className="p-3 min-w-[120px] border-r border-slate-200">내용2</th>
-                          <th className="p-3 w-28 border-r border-slate-200 text-center">개별수업</th>
+                        <tr className="text-slate-700 border-b-2 border-slate-400 font-bold whitespace-nowrap">
+                          <th className="p-3 w-40 border-r border-slate-300 text-center">날짜 · 요일</th>
+                          <th className="p-3 w-48 border-r border-slate-300">공휴일 / 일정 이름</th>
+                          <th className="p-3 min-w-[120px] border-r border-slate-300">내용1</th>
+                          <th className="p-3 min-w-[120px] border-r border-slate-300">내용2</th>
+                          <th className="p-3 w-28 border-r border-slate-300 text-center">개별수업</th>
                           <th className="p-3 w-44 text-center">관리</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200">
+                      <tbody className="divide-y divide-slate-300">
                         {filteredHolidays.map((h) => {
                           const meta = getHolidayDateMeta(h.date, targetYear);
                           const isPast = meta.diffDays !== null && meta.diffDays < 0;
@@ -1125,7 +1125,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                               key={h.id ?? h.date}
                               className={`transition-colors ${isPast ? 'bg-slate-50/70 text-slate-500 hover:bg-slate-100/70' : 'hover:bg-blue-50/30'}`}
                             >
-                              <td className="p-2.5 border-r border-slate-200 text-center whitespace-nowrap">
+                              <td className="p-2.5 border-r border-slate-300 text-center whitespace-nowrap">
                                 <div className="inline-flex items-center gap-1.5">
                                   <span className="font-extrabold text-slate-900 tabular-nums">{meta.mmdd}</span>
                                   {meta.weekday && (
@@ -1152,24 +1152,24 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                   )}
                                 </div>
                               </td>
-                              <td className="p-2 border-r border-slate-200">
+                              <td className="p-2 border-r border-slate-300">
                                 {renderCell(h, 'name', 'text-slate-900 font-bold')}
                               </td>
-                              <td className="p-2 border-r border-slate-200">
+                              <td className="p-2 border-r border-slate-300">
                                 {renderCell(h, 'content1', 'text-slate-700 font-semibold')}
                               </td>
-                              <td className="p-2 border-r border-slate-200">
+                              <td className="p-2 border-r border-slate-300">
                                 {renderCell(h, 'content2', 'text-slate-700 font-semibold')}
                               </td>
-                              <td className="p-2 border-r border-slate-200 text-center">
+                              <td className="p-2 border-r border-slate-300 text-center">
                                 <button
                                   type="button"
                                   onClick={() => handleToggleVacation(h.date, h.vacation_available)}
                                   disabled={saving || loading}
                                   className={`px-3 py-1 rounded-full text-xs font-bold transition-colors shadow-xs cursor-pointer ${
                                     h.vacation_available
-                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200'
-                                      : 'bg-slate-100 text-slate-500 border border-slate-300 hover:bg-slate-200'
+                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-400 hover:bg-emerald-200'
+                                      : 'bg-slate-100 text-slate-600 border border-slate-300 hover:bg-slate-200'
                                   }`}
                                 >
                                   {h.vacation_available ? '가능 O' : '불가 X'}
@@ -1181,7 +1181,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                     type="button"
                                     onClick={() => handleOpenEditModal(h)}
                                     disabled={saving || loading}
-                                    className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
+                                    className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
                                   >
                                     수정
                                   </button>
@@ -1189,7 +1189,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                     type="button"
                                     onClick={() => handleDelete(h)}
                                     disabled={saving || loading}
-                                    className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
+                                    className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
                                   >
                                     삭제
                                   </button>
@@ -1197,7 +1197,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                     type="button"
                                     onClick={() => handleApplyToSchedule([h])}
                                     disabled={applying || saving || loading}
-                                    className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
+                                    className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
                                     title="이 날짜만 일정표에 적용"
                                   >
                                     일정적용
