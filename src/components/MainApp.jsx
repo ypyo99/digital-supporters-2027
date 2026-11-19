@@ -316,11 +316,13 @@ export default function MainApp({
   const [roomStatusPopup, setRoomStatusPopup] = useState(null);
   const roomPopupDismissedRef = useRef(null);
 
-  // 이전 버전에서 localStorage에 남아 앱 재실행 시 팝업을 영구 차단하던 레거시 키 정리
+  // 당일이 지난 오래된 팝업 숨김 키 정리 (오늘 저장된 키는 보존)
   useEffect(() => {
     try {
+      const todayStr = getLocalDateString(new Date());
+      const currentTodayKey = `sungdong_room_popup_hide_today_${todayStr}`;
       Object.keys(window.localStorage).forEach(k => {
-        if (k.startsWith('sungdong_room_popup_hide_')) {
+        if (k.startsWith('sungdong_room_popup_hide_') && k !== currentTodayKey) {
           window.localStorage.removeItem(k);
         }
       });
@@ -331,6 +333,10 @@ export default function MainApp({
     try {
       window.__sungdong_initial_room_popup_shown = true;
       window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      if (hideToday === true) {
+        const todayStr = (roomStatusPopup && roomStatusPopup.dateStr) || getLocalDateString(new Date());
+        setSavedItem(`sungdong_room_popup_hide_today_${todayStr}`, 'true');
+      }
     } catch (_) {}
     roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
     setRoomStatusPopup(null);
@@ -901,6 +907,15 @@ export default function MainApp({
   const [holidaysFullList, setHolidaysFullList] = useState([]);
 
   useEffect(() => {
+    // 오늘 다시 보지 않기를 누른 경우 오늘 하루 동안 어떤 경우에도 다시 표시하지 않음
+    try {
+      const todayStr = getLocalDateString(new Date());
+      if (getSavedItem(`sungdong_room_popup_hide_today_${todayStr}`, '') === 'true') {
+        setRoomStatusPopup(null);
+        return;
+      }
+    } catch (_) {}
+
     // 다른 작업을 하다가 메인화면으로 돌아온 경우 또는 이미 팝업을 표시한 경우 다시 띄우지 않음
     try {
       if (window.__sungdong_initial_room_popup_shown) {
@@ -3792,7 +3807,7 @@ export default function MainApp({
         {roomStatusPopup && (
           <div
             className="fixed inset-0 bg-slate-900/50 backdrop-blur-[3px] flex items-center justify-center z-[70] p-3 sm:p-4"
-            onClick={closeRoomStatusPopup}
+            onClick={() => closeRoomStatusPopup(false)}
           >
             <div
               className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[86vh] animate-fadeIn border border-slate-200"
@@ -3808,7 +3823,7 @@ export default function MainApp({
                 </div>
                 <button
                   type="button"
-                  onClick={closeRoomStatusPopup}
+                  onClick={() => closeRoomStatusPopup(false)}
                   className="p-1 rounded-lg text-white/90 hover:bg-white/20 active:scale-90 transition"
                   aria-label="닫기"
                 >
