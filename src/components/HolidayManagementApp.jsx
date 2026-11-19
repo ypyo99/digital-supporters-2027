@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import { Home, LucideCalendar } from './Icons';
 import { getShiftWeight, getSavedItem, setSavedItem, removeSavedItem } from '../utils/helpers';
-import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
+import { hasValidSavedAdminPassword } from '../utils/appSettings';
 
 export default function HolidayManagementApp({ onNavigateBack }) {
   const [holidays, setHolidays] = useState([]);
@@ -18,53 +18,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   const [showApplyPopup, setShowApplyPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
-  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
-  const [showPwdModal, setShowPwdModal] = useState(false);
-  const [pwdInput, setPwdInput] = useState("");
-  const [pwdError, setPwdError] = useState(false);
-  const pwdInputRef = useRef(null);
-
-  useEffect(() => {
-    try {
-      if (showPwdModal && pwdInputRef.current) {
-        pwdInputRef.current.focus();
-      }
-    } catch (e) {
-      console.error("Focus useEffect Error:", e);
-    }
-  }, [showPwdModal]);
-
-  const handleAdminClick = () => {
-    try {
-      if (isAdmin) {
-        setIsAdmin(false);
-        removeSavedItem('sungdong_admin_logged_in');
-      } else if (hasValidSavedAdminPassword()) {
-        setIsAdmin(true);
-        setSavedItem('sungdong_admin_logged_in', 'true');
-      } else {
-        setShowPwdModal(true);
-        setPwdInput("");
-        setPwdError(false);
-      }
-    } catch (e) {
-      alert("handleAdminClick 오류: " + e.message);
-    }
-  };
-
-  const checkPassword = () => {
-    try {
-      if (verifyAdminPassword(pwdInput)) {
-        setIsAdmin(true);
-        setSavedItem('sungdong_admin_logged_in', 'true');
-        setShowPwdModal(false);
-      } else {
-        setPwdError(true);
-      }
-    } catch (e) {
-      alert("checkPassword 오류: " + e.message);
-    }
-  };
+  const [isAdmin] = useState(() => hasValidSavedAdminPassword());
 
   useEffect(() => {
     fetchHolidays();
@@ -406,7 +360,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   return (
     <div className="min-h-[100dvh] bg-gray-50 font-sans pb-10 flex flex-col">
       <header className="app-header text-white z-40 relative shrink-0">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-safe-4 pb-14 flex justify-between items-start relative min-h-[120px]">
+        <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-safe-4 ${isAdmin ? 'pb-14 min-h-[120px]' : 'pb-4'} flex justify-between items-start relative`}>
           <div className="flex items-center">
             <div className="flex flex-col">
               <div className="flex items-center mb-1">
@@ -417,15 +371,13 @@ export default function HolidayManagementApp({ onNavigateBack }) {
             </div>
           </div>
 
-          {/* 담당자 로그인 버튼 영역 */}
-          <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
-            <button
-              onClick={handleAdminClick}
-              className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
-            >
-              {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
-            </button>
-          </div>
+          {isAdmin && (
+            <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
+              <span className="inline-block px-6 py-1.5 md:px-10 md:py-2 hdr-pill is-on font-bold text-sm md:text-base whitespace-nowrap select-none cursor-default">
+                담당자 모드
+              </span>
+            </div>
+          )}
 
           <button
             onClick={onNavigateBack}
@@ -450,16 +402,11 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
         {!isAdmin ? (
           <div
-            onClick={() => {
-              setShowPwdModal(true);
-              setPwdInput("");
-              setPwdError(false);
-            }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl py-3.5 px-4 sm:py-4 sm:px-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mt-1"
+            className="bg-amber-50 border border-amber-200 rounded-2xl py-3.5 px-4 sm:py-4 sm:px-5 text-center shadow-xs w-full mt-1"
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>
-              <span>[담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
+              <span>메인 화면 우측 상단 [설정]에서 관리자 비밀번호를 저장해 주세요.</span>
             </p>
           </div>
         ) : (
@@ -581,37 +528,6 @@ export default function HolidayManagementApp({ onNavigateBack }) {
       </>
     )}
   </main>
-
-      {showPwdModal && (
-        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
-            <input
-              ref={pwdInputRef}
-              autoFocus
-              type="password"
-              value={pwdInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPwdInput(val);
-                if (verifyAdminPassword(val)) {
-                  setIsAdmin(true);
-                  setSavedItem('sungdong_admin_logged_in', 'true');
-                  setShowPwdModal(false);
-                }
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && checkPassword()}
-              className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500 text-black"
-              placeholder="••••"
-            />
-            {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
-            <div className="flex gap-2 text-black">
-              <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>
-              <button onClick={checkPassword} className="flex-1 py-3 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 active:scale-[0.98] transition-all touch-manipulation">확인</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {showApplyPopup && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4 backdrop-blur-sm animate-fadeIn">

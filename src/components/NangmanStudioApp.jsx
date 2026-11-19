@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import { getSavedItem, setSavedItem, safeJsonSetItem, getLocalDateString } from '../utils/helpers';
-import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
+import { hasValidSavedAdminPassword } from '../utils/appSettings';
 import { LucideCalendar, Home } from './Icons';
 
 const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'default-app-id';
@@ -37,20 +37,18 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
       return cached ? JSON.parse(cached) : {};
     } catch (e) { return {}; }
   });
+  const scheduleRef = useRef(schedule);
 
   const [memo, setMemo] = useState(() => {
     return getSavedItem('nangman_memo_backup', "");
   });
+  const memoRef = useRef(memo);
 
   const [isTyping, setIsTyping] = useState(false);
   const isTypingRef = useRef(false);
   const [isAutoScheduling, setIsAutoScheduling] = useState(false);
-  const [isManagerMode, setIsManagerMode] = useState(() => hasValidSavedAdminPassword());
+  const [isManagerMode] = useState(() => hasValidSavedAdminPassword());
   const isManagerModeRef = useRef(isManagerMode);
-  const [showPwdModal, setShowPwdModal] = useState(false);
-  const [pwdInput, setPwdInput] = useState("");
-  const [pwdError, setPwdError] = useState(false);
-  const pwdInputRef = useRef(null);
 
   const [editingCell, setEditingCell] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -71,14 +69,16 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   }, []);
 
   useEffect(() => {
-    if (showPwdModal && pwdInputRef.current) {
-      pwdInputRef.current.focus();
-    }
-  }, [showPwdModal]);
-
-  useEffect(() => {
     isManagerModeRef.current = isManagerMode;
   }, [isManagerMode]);
+
+  useEffect(() => {
+    scheduleRef.current = schedule;
+  }, [schedule]);
+
+  useEffect(() => {
+    memoRef.current = memo;
+  }, [memo]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
@@ -130,10 +130,14 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
           }
           console.error("Supabase load error:", error);
         } else if (data) {
-          setSchedule(data.data || {});
-          setMemo(data.memo || "");
-          safeJsonSetItem('nangman_schedule_backup', data.data || {});
-          setSavedItem('nangman_memo_backup', data.memo || "");
+          const loadedData = data.data || {};
+          const loadedMemo = data.memo || "";
+          scheduleRef.current = loadedData;
+          memoRef.current = loadedMemo;
+          setSchedule(loadedData);
+          setMemo(loadedMemo);
+          safeJsonSetItem('nangman_schedule_backup', loadedData);
+          setSavedItem('nangman_memo_backup', loadedMemo);
         }
       } catch (err) {
         console.error("Supabase exception:", err);
@@ -150,8 +154,12 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
         (payload) => {
           const newData = payload.new;
           if (newData && !isManagerModeRef.current) {
-            setSchedule(newData.data || {});
-            setMemo(newData.memo || "");
+            const nextData = newData.data || {};
+            const nextMemo = newData.memo || "";
+            scheduleRef.current = nextData;
+            memoRef.current = nextMemo;
+            setSchedule(nextData);
+            setMemo(nextMemo);
           }
         }
       )
@@ -162,6 +170,32 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
     };
   }, []);
 
+  const persistNangmanToDb = async (nextSchedule, nextMemo) => {
+    try {
+      const { error } = await supabaseClient
+        .from('nangman_schedules')
+        .upsert({
+          id: appId,
+          data: nextSchedule,
+          memo: nextMemo,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        if (error.code === '42P01' || error.code === 'PGRST205' || (error.message && error.message.includes('nangman_schedules'))) {
+          setSupabaseTableMissing(true);
+        }
+        throw error;
+      }
+
+      setSaveErrorMsg("");
+      setSupabaseTableMissing(false);
+    } catch (error) {
+      console.error("⚠️ 데이터 저장 오류:", error);
+      setSaveErrorMsg(`⚠️ 저장 실패: 슈파베이스 권한이나 테이블 설정이 잘못되었습니다. (${error.message})`);
+    }
+  };
+
   const saveBulkChanges = async (changes) => {
     if (Object.keys(changes).length === 0) return;
     const optimisticData = {};
@@ -169,21 +203,13 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
       const cleanKey = k.replace('data.', '');
       optimisticData[cleanKey] = changes[k];
     });
-    const newSchedule = { ...schedule, ...optimisticData };
+    const newSchedule = { ...scheduleRef.current, ...optimisticData };
+    scheduleRef.current = newSchedule;
     setSchedule(newSchedule);
     safeJsonSetItem('nangman_schedule_backup', newSchedule);
 
     // 즉시 DB 저장
-    try {
-      await supabaseClient.from('nangman_schedules').upsert({
-        id: appId,
-        data: newSchedule,
-        memo: memo,
-        updated_at: new Date().toISOString()
-      });
-    } catch (e) {
-      console.error("Supabase immediate save error:", e);
-    }
+    await persistNangmanToDb(newSchedule, memoRef.current);
   };
 
   const getScheduleKey = (dateStr, timeSlot) => {
@@ -207,22 +233,14 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
       }
     }
 
-    const newSchedule = { ...schedule, [key]: finalValue };
+    const newSchedule = { ...scheduleRef.current, [key]: finalValue };
+    scheduleRef.current = newSchedule;
     setSchedule(newSchedule);
     safeJsonSetItem('nangman_schedule_backup', newSchedule);
     setEditingCell(null);
 
     // 즉시 DB 저장
-    try {
-      await supabaseClient.from('nangman_schedules').upsert({
-        id: appId,
-        data: newSchedule,
-        memo: memo,
-        updated_at: new Date().toISOString()
-      });
-    } catch (e) {
-      console.error("Supabase immediate save error:", e);
-    }
+    await persistNangmanToDb(newSchedule, memoRef.current);
   };
 
   const copyPreviousWeek = async (e) => {
@@ -334,26 +352,25 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   };
 
   useEffect(() => {
-    if (!isTyping) return;
+    if (!isTyping || !isManagerMode) return;
     const timer = setTimeout(async () => {
       setSavedItem('nangman_memo_backup', memo);
       setIsTyping(false);
       isTypingRef.current = false;
 
       // 즉시 DB 저장
-      try {
-        await supabaseClient.from('nangman_schedules').upsert({
-          id: appId,
-          data: schedule,
-          memo: memo,
-          updated_at: new Date().toISOString()
-        });
-      } catch (e) {
-        console.error("Supabase immediate save error (memo):", e);
-      }
+      await persistNangmanToDb(scheduleRef.current, memo);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [memo, isTyping, schedule]);
+  }, [memo, isTyping, isManagerMode]);
+
+  const flushPendingMemo = async () => {
+    if (!isManagerMode || !isTypingRef.current) return;
+    setSavedItem('nangman_memo_backup', memoRef.current);
+    setIsTyping(false);
+    isTypingRef.current = false;
+    await persistNangmanToDb(scheduleRef.current, memoRef.current);
+  };
 
   const formatDateString = (date) => getLocalDateString(date);
 
@@ -384,43 +401,6 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
     setCurrentWeekStart(new Date(d.setDate(diff)));
   };
 
-  const handleManagerClick = async () => {
-    if (isManagerMode) {
-      try {
-        const { error } = await supabaseClient
-          .from('nangman_schedules')
-          .upsert({
-            id: appId,
-            data: schedule,
-            memo: memo,
-            updated_at: new Date().toISOString()
-          });
-
-        if (error) {
-          if (error.code === '42P01' || error.code === 'PGRST205' || (error.message && error.message.includes('nangman_schedules'))) {
-            setSupabaseTableMissing(true);
-          }
-          throw error;
-        }
-
-        setSaveErrorMsg("");
-        setSupabaseTableMissing(false);
-      } catch (error) {
-        console.error("⚠️ 데이터 저장 오류:", error);
-        setSaveErrorMsg(`⚠️ 저장 실패: 슈파베이스 권한이나 테이블 설정이 잘못되었습니다. (${error.message})`);
-        return;
-      }
-      setIsManagerMode(false);
-    }
-    else if (hasValidSavedAdminPassword()) { setIsManagerMode(true); }
-    else { setShowPwdModal(true); setPwdInput(""); setPwdError(false); }
-  };
-
-  const checkPassword = () => {
-    if (verifyAdminPassword(pwdInput)) { setIsManagerMode(true); setShowPwdModal(false); }
-    else setPwdError(true);
-  };
-
   const currentDays = getCurrentWeekDays();
   const startMonth = currentDays[0].getMonth() + 1;
   const startDay = currentDays[0].getDate();
@@ -430,7 +410,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   return (
     <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans text-gray-800">
       <div className="shrink-0 app-header text-white z-40 relative">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pb-14 pt-safe-4 flex justify-between items-start relative min-h-[120px]">
+        <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 ${isManagerMode ? 'pb-14 min-h-[120px]' : 'pb-4'} pt-safe-4 flex justify-between items-start relative`}>
           <div>
             <div className="flex items-center mb-1">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -439,16 +419,15 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
             <p className="text-lg font-semibold text-yellow-300">디지털교육 서포터즈</p>
           </div>
 
-          <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
-            <button
-              onClick={handleManagerClick}
-              className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isManagerMode ? 'is-on' : ''}`}
-            >
-              {isManagerMode ? '저장/담당자 모드 종료' : (hasValidSavedAdminPassword() ? '담당자 모드 시작' : '담당자 로그인')}
-            </button>
-          </div>
+          {isManagerMode && (
+            <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
+              <span className="inline-block px-6 py-1.5 md:px-10 md:py-2 hdr-pill is-on font-bold text-sm md:text-base whitespace-nowrap select-none cursor-default">
+                담당자 모드
+              </span>
+            </div>
+          )}
 
-          <button onClick={onNavigateBack} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
+          <button onClick={async () => { await flushPendingMemo(); onNavigateBack(); }} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
             <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>
         </div>
@@ -658,7 +637,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold text-gray-700 flex items-center gap-2 text-sm landscape:text-[20px] md:text-[22px]">📢 공지 및 메모</h3>
                 <button
-                  onClick={onNavigateToClassroom}
+                  onClick={async () => { await flushPendingMemo(); onNavigateToClassroom(); }}
                   className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs md:text-sm font-bold shadow-sm transition-all active:scale-95 touch-manipulation"
                 >
                   평생교육실2
@@ -668,10 +647,13 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 value={memo}
                 onChange={(e) => {
                   if (!isManagerMode) return;
-                  setMemo(e.target.value);
+                  const nextVal = e.target.value;
+                  memoRef.current = nextVal;
+                  setMemo(nextVal);
                   setIsTyping(true);
                   isTypingRef.current = true;
                 }}
+                onBlur={flushPendingMemo}
                 readOnly={!isManagerMode}
                 placeholder={isManagerMode ? "모든 선생님 화면에 실시간으로 보입니다." : "담당자 모드에서만 작성 가능합니다."}
                 className={`w-full p-3 md:p-4 border rounded-xl font-bold h-24 md:h-32 outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] text-black bg-white ${isManagerMode ? 'border-blue-300' : 'border-gray-300'}`}
@@ -682,20 +664,6 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
         </div>
       </div>
     </div>
-
-      {showPwdModal && (
-        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
-            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (verifyAdminPassword(val)) { setIsManagerMode(true); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500" placeholder="••••" />
-            {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
-            <div className="flex gap-2">
-              <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>
-              <button onClick={checkPassword} className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold touch-manipulation">확인</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

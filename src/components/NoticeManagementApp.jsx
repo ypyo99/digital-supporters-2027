@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { supabaseClient } from '../utils/supabase';
 import { Home, LucideCalendar } from './Icons';
 import { getSavedItem, setSavedItem, removeSavedItem } from '../utils/helpers';
-import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
+import { hasValidSavedAdminPassword } from '../utils/appSettings';
 
 const FloatingScrollButton = ({ listRef, show }) => {
   const [isListVisible, setIsListVisible] = useState(false);
@@ -99,12 +99,7 @@ const linkifyHtml = (html) => {
 };
 
 export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
-  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
-
-  const [showPwdModal, setShowPwdModal] = useState(false);
-  const [pwdInput, setPwdInput] = useState("");
-  const [pwdError, setPwdError] = useState(false);
-  const pwdInputRef = useRef(null);
+  const [isAdmin] = useState(() => hasValidSavedAdminPassword());
   const [lightboxImg, setLightboxImg] = useState(null);
 
   const [notices, setNotices] = useState([]);
@@ -239,12 +234,6 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
     }
   }, [isEditing, selectedNotice, title, content, isTop, startDate, endDate]);
 
-  useEffect(() => {
-    if (showPwdModal && pwdInputRef.current) {
-      pwdInputRef.current.focus();
-    }
-  }, [showPwdModal]);
-
   const loadNotices = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -318,54 +307,6 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
   useEffect(() => {
     loadNotices();
   }, []);
-
-  const handleAdminClick = async () => {
-    if (isAdmin) {
-      if (hasChanges) {
-        const wantsToSave = window.confirm("작성 중이던 공지사항 내용이 변경되었습니다. 저장하시겠습니까?");
-        if (wantsToSave) {
-          try {
-            const success = await handleSave({ preventDefault: () => { } }, true);
-            if (success) {
-              alert("공지사항을 저장하였습니다.");
-            }
-          } catch (e) { }
-        }
-      }
-      setIsAdmin(false);
-      removeSavedItem('sungdong_admin_logged_in');
-      setIsEditing(false);
-      setSelectedNotice(null);
-      setSelectedImg(null);
-    } else if (hasValidSavedAdminPassword()) {
-      setIsAdmin(true);
-      setSavedItem('sungdong_admin_logged_in', 'true');
-      if (selectedNotice) {
-        setIsEditing(true);
-      } else {
-        setIsEditing(false);
-      }
-    } else {
-      setShowPwdModal(true);
-      setPwdInput("");
-      setPwdError(false);
-    }
-  };
-
-  const checkPassword = () => {
-    if (verifyAdminPassword(pwdInput)) {
-      setIsAdmin(true);
-      setSavedItem('sungdong_admin_logged_in', 'true');
-      setShowPwdModal(false);
-      if (selectedNotice) {
-        setIsEditing(true);
-      } else {
-        setIsEditing(false);
-      }
-    } else {
-      setPwdError(true);
-    }
-  };
 
   const handleSelectNotice = (notice) => {
     setSelectedNotice(notice);
@@ -663,7 +604,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
       `}</style>
       {/* 헤더 영역 */}
       <header className="app-header text-white z-20 relative shrink-0">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-4 pb-16 sm:pb-12 flex justify-between items-start relative min-h-[148px] sm:min-h-[116px]">
+        <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-4 ${isAdmin ? 'pb-16 sm:pb-12 min-h-[148px] sm:min-h-[116px]' : 'pb-4'} flex justify-between items-start relative`}>
           <div className="flex items-center">
             <div className="flex flex-col">
               <div className="flex items-center mb-1">
@@ -674,23 +615,20 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
             </div>
           </div>
 
-          {/* 담당자 로그인 및 새로작성 버튼 영역 */}
-          <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50 flex items-center gap-3">
-            <button
-              onClick={handleAdminClick}
-              className={`px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap ${isAdmin ? 'is-on' : ''}`}
-            >
-              {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
-            </button>
-            {isAdmin && (
+          {/* 담당자 모드 배지 및 새로작성 버튼 영역 */}
+          {isAdmin && (
+            <div className="absolute left-1/2 bottom-1.5 transform -translate-x-1/2 z-50 flex items-center gap-3">
+              <span className="inline-block px-5 py-1.5 md:px-8 md:py-2 hdr-pill is-on font-bold text-xs md:text-sm whitespace-nowrap select-none cursor-default">
+                담당자 모드
+              </span>
               <button
                 onClick={handleNewNotice}
                 className="px-5 py-1.5 md:px-8 md:py-2 hdr-pill font-bold transition-all active:scale-95 text-xs md:text-sm touch-manipulation whitespace-nowrap"
               >
                 새로 작성
               </button>
-            )}
-          </div>
+            </div>
+          )}
 
           <button
             onClick={async () => {
@@ -1172,53 +1110,6 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
 
       {/* 목록으로 스크롤하는 플로팅 화살표 버튼 (게시물 상세 보기 중 목록이 안 보일 때 표시) */}
       <FloatingScrollButton listRef={listRef} show={!!selectedNotice && !isEditing} />
-
-      {/* 담당자 암호 입력 모달 */}
-      {showPwdModal && (
-        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-[70] px-4 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
-            <input
-              ref={pwdInputRef}
-              autoFocus
-              type="password"
-              value={pwdInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPwdInput(val);
-                if (verifyAdminPassword(val)) {
-                  setIsAdmin(true);
-                  setSavedItem('sungdong_admin_logged_in', 'true');
-                  setShowPwdModal(false);
-                  if (selectedNotice) {
-                    setIsEditing(true);
-                  } else {
-                    setIsEditing(false);
-                  }
-                }
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && checkPassword()}
-              className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500"
-              placeholder="••••"
-            />
-            {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowPwdModal(false)}
-                className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation text-sm sm:text-base"
-              >
-                취소
-              </button>
-              <button
-                onClick={checkPassword}
-                className="flex-1 py-3 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 active:scale-[0.98] transition-all touch-manipulation text-sm sm:text-base"
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 이미지 라이트박스 (크게 보기) */}
       {lightboxImg && (

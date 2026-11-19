@@ -31,7 +31,7 @@ import {
   renderSurveyFormHtml,
   executeBatchPrint
 } from '../utils/formPrintTemplates';
-import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
+import { hasValidSavedAdminPassword } from '../utils/appSettings';
 
 // 비학생 일정/행사/공휴일 제외 키워드
 const EXCLUDE_STUDENT_KEYWORDS = [
@@ -124,28 +124,7 @@ export default function StudentFormsAdminApp({
   const [isPrinting, setIsPrinting] = useState(false);
 
   // 담당자 인증 상태 (isTeacherView가 아닌 경우 보호)
-  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
-  const [showPwdModal, setShowPwdModal] = useState(false);
-  const [pwdInput, setPwdInput] = useState("");
-  const [pwdError, setPwdError] = useState(false);
-  const pwdInputRef = useRef(null);
-
-  useEffect(() => {
-    if (showPwdModal && pwdInputRef.current) {
-      pwdInputRef.current.focus();
-    }
-  }, [showPwdModal]);
-
-  const checkPassword = () => {
-    if (verifyAdminPassword(pwdInput)) {
-      setIsAdmin(true);
-      setSavedItem('sungdong_admin_logged_in', 'true');
-      setShowPwdModal(false);
-      setPwdError(false);
-    } else {
-      setPwdError(true);
-    }
-  };
+  const [isAdmin] = useState(() => hasValidSavedAdminPassword());
 
   // -------------------------------------------------------------
   // Data Loading: daily_logs + application_forms + surveys
@@ -1002,7 +981,7 @@ export default function StudentFormsAdminApp({
 
       {/* TOP HEADER */}
       <header className="app-header text-white border-b border-blue-900/30 shadow-md relative z-20 shrink-0">
-        <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-safe-4 flex items-start justify-between gap-2 relative shrink-0 ${!isTeacherView ? 'pb-14 min-h-[120px]' : 'pb-4'}`}>
+        <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-safe-4 flex items-start justify-between gap-2 relative shrink-0 ${(!isTeacherView && isAdmin) ? 'pb-14 min-h-[120px]' : 'pb-4'}`}>
           {/* Left: Title */}
           <div className="flex flex-col min-w-0">
             <div className="flex items-center mb-1">
@@ -1017,28 +996,12 @@ export default function StudentFormsAdminApp({
             )}
           </div>
 
-          {/* Center: Admin Login/Logout Button for Admin Mode */}
-          {!isTeacherView && (
+          {/* Center: Admin Badge */}
+          {!isTeacherView && isAdmin && (
             <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
-              <button
-                type="button"
-                onClick={() => {
-                  if (isAdmin) {
-                    setIsAdmin(false);
-                    removeSavedItem('sungdong_admin_logged_in');
-                  } else if (hasValidSavedAdminPassword()) {
-                    setIsAdmin(true);
-                    setSavedItem('sungdong_admin_logged_in', 'true');
-                  } else {
-                    setShowPwdModal(true);
-                    setPwdInput("");
-                    setPwdError(false);
-                  }
-                }}
-                className={`px-5 py-1.5 md:px-7 md:py-2 hdr-pill font-bold active:scale-95 text-xs md:text-sm transition-all whitespace-nowrap cursor-pointer ${isAdmin ? 'is-on' : ''}`}
-              >
-                {isAdmin ? '담당자 모드 종료' : '담당자 로그인'}
-              </button>
+              <span className="inline-block px-5 py-1.5 md:px-7 md:py-2 hdr-pill is-on font-bold text-xs md:text-sm whitespace-nowrap select-none cursor-default">
+                담당자 모드
+              </span>
             </div>
           )}
 
@@ -1078,16 +1041,11 @@ export default function StudentFormsAdminApp({
 
         {(!isTeacherView && !isAdmin) ? (
           <div
-            onClick={() => {
-              setShowPwdModal(true);
-              setPwdInput("");
-              setPwdError(false);
-            }}
-            className="bg-amber-50 border border-amber-200 rounded-2xl py-3.5 px-4 sm:py-4 sm:px-5 text-center shadow-xs w-full cursor-pointer hover:bg-amber-100/80 transition-all active:scale-[0.99] mt-1"
+            className="bg-amber-50 border border-amber-200 rounded-2xl py-3.5 px-4 sm:py-4 sm:px-5 text-center shadow-xs w-full mt-1"
           >
             <p className="font-extrabold text-amber-800 text-base sm:text-lg flex items-center justify-center gap-2">
               <span className="text-xl sm:text-2xl">💡</span>
-              <span>[담당자 로그인] 버튼을 눌러 인증해 주세요.</span>
+              <span>메인 화면 우측 상단 [설정]에서 관리자 비밀번호를 저장해 주세요.</span>
             </p>
           </div>
         ) : (
@@ -1820,55 +1778,6 @@ export default function StudentFormsAdminApp({
         )}
 
       </main>
-
-      {/* 담당자 암호 입력 모달 */}
-      {showPwdModal && (
-        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-gray-100 flex flex-col items-center animate-fadeIn">
-            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4 text-xl font-bold">
-              🔑
-            </div>
-            <h3 className="text-lg font-bold text-gray-800 mb-2 text-center">담당자 암호</h3>
-            <p className="text-xs text-gray-500 mb-4 text-center">비밀번호를 입력하시면 관리 화면이 열립니다.</p>
-            <input
-              ref={pwdInputRef}
-              autoFocus
-              type="password"
-              value={pwdInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPwdInput(val);
-                if (verifyAdminPassword(val)) {
-                  setIsAdmin(true);
-                  setSavedItem('sungdong_admin_logged_in', 'true');
-                  setShowPwdModal(false);
-                  setPwdError(false);
-                }
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && checkPassword()}
-              className="w-full border-2 p-3 rounded-lg mb-2 text-center text-2xl tracking-widest outline-none focus:border-blue-500 text-black"
-              placeholder="••••"
-            />
-            {pwdError && <p className="text-red-500 text-xs text-center mb-3 font-bold">비밀번호가 틀렸습니다.</p>}
-            <div className="flex gap-2 w-full mt-2">
-              <button
-                type="button"
-                onClick={() => { setShowPwdModal(false); setPwdError(false); setPwdInput(''); }}
-                className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition active:scale-95 touch-manipulation cursor-pointer"
-              >
-                취소
-              </button>
-              <button
-                type="button"
-                onClick={checkPassword}
-                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md shadow-blue-600/25 transition active:scale-95 touch-manipulation cursor-pointer"
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ============================================================== */}
       {/* BATCH PRINT CONFIGURATION MODAL                                */}
