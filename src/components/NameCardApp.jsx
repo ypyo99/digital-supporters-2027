@@ -1150,23 +1150,14 @@ export default function NameCardApp({ onNavigateBack }) {
                   </div>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => handleDownloadOrSave('default')}
-                  disabled={isSaving}
-                  className="flex-1 min-w-[160px] py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>{isSaving ? '고해상도 저장 중...' : (profilePhotoUrl ? '기본 명함 인쇄 요청 (사진 없음)' : '인쇄 요청')}</span>
-                </button>
-
-                {profilePhotoUrl && (
+                {!profilePhotoUrl && (
                   <button
                     type="button"
-                    onClick={() => handleDownloadOrSave('profile')}
+                    onClick={() => handleDownloadOrSave('default')}
                     disabled={isSaving}
-                    className="flex-1 min-w-[180px] py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 min-w-[160px] py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span>{isSaving ? '고해상도 저장 중...' : '프로필사진 명함 인쇄 요청'}</span>
+                    <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
                   </button>
                 )}
               </div>
