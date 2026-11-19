@@ -1431,7 +1431,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
 
                         <div
-                          className="mt-6 pl-3.5 text-[18.5px] font-medium text-[#334155] leading-[1.55] whitespace-pre-wrap break-words"
+                          className="mt-6 pl-3.5 text-[18.5px] font-medium text-[#334155] leading-[1.55] whitespace-pre-wrap break-keep break-words"
                           style={{ borderLeft: `4px solid ${activeTheme.accent}` }}
                         >
                           {sloganInput}
@@ -1632,7 +1632,7 @@ export default function NameCardApp({ onNavigateBack }) {
                     </div>
                     <div
                       style={{ fontSize: `${sizes.slogan}px` }}
-                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px] leading-snug whitespace-pre-wrap break-words"
+                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px] leading-snug whitespace-pre-wrap break-keep break-words"
                     >
                       {sloganInput}
                     </div>
