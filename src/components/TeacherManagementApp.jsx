@@ -1,29 +1,54 @@
 // 선생님 명단 관리
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabaseClient } from '../utils/supabase';
-import { getSavedItem, setSavedItem, removeSavedItem, setGlobalTeachersList, formatTeacherRow, getLocalDateString } from '../utils/helpers';
+import { setGlobalTeachersList, formatTeacherRow, getLocalDateString } from '../utils/helpers';
 import { User, Home } from './Icons';
 import { hasValidSavedAdminPassword } from '../utils/appSettings';
+
+const TEAM_OPTIONS = ['1팀', '2팀', '3팀', '취업팀'];
+
+const getDefaultShifts = (team) => (
+  team === '3팀'
+    ? { shift1: '13:00~14:00', shift2: '14:00~15:00', shift3: '15:00~16:00' }
+    : { shift1: '9:30~10:30', shift2: '10:30~11:30', shift3: '11:30~12:30' }
+);
+
+const createEmptyForm = (team = '1팀', seq = '') => ({
+  team,
+  group: '1조',
+  seq_num: seq,
+  name: '',
+  ...getDefaultShifts(team),
+  is_active: true,
+  hire_date: '2026-02-01',
+  resign_date: '2026-11-30'
+});
+
+const sortTeachers = (list) => [...list].sort((a, b) =>
+  a.team.localeCompare(b.team) ||
+  ((a.seq_num || 999) - (b.seq_num || 999)) ||
+  a.group.localeCompare(b.group) ||
+  a.name.localeCompare(b.name)
+);
 
 export default function TeacherManagementApp({ onNavigateBack }) {
   const [teachers, setTeachers] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin] = useState(() => hasValidSavedAdminPassword());
-  const [formData, setFormData] = useState({
-    team: '1팀',
-    group: '1조',
-    seq_num: '',
-    name: '',
-    shift1: '9:30~10:30',
-    shift2: '10:30~11:30',
-    shift3: '11:30~12:30',
-    is_active: true,
-    hire_date: '2026-02-01',
-    resign_date: '2026-11-30'
-  });
+  const [formData, setFormData] = useState(() => createEmptyForm());
+  const [searchQuery, setSearchQuery] = useState('');
+  const [teamFilter, setTeamFilter] = useState('all');
+  const [showInactive, setShowInactive] = useState(true);
+  const [notice, setNotice] = useState('');
+
+  const showNotice = (msg) => {
+    setNotice(msg);
+    setTimeout(() => setNotice(''), 1500);
+  };
 
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [transferTargetName, setTransferTargetName] = useState("");
@@ -55,15 +80,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
     setFormData(prev => {
       const next = { ...prev, [name]: finalValue };
       if (name === 'team') {
-        if (value === '3팀') {
-          next.shift1 = '13:00~14:00';
-          next.shift2 = '14:00~15:00';
-          next.shift3 = '15:00~16:00';
-        } else {
-          next.shift1 = '9:30~10:30';
-          next.shift2 = '10:30~11:30';
-          next.shift3 = '11:30~12:30';
-        }
+        Object.assign(next, getDefaultShifts(value));
       }
       return next;
     });
@@ -99,14 +116,8 @@ export default function TeacherManagementApp({ onNavigateBack }) {
         if (error) throw error;
       }
       await fetchTeachers();
-      const nextSeq = !isEditing && formData.seq_num ? (parseInt(formData.seq_num, 10) + 1).toString() : '';
-      setFormData(prev => ({
-        ...prev,
-        name: '',
-        seq_num: nextSeq
-      }));
-      setIsEditing(false);
-      setCurrentId(null);
+      showNotice(isEditing ? `${formData.name} 선생님 정보가 수정되었습니다.` : `${formData.name} 선생님이 등록되었습니다.`);
+      closeForm();
     } catch (err) {
       console.error(err);
       alert('저장에 실패했습니다.');
@@ -130,7 +141,41 @@ export default function TeacherManagementApp({ onNavigateBack }) {
     });
     setCurrentId(teacher.id);
     setIsEditing(true);
+    setShowForm(true);
   };
+
+  const handleOpenNew = () => {
+    const team = teamFilter !== 'all' ? teamFilter : '1팀';
+    const sameTeam = teachers.filter(t => t.team === team && t.seq_num);
+    const maxSeq = sameTeam.reduce((m, t) => Math.max(m, parseInt(t.seq_num, 10) || 0), 0);
+    setFormData(createEmptyForm(team, maxSeq ? String(maxSeq + 1) : ''));
+    setCurrentId(null);
+    setIsEditing(false);
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setIsEditing(false);
+    setCurrentId(null);
+  };
+
+  const teamCounts = useMemo(() => {
+    const base = showInactive ? teachers : teachers.filter(t => t.is_active !== false);
+    const counts = { all: base.length };
+    TEAM_OPTIONS.forEach(team => { counts[team] = base.filter(t => t.team === team).length; });
+    return counts;
+  }, [teachers, showInactive]);
+
+  const filteredTeachers = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return sortTeachers(teachers).filter(t => {
+      if (!showInactive && t.is_active === false) return false;
+      if (teamFilter !== 'all' && t.team !== teamFilter) return false;
+      if (!q) return true;
+      return [t.name, t.group, t.team, String(t.seq_num ?? '')].some(v => (v || '').toLowerCase().includes(q));
+    });
+  }, [teachers, searchQuery, teamFilter, showInactive]);
 
   const handleDelete = async (id) => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
@@ -139,6 +184,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
         const { error } = await supabaseClient.from('teachers').delete().eq('id', id);
         if (error) throw error;
         await fetchTeachers();
+        showNotice('삭제되었습니다.');
       } catch (err) {
         console.error(err);
         alert('삭제에 실패했습니다.');
@@ -225,136 +271,250 @@ export default function TeacherManagementApp({ onNavigateBack }) {
             </p>
           </div>
         ) : (
-          <>
-            <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 className="text-lg font-bold text-gray-800">
-                  {isEditing ? '선생님 정보 수정' : '새 선생님 등록'}
-                </h2>
-                <div className="flex gap-2">
-                  {isEditing && (
-                    <button type="button" onClick={() => { setIsEditing(false); setCurrentId(null); setFormData({ team: '1팀', group: '1조', seq_num: '', name: '', shift1: '9:30~10:30', shift2: '10:30~11:30', shift3: '11:30~12:30', is_active: true, hire_date: '2026-02-01', resign_date: '2026-11-30' }); }} className="px-3 py-1.5 text-sm bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors">
-                      취소
+          <div className="space-y-3 mt-2">
+            {notice && (
+              <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold shadow-lg animate-fadeIn">
+                {notice}
+              </div>
+            )}
+
+            {/* 상단 도구 모음: 검색 / 팀 필터 / 새 선생님 등록 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-4 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="이름, 조, 번호로 검색..."
+                    className="w-full pl-3.5 pr-8 py-2 border border-slate-300 rounded-xl text-sm font-medium bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-extrabold cursor-pointer"
+                      aria-label="검색어 지우기"
+                    >
+                      ✕
                     </button>
                   )}
-                  <button type="submit" disabled={isLoading} className="px-3 py-1.5 text-sm bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50">
-                    {isLoading ? '처리중...' : (isEditing ? '수정 저장' : '새로 등록')}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <label className="flex items-center gap-1.5 cursor-pointer px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={showInactive}
+                      onChange={(e) => setShowInactive(e.target.checked)}
+                      className="w-4 h-4 text-indigo-600 rounded border-gray-300"
+                    />
+                    <span className="text-xs sm:text-sm font-bold text-slate-700">퇴사자 표시</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleOpenNew}
+                    disabled={isLoading}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-extrabold shadow-sm active:scale-95 disabled:opacity-50 transition whitespace-nowrap cursor-pointer"
+                  >
+                    + 새 선생님 등록
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                <div>
-                  <select name="team" value={formData.team} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base">
-                    <option value="1팀">1팀</option>
-                    <option value="2팀">2팀</option>
-                    <option value="3팀">3팀</option>
-                    <option value="취업팀">취업팀</option>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {['all', ...TEAM_OPTIONS].map(team => (
+                  <button
+                    key={team}
+                    type="button"
+                    onClick={() => setTeamFilter(team)}
+                    className={`px-3 py-1 rounded-full text-xs sm:text-sm font-bold border transition cursor-pointer ${
+                      teamFilter === team
+                        ? 'bg-indigo-600 text-white border-indigo-600'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    {team === 'all' ? '전체' : team} ({teamCounts[team] || 0})
+                  </button>
+                ))}
+                <span className="ml-auto text-xs font-bold text-slate-500">
+                  표시 중 <span className="text-slate-900 font-extrabold">{filteredTeachers.length}명</span>
+                </span>
+              </div>
+            </div>
+
+            {/* 선생님 목록 */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              {isLoading && teachers.length === 0 ? (
+                <div className="text-center py-10">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                </div>
+              ) : filteredTeachers.length === 0 ? (
+                <div className="py-10 text-center text-slate-500 text-sm font-semibold">
+                  {teachers.length === 0 ? '등록된 선생님이 없습니다.' : '조건에 맞는 선생님이 없습니다.'}
+                </div>
+              ) : (
+                <>
+                  {/* 모바일 카드 뷰 */}
+                  <div className="md:hidden divide-y divide-slate-100">
+                    {filteredTeachers.map(t => {
+                      const inactive = t.is_active === false;
+                      return (
+                        <div key={t.id} className={`p-3.5 ${inactive ? 'bg-slate-100/70' : ''}`}>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <div className="flex items-center flex-wrap gap-1.5">
+                                <span className={`px-2 py-0.5 rounded-md text-xs font-black ${t.team === '2팀' || t.team === '취업팀' ? 'bg-sky-100 text-sky-800' : 'bg-indigo-100 text-indigo-800'}`}>{t.team}</span>
+                                <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700">{t.group}</span>
+                                {t.seq_num && <span className="text-xs font-bold text-slate-500">#{t.seq_num}</span>}
+                                {inactive && <span className="px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600">퇴사</span>}
+                              </div>
+                              <div className={`mt-1 text-base font-extrabold break-words ${inactive ? 'line-through text-slate-400' : 'text-slate-900'}`}>{t.name}</div>
+                            </div>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-1.5 text-xs font-semibold text-slate-600">
+                            {[t.shift1, t.shift2, t.shift3].filter(Boolean).map((s, i) => (
+                              <span key={i} className="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 tabular-nums">{s}</span>
+                            ))}
+                          </div>
+                          <div className="mt-1.5 text-[11.5px] font-medium text-slate-500 tabular-nums">
+                            입사 {t.hire_date || '-'} · 퇴사 {t.resign_date || '-'}
+                          </div>
+                          <div className="flex items-center justify-end gap-1.5 mt-2.5">
+                            <button onClick={() => handleEdit(t)} className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold active:scale-95 transition cursor-pointer">수정</button>
+                            <button onClick={() => handleDelete(t.id)} className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer">삭제</button>
+                            <button onClick={() => handleTransferClick(t)} className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold active:scale-95 transition cursor-pointer">이관</button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* 데스크톱 테이블 뷰 */}
+                  <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[72vh] relative">
+                    <table className="w-full text-center border-collapse text-sm">
+                      <thead className="sticky top-0 z-20 shadow-xs">
+                        <tr className="bg-indigo-50 border-b border-gray-200 text-indigo-900 font-bold whitespace-nowrap">
+                          <th className="py-2.5 px-2 border-r border-gray-200 w-16">팀</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200 w-14">조</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200 w-14">번호</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200">이름</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200">시간대 1</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200">시간대 2</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200">시간대 3</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200 w-28">입사일</th>
+                          <th className="py-2.5 px-2 border-r border-gray-200 w-28">퇴사일</th>
+                          <th className="py-2.5 px-2 w-44">관리</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredTeachers.map(t => {
+                          const inactive = t.is_active === false;
+                          return (
+                            <tr key={t.id} className={`border-b border-gray-100 transition-colors ${inactive ? 'bg-gray-100 text-gray-400' : (t.team === '2팀' || t.team === '취업팀' ? 'bg-sky-50/60 hover:bg-sky-100' : 'hover:bg-indigo-50/40')}`}>
+                              <td className="py-2 px-2 border-r border-gray-100 font-bold">{t.team}</td>
+                              <td className="py-2 px-2 border-r border-gray-100">{t.group}</td>
+                              <td className="py-2 px-2 border-r border-gray-100 tabular-nums">{t.seq_num}</td>
+                              <td className="py-2 px-2 border-r border-gray-100 font-bold">
+                                {inactive && <span className="text-xs text-red-600 bg-red-100 px-1 py-0.5 rounded mr-1 whitespace-nowrap">퇴사</span>}
+                                <span className={inactive ? 'line-through' : 'text-gray-900'}>{t.name}</span>
+                              </td>
+                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift1}</td>
+                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift2}</td>
+                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift3}</td>
+                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.hire_date || '-'}</td>
+                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.resign_date || '-'}</td>
+                              <td className="py-2 px-2 whitespace-nowrap">
+                                <div className="inline-flex items-center gap-1.5">
+                                  <button onClick={() => handleEdit(t)} className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold transition cursor-pointer">수정</button>
+                                  <button onClick={() => handleDelete(t.id)} className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition cursor-pointer">삭제</button>
+                                  <button onClick={() => handleTransferClick(t)} className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-xs font-bold transition cursor-pointer">이관</button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* 선생님 등록 / 수정 모달 */}
+      {showForm && (
+        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-3 py-4">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[92vh] overflow-y-auto">
+            <div className={`flex items-center justify-between px-5 py-3.5 rounded-t-2xl text-white ${isEditing ? 'bg-indigo-600' : 'bg-emerald-600'}`}>
+              <h3 className="text-base sm:text-lg font-extrabold">
+                {isEditing ? '선생님 정보 수정' : '새 선생님 등록'}
+              </h3>
+              <button type="button" onClick={closeForm} className="p-1 rounded-lg text-white/80 hover:bg-white/15 cursor-pointer" aria-label="닫기">✕</button>
+            </div>
+
+            <div className="p-4 sm:p-5 space-y-3.5 text-left">
+              <div className="grid grid-cols-12 gap-2.5">
+                <div className="col-span-4">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">팀</label>
+                  <select name="team" value={formData.team} onChange={handleInputChange} className="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-sm font-bold">
+                    {TEAM_OPTIONS.map(team => <option key={team} value={team}>{team}</option>)}
                   </select>
                 </div>
-                <div>
-                  <input type="text" name="group" value={formData.group} onChange={handleInputChange} placeholder="예: 1조" className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base" />
+                <div className="col-span-4">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">조</label>
+                  <input type="text" name="group" value={formData.group} onChange={handleInputChange} placeholder="예: 1조" className="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-sm font-bold" />
                 </div>
-                <div className="flex gap-2 sm:gap-4 w-full">
-                  <input type="text" inputMode="numeric" name="seq_num" value={formData.seq_num} onChange={handleInputChange} placeholder="번호" className="w-16 border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base text-center" />
-                  <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="선생님 이름" className="flex-1 min-w-0 border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base" />
+                <div className="col-span-4">
+                  <label className="block text-xs font-bold text-slate-600 mb-1">번호</label>
+                  <input type="text" inputMode="numeric" name="seq_num" value={formData.seq_num} onChange={handleInputChange} placeholder="번호" className="w-full border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-sm font-bold text-center" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-2">
-                <div>
-                  <input type="text" name="shift1" value={formData.shift1} onChange={handleInputChange} placeholder="9:30~10:30" className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base" />
-                </div>
-                <div>
-                  <input type="text" name="shift2" value={formData.shift2} onChange={handleInputChange} placeholder="10:30~11:30" className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base" />
-                </div>
-                <div>
-                  <input type="text" name="shift3" value={formData.shift3} onChange={handleInputChange} placeholder="11:30~12:30" className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base" />
-                </div>
+              <div>
+                <label className="block text-xs font-bold text-indigo-600 mb-1">이름 *</label>
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="선생님 이름" autoFocus={!isEditing} className="w-full border border-slate-300 rounded-xl p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-sm sm:text-base font-bold" />
               </div>
-              <div className="flex items-center gap-2 mt-2 px-1">
-                <input type="checkbox" id="is_active" name="is_active" checked={formData.is_active} onChange={handleInputChange} className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
-                <label htmlFor="is_active" className="text-sm font-bold text-gray-700 select-none cursor-pointer">현재 재직 중 (체크 해제 시 메인 화면의 선생님 목록에서 숨김 처리됩니다)</label>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-2 px-1">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">입사일</label>
-                  <input type="date" name="hire_date" value={formData.hire_date || ''} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base text-black font-semibold" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">퇴사일</label>
-                  <input type="date" name="resign_date" value={formData.resign_date || ''} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg p-1.5 sm:p-2 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-base text-black font-semibold" />
-                </div>
-              </div>
-            </form>
-          </div>
 
-          <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 overflow-hidden">
-          <div className="px-5 py-3 border-b bg-gray-50">
-            <h2 className="text-lg font-bold text-gray-800"></h2>
-          </div>
-          <div className="p-0 overflow-x-auto overflow-y-auto max-h-[70vh] sm:max-h-[75vh] relative">
-            <table className="w-full text-center border-collapse min-w-[600px]">
-              <thead className="sticky top-0 z-20 shadow-xs">
-                <tr className="bg-indigo-50 border-b border-gray-200 text-indigo-900 font-bold">
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-1 border-r border-gray-200 w-10 whitespace-nowrap">팀</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-1 border-r border-gray-200 w-10 whitespace-nowrap">조</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-1 border-r border-gray-200 w-12 whitespace-nowrap">번호</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">이름</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200 w-24 whitespace-nowrap">입사일</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200 w-24 whitespace-nowrap">퇴사일</th>
-                  {isAdmin && <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">관리</th>}
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">시간대 1</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2 border-r border-gray-200">시간대 2</th>
-                  <th className="sticky top-0 z-20 bg-indigo-50 py-2.5 px-2">시간대 3</th>
-                </tr>
-              </thead>
-              <tbody>
-                {teachers.length > 0 ? teachers.sort((a, b) => a.team.localeCompare(b.team) || ((a.seq_num || 999) - (b.seq_num || 999)) || a.group.localeCompare(b.group) || a.name.localeCompare(b.name)).map(t => (
-                  <tr key={t.id} className={`border-b border-gray-100 ${t.is_active === false ? 'bg-gray-200 opacity-60' : (t.team === '2팀' || t.team === '취업팀' ? 'bg-sky-50 hover:bg-sky-100' : 'hover:bg-gray-50')}`}>
-                    <td className="py-2 px-1 border-r border-gray-100 w-10 text-xs sm:text-sm">{t.team.replace('팀', '')}</td>
-                    <td className="py-2 px-1 border-r border-gray-100 w-10 text-xs sm:text-sm">{t.group.replace('조', '')}</td>
-                    <td className="py-2 px-1 border-r border-gray-100 w-12 whitespace-nowrap text-xs sm:text-sm">{t.seq_num}</td>
-                    <td className="py-2 px-2 border-r border-gray-100 font-bold text-xs sm:text-sm">
-                      {t.is_active === false && <span className="text-xs text-red-600 bg-red-100 px-1 py-0.5 rounded mr-1 whitespace-nowrap">퇴사</span>}
-                      <span className={t.is_active === false ? 'line-through text-gray-500' : ''}>
-                        {t.name.includes('/') ? (
-                          t.name.split('/').map((namePart, idx, arr) => (
-                            <span key={idx} className="block whitespace-nowrap">
-                              {namePart}{idx < arr.length - 1 ? '/' : ''}
-                            </span>
-                          ))
-                        ) : (
-                          t.name
-                        )}
-                      </span>
-                    </td>
-                    <td className="py-2 px-2 border-r border-gray-100 text-xs sm:text-sm text-gray-600">{t.hire_date || '-'}</td>
-                    <td className="py-2 px-2 border-r border-gray-100 text-xs sm:text-sm text-gray-600">{t.resign_date || '-'}</td>
-                    {isAdmin && (
-                      <td className="py-2 px-2 border-r border-gray-100 space-x-1 whitespace-nowrap">
-                        <button onClick={() => handleEdit(t)} className="px-2 py-1 bg-blue-200 text-blue-800 text-xs font-bold rounded hover:bg-blue-300 mb-1 sm:mb-0">수정</button>
-                        <button onClick={() => handleDelete(t.id)} className="px-2 py-1 bg-red-200 text-red-800 text-xs font-bold rounded hover:bg-red-300 mb-1 sm:mb-0">삭제</button>
-                        <button onClick={() => handleTransferClick(t)} className="px-2 py-1 bg-purple-200 text-purple-800 text-xs font-bold rounded hover:bg-purple-300">이관</button>
-                      </td>
-                    )}
-                    <td className="py-2 px-2 border-r border-gray-100 text-sm text-gray-600">{t.shift1}</td>
-                    <td className="py-2 px-2 border-r border-gray-100 text-sm text-gray-600">{t.shift2}</td>
-                    <td className="py-2 px-2 text-sm text-gray-600">{t.shift3}</td>
-                  </tr>
-                )) : (
-                  <tr>
-                    <td colSpan={isAdmin ? 10 : 9} className="py-6 text-gray-500 font-medium">등록된 선생님이 없습니다.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">근무 시간대</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['shift1', 'shift2', 'shift3'].map((key, i) => (
+                    <input key={key} type="text" name={key} value={formData[key]} onChange={handleInputChange} placeholder={`시간대 ${i + 1}`} className="w-full min-w-0 border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-sm font-medium text-center tabular-nums" />
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">입사일</label>
+                  <input type="date" name="hire_date" value={formData.hire_date || ''} onChange={handleInputChange} className="w-full min-w-0 border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-sm font-semibold" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">퇴사일</label>
+                  <input type="date" name="resign_date" value={formData.resign_date || ''} onChange={handleInputChange} className="w-full min-w-0 border border-slate-300 rounded-xl p-2 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none text-xs sm:text-sm font-semibold" />
+                </div>
+              </div>
+
+              <label htmlFor="is_active" className="flex items-start gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer">
+                <input type="checkbox" id="is_active" name="is_active" checked={formData.is_active} onChange={handleInputChange} className="mt-0.5 w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                <span className="text-sm font-bold text-slate-700 select-none">
+                  현재 재직 중
+                  <span className="block text-xs font-medium text-slate-500">체크 해제 시 메인 화면의 선생님 목록에서 숨김 처리됩니다.</span>
+                </span>
+              </label>
+            </div>
+
+            <div className="flex gap-2 px-4 sm:px-5 pb-4 sm:pb-5">
+              <button type="button" onClick={closeForm} className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition cursor-pointer">취소</button>
+              <button type="submit" disabled={isLoading} className={`flex-1 py-2.5 text-white rounded-xl font-extrabold disabled:opacity-50 transition cursor-pointer ${isEditing ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-emerald-600 hover:bg-emerald-700'}`}>
+                {isLoading ? '처리중...' : (isEditing ? '수정 저장' : '등록')}
+              </button>
+            </div>
+          </form>
         </div>
-      </>
-    )}
-  </main>
+      )}
 
       {showTransferModal && transferSource && (
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
