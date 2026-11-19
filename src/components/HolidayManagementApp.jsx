@@ -135,7 +135,7 @@ const getHolidayDateMeta = (rawDate, year) => {
   let dDayLabel = '';
   if (diffDays === 0) dDayLabel = '오늘';
   else if (diffDays > 0) dDayLabel = `D-${diffDays}`;
-  else dDayLabel = '지남';
+  else dDayLabel = '';
 
   return {
     mmdd,
@@ -846,19 +846,20 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-end">
-                <div className="sm:col-span-1 lg:col-span-4 min-w-0">
-                  <label className="flex items-center justify-between text-[11.5px] font-bold text-blue-600 mb-1">
-                    <span>날짜 선택 *</span>
+              <div className="grid grid-cols-12 gap-2 sm:gap-2.5 items-end">
+                {/* 날짜 선택과 이름을 한 줄에 배치 (모바일 7:5, 데스크톱 4:3) */}
+                <div className="col-span-7 sm:col-span-7 lg:col-span-4 min-w-0">
+                  <label className="flex items-center justify-between text-[11px] sm:text-[11.5px] font-bold text-blue-600 mb-1">
+                    <span className="truncate">날짜 선택 *</span>
                     {formMeta.weekday && (
-                      <span className={`px-1.5 py-px rounded text-[10.5px] font-extrabold ${
+                      <span className={`px-1.5 py-px rounded text-[10px] sm:text-[10.5px] font-extrabold shrink-0 ${
                         formMeta.isSunday ? 'bg-rose-100 text-rose-700' : formMeta.isSaturday ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-700'
                       }`}>
                         {formMeta.mmdd} ({formMeta.weekday})
                       </span>
                     )}
                   </label>
-                  <div className="flex gap-1.5 min-w-0">
+                  <div className="flex gap-1 sm:gap-1.5 min-w-0">
                     <input
                       type="date"
                       value={toDateInputValue(formData.date, targetYear)}
@@ -866,7 +867,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                         const mmdd = normalizeHolidayDate(e.target.value);
                         if (mmdd) setFormData(prev => ({ ...prev, date: mmdd }));
                       }}
-                      className="flex-1 min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
+                      className="flex-1 min-w-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
                     />
                     <input
                       type="text"
@@ -874,46 +875,45 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       value={formData.date}
                       onChange={handleInputChange}
                       placeholder="MM-DD"
-                      className="w-[78px] shrink-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold text-center"
+                      className="w-[58px] sm:w-[74px] shrink-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold text-center"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-1 lg:col-span-3 min-w-0">
-                  <label className="block text-[11.5px] font-bold text-blue-600 mb-1">이름 *</label>
+                <div className="col-span-5 sm:col-span-5 lg:col-span-3 min-w-0">
+                  <label className="block text-[11px] sm:text-[11.5px] font-bold text-blue-600 mb-1 truncate">이름 *</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="예: 삼일절, 소양교육"
-                    className="w-full min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
+                    placeholder="예: 삼일절"
+                    className="w-full min-w-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5 sm:col-span-2 lg:col-span-5 min-w-0">
-                  <div className="min-w-0">
-                    <label className="block text-[11.5px] font-bold text-slate-600 mb-1">내용1</label>
-                    <input
-                      type="text"
-                      name="content1"
-                      value={formData.content1}
-                      onChange={handleInputChange}
-                      placeholder="예: 휴관"
-                      className="w-full min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <label className="block text-[11.5px] font-bold text-slate-600 mb-1">내용2</label>
-                    <input
-                      type="text"
-                      name="content2"
-                      value={formData.content2}
-                      onChange={handleInputChange}
-                      placeholder="예: 휴강"
-                      className="w-full min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
-                    />
-                  </div>
+                <div className="col-span-6 sm:col-span-6 lg:col-span-2 min-w-0">
+                  <label className="block text-[11px] sm:text-[11.5px] font-bold text-slate-600 mb-1 truncate">내용1</label>
+                  <input
+                    type="text"
+                    name="content1"
+                    value={formData.content1}
+                    onChange={handleInputChange}
+                    placeholder="예: 휴관"
+                    className="w-full min-w-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
+                  />
+                </div>
+
+                <div className="col-span-6 sm:col-span-6 lg:col-span-3 min-w-0">
+                  <label className="block text-[11px] sm:text-[11.5px] font-bold text-slate-600 mb-1 truncate">내용2</label>
+                  <input
+                    type="text"
+                    name="content2"
+                    value={formData.content2}
+                    onChange={handleInputChange}
+                    placeholder="예: 휴강"
+                    className="w-full min-w-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
+                  />
                 </div>
               </div>
             </form>
@@ -1018,15 +1018,15 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                         <div
                           key={h.id ?? h.date}
                           className={`rounded-2xl border p-3.5 transition ${
-                            isPast ? 'bg-slate-50/70 border-slate-200 opacity-85' : 'bg-white border-slate-200 shadow-xs'
+                            isPast ? 'bg-slate-50/70 border-slate-200 opacity-90' : 'bg-white border-slate-200 shadow-xs'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <div className="flex items-center flex-wrap gap-1.5">
-                                <span className="text-sm font-extrabold text-slate-900 tabular-nums">{meta.mmdd}</span>
+                                <span className="text-base font-black text-slate-900 tabular-nums">{meta.mmdd}</span>
                                 {meta.weekday && (
-                                  <span className={`px-1.5 py-0.5 rounded text-[11px] font-extrabold ${
+                                  <span className={`px-2 py-0.5 rounded-md text-xs font-black ${
                                     meta.isSunday
                                       ? 'bg-rose-100 text-rose-700'
                                       : meta.isSaturday
@@ -1037,55 +1037,52 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                   </span>
                                 )}
                                 {meta.dDayLabel && (
-                                  <span className={`px-1.5 py-0.5 rounded text-[10.5px] font-extrabold ${
-                                    meta.diffDays === 0
-                                      ? 'bg-blue-600 text-white'
-                                      : isPast
-                                        ? 'bg-slate-200 text-slate-500'
-                                        : 'bg-indigo-100 text-indigo-700'
-                                  }`}>
+                                  <span className="px-2 py-0.5 rounded-md text-[11px] font-extrabold bg-blue-600 text-white shadow-xs">
                                     {meta.dDayLabel}
                                   </span>
                                 )}
                               </div>
-                              <div className="text-base font-extrabold text-slate-900 mt-1 break-words">{h.name}</div>
+                              <div className="text-base font-extrabold text-slate-900 mt-1 break-words leading-snug">{h.name}</div>
                             </div>
 
                             <button
                               type="button"
                               onClick={() => handleToggleVacation(h.date, h.vacation_available)}
                               disabled={saving || loading}
-                              className={`px-2.5 py-1 rounded-full text-[11.5px] font-bold shrink-0 transition cursor-pointer ${
+                              className={`px-2.5 py-1 rounded-full text-xs font-bold shrink-0 transition cursor-pointer active:scale-95 ${
                                 h.vacation_available
                                   ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                                   : 'bg-slate-100 text-slate-500 border border-slate-200'
                               }`}
+                              title="클릭하여 개별수업 가능 여부 변경"
                             >
-                              {h.vacation_available ? '개별수업 O' : '개별수업 X'}
+                              {h.vacation_available ? '개별수업 가능' : '개별수업 불가'}
                             </button>
                           </div>
 
                           {(h.content1 || h.content2) && (
-                            <div className="flex flex-wrap gap-1.5 mt-2 text-xs font-semibold text-slate-600">
-                              {h.content1 && <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200">내용1: {h.content1}</span>}
-                              {h.content2 && <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200">내용2: {h.content2}</span>}
+                            <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2 border-t border-slate-100 text-xs font-medium">
+                              {h.content1 && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700">
+                                  <span className="font-extrabold text-slate-400">내용1</span>
+                                  <span className="font-bold text-slate-900">{h.content1}</span>
+                                </span>
+                              )}
+                              {h.content2 && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700">
+                                  <span className="font-extrabold text-slate-400">내용2</span>
+                                  <span className="font-bold text-slate-900">{h.content2}</span>
+                                </span>
+                              )}
                             </div>
                           )}
 
                           <div className="flex items-center justify-end gap-1.5 mt-3 pt-2.5 border-t border-slate-100">
                             <button
                               type="button"
-                              onClick={() => handleApplyToSchedule([h])}
-                              disabled={applying || saving || loading}
-                              className="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold active:scale-95 transition cursor-pointer"
-                            >
-                              일정적용
-                            </button>
-                            <button
-                              type="button"
                               onClick={() => handleOpenEditModal(h)}
                               disabled={saving || loading}
-                              className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold active:scale-95 transition cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold active:scale-95 transition cursor-pointer"
                             >
                               수정
                             </button>
@@ -1093,9 +1090,17 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                               type="button"
                               onClick={() => handleDelete(h)}
                               disabled={saving || loading}
-                              className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer"
                             >
                               삭제
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleApplyToSchedule([h])}
+                              disabled={applying || saving || loading}
+                              className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold active:scale-95 transition cursor-pointer"
+                            >
+                              일정적용
                             </button>
                           </div>
                         </div>
@@ -1179,15 +1184,6 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                 <div className="inline-flex items-center gap-1.5">
                                   <button
                                     type="button"
-                                    onClick={() => handleApplyToSchedule([h])}
-                                    disabled={applying || saving || loading}
-                                    className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
-                                    title="이 날짜만 일정표에 적용"
-                                  >
-                                    적용
-                                  </button>
-                                  <button
-                                    type="button"
                                     onClick={() => handleOpenEditModal(h)}
                                     disabled={saving || loading}
                                     className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
@@ -1201,6 +1197,15 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                                     className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
                                   >
                                     삭제
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleApplyToSchedule([h])}
+                                    disabled={applying || saving || loading}
+                                    className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer"
+                                    title="이 날짜만 일정표에 적용"
+                                  >
+                                    일정적용
                                   </button>
                                 </div>
                               </td>
