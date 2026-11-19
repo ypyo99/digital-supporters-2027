@@ -45,8 +45,8 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   const [isTyping, setIsTyping] = useState(false);
   const isTypingRef = useRef(false);
   const [isAutoScheduling, setIsAutoScheduling] = useState(false);
-  const [isManagerMode, setIsManagerMode] = useState(false);
-  const isManagerModeRef = useRef(false);
+  const [isManagerMode, setIsManagerMode] = useState(() => hasValidSavedAdminPassword());
+  const isManagerModeRef = useRef(isManagerMode);
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
