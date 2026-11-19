@@ -314,15 +314,10 @@ export default function MainApp({
   const [studentHistoryLogs, setStudentHistoryLogs] = useState([]);
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
   const [roomStatusPopup, setRoomStatusPopup] = useState(null);
+  const roomPopupDismissedRef = useRef(null);
 
-  const closeRoomStatusPopup = (hideToday = false) => {
-    if (roomStatusPopup) {
-      const seenKey = `sungdong_room_popup_seen_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`;
-      try { window.sessionStorage.setItem(seenKey, 'true'); } catch (_) {}
-      if (hideToday) {
-        setSavedItem(`sungdong_room_popup_hide_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`, 'true');
-      }
-    }
+  const closeRoomStatusPopup = () => {
+    roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
     setRoomStatusPopup(null);
   };
 
@@ -891,65 +886,53 @@ export default function MainApp({
   const [holidaysFullList, setHolidaysFullList] = useState([]);
 
   useEffect(() => {
-    if (isLoggedIn || !selectedTeam) return;
-
-    const now = new Date();
-    const minutesOfDay = now.getHours() * 60 + now.getMinutes();
-    const isBefore0930 = minutesOfDay < (9 * 60 + 30);
-    const isBefore1300 = minutesOfDay < (13 * 60);
-
-    let showClassroom = false;
-    let showNangman = false;
-    let teamKey = '';
-    let teamLabel = selectedTeam;
-    let scheduleType = '';
-
-    if (selectedTeam === '1팀' || selectedTeam === '2팀') {
-      if (isBefore0930) {
-        showClassroom = true;
-        showNangman = true;
-        teamKey = selectedTeam;
-        teamLabel = `${selectedTeam} (오전)`;
-        scheduleType = 'morning';
-      }
-    } else if (selectedTeam === '3팀') {
-      if (isBefore1300) {
-        showClassroom = true;
-        showNangman = false;
-        teamKey = '3팀';
-        teamLabel = '3팀 (오후)';
-        scheduleType = 'afternoon';
-      }
-    } else if (selectedTeam === '취업팀' && currentUser) {
-      const group = getTeacherGroup('취업팀', currentUser, dbTeachers) || '';
-      if (group.includes('오전') && isBefore0930) {
-        showClassroom = true;
-        showNangman = true;
-        teamKey = '취업팀-오전';
-        teamLabel = '취업팀 오전조';
-        scheduleType = 'morning';
-      } else if (group.includes('오후') && isBefore1300) {
-        showClassroom = true;
-        showNangman = false;
-        teamKey = '취업팀-오후';
-        teamLabel = '취업팀 오후조';
-        scheduleType = 'afternoon';
-      }
-    }
-
-    if (!showClassroom && !showNangman) {
+    if (isLoggedIn || !selectedTeam) {
       setRoomStatusPopup(null);
       return;
     }
 
-    const todayStr = getLocalDateString(now);
-    const hideKey = `sungdong_room_popup_hide_${todayStr}_${teamKey}`;
-    const seenKey = `sungdong_room_popup_seen_${todayStr}_${teamKey}`;
-    if (getSavedItem(hideKey, '') === 'true') return;
-    try {
-      if (window.sessionStorage.getItem(seenKey) === 'true') return;
-    } catch (_) {}
+    const teamUserKey = `${selectedTeam}_${currentUser || ''}`;
+    if (roomPopupDismissedRef.current === teamUserKey) {
+      return;
+    }
 
+    const now = new Date();
+    let showClassroom = true;
+    let showNangman = true;
+    let teamKey = selectedTeam;
+    let teamLabel = selectedTeam;
+    let scheduleType = 'morning';
+
+    if (selectedTeam === '1팀' || selectedTeam === '2팀') {
+      showClassroom = true;
+      showNangman = true;
+      teamKey = selectedTeam;
+      teamLabel = `${selectedTeam} (오전)`;
+      scheduleType = 'morning';
+    } else if (selectedTeam === '3팀') {
+      showClassroom = true;
+      showNangman = true;
+      teamKey = '3팀';
+      teamLabel = '3팀 (오후)';
+      scheduleType = 'afternoon';
+    } else if (selectedTeam === '취업팀') {
+      const group = (currentUser ? getTeacherGroup('취업팀', currentUser, dbTeachers) : '') || '';
+      if (group.includes('오후')) {
+        showClassroom = true;
+        showNangman = true;
+        teamKey = '취업팀-오후';
+        teamLabel = '취업팀 오후조';
+        scheduleType = 'afternoon';
+      } else {
+        showClassroom = true;
+        showNangman = true;
+        teamKey = currentUser ? '취업팀-오전' : '취업팀';
+        teamLabel = currentUser ? '취업팀 오전조' : '취업팀';
+        scheduleType = 'morning';
+      }
+    }
+
+    const todayStr = getLocalDateString(now);
     let isMounted = true;
     const loadRoomStatus = async () => {
       try {
@@ -2434,6 +2417,7 @@ export default function MainApp({
     isLoggedInRef.current = false;
     setIsLoggedIn(false);
     setRecords([]);
+    roomPopupDismissedRef.current = null;
     if (window.history.state && window.history.state.subView === 'logWrite') {
       window.history.back();
     }
@@ -3764,7 +3748,7 @@ export default function MainApp({
         {roomStatusPopup && (
           <div
             className="fixed inset-0 bg-slate-900/50 backdrop-blur-[3px] flex items-center justify-center z-[70] p-3 sm:p-4"
-            onClick={() => closeRoomStatusPopup(false)}
+            onClick={closeRoomStatusPopup}
           >
             <div
               className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[86vh] animate-fadeIn border border-slate-200"
@@ -3780,7 +3764,7 @@ export default function MainApp({
                 </div>
                 <button
                   type="button"
-                  onClick={() => closeRoomStatusPopup(false)}
+                  onClick={closeRoomStatusPopup}
                   className="p-1 rounded-lg text-white/90 hover:bg-white/20 active:scale-90 transition"
                   aria-label="닫기"
                 >
@@ -3811,7 +3795,7 @@ export default function MainApp({
                       </div>
                       <button
                         type="button"
-                        onClick={() => { closeRoomStatusPopup(false); handleLogout(); onNavigateToClassroom(); }}
+                        onClick={() => { closeRoomStatusPopup(); handleLogout(); onNavigateToClassroom(); }}
                         className="text-[12.5px] font-bold text-blue-600 hover:underline whitespace-nowrap"
                       >
                         주간 보기 &rarr;
@@ -3847,14 +3831,11 @@ export default function MainApp({
                         </span>
                         <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900 flex items-center gap-1.5">
                           <span>낭만스튜디오</span>
-                          <span className="text-[11.5px] font-bold text-pink-700 bg-pink-100 px-1.5 py-0.5 rounded">
-                            {roomStatusPopup.isMorning ? '오전' : '오후'}
-                          </span>
                         </h4>
                       </div>
                       <button
                         type="button"
-                        onClick={() => { closeRoomStatusPopup(false); handleLogout(); onNavigateToNangmanStudio(); }}
+                        onClick={() => { closeRoomStatusPopup(); handleLogout(); onNavigateToNangmanStudio(); }}
                         className="text-[12.5px] font-bold text-blue-600 hover:underline whitespace-nowrap"
                       >
                         주간 보기 &rarr;
@@ -3889,18 +3870,11 @@ export default function MainApp({
                 )}
               </div>
 
-              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0">
+              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
                 <button
                   type="button"
-                  onClick={() => closeRoomStatusPopup(true)}
-                  className="px-3 py-2 rounded-xl text-[13px] sm:text-[14px] font-bold text-slate-600 hover:bg-slate-200/70 transition cursor-pointer whitespace-nowrap"
-                >
-                  오늘 그만 보기
-                </button>
-                <button
-                  type="button"
-                  onClick={() => closeRoomStatusPopup(false)}
-                  className="px-5 py-2 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer"
+                  onClick={closeRoomStatusPopup}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer text-center"
                 >
                   확인
                 </button>
