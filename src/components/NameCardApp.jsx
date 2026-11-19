@@ -1,6 +1,6 @@
 // 디지털교육서포터즈 명함 만들기 (ypyo99/ds-namecard 통합)
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { Home } from './Icons';
 import { SEOUL_SYMBOL_BASE64 } from '../utils/seoulSymbolBase64';
@@ -10,75 +10,108 @@ const TARGET_NAMECARD_DIR = 'G:\\내 드라이브\\2027-Digital Supporters\\명�
 const GOOGLE_DRIVE_FOLDER_ID = '13BWCd8p70u9GGBEDHQBaO3ZRJL3DtD1I';
 const GOOGLE_DRIVE_FOLDER_URL = `https://drive.google.com/drive/u/0/folders/${GOOGLE_DRIVE_FOLDER_ID}`;
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwtz2B3wl9Bk3AgoPEO9Jz3PkPRAJEq11N28YW8fZC4x3oVo0ls1p9rkUxMEnL7_ak5Hg/exec';
-const STORAGE_KEY = 'ds_card_custom_defaults_v2';
+const THEME_STORAGE_KEY = 'ds_card_panel_theme_v1';
 const IDB_NAME = 'ds_namecard_fs_v1';
 const IDB_STORE = 'handles';
 const IDB_KEY = 'saveDir';
 
-const OPTIMAL_PRESET = {
-  sizes: {
-    logo: 60,
-    org: 27,
-    name: 58,
-    title: 33,
-    slogan: 21,
-    contact: 29.5
-  },
-  nameColorPercent: 4 // #151E2E (다크 차콜)
+const CARD_SIZES = {
+  logo: 60,
+  org: 27,
+  name: 58,
+  title: 33,
+  slogan: 21,
+  contact: 29.5
 };
+const NAME_COLOR_HEX = '#151E2E';
 
-const COMPONENT_CONFIGS = [
-  { key: 'logo', label: '로고', defaultVal: 60, min: 24, max: 110, step: 2, sliderStep: 1 },
-  { key: 'org', label: '기관명', defaultVal: 27, min: 14, max: 42, step: 1, sliderStep: 1 },
-  { key: 'name', label: '성함', defaultVal: 58, min: 24, max: 78, step: 2, sliderStep: 1 },
-  { key: 'title', label: '직책', defaultVal: 33, min: 14, max: 42, step: 1, sliderStep: 1 },
-  { key: 'slogan', label: '부제문구', defaultVal: 21, min: 11, max: 28, step: 1, sliderStep: 1 },
-  { key: 'contact', label: '연락처', defaultVal: 29.5, min: 14, max: 38, step: 1, sliderStep: 0.5 }
+const PANEL_THEMES = [
+  {
+    id: 'navy',
+    label: '딥 네이비',
+    swatch: '#1B3A6F',
+    grad: ['#1B3A6F', '#122B55', '#08142D'],
+    glowHex: '#416EA8',
+    glowOpacity: 0.55,
+    glowRgba: 'rgba(65, 110, 168, 0.55)',
+    glowZeroRgba: 'rgba(27, 58, 111, 0)',
+    crescents: ['rgba(24, 67, 125, 0.52)', 'rgba(14, 35, 74, 0.72)', 'rgba(7, 18, 42, 0.88)'],
+    orbits: [
+      { r: 290.0, color: 'rgba(80, 126, 186, 0.35)', w: 1.2 },
+      { r: 238.0, color: 'rgba(92, 139, 204, 0.45)', w: 1.3 },
+      { r: 178.0, color: 'rgba(123, 168, 232, 0.75)', w: 1.6 },
+      { r: 116.0, color: 'rgba(80, 126, 186, 0.45)', w: 1.3 },
+      { r: 66.0, color: 'rgba(80, 126, 186, 0.30)', w: 1.2 }
+    ],
+    accent: '#F58220'
+  },
+  {
+    id: 'emerald',
+    label: '에메랄드',
+    swatch: '#0F766E',
+    grad: ['#115E59', '#0D4A46', '#042F2E'],
+    glowHex: '#2DD4BF',
+    glowOpacity: 0.45,
+    glowRgba: 'rgba(45, 212, 191, 0.45)',
+    glowZeroRgba: 'rgba(17, 94, 89, 0)',
+    crescents: ['rgba(15, 118, 110, 0.52)', 'rgba(19, 78, 74, 0.72)', 'rgba(4, 47, 46, 0.88)'],
+    orbits: [
+      { r: 290.0, color: 'rgba(94, 234, 212, 0.32)', w: 1.2 },
+      { r: 238.0, color: 'rgba(45, 212, 191, 0.45)', w: 1.3 },
+      { r: 178.0, color: 'rgba(153, 246, 228, 0.75)', w: 1.6 },
+      { r: 116.0, color: 'rgba(94, 234, 212, 0.45)', w: 1.3 },
+      { r: 66.0, color: 'rgba(94, 234, 212, 0.28)', w: 1.2 }
+    ],
+    accent: '#F59E0B'
+  },
+  {
+    id: 'purple',
+    label: '로열 퍼플',
+    swatch: '#5B21B6',
+    grad: ['#5B21B6', '#3B0764', '#1E1B4B'],
+    glowHex: '#A78BFA',
+    glowOpacity: 0.5,
+    glowRgba: 'rgba(167, 139, 250, 0.50)',
+    glowZeroRgba: 'rgba(91, 33, 182, 0)',
+    crescents: ['rgba(109, 40, 217, 0.48)', 'rgba(59, 7, 100, 0.72)', 'rgba(30, 27, 75, 0.88)'],
+    orbits: [
+      { r: 290.0, color: 'rgba(167, 139, 250, 0.35)', w: 1.2 },
+      { r: 238.0, color: 'rgba(196, 181, 253, 0.45)', w: 1.3 },
+      { r: 178.0, color: 'rgba(221, 214, 254, 0.75)', w: 1.6 },
+      { r: 116.0, color: 'rgba(167, 139, 250, 0.45)', w: 1.3 },
+      { r: 66.0, color: 'rgba(167, 139, 250, 0.30)', w: 1.2 }
+    ],
+    accent: '#F472B6'
+  },
+  {
+    id: 'burgundy',
+    label: '버건디',
+    swatch: '#881337',
+    grad: ['#881337', '#581129', '#2A0815'],
+    glowHex: '#FB7185',
+    glowOpacity: 0.45,
+    glowRgba: 'rgba(251, 113, 133, 0.45)',
+    glowZeroRgba: 'rgba(136, 19, 55, 0)',
+    crescents: ['rgba(159, 18, 57, 0.52)', 'rgba(76, 5, 25, 0.72)', 'rgba(42, 8, 21, 0.88)'],
+    orbits: [
+      { r: 290.0, color: 'rgba(253, 164, 175, 0.35)', w: 1.2 },
+      { r: 238.0, color: 'rgba(251, 113, 133, 0.45)', w: 1.3 },
+      { r: 178.0, color: 'rgba(254, 205, 211, 0.75)', w: 1.6 },
+      { r: 116.0, color: 'rgba(253, 164, 175, 0.45)', w: 1.3 },
+      { r: 66.0, color: 'rgba(253, 164, 175, 0.28)', w: 1.2 }
+    ],
+    accent: '#F59E0B'
+  }
 ];
 
-const CONFIG_MAP = Object.fromEntries(COMPONENT_CONFIGS.map(c => [c.key, c]));
-
-const clampSize = (key, val) => {
-  const cfg = CONFIG_MAP[key];
-  if (!cfg) return val;
-  return Math.max(cfg.min, Math.min(cfg.max, Math.round(val * 10) / 10));
-};
-
-const calculateGrayColor = (percent) => {
-  const t = Math.max(0, Math.min(100, percent)) / 100;
-  const r = Math.round(16 + (148 - 16) * t);
-  const g = Math.round(24 + (163 - 24) * t);
-  const b = Math.round(40 + (184 - 40) * t);
-  const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0').toUpperCase()).join('');
-
-  let desc = '기본 블랙';
-  if (percent === 0) desc = '기본 블랙';
-  else if (percent < 25) desc = '다크 차콜';
-  else if (percent < 50) desc = '딥 그레이';
-  else if (percent < 75) desc = '미디엄 그레이';
-  else desc = '라이트 그레이';
-
-  return { hex, desc };
-};
-
-const getActiveDefaults = () => {
+const getInitialThemeId = () => {
   try {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed && parsed.sizes) {
-        return {
-          sizes: { ...OPTIMAL_PRESET.sizes, ...parsed.sizes },
-          nameColorPercent: parsed.nameColorPercent !== undefined
-            ? parsed.nameColorPercent
-            : OPTIMAL_PRESET.nameColorPercent
-        };
-      }
-    }
-  } catch (e) {
-    console.warn('localStorage 읽기 실패:', e);
+    const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved && PANEL_THEMES.some(t => t.id === saved)) return saved;
+  } catch {
+    // ignore storage errors
   }
-  return OPTIMAL_PRESET;
+  return 'navy';
 };
 
 const formatDisplayName = (rawName) => {
@@ -152,7 +185,7 @@ const dataUrlToBlob = (dataUrl) => {
   return new Blob([bytes], { type: mime });
 };
 
-const drawRightNavyPanelOnCanvas = (canvas) => {
+const drawRightPanelOnCanvas = (canvas, theme) => {
   const s = canvas.width / 900;
   const pw = 250;
   const ph = 500;
@@ -168,9 +201,9 @@ const drawRightNavyPanelOnCanvas = (canvas) => {
   ctx.clip();
 
   const baseGrad = ctx.createLinearGradient(0, 0, pw * 0.3 * s, ph * s);
-  baseGrad.addColorStop(0, '#1B3A6F');
-  baseGrad.addColorStop(0.45, '#122B55');
-  baseGrad.addColorStop(1, '#08142D');
+  baseGrad.addColorStop(0, theme.grad[0]);
+  baseGrad.addColorStop(0.45, theme.grad[1]);
+  baseGrad.addColorStop(1, theme.grad[2]);
   ctx.fillStyle = baseGrad;
   ctx.fillRect(0, 0, pw * s, ph * s);
 
@@ -182,38 +215,23 @@ const drawRightNavyPanelOnCanvas = (canvas) => {
     ph * 0.08 * s,
     pw * 1.2 * s
   );
-  topGlow.addColorStop(0, 'rgba(65, 110, 168, 0.55)');
-  topGlow.addColorStop(1, 'rgba(27, 58, 111, 0)');
+  topGlow.addColorStop(0, theme.glowRgba);
+  topGlow.addColorStop(1, theme.glowZeroRgba);
   ctx.fillStyle = topGlow;
   ctx.fillRect(0, 0, pw * s, ph * s);
 
   const cx = 254 * s;
   const cy = 510 * s;
+  const crescentRadii = [238, 135, 80];
 
-  ctx.beginPath();
-  ctx.arc(cx, cy, 238 * s, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(24, 67, 125, 0.52)';
-  ctx.fill();
+  crescentRadii.forEach((r, idx) => {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * s, 0, Math.PI * 2);
+    ctx.fillStyle = theme.crescents[idx];
+    ctx.fill();
+  });
 
-  ctx.beginPath();
-  ctx.arc(cx, cy, 135 * s, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(14, 35, 74, 0.72)';
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, 80 * s, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(7, 18, 42, 0.88)';
-  ctx.fill();
-
-  const orbits = [
-    { r: 290.0, color: 'rgba(80, 126, 186, 0.35)', w: 1.2 },
-    { r: 238.0, color: 'rgba(92, 139, 204, 0.45)', w: 1.3 },
-    { r: 178.0, color: 'rgba(123, 168, 232, 0.75)', w: 1.6 },
-    { r: 116.0, color: 'rgba(80, 126, 186, 0.45)', w: 1.3 },
-    { r: 66.0, color: 'rgba(80, 126, 186, 0.30)', w: 1.2 }
-  ];
-
-  orbits.forEach(orb => {
+  theme.orbits.forEach(orb => {
     ctx.beginPath();
     ctx.arc(cx, cy, orb.r * s, 0, Math.PI * 2);
     ctx.strokeStyle = orb.color;
@@ -223,7 +241,7 @@ const drawRightNavyPanelOnCanvas = (canvas) => {
 
   ctx.beginPath();
   ctx.arc(110.0 * s, 405.0 * s, 9.5 * s, 0, Math.PI * 2);
-  ctx.fillStyle = '#F58220';
+  ctx.fillStyle = theme.accent;
   ctx.fill();
 
   const bx = 42.0 * s;
@@ -237,7 +255,7 @@ const drawRightNavyPanelOnCanvas = (canvas) => {
   } else {
     ctx.rect(bx, by, bw, bh);
   }
-  ctx.fillStyle = '#F58220';
+  ctx.fillStyle = theme.accent;
   ctx.fill();
 
   const texts = [
@@ -265,16 +283,13 @@ const drawRightNavyPanelOnCanvas = (canvas) => {
 };
 
 export default function NameCardApp({ onNavigateBack }) {
-  const initialDefaults = useRef(getActiveDefaults()).current;
   const [nameInput, setNameInput] = useState('표영');
   const [phoneInput, setPhoneInput] = useState('010-2687-7190');
-  const [sizes, setSizes] = useState(() => ({ ...initialDefaults.sizes }));
-  const [nameColorPercent, setNameColorPercent] = useState(() => initialDefaults.nameColorPercent);
+  const [themeId, setThemeId] = useState(() => getInitialThemeId());
   const [cardScale, setCardScale] = useState(1);
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveFeedback, setSaveFeedback] = useState(null); // { type: 'success' | 'error', text: string }
-  const [defaultSavedToast, setDefaultSavedToast] = useState(false);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
   const [dirHandle, setDirHandle] = useState(null);
@@ -282,8 +297,6 @@ export default function NameCardApp({ onNavigateBack }) {
 
   const cardWrapRef = useRef(null);
   const cardRef = useRef(null);
-  const pressTimerRef = useRef(null);
-  const pressIntervalRef = useRef(null);
 
   // Check local Vite save endpoint & saved FileSystemDirectoryHandle + teachers list
   useEffect(() => {
@@ -348,49 +361,14 @@ export default function NameCardApp({ onNavigateBack }) {
     };
   }, []);
 
-  const stopAdjusting = useCallback(() => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    if (pressIntervalRef.current) {
-      clearInterval(pressIntervalRef.current);
-      pressIntervalRef.current = null;
-    }
-  }, []);
+  const activeTheme = PANEL_THEMES.find(t => t.id === themeId) || PANEL_THEMES[0];
 
-  useEffect(() => stopAdjusting, [stopAdjusting]);
-
-  const adjustSize = useCallback((key, delta) => {
-    setSizes(prev => ({
-      ...prev,
-      [key]: clampSize(key, (prev[key] ?? CONFIG_MAP[key].defaultVal) + delta)
-    }));
-  }, []);
-
-  const startAdjusting = (key, delta) => {
-    stopAdjusting();
-    adjustSize(key, delta);
-    pressTimerRef.current = setTimeout(() => {
-      pressIntervalRef.current = setInterval(() => {
-        adjustSize(key, delta);
-      }, 70);
-    }, 300);
-  };
-
-  const handleResetDefaults = () => {
-    const target = getActiveDefaults();
-    setSizes({ ...target.sizes });
-    setNameColorPercent(target.nameColorPercent);
-  };
-
-  const handleSaveAsDefault = () => {
+  const handleSelectTheme = (id) => {
+    setThemeId(id);
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ sizes, nameColorPercent }));
-      setDefaultSavedToast(true);
-      setTimeout(() => setDefaultSavedToast(false), 1600);
-    } catch (e) {
-      console.warn('localStorage 저장 실패:', e);
+      window.localStorage.setItem(THEME_STORAGE_KEY, id);
+    } catch {
+      // ignore storage errors
     }
   };
 
@@ -456,7 +434,7 @@ export default function NameCardApp({ onNavigateBack }) {
         }
       });
 
-      drawRightNavyPanelOnCanvas(canvas);
+      drawRightPanelOnCanvas(canvas, activeTheme);
 
       const dataUrl = canvas.toDataURL('image/jpeg', 0.96);
       const safeTeacherName = (nameInput.trim() || '디지털교육서포터즈').replace(/[<>:"/\\|?*]/g, '_');
@@ -552,10 +530,11 @@ export default function NameCardApp({ onNavigateBack }) {
     }
   };
 
-  const { hex: nameColorHex, desc: nameColorDesc } = calculateGrayColor(nameColorPercent);
   const { text: formattedName, trackingClass } = formatDisplayName(nameInput);
   const displayPhone = phoneInput.trim() || '010-2687-7190';
 
+  const sizes = CARD_SIZES;
+  const nameColorHex = NAME_COLOR_HEX;
   const contactLabelSize = (sizes.contact * (18.5 / 26.5)).toFixed(1);
   const contactIconSize = (sizes.contact * (24 / 26.5)).toFixed(1);
   const subOrgSize = (sizes.org * (18.5 / 27)).toFixed(1);
@@ -564,30 +543,6 @@ export default function NameCardApp({ onNavigateBack }) {
     <div className="min-h-[100dvh] flex flex-col app-surface font-sans text-slate-800 pb-10">
       <style>{`
         .ds-namecard-font { font-family: 'Noto Sans KR', 'Pretendard Variable', sans-serif; }
-        .name-color-slider {
-          background: linear-gradient(to right, #101828 0%, #334155 30%, #64748B 60%, #94A3B8 85%, #CBD5E1 100%);
-          outline: none;
-        }
-        .name-color-slider::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #ffffff;
-          border: 2px solid #13386E;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-          cursor: pointer;
-        }
-        .name-color-slider::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #ffffff;
-          border: 2px solid #13386E;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-          cursor: pointer;
-        }
       `}</style>
 
       {/* 앱 공통 상단 헤더 */}
@@ -752,146 +707,31 @@ export default function NameCardApp({ onNavigateBack }) {
             </div>
           )}
 
-          {/* 이름 폰트색 (회색계열) 슬라이더 */}
-          <div className="mt-3.5 p-3 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex items-center gap-2 shrink-0">
-              <label htmlFor="range-name-color" className="text-xs font-bold text-slate-700 cursor-pointer">
-                이름 폰트색 (회색계열)
-              </label>
-              <span
-                className="w-4 h-4 rounded-full border border-slate-400 inline-block"
-                style={{ backgroundColor: nameColorHex }}
-              />
-              <span className="text-[11px] font-extrabold text-[#13386E] font-mono bg-white border border-slate-300 px-2 py-0.5 rounded">
-                {nameColorHex} ({nameColorDesc})
-              </span>
-            </div>
-
-            <div className="flex-1 flex items-center gap-2.5 max-w-[420px]">
-              <span className="text-[10.5px] font-bold text-slate-500 whitespace-nowrap">블랙</span>
-              <input
-                type="range"
-                id="range-name-color"
-                min={0}
-                max={100}
-                step={1}
-                value={nameColorPercent}
-                onChange={(e) => setNameColorPercent(parseFloat(e.target.value))}
-                className="flex-1 h-2 rounded-lg appearance-none cursor-pointer name-color-slider"
-              />
-              <span className="text-[10.5px] font-bold text-slate-500 whitespace-nowrap">밝은 회색</span>
-            </div>
-
-            <div className="flex items-center gap-1 shrink-0">
-              <button
-                type="button"
-                onClick={() => setNameColorPercent(4)}
-                className={`px-2 py-1 text-[11px] font-bold border rounded-lg transition cursor-pointer ${
-                  nameColorPercent === 4
-                    ? 'bg-blue-50 border-blue-300 text-[#13386E]'
-                    : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                다크 차콜(#151E2E)
-              </button>
-              <button
-                type="button"
-                onClick={() => setNameColorPercent(0)}
-                className={`px-2 py-1 text-[11px] font-bold border rounded-lg transition cursor-pointer ${
-                  nameColorPercent === 0
-                    ? 'bg-blue-50 border-blue-300 text-[#13386E]'
-                    : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                기본 블랙
-              </button>
-            </div>
-          </div>
-
-          {/* 컴포넌트별 크기 조절 */}
-          <div className="mt-4 pt-3.5 border-t border-slate-200">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-700">크기 조절</span>
-                <span className="text-[11px] text-slate-500 hidden sm:inline">(버튼을 클릭하거나 꾹 누르면 연속 조절됩니다)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={handleSaveAsDefault}
-                  className={`text-[11px] px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
-                    defaultSavedToast
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-[#13386E] hover:bg-[#1a4484] text-white'
-                  }`}
-                >
-                  {defaultSavedToast ? '기본값 저장 완료!' : '현재 설정 기본값 저장'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleResetDefaults}
-                  className="text-[11px] text-slate-700 hover:text-[#13386E] py-1 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold border border-slate-300 transition cursor-pointer"
-                >
-                  기본값 복원
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-              {COMPONENT_CONFIGS.map(cfg => {
-                const val = sizes[cfg.key] ?? cfg.defaultVal;
+          {/* 오른쪽 그림 테마색 선택 (4가지) */}
+          <div className="mt-3.5 p-3 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-wrap items-center justify-between gap-2.5">
+            <span className="text-xs font-bold text-slate-700 shrink-0">오른쪽 그림 테마색</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1 max-w-[540px]">
+              {PANEL_THEMES.map(theme => {
+                const selected = theme.id === activeTheme.id;
                 return (
-                  <div
-                    key={cfg.key}
-                    className="bg-slate-50 hover:bg-slate-100/80 transition-colors p-2.5 rounded-xl border border-slate-300 flex flex-col justify-between"
+                  <button
+                    key={theme.id}
+                    type="button"
+                    onClick={() => handleSelectTheme(theme.id)}
+                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-extrabold transition cursor-pointer active:scale-95 ${
+                      selected
+                        ? 'bg-white border-[#13386E] text-slate-900 ring-2 ring-[#13386E]/20 shadow-xs'
+                        : 'bg-white/80 border-slate-300 text-slate-600 hover:bg-white hover:border-slate-400'
+                    }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[11px] font-bold text-slate-700">{cfg.label}</span>
-                      <span className="text-[11px] font-extrabold text-[#13386E] bg-white px-1.5 py-0.5 rounded border border-slate-300 font-mono">
-                        {val}px
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 mb-1.5">
-                      <button
-                        type="button"
-                        onMouseDown={(e) => { if (e.button === 0) startAdjusting(cfg.key, -cfg.step); }}
-                        onMouseUp={stopAdjusting}
-                        onMouseLeave={stopAdjusting}
-                        onTouchStart={(e) => { e.preventDefault(); startAdjusting(cfg.key, -cfg.step); }}
-                        onTouchEnd={stopAdjusting}
-                        onTouchCancel={stopAdjusting}
-                        className="flex-1 py-1 bg-white hover:bg-blue-50 active:scale-90 border border-slate-300 rounded-lg text-slate-700 hover:text-[#13386E] font-bold text-xs transition select-none cursor-pointer"
-                        title={`${cfg.label} 축소`}
-                      >
-                        -
-                      </button>
-                      <button
-                        type="button"
-                        onMouseDown={(e) => { if (e.button === 0) startAdjusting(cfg.key, cfg.step); }}
-                        onMouseUp={stopAdjusting}
-                        onMouseLeave={stopAdjusting}
-                        onTouchStart={(e) => { e.preventDefault(); startAdjusting(cfg.key, cfg.step); }}
-                        onTouchEnd={stopAdjusting}
-                        onTouchCancel={stopAdjusting}
-                        className="flex-1 py-1 bg-white hover:bg-blue-50 active:scale-90 border border-slate-300 rounded-lg text-slate-700 hover:text-[#13386E] font-bold text-xs transition select-none cursor-pointer"
-                        title={`${cfg.label} 확대`}
-                      >
-                        +
-                      </button>
-                    </div>
-                    <input
-                      type="range"
-                      min={cfg.min}
-                      max={cfg.max}
-                      step={cfg.sliderStep}
-                      value={val}
-                      onChange={(e) => {
-                        const next = parseFloat(e.target.value);
-                        setSizes(prev => ({ ...prev, [cfg.key]: clampSize(cfg.key, next) }));
-                      }}
-                      className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#13386E]"
-                    />
-                  </div>
+                    <span
+                      className="w-4 h-4 rounded-full border border-black/15 shrink-0 flex items-center justify-center"
+                      style={{ background: `linear-gradient(135deg, ${theme.grad[0]}, ${theme.grad[2]})` }}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: theme.accent }} />
+                    </span>
+                    <span className="whitespace-nowrap">{theme.label}</span>
+                  </button>
                 );
               })}
             </div>
@@ -925,7 +765,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
                 }}
               >
-                {/* 우측 네이비 테크/궤도 패널 */}
+                {/* 우측 테크/궤도 패널 */}
                 <svg
                   id="deco-svg"
                   data-html2canvas-ignore="true"
@@ -935,31 +775,37 @@ export default function NameCardApp({ onNavigateBack }) {
                 >
                   <defs>
                     <linearGradient id="panelBaseGrad" x1="0" y1="0" x2="0.3" y2="1">
-                      <stop offset="0%" stopColor="#1B3A6F" />
-                      <stop offset="45%" stopColor="#122B55" />
-                      <stop offset="100%" stopColor="#08142D" />
+                      <stop offset="0%" stopColor={activeTheme.grad[0]} />
+                      <stop offset="45%" stopColor={activeTheme.grad[1]} />
+                      <stop offset="100%" stopColor={activeTheme.grad[2]} />
                     </linearGradient>
                     <radialGradient id="topHighlight" cx="0.85" cy="0.08" r="0.75">
-                      <stop offset="0%" stopColor="#416EA8" stopOpacity="0.55" />
-                      <stop offset="60%" stopColor="#1B3A6F" stopOpacity="0" />
+                      <stop offset="0%" stopColor={activeTheme.glowHex} stopOpacity={activeTheme.glowOpacity} />
+                      <stop offset="60%" stopColor={activeTheme.grad[0]} stopOpacity="0" />
                     </radialGradient>
                   </defs>
 
                   <rect width="250" height="500" fill="url(#panelBaseGrad)" />
                   <rect width="250" height="500" fill="url(#topHighlight)" />
 
-                  <circle cx="254" cy="510" r="238" fill="#18437D" opacity="0.52" />
-                  <circle cx="254" cy="510" r="135" fill="#0E234A" opacity="0.72" />
-                  <circle cx="254" cy="510" r="80" fill="#07122A" opacity="0.88" />
+                  <circle cx="254" cy="510" r="238" fill={activeTheme.crescents[0]} />
+                  <circle cx="254" cy="510" r="135" fill={activeTheme.crescents[1]} />
+                  <circle cx="254" cy="510" r="80" fill={activeTheme.crescents[2]} />
 
-                  <circle cx="254" cy="510" r="290" fill="none" stroke="#507EBA" strokeWidth="1.2" opacity="0.35" />
-                  <circle cx="254" cy="510" r="238" fill="none" stroke="#5C8BCC" strokeWidth="1.3" opacity="0.45" />
-                  <circle cx="254" cy="510" r="178" fill="none" stroke="#7BA8E8" strokeWidth="1.6" opacity="0.75" />
-                  <circle cx="254" cy="510" r="116" fill="none" stroke="#507EBA" strokeWidth="1.3" opacity="0.45" />
-                  <circle cx="254" cy="510" r="66" fill="none" stroke="#507EBA" strokeWidth="1.2" opacity="0.30" />
+                  {activeTheme.orbits.map((orb, idx) => (
+                    <circle
+                      key={idx}
+                      cx="254"
+                      cy="510"
+                      r={orb.r}
+                      fill="none"
+                      stroke={orb.color}
+                      strokeWidth={orb.w}
+                    />
+                  ))}
 
-                  <circle cx="110" cy="405" r="9.5" fill="#F58220" />
-                  <rect x="42" y="48" width="40" height="5" rx="2.5" fill="#F58220" />
+                  <circle cx="110" cy="405" r="9.5" fill={activeTheme.accent} />
+                  <rect x="42" y="48" width="40" height="5" rx="2.5" fill={activeTheme.accent} />
 
                   <text x="42" y="80" fill="#FFFFFF" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">DIGITAL</text>
                   <text x="42" y="106" fill="#FFFFFF" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">EDUCATION</text>
