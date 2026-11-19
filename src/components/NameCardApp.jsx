@@ -1315,7 +1315,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   disabled={isSaving}
                   className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold rounded-xl shadow-xs cursor-pointer transition"
                 >
-                  이 명함 인쇄 요청
+                  인쇄 요청
                 </button>
               </div>
               <div
@@ -1500,7 +1500,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   disabled={isSaving}
                   className="px-3.5 py-1.5 bg-[#13386E] hover:bg-[#1a4484] text-white text-xs font-extrabold rounded-xl shadow-xs cursor-pointer transition"
                 >
-                  이 명함 인쇄 요청
+                  인쇄 요청
                 </button>
               </div>
             )}
