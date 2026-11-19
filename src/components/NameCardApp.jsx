@@ -1414,24 +1414,24 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
                       </div>
 
-                      {/* 2. 성함 + 직책 배지 + 테마 문구 */}
-                      <div>
-                        <div className="flex items-center flex-wrap gap-3">
+                      {/* 2. 성함 + 직책 + 테마 문구 */}
+                      <div className="my-1">
+                        <div className="flex items-baseline flex-wrap gap-3.5">
                           <div
-                            className={`text-[48px] font-black leading-none text-[#0F172A] whitespace-nowrap ${trackingClass}`}
+                            className={`text-[50px] font-black leading-[1.1] text-[#0F172A] whitespace-nowrap ${trackingClass}`}
                           >
                             {formattedName}
                           </div>
                           <span
-                            className="inline-flex items-center px-3.5 py-1.5 rounded-full text-[18px] font-extrabold text-white tracking-[-0.01em] shadow-xs whitespace-nowrap"
-                            style={{ backgroundColor: activeTheme.swatch }}
+                            className="inline-block px-3 py-1 rounded-lg bg-white text-[25px] font-extrabold leading-[1.1] tracking-[-0.01em] whitespace-nowrap"
+                            style={{ color: activeTheme.swatch }}
                           >
                             디지털교육서포터즈
                           </span>
                         </div>
 
                         <div
-                          className="mt-4 pl-3.5 text-[18px] font-medium text-[#334155] leading-snug whitespace-pre-wrap break-words"
+                          className="mt-6 pl-3.5 text-[18.5px] font-medium text-[#334155] leading-[1.55] whitespace-pre-wrap break-words"
                           style={{ borderLeft: `4px solid ${activeTheme.accent}` }}
                         >
                           {sloganInput}
