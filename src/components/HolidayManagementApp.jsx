@@ -17,12 +17,40 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   const [editValue, setEditValue] = useState("");
   const [showApplyPopup, setShowApplyPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const popupTimerRef = useRef(null);
 
   const [isAdmin] = useState(() => hasValidSavedAdminPassword());
 
   useEffect(() => {
     fetchHolidays();
+    return () => {
+      if (popupTimerRef.current) {
+        clearTimeout(popupTimerRef.current);
+      }
+    };
   }, []);
+
+  const closeStatusPopup = () => {
+    if (popupTimerRef.current) {
+      clearTimeout(popupTimerRef.current);
+      popupTimerRef.current = null;
+    }
+    setShowApplyPopup(false);
+    setPopupMessage("");
+  };
+
+  const showStatusPopup = (message, durationMs = 1500) => {
+    if (popupTimerRef.current) {
+      clearTimeout(popupTimerRef.current);
+    }
+    setPopupMessage(message);
+    setShowApplyPopup(true);
+    popupTimerRef.current = setTimeout(() => {
+      setShowApplyPopup(false);
+      setPopupMessage("");
+      popupTimerRef.current = null;
+    }, durationMs);
+  };
 
   const fetchHolidays = async () => {
     setLoading(true);
@@ -102,6 +130,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
       setFormData({ date: '', name: '', content1: '', content2: '', vacation_available: false });
       await fetchHolidays();
+      showStatusPopup("데이터가 저장되었습니다.");
     } catch (err) {
       console.error(err);
       setNotice("추가 중 오류가 발생했습니다: " + err.message);
@@ -127,6 +156,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
       setTimeout(() => setNotice(""), 3000);
 
       await fetchHolidays();
+      showStatusPopup("데이터가 삭제되었습니다.");
     } catch (err) {
       console.error(err);
       setNotice("삭제 중 오류가 발생했습니다: " + err.message);
@@ -158,6 +188,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
       setNotice("수정사항이 저장되었습니다.");
       setTimeout(() => setNotice(""), 3000);
       await fetchHolidays();
+      showStatusPopup("데이터가 저장되었습니다.");
     } catch (err) {
       console.error(err);
       alert("수정 중 오류가 발생했습니다: " + err.message);
@@ -181,6 +212,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
       setNotice("휴가가능 상태가 변경되었습니다.");
       setTimeout(() => setNotice(""), 3000);
       await fetchHolidays();
+      showStatusPopup("데이터가 저장되었습니다.");
     } catch (err) {
       console.error(err);
       alert("수정 중 오류가 발생했습니다: " + err.message);
@@ -204,7 +236,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
             onBlur={() => handleSaveCell(holiday.date, field)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleSaveCell(holiday.date, field);
+                e.currentTarget.blur();
               } else if (e.key === 'Escape') {
                 setEditingCell(null);
               }
@@ -343,12 +375,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         }
       }
 
-      setPopupMessage(`성공적으로 시간표에 적용되었습니다!\n(총 ${totalUpdated}건 업데이트)`);
-      setShowApplyPopup(true);
-      setTimeout(() => {
-        setShowApplyPopup(false);
-        setPopupMessage("");
-      }, 2000);
+      showStatusPopup(`성공적으로 시간표에 적용되었습니다!\n(총 ${totalUpdated}건 업데이트)`, 2000);
     } catch (err) {
       console.error(err);
       setNotice("적용 중 오류가 발생했습니다: " + err.message);
@@ -530,7 +557,10 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   </main>
 
       {showApplyPopup && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4 backdrop-blur-sm animate-fadeIn">
+        <div
+          onClick={closeStatusPopup}
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100] px-4 backdrop-blur-sm animate-fadeIn cursor-pointer"
+        >
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-gray-100 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-3">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
