@@ -72,6 +72,9 @@ export default function App() {
   // [화면 전환 및 브라우저 History(뒤로가기) 연동]
   const navigateTo = (viewName, replace = false) => {
     if (viewName === currentView) return;
+    if (viewName !== 'main') {
+      try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
+    }
     const targetUrl = viewName === 'main' ? window.location.pathname : `?view=${viewName}`;
     if (replace) {
       window.history.replaceState({ view: viewName }, '', targetUrl);

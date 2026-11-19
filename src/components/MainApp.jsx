@@ -317,6 +317,7 @@ export default function MainApp({
   const roomPopupDismissedRef = useRef(null);
 
   const closeRoomStatusPopup = (hideToday = false) => {
+    try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
     roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
     if (hideToday && roomStatusPopup) {
       const hideKey = `sungdong_room_popup_hide_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`;
@@ -890,6 +891,14 @@ export default function MainApp({
   const [holidaysFullList, setHolidaysFullList] = useState([]);
 
   useEffect(() => {
+    // 다른 작업을 하다가 메인화면으로 돌아온 경우 또는 이미 팝업을 표시한 경우 다시 띄우지 않음
+    try {
+      if (window.__sungdong_initial_room_popup_shown) {
+        setRoomStatusPopup(null);
+        return;
+      }
+    } catch (_) {}
+
     if (isLoggedIn || !selectedTeam) {
       setRoomStatusPopup(null);
       return;
@@ -1026,6 +1035,7 @@ export default function MainApp({
           nangmanMemo: nMemo,
           holidayName: holidayInfo ? (holidayInfo.name || '휴무일') : ''
         });
+        try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
       } catch (err) {
         console.error('교육실 사용현황 로드 실패:', err);
       }
@@ -2431,7 +2441,7 @@ export default function MainApp({
     isLoggedInRef.current = false;
     setIsLoggedIn(false);
     setRecords([]);
-    roomPopupDismissedRef.current = null;
+    try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
     if (window.history.state && window.history.state.subView === 'logWrite') {
       window.history.back();
     }
@@ -3285,6 +3295,7 @@ export default function MainApp({
     if (!isLoginReady) return;
 
     if (currentUser) {
+      try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
       const todayStr = getInitialWeekday();
       setDate(todayStr);
       isLoggedInRef.current = true;
