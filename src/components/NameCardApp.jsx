@@ -319,9 +319,24 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
   ctx.restore();
 };
 
+const formatPhoneInput = (rawValue = '') => {
+  const trimmed = String(rawValue || '').trim();
+  if (!trimmed || trimmed === '0' || trimmed === '01' || trimmed === '010' || trimmed === '010-') {
+    return '010-';
+  }
+  const digits = trimmed.replace(/\D/g, '');
+  if (!digits || digits === '0' || digits === '01' || digits === '010') {
+    return '010-';
+  }
+  const tail = digits.startsWith('010') ? digits.slice(3, 11) : digits.slice(0, 8);
+  if (!tail) return '010-';
+  if (tail.length <= 4) return `010-${tail}`;
+  return `010-${tail.slice(0, 4)}-${tail.slice(4, 8)}`;
+};
+
 export default function NameCardApp({ onNavigateBack }) {
   const [nameInput, setNameInput] = useState('표영');
-  const [phoneInput, setPhoneInput] = useState('010-0000-0000');
+  const [phoneInput, setPhoneInput] = useState('010-');
   const [sloganInput, setSloganInput] = useState(DEFAULT_SLOGAN);
   const [themeId, setThemeId] = useState(() => getInitialThemeId());
   const [cardScale, setCardScale] = useState(1);
@@ -523,7 +538,7 @@ export default function NameCardApp({ onNavigateBack }) {
       const safeTeacherName = rawName.replace(/[<>:"/\\|?*]/g, '_');
       const fileName = `${safeTeacherName}_디지털교육서포터즈_명함(9x5cm).jpg`;
       const emailSubject = `명함 인쇄 요청: ${rawName} 선생님`;
-      const currentPhone = phoneInput.trim() || '010-2687-7190';
+      const currentPhone = formatPhoneInput(phoneInput);
       const currentThemeLabel = activeTheme?.label || '';
 
       // 1. 이메일 발송 (브라우저에서 FormSubmit 표준 엔드포인트로 multipart/form-data 첨부파일 직접 전송)
@@ -693,7 +708,7 @@ export default function NameCardApp({ onNavigateBack }) {
   };
 
   const { text: formattedName, trackingClass } = formatDisplayName(nameInput);
-  const displayPhone = phoneInput.trim() || '010-0000-0000';
+  const displayPhone = formatPhoneInput(phoneInput);
 
   const sizes = CARD_SIZES;
   const nameColorHex = NAME_COLOR_HEX;
@@ -783,10 +798,12 @@ export default function NameCardApp({ onNavigateBack }) {
               </label>
               <input
                 id="input-phone"
-                type="text"
+                type="tel"
+                inputMode="numeric"
                 value={phoneInput}
-                onChange={(e) => setPhoneInput(e.target.value)}
-                placeholder="010-0000-0000"
+                onChange={(e) => setPhoneInput(formatPhoneInput(e.target.value))}
+                placeholder="010-"
+                maxLength={13}
                 className="w-full px-3.5 py-2 text-sm text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
               />
             </div>
