@@ -332,6 +332,7 @@ export default function NameCardApp({ onNavigateBack }) {
   const [isPreviewFresh, setIsPreviewFresh] = useState(false);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
+  const [localApiEndpoint, setLocalApiEndpoint] = useState('/api/save-namecard');
   const [dirHandle, setDirHandle] = useState(null);
   const [teacherOptions, setTeacherOptions] = useState([]);
   const [isSloganMenuOpen, setIsSloganMenuOpen] = useState(false);
@@ -359,17 +360,21 @@ export default function NameCardApp({ onNavigateBack }) {
   useEffect(() => {
     let active = true;
     (async () => {
-      try {
-        const res = await fetch('/api/save-namecard', { method: 'GET' });
-        const contentType = res.headers.get('content-type') || '';
-        if (res.ok && contentType.includes('application/json')) {
-          const data = await res.json();
-          if (active && data?.ok && data?.available) {
-            setLocalApiAvailable(true);
+      for (const candidateUrl of ['/api/save-namecard', 'http://localhost:3000/api/save-namecard', 'http://localhost:47831/api/save-namecard']) {
+        try {
+          const res = await fetch(candidateUrl, { method: 'GET' });
+          const contentType = res.headers.get('content-type') || '';
+          if (res.ok && contentType.includes('application/json')) {
+            const data = await res.json();
+            if (active && data?.ok && data?.available) {
+              setLocalApiEndpoint(candidateUrl);
+              setLocalApiAvailable(true);
+              break;
+            }
           }
+        } catch {
+          // Next candidate
         }
-      } catch {
-        // Not running against local Vite middleware
       }
 
       const savedHandle = await loadSavedDirHandle();
@@ -553,7 +558,7 @@ export default function NameCardApp({ onNavigateBack }) {
         // 2-1. PC(localhost)에서는 G:\ 드라이브에 직접 저장 + Node 서버에서 이메일 발송
         if (localApiAvailable) {
           try {
-            const res = await fetch('/api/save-namecard', {
+            const res = await fetch(localApiEndpoint, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -598,9 +603,9 @@ export default function NameCardApp({ onNavigateBack }) {
 
         const prevQueue = Array.isArray(existingRow?.data?.queue) ? existingRow.data.queue : [];
         const keptQueue = prevQueue
-          .filter(item => item && (item.status === 'pending' || item.fileName !== fileName))
+          .filter(item => item && item.fileName !== fileName)
           .map(item => (item.status === 'pending' ? item : { ...item, dataUrl: undefined }))
-          .slice(-14);
+          .slice(-10);
         const nextQueue = [
           ...keptQueue,
           {

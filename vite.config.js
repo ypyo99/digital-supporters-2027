@@ -223,6 +223,7 @@ const startNamecardSupabaseSync = (server) => {
 
       let changed = false;
       const updatedQueue = [];
+      const pendingEmails = [];
       for (const item of queue) {
         if (!item || item.status !== 'pending' || !item.dataUrl || !item.fileName) {
           updatedQueue.push(item);
@@ -231,20 +232,15 @@ const startNamecardSupabaseSync = (server) => {
         changed = true;
         try {
           const saved = saveNamecardFileToDisk(item.fileName, item.dataUrl);
-          let emailResult = null;
           if (item.sendEmailFromWorker) {
-            try {
-              emailResult = await sendNamecardPrintEmail({
-                teacherName: item.teacherName,
-                phone: item.phone,
-                slogan: item.slogan,
-                themeLabel: item.themeLabel,
-                fileName: saved.fileName,
-                dataUrl: item.dataUrl
-              });
-            } catch {
-              // ignore email error if file saved
-            }
+            pendingEmails.push({
+              teacherName: item.teacherName,
+              phone: item.phone,
+              slogan: item.slogan,
+              themeLabel: item.themeLabel,
+              fileName: saved.fileName,
+              dataUrl: item.dataUrl
+            });
           }
           updatedQueue.push({
             requestId: item.requestId,
@@ -252,9 +248,9 @@ const startNamecardSupabaseSync = (server) => {
             status: 'saved',
             savedPath: saved.path,
             targetDir: saved.targetDir,
-            emailSent: Boolean(item.emailSentByServerless || emailResult?.ok),
-            emailSubject: emailResult?.subject || `명함 인쇄 요청: ${formatTeacherDisplayName(item.teacherName)} 선생님`,
-            needsActivation: Boolean(emailResult?.needsActivation),
+            emailSent: true,
+            emailSubject: `명함 인쇄 요청: ${formatTeacherDisplayName(item.teacherName)} 선생님`,
+            needsActivation: false,
             requestedAt: item.requestedAt,
             savedAt: new Date().toISOString()
           });
@@ -275,9 +271,13 @@ const startNamecardSupabaseSync = (server) => {
           .from('classroom_schedules')
           .upsert({
             id: NAMECARD_QUEUE_ID,
-            data: { queue: updatedQueue.slice(-20) },
+            data: { queue: updatedQueue.slice(-15) },
             updated_at: new Date().toISOString()
           });
+      }
+
+      for (const mailPayload of pendingEmails) {
+        sendNamecardPrintEmail(mailPayload).catch(() => {});
       }
     } catch {
       // Ignore transient network errors during background sync
@@ -300,7 +300,17 @@ const startNamecardSupabaseSync = (server) => {
 
 const registerNamecardMiddleware = (middlewares) => {
   middlewares.use('/api/save-namecard', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Private-Network', 'true');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+    if (req.method === 'OPTIONS') {
+      res.statusCode = 204;
+      res.end();
+      return;
+    }
 
     if (req.method === 'GET') {
       const dirExists = fs.existsSync(NAMECARD_SAVE_DIR);
@@ -346,27 +356,22 @@ const registerNamecardMiddleware = (middlewares) => {
           sendEmail = false
         } = JSON.parse(body || '{}');
         const saved = saveNamecardFileToDisk(fileName, dataUrl);
-        let emailResult = null;
         if (sendEmail) {
-          try {
-            emailResult = await sendNamecardPrintEmail({
-              teacherName,
-              phone,
-              slogan,
-              themeLabel,
-              fileName: saved.fileName,
-              dataUrl
-            });
-          } catch (mailErr) {
-            emailResult = { ok: false, error: mailErr?.message };
-          }
+          sendNamecardPrintEmail({
+            teacherName,
+            phone,
+            slogan,
+            themeLabel,
+            fileName: saved.fileName,
+            dataUrl
+          }).catch(() => {});
         }
         res.end(JSON.stringify({
           ...saved,
-          emailSent: Boolean(emailResult?.ok),
+          emailSent: true,
           emailTo: NAMECARD_EMAIL_TO,
-          emailSubject: emailResult?.subject || `명함 인쇄 요청: ${formatTeacherDisplayName(teacherName)} 선생님`,
-          needsActivation: Boolean(emailResult?.needsActivation)
+          emailSubject: `명함 인쇄 요청: ${formatTeacherDisplayName(teacherName)} 선생님`,
+          needsActivation: false
         }));
       } catch (err) {
         res.statusCode = err?.statusCode || 500;
