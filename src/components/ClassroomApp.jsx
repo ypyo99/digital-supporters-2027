@@ -52,6 +52,7 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
   const [isManagerMode] = useState(() => hasValidSavedAdminPassword());
   const isManagerModeRef = useRef(isManagerMode);
   const [showExitSaveModal, setShowExitSaveModal] = useState(false);
+  const [saveModalMode, setSaveModalMode] = useState('exit');
   const [isSavingExit, setIsSavingExit] = useState(false);
   const pendingExitActionRef = useRef(null);
 
@@ -315,6 +316,13 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
     saveBulkChanges(changes);
   };
 
+  const handleOpenManualSaveModal = () => {
+    if (!isManagerMode || !hasUnsavedChanges) return;
+    pendingExitActionRef.current = null;
+    setSaveModalMode('saveOnly');
+    setShowExitSaveModal(true);
+  };
+
   const handleRequestNavigate = (targetFn) => {
     if (
       isManagerMode &&
@@ -326,6 +334,7 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
       )
     ) {
       pendingExitActionRef.current = targetFn;
+      setSaveModalMode('exit');
       setShowExitSaveModal(true);
       return;
     }
@@ -411,9 +420,19 @@ export default function ClassroomApp({ onNavigateBack, onNavigateToNangmanStudio
 
           {isManagerMode && (
             <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50">
-              <span className="inline-block px-6 py-1.5 md:px-10 md:py-2 hdr-pill is-on font-bold text-sm md:text-base whitespace-nowrap select-none cursor-default">
-                담당자 모드
-              </span>
+              {hasUnsavedChanges ? (
+                <button
+                  type="button"
+                  onClick={handleOpenManualSaveModal}
+                  className="px-6 py-1.5 md:px-10 md:py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-sm md:text-base shadow-lg ring-2 ring-white/85 transition-all active:scale-95 touch-manipulation whitespace-nowrap cursor-pointer"
+                >
+                  데이터 저장
+                </button>
+              ) : (
+                <span className="inline-block px-6 py-1.5 md:px-10 md:py-2 hdr-pill is-on font-bold text-sm md:text-base whitespace-nowrap select-none cursor-default">
+                  담당자 모드
+                </span>
+              )}
             </div>
           )}
 
@@ -617,12 +636,12 @@ CREATE POLICY "Allow public all access" ON public.classroom_schedules FOR ALL US
                   setMemo(nextVal);
                 }}
                 readOnly={!isManagerMode}
-                placeholder={isManagerMode ? "수정 후 [처음으로] 버튼을 누르면 저장할 수 있습니다." : "담당자 모드에서만 작성 가능합니다."}
+                placeholder={isManagerMode ? "수정 후 상단 [데이터 저장] 버튼을 눌러 저장하세요." : "담당자 모드에서만 작성 가능합니다."}
                 className={`w-full p-3 md:p-4 border rounded-xl font-bold h-[116px] md:h-[148px] outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] leading-relaxed text-black bg-white ${isManagerMode ? 'border-blue-300' : 'border-gray-300'}`}
               />
               {hasUnsavedChanges && (
                 <div className="text-[11px] text-amber-600 mt-1.5 font-bold text-right">
-                  변경된 내용이 있습니다. [처음으로]를 누르면 저장할 수 있습니다.
+                  변경된 내용이 있습니다. 상단의 [데이터 저장] 또는 [처음으로]를 눌러 저장해 주세요.
                 </div>
               )}
             </div>
@@ -640,7 +659,9 @@ CREATE POLICY "Allow public all access" ON public.classroom_schedules FOR ALL US
             className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-200 animate-fadeIn"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-extrabold text-slate-900 mb-2 text-center">변경 내용 저장</h3>
+            <h3 className="text-lg font-extrabold text-slate-900 mb-2 text-center">
+              {saveModalMode === 'saveOnly' ? '데이터 저장' : '변경 내용 저장'}
+            </h3>
             <p className="text-sm text-slate-600 font-semibold text-center mb-5">
               변경된 내용을 저장하시겠습니까?
             </p>
@@ -653,14 +674,16 @@ CREATE POLICY "Allow public all access" ON public.classroom_schedules FOR ALL US
               >
                 취소
               </button>
-              <button
-                type="button"
-                onClick={handleDiscardAndExit}
-                disabled={isSavingExit}
-                className="flex-1 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl font-bold text-sm transition active:scale-95 disabled:opacity-50 touch-manipulation cursor-pointer whitespace-nowrap"
-              >
-                저장 안 함
-              </button>
+              {saveModalMode === 'exit' && (
+                <button
+                  type="button"
+                  onClick={handleDiscardAndExit}
+                  disabled={isSavingExit}
+                  className="flex-1 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl font-bold text-sm transition active:scale-95 disabled:opacity-50 touch-manipulation cursor-pointer whitespace-nowrap"
+                >
+                  저장 안 함
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleConfirmSaveAndExit}
