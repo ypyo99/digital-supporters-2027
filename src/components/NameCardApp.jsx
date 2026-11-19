@@ -705,9 +705,9 @@ export default function NameCardApp({ onNavigateBack }) {
               />
             </div>
 
-            {/* 오른쪽 그림 테마색 선택 (4가지) */}
+            {/* 이미지 색상 선택 (4가지) */}
             <div className="col-span-12 p-3 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-wrap items-center justify-between gap-2.5">
-              <span className="text-xs font-bold text-slate-700 shrink-0">오른쪽 그림 테마색</span>
+              <span className="text-xs font-bold text-slate-700 shrink-0">이미지 색상</span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1 max-w-[540px]">
                 {PANEL_THEMES.map(theme => {
                   const selected = theme.id === activeTheme.id;
