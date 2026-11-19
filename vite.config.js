@@ -131,7 +131,7 @@ const sendNamecardPrintEmail = async ({
   fd.append('이미지_색상', themeLabel || '-');
   fd.append('attachment', new Blob([buffer], { type: mimeType }), safeName);
 
-  const fsRes = await fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
+  const fsRes = await fetch(`https://formsubmit.co/ajax/${NAMECARD_EMAIL_TO}`, {
     method: 'POST',
     headers: {
       Origin: CANONICAL_ORIGIN,
@@ -145,7 +145,7 @@ const sendNamecardPrintEmail = async ({
   const needsActivation = /Activate Form|needs Activation|activation/i.test(fsText);
 
   return {
-    ok: fsRes.ok,
+    ok: fsRes.ok && /"success"\s*:\s*"?true/.test(fsText),
     method: 'formsubmit',
     to: NAMECARD_EMAIL_TO,
     subject,
@@ -232,7 +232,7 @@ const startNamecardSupabaseSync = (server) => {
         try {
           const saved = saveNamecardFileToDisk(item.fileName, item.dataUrl);
           let emailResult = null;
-          if (!item.emailSentByServerless) {
+          if (item.sendEmailFromWorker) {
             try {
               emailResult = await sendNamecardPrintEmail({
                 teacherName: item.teacherName,
@@ -342,21 +342,24 @@ const registerNamecardMiddleware = (middlewares) => {
           teacherName = '',
           phone = '',
           slogan = '',
-          themeLabel = ''
+          themeLabel = '',
+          sendEmail = false
         } = JSON.parse(body || '{}');
         const saved = saveNamecardFileToDisk(fileName, dataUrl);
         let emailResult = null;
-        try {
-          emailResult = await sendNamecardPrintEmail({
-            teacherName,
-            phone,
-            slogan,
-            themeLabel,
-            fileName: saved.fileName,
-            dataUrl
-          });
-        } catch (mailErr) {
-          emailResult = { ok: false, error: mailErr?.message };
+        if (sendEmail) {
+          try {
+            emailResult = await sendNamecardPrintEmail({
+              teacherName,
+              phone,
+              slogan,
+              themeLabel,
+              fileName: saved.fileName,
+              dataUrl
+            });
+          } catch (mailErr) {
+            emailResult = { ok: false, error: mailErr?.message };
+          }
         }
         res.end(JSON.stringify({
           ...saved,
