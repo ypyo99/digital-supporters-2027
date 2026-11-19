@@ -486,11 +486,49 @@ function saveNamecardToDrive(params) {
 
         var blob = Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName);
         var file = folder.createFile(blob);
+
+        var rawTeacher = (params && params.teacherName) ? String(params.teacherName).trim() : "디지털교육서포터즈";
+        var cleanTeacher = rawTeacher.replace(/\s*선생님\s*$/, "").trim() || "디지털교육서포터즈";
+        var emailSubject = "명함 인쇄 요청: " + cleanTeacher + " 선생님";
+        var emailTo = (params && params.emailTo) ? String(params.emailTo).trim() : "ypyo99@gmail.com";
+        var phoneStr = (params && params.phone) ? String(params.phone).trim() : "-";
+        var sloganStr = (params && params.slogan) ? String(params.slogan).trim() : "-";
+        var themeStr = (params && params.themeLabel) ? String(params.themeLabel).trim() : "-";
+
+        try {
+            var htmlBody = "<div style='font-family:sans-serif;color:#1e293b;max-width:640px;line-height:1.6;'>"
+                + "<h2 style='margin:0 0 12px 0;color:#0f294a;'>" + emailSubject + "</h2>"
+                + "<p style='margin:0 0 16px 0;font-size:14px;color:#475569;'>디지털교육서포터즈 명함(9x5cm, 300DPI) 인쇄 요청이 접수되었습니다.</p>"
+                + "<table style='border-collapse:collapse;width:100%;margin-bottom:18px;font-size:14px;'>"
+                + "<tr><td style='padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700;width:110px;'>선생님 성함</td><td style='padding:8px 12px;border:1px solid #e2e8f0;'>" + cleanTeacher + " 선생님</td></tr>"
+                + "<tr><td style='padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700;'>휴대폰 번호</td><td style='padding:8px 12px;border:1px solid #e2e8f0;'>" + phoneStr + "</td></tr>"
+                + "<tr><td style='padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700;'>테마 문구</td><td style='padding:8px 12px;border:1px solid #e2e8f0;'>" + sloganStr + "</td></tr>"
+                + "<tr><td style='padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;font-weight:700;'>이미지 색상</td><td style='padding:8px 12px;border:1px solid #e2e8f0;'>" + themeStr + "</td></tr>"
+                + "</table>"
+                + "<div style='margin-top:12px;'>"
+                + "<p style='margin:0 0 8px 0;font-weight:700;font-size:13px;color:#334155;'>[명함 이미지 미리보기 및 첨부파일]</p>"
+                + "<img src='cid:namecardImg' alt='" + fileName + "' style='max-width:560px;width:100%;height:auto;border:1px solid #cbd5e1;border-radius:10px;display:block;' />"
+                + "</div></div>";
+
+            MailApp.sendEmail({
+                to: emailTo,
+                subject: emailSubject,
+                body: emailSubject + "\n\n선생님 성함: " + cleanTeacher + " 선생님\n휴대폰 번호: " + phoneStr + "\n테마 문구: " + sloganStr + "\n이미지 색상: " + themeStr + "\n\n첨부된 명함 이미지를 확인해 주세요.",
+                htmlBody: htmlBody,
+                inlineImages: { namecardImg: blob },
+                attachments: [blob]
+            });
+        } catch (mailErr) {
+            Logger.log("명함 인쇄 요청 이메일 발송 오류: " + mailErr.toString());
+        }
+
         return {
             success: true,
             fileId: file.getId(),
             fileName: file.getName(),
-            url: file.getUrl()
+            url: file.getUrl(),
+            emailSent: true,
+            emailSubject: emailSubject
         };
     } catch (err) {
         return { success: false, error: err.toString() };

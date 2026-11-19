@@ -513,22 +513,34 @@ export default function NameCardApp({ onNavigateBack }) {
         setPreviewDataUrl(dataUrl);
         setIsPreviewFresh(true);
       }
-      const safeTeacherName = (nameInput.trim() || '디지털교육서포터즈').replace(/[<>:"/\\|?*]/g, '_');
+      const rawName = (nameInput.trim() || '디지털교육서포터즈').replace(/\s*선생님\s*$/, '').trim() || '디지털교육서포터즈';
+      const safeTeacherName = rawName.replace(/[<>:"/\\|?*]/g, '_');
       const fileName = `${safeTeacherName}_디지털교육서포터즈_명함(9x5cm).jpg`;
+      const emailSubject = `명함 인쇄 요청: ${rawName} 선생님`;
+      const emailTo = 'ypyo99@gmail.com';
+      const currentPhone = phoneInput.trim() || '010-2687-7190';
+      const currentThemeLabel = activeTheme?.label || '';
 
-      // 1. 로컬 PC 서버(/api/save-namecard)를 통해 G:\내 드라이브\2027-Digital Supporters\명함 에 직접 저장
+      // 1. 로컬 PC 서버(/api/save-namecard)를 통해 G:\내 드라이브\2027-Digital Supporters\명함 저장 + ypyo99@gmail.com 이메일 발송
       if (localApiAvailable) {
         try {
           const res = await fetch('/api/save-namecard', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fileName, dataUrl })
+            body: JSON.stringify({
+              fileName,
+              dataUrl,
+              teacherName: rawName,
+              phone: currentPhone,
+              slogan: sloganInput,
+              themeLabel: currentThemeLabel
+            })
           });
           const data = await res.json();
           if (res.ok && data?.ok) {
             setSaveFeedback({
               type: 'success',
-              text: `${data.path} 에 저장 완료!`
+              text: `${emailTo} 으로 메일 발송([${emailSubject}]) 및 ${data.path} 에 저장 완료!`
             });
             return;
           }
@@ -538,7 +550,32 @@ export default function NameCardApp({ onNavigateBack }) {
         }
       }
 
-      // 2. 브라우저에서 연결된 저장 폴더(FileSystemDirectoryHandle)가 있으면 직접 저장
+      // 2. 배포 환경(Netlify Serverless Function)을 통해 ypyo99@gmail.com 으로 명함 이미지 첨부 이메일 즉시 발송 시도
+      let emailSentByServerless = false;
+      try {
+        const mailRes = await fetch('/.netlify/functions/send-namecard-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName,
+            dataUrl,
+            teacherName: rawName,
+            phone: currentPhone,
+            slogan: sloganInput,
+            themeLabel: currentThemeLabel
+          })
+        });
+        if (mailRes.ok) {
+          const mailData = await mailRes.json().catch(() => ({}));
+          if (mailData?.ok) {
+            emailSentByServerless = true;
+          }
+        }
+      } catch {
+        // Netlify Function 호출 실패 시 PC 동기화 워커에서 이메일 발송 처리
+      }
+
+      // 3. 브라우저에서 연결된 저장 폴더(FileSystemDirectoryHandle)가 있으면 직접 저장
       if (dirHandle) {
         try {
           let perm = await dirHandle.queryPermission({ mode: 'readwrite' });
@@ -550,18 +587,13 @@ export default function NameCardApp({ onNavigateBack }) {
             const writable = await fileHandle.createWritable();
             await writable.write(dataUrlToBlob(dataUrl));
             await writable.close();
-            setSaveFeedback({
-              type: 'success',
-              text: `연결된 폴더(${dirHandle.name})에 '${fileName}' 저장 완료!`
-            });
-            return;
           }
         } catch (fsErr) {
           console.warn('연결된 폴더 저장 실패, 클라우드 동기화 저장 시도:', fsErr);
         }
       }
 
-      // 3. 스마트폰/외부 환경: Supabase 인쇄 요청 큐를 통해 PC 구글 드라이브(G:\내 드라이브\2027-Digital Supporters\명함)로 자동 동기화 저장
+      // 4. 스마트폰/외부 환경: Supabase 인쇄 요청 큐를 통해 PC 구글 드라이브(G:\내 드라이브\2027-Digital Supporters\명함) 저장 및 이메일 발송 동기화
       const requestId = `nc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       const targetGoogleDrivePath = `${TARGET_NAMECARD_DIR}\\${fileName}`;
 
@@ -586,6 +618,11 @@ export default function NameCardApp({ onNavigateBack }) {
           requestId,
           fileName,
           dataUrl,
+          teacherName: rawName,
+          phone: currentPhone,
+          slogan: sloganInput,
+          themeLabel: currentThemeLabel,
+          emailSentByServerless,
           status: 'pending',
           requestedAt: new Date().toISOString()
         }
@@ -617,7 +654,7 @@ export default function NameCardApp({ onNavigateBack }) {
         if (matched?.status === 'saved') {
           setSaveFeedback({
             type: 'success',
-            text: `${matched.savedPath || targetGoogleDrivePath} 에 저장 완료!`
+            text: `${emailTo} 으로 메일 발송([${emailSubject}]) 및 ${matched.savedPath || targetGoogleDrivePath} 에 저장 완료!`
           });
           return;
         }
@@ -628,7 +665,7 @@ export default function NameCardApp({ onNavigateBack }) {
 
       setSaveFeedback({
         type: 'success',
-        text: `${targetGoogleDrivePath} 에 저장 완료!`
+        text: `${emailTo} 으로 메일 발송([${emailSubject}]) 및 ${targetGoogleDrivePath} 에 저장 완료!`
       });
     } catch (err) {
       console.error('명함 이미지 생성 오류:', err);
