@@ -536,7 +536,11 @@ export default function NameCardApp({ onNavigateBack }) {
       }
       const rawName = (nameInput.trim() || '디지털교육서포터즈').replace(/\s*선생님\s*$/, '').trim() || '디지털교육서포터즈';
       const safeTeacherName = rawName.replace(/[<>:"/\\|?*]/g, '_');
-      const fileName = `${safeTeacherName}_디지털교육서포터즈_명함(9x5cm).jpg`;
+      const now = new Date();
+      const pad2 = (n) => String(n).padStart(2, '0');
+      const dateStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+      const timeStr = `${pad2(now.getHours())}-${pad2(now.getMinutes())}-${pad2(now.getSeconds())}`;
+      const fileName = `${safeTeacherName}_명함_${dateStr}_${timeStr}.jpg`;
       const emailSubject = `명함 인쇄 요청: ${rawName} 선생님`;
       const currentPhone = formatPhoneInput(phoneInput);
       const currentThemeLabel = activeTheme?.label || '';
