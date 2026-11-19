@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { supabaseClient } from '../utils/supabase';
 import { Home, LucideCalendar } from './Icons';
 import { getSavedItem, setSavedItem, removeSavedItem } from '../utils/helpers';
+import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
 
 const FloatingScrollButton = ({ listRef, show }) => {
   const [isListVisible, setIsListVisible] = useState(false);
@@ -98,7 +99,7 @@ const linkifyHtml = (html) => {
 };
 
 export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
-  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
+  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
 
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
@@ -336,6 +337,14 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
       setIsEditing(false);
       setSelectedNotice(null);
       setSelectedImg(null);
+    } else if (hasValidSavedAdminPassword()) {
+      setIsAdmin(true);
+      setSavedItem('sungdong_admin_logged_in', 'true');
+      if (selectedNotice) {
+        setIsEditing(true);
+      } else {
+        setIsEditing(false);
+      }
     } else {
       setShowPwdModal(true);
       setPwdInput("");
@@ -344,7 +353,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
   };
 
   const checkPassword = () => {
-    if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+    if (verifyAdminPassword(pwdInput)) {
       setIsAdmin(true);
       setSavedItem('sungdong_admin_logged_in', 'true');
       setShowPwdModal(false);
@@ -1177,7 +1186,7 @@ CREATE POLICY "Allow public all access" ON public.notices FOR ALL USING (true) W
               onChange={(e) => {
                 const val = e.target.value;
                 setPwdInput(val);
-                if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+                if (verifyAdminPassword(val)) {
                   setIsAdmin(true);
                   setSavedItem('sungdong_admin_logged_in', 'true');
                   setShowPwdModal(false);

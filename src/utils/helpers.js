@@ -35,7 +35,14 @@ export const clearExpendableStorage = () => {
       const k = window.localStorage.key(i);
       if (!k) continue;
       // 필수 로그인/설정 키 제외하고 캐시 데이터 정리
-      if (k === 'sungdong_team' || k === 'sungdong_teacher' || k === 'sungdong_admin_logged_in') {
+      if (
+        k === 'sungdong_team' ||
+        k === 'sungdong_teacher' ||
+        k === 'sungdong_admin_logged_in' ||
+        k === 'sungdong_admin_password' ||
+        k === 'sungdong_bg_gray_level' ||
+        k === 'sungdong_room_popup_mode'
+      ) {
         continue;
       }
       if (PURGEABLE_KEYS.includes(k) || PURGEABLE_PREFIXES.some(prefix => k.startsWith(prefix))) {

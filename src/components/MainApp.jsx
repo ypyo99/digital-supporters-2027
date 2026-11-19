@@ -99,7 +99,10 @@ import {
   getBgGrayLevel,
   getRoomPopupMode,
   saveBgGrayLevel,
-  saveRoomPopupMode
+  saveRoomPopupMode,
+  hasValidSavedAdminPassword,
+  saveAdminPassword,
+  clearSavedAdminPassword
 } from '../utils/appSettings';
 import {
   User,
@@ -243,6 +246,7 @@ export default function MainApp({
   const [errorMessage, setErrorMessage] = useState("");
   const ADMIN_MENU_TTL_MS = 60 * 60 * 1000;
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(() => {
+    if (!hasValidSavedAdminPassword()) return false;
     if (getSavedItem('sungdong_admin_menu_open', '') !== 'true') return false;
     const openedAt = Number(getSavedItem('sungdong_admin_menu_opened_at', '0'));
     if (!openedAt || Date.now() - openedAt >= ADMIN_MENU_TTL_MS) {
@@ -272,6 +276,7 @@ export default function MainApp({
   }, [isAdminMenuOpen]);
 
   const toggleAdminMenu = () => {
+    if (!hasValidSavedAdminPassword()) return;
     setIsAdminMenuOpen(prev => {
       const next = !prev;
       setSavedItem('sungdong_admin_menu_open', String(next));
@@ -326,6 +331,54 @@ export default function MainApp({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [bgGrayLevel, setBgGrayLevel] = useState(() => getBgGrayLevel());
   const [roomPopupMode, setRoomPopupMode] = useState(() => getRoomPopupMode());
+  const [hasAdminPassword, setHasAdminPassword] = useState(() => hasValidSavedAdminPassword());
+  const [adminPwdInput, setAdminPwdInput] = useState('');
+  const [adminPwdError, setAdminPwdError] = useState('');
+  const [adminPwdNotice, setAdminPwdNotice] = useState('');
+
+  const openSettingsModal = () => {
+    setAdminPwdInput('');
+    setAdminPwdError('');
+    setAdminPwdNotice('');
+    setHasAdminPassword(hasValidSavedAdminPassword());
+    setShowSettingsModal(true);
+  };
+
+  const closeSettingsModal = () => {
+    setAdminPwdInput('');
+    setAdminPwdError('');
+    setAdminPwdNotice('');
+    setShowSettingsModal(false);
+  };
+
+  const handleSaveAdminPassword = () => {
+    if (!adminPwdInput) {
+      setAdminPwdError('관리자 비밀번호를 입력해주세요.');
+      setAdminPwdNotice('');
+      return;
+    }
+    const res = saveAdminPassword(adminPwdInput);
+    if (res.ok && res.saved) {
+      setHasAdminPassword(true);
+      setAdminPwdInput('');
+      setAdminPwdError('');
+      setAdminPwdNotice('관리자 비밀번호가 저장되었습니다. 이제 관리자 메뉴를 사용할 수 있습니다.');
+    } else {
+      setAdminPwdError(res.error || '관리자 비밀번호가 일치하지 않습니다.');
+      setAdminPwdNotice('');
+    }
+  };
+
+  const handleClearAdminPassword = () => {
+    clearSavedAdminPassword();
+    setHasAdminPassword(false);
+    setIsAdminMenuOpen(false);
+    setSavedItem('sungdong_admin_menu_open', 'false');
+    setSavedItem('sungdong_admin_menu_opened_at', '');
+    setAdminPwdInput('');
+    setAdminPwdError('');
+    setAdminPwdNotice('저장된 관리자 비밀번호가 삭제되었습니다.');
+  };
 
   const handleChangeBgGrayLevel = (level) => {
     const saved = saveBgGrayLevel(level);
@@ -3498,7 +3551,7 @@ export default function MainApp({
         >
           <button
             type="button"
-            onClick={() => setShowSettingsModal(true)}
+            onClick={openSettingsModal}
             className="safe-top-btn absolute right-2.5 sm:right-5 z-20 p-2 rounded-full bg-white/90 hover:bg-white text-slate-600 ring-1 ring-slate-200/90 shadow-sm active:scale-95 transition-all touch-manipulation"
             aria-label="설정"
             title="앱 설정"
@@ -3808,55 +3861,57 @@ export default function MainApp({
               </div>
             </section>
 
-            <section className="menu-group">
-              <button
-                type="button"
-                className="admin-toggle"
-                aria-expanded={isAdminMenuOpen}
-                onClick={toggleAdminMenu}
-              >
-                <IconLock className="w-[18px] h-[18px] text-slate-700" />
-                관리자 메뉴
-                <span className="toggle-sub">담당자 전용</span>
-                <IconChevronRight className="toggle-caret" />
-              </button>
-              {isAdminMenuOpen && (
-                <div className="menu-list mt-2 animate-fadeIn">
-                  <MenuRow
-                    variant="admin"
-                    chipColor="chip-emerald"
-                    onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin({ isAdminMode: true }); }}
-                    icon={<IconDocumentCheck />}
-                    label={
-                      <>
-                        참여자 서류 관리ㆍ인쇄<br />
-                      </>
-                    }
-                  />
-                  <MenuRow
-                    variant="admin"
-                    chipColor="chip-blue"
-                    onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
-                    icon={<UsersIcon />}
-                    label="선생님 명단 관리"
-                  />
-                  <MenuRow
-                    variant="admin"
-                    chipColor="chip-rose"
-                    onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
-                    icon={<IconCalendarStar />}
-                    label="공휴일ㆍ휴무일 관리"
-                  />
-                  <MenuRow
-                    variant="admin"
-                    chipColor="chip-purple"
-                    onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
-                    icon={<IconTimetable />}
-                    label="시간표 작성"
-                  />
-                </div>
-              )}
-            </section>
+            {hasAdminPassword && (
+              <section className="menu-group">
+                <button
+                  type="button"
+                  className="admin-toggle"
+                  aria-expanded={isAdminMenuOpen}
+                  onClick={toggleAdminMenu}
+                >
+                  <IconLock className="w-[18px] h-[18px] text-slate-700" />
+                  관리자 메뉴
+                  <span className="toggle-sub">담당자 전용</span>
+                  <IconChevronRight className="toggle-caret" />
+                </button>
+                {isAdminMenuOpen && (
+                  <div className="menu-list mt-2 animate-fadeIn">
+                    <MenuRow
+                      variant="admin"
+                      chipColor="chip-emerald"
+                      onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin({ isAdminMode: true }); }}
+                      icon={<IconDocumentCheck />}
+                      label={
+                        <>
+                          참여자 서류 관리ㆍ인쇄<br />
+                        </>
+                      }
+                    />
+                    <MenuRow
+                      variant="admin"
+                      chipColor="chip-blue"
+                      onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
+                      icon={<UsersIcon />}
+                      label="선생님 명단 관리"
+                    />
+                    <MenuRow
+                      variant="admin"
+                      chipColor="chip-rose"
+                      onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
+                      icon={<IconCalendarStar />}
+                      label="공휴일ㆍ휴무일 관리"
+                    />
+                    <MenuRow
+                      variant="admin"
+                      chipColor="chip-purple"
+                      onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
+                      icon={<IconTimetable />}
+                      label="시간표 작성"
+                    />
+                  </div>
+                )}
+              </section>
+            )}
 
             <div className="mt-4 sm:mt-5 text-center text-[12px] text-gray-600 font-semibold tracking-wider select-none" aria-hidden="true">
               v261117-rebuild
@@ -4014,7 +4069,7 @@ export default function MainApp({
         {showSettingsModal && (
           <div
             className="fixed inset-0 bg-slate-900/55 backdrop-blur-[3px] flex items-center justify-center z-[80] p-3 sm:p-4"
-            onClick={() => setShowSettingsModal(false)}
+            onClick={closeSettingsModal}
           >
             <div
               className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[88vh] animate-fadeIn border border-slate-200"
@@ -4027,7 +4082,7 @@ export default function MainApp({
                 </div>
                 <button
                   type="button"
-                  onClick={() => setShowSettingsModal(false)}
+                  onClick={closeSettingsModal}
                   className="p-1 rounded-lg text-white/90 hover:bg-white/20 active:scale-90 transition"
                   aria-label="설정 닫기"
                 >
@@ -4149,12 +4204,79 @@ export default function MainApp({
                     </button>
                   </div>
                 </div>
+
+                {/* 3. 관리자 비밀번호 저장 */}
+                <div className="pt-4 border-t border-slate-200">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900">
+                      3. 관리자 비밀번호
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${
+                      hasAdminPassword
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                        : 'bg-slate-100 text-slate-600 border border-slate-200'
+                    }`}>
+                      {hasAdminPassword ? '저장됨 · 관리자 활성' : '미저장'}
+                    </span>
+                  </div>
+                  <p className="text-[12.5px] text-slate-500 font-medium mb-2.5 leading-snug">
+                    비밀번호를 저장하면 메인화면에 관리자 메뉴가 표시되고, 공지사항·교육실 담당자 기능도 재입력 없이 바로 사용할 수 있습니다.
+                  </p>
+                  {!hasAdminPassword ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="password"
+                        value={adminPwdInput}
+                        onChange={(e) => {
+                          setAdminPwdInput(e.target.value);
+                          if (adminPwdError) setAdminPwdError('');
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleSaveAdminPassword();
+                          }
+                        }}
+                        placeholder="관리자 비밀번호 입력"
+                        autoComplete="off"
+                        className="flex-1 min-w-0 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-[14px] font-bold text-slate-900 outline-none focus:border-blue-500 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveAdminPassword}
+                        className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13.5px] sm:text-[14px] font-extrabold shadow-sm active:scale-95 transition shrink-0 cursor-pointer"
+                      >
+                        저장
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[14px] font-black tracking-widest text-emerald-700 shrink-0">••••</span>
+                        <span className="text-[13px] font-bold text-emerald-800 truncate">관리자 비밀번호가 저장되어 있습니다.</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleClearAdminPassword}
+                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[12.5px] font-extrabold active:scale-95 transition shrink-0 cursor-pointer"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
+                  {adminPwdError && (
+                    <p className="mt-2 text-[12.5px] font-bold text-rose-600">{adminPwdError}</p>
+                  )}
+                  {adminPwdNotice && !adminPwdError && (
+                    <p className="mt-2 text-[12.5px] font-bold text-emerald-600">{adminPwdNotice}</p>
+                  )}
+                </div>
               </div>
 
               <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
                 <button
                   type="button"
-                  onClick={() => setShowSettingsModal(false)}
+                  onClick={closeSettingsModal}
                   className="px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer"
                 >
                   확인

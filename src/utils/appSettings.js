@@ -2,6 +2,7 @@ import { getSavedItem, setSavedItem, removeSavedItem } from './helpers';
 
 export const BG_GRAY_LEVEL_KEY = 'sungdong_bg_gray_level';
 export const ROOM_POPUP_MODE_KEY = 'sungdong_room_popup_mode';
+export const ADMIN_PASSWORD_KEY = 'sungdong_admin_password';
 
 export const DEFAULT_BG_GRAY_LEVEL = 20;
 export const DEFAULT_ROOM_POPUP_MODE = 'once';
@@ -35,6 +36,47 @@ export const getRoomPopupMode = () => {
   } catch (_) {
     return DEFAULT_ROOM_POPUP_MODE;
   }
+};
+
+export const getExpectedAdminPassword = () => import.meta.env.VITE_ADMIN_PASSWORD || 'qqq';
+
+export const getSavedAdminPassword = () => {
+  try {
+    return getSavedItem(ADMIN_PASSWORD_KEY, '') || '';
+  } catch (_) {
+    return '';
+  }
+};
+
+export const verifyAdminPassword = (input) => {
+  return typeof input === 'string' && input === getExpectedAdminPassword();
+};
+
+export const hasValidSavedAdminPassword = () => {
+  const saved = getSavedAdminPassword();
+  return Boolean(saved) && saved === getExpectedAdminPassword();
+};
+
+export const clearSavedAdminPassword = () => {
+  removeSavedItem(ADMIN_PASSWORD_KEY);
+  removeSavedItem('sungdong_admin_logged_in');
+};
+
+export const saveAdminPassword = (input) => {
+  if (!input) {
+    clearSavedAdminPassword();
+    return { ok: true, saved: false };
+  }
+  if (verifyAdminPassword(input)) {
+    setSavedItem(ADMIN_PASSWORD_KEY, input);
+    setSavedItem('sungdong_admin_logged_in', 'true');
+    return { ok: true, saved: true };
+  }
+  return {
+    ok: false,
+    saved: hasValidSavedAdminPassword(),
+    error: '관리자 비밀번호가 일치하지 않습니다.'
+  };
 };
 
 export const computeMainBgColors = (level) => {

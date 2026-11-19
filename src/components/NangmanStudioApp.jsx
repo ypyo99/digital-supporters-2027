@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import { getSavedItem, setSavedItem, safeJsonSetItem, getLocalDateString } from '../utils/helpers';
+import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
 import { LucideCalendar, Home } from './Icons';
 
 const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'default-app-id';
@@ -411,11 +412,12 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
       }
       setIsManagerMode(false);
     }
+    else if (hasValidSavedAdminPassword()) { setIsManagerMode(true); }
     else { setShowPwdModal(true); setPwdInput(""); setPwdError(false); }
   };
 
   const checkPassword = () => {
-    if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) { setIsManagerMode(true); setShowPwdModal(false); }
+    if (verifyAdminPassword(pwdInput)) { setIsManagerMode(true); setShowPwdModal(false); }
     else setPwdError(true);
   };
 
@@ -442,7 +444,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
               onClick={handleManagerClick}
               className={`px-6 py-1.5 md:px-10 md:py-2 hdr-pill font-bold transition-all active:scale-90 text-sm md:text-base touch-manipulation whitespace-nowrap ${isManagerMode ? 'is-on' : ''}`}
             >
-              {isManagerMode ? '저장/담당자 모드 종료' : '담당자 로그인'}
+              {isManagerMode ? '저장/담당자 모드 종료' : (hasValidSavedAdminPassword() ? '담당자 모드 시작' : '담당자 로그인')}
             </button>
           </div>
 
@@ -685,7 +687,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
-            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) { setIsManagerMode(true); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500" placeholder="••••" />
+            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (verifyAdminPassword(val)) { setIsManagerMode(true); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500" placeholder="••••" />
             {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
             <div className="flex gap-2">
               <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>

@@ -11,6 +11,7 @@ import {
 } from '../utils/helpers';
 import ExcelJS from 'exceljs';
 import { Home, LucideCalendar } from './Icons';
+import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
 
 // 스마트폰 환경 등에서 날짜 파싱 오류 및 Timezone 문제를 방지하기 위해 로컬 타임으로 안전하게 파싱하는 공통 함수
 const parseDateLocal = (dateStr) => {
@@ -20,7 +21,7 @@ const parseDateLocal = (dateStr) => {
 };
 
 export default function AutoScheduleApp({ onNavigateBack }) {
-  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
+  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
@@ -41,6 +42,9 @@ export default function AutoScheduleApp({ onNavigateBack }) {
       if (isAdmin) {
         setIsAdmin(false);
         removeSavedItem('sungdong_admin_logged_in');
+      } else if (hasValidSavedAdminPassword()) {
+        setIsAdmin(true);
+        setSavedItem('sungdong_admin_logged_in', 'true');
       } else {
         setShowPwdModal(true);
         setPwdInput("");
@@ -53,7 +57,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
 
   const checkPassword = () => {
     try {
-      if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+      if (verifyAdminPassword(pwdInput)) {
         setIsAdmin(true);
         setSavedItem('sungdong_admin_logged_in', 'true');
         setShowPwdModal(false);
@@ -1339,7 +1343,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
               onChange={(e) => {
                 const val = e.target.value;
                 setPwdInput(val);
-                if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+                if (verifyAdminPassword(val)) {
                   setIsAdmin(true);
                   setSavedItem('sungdong_admin_logged_in', 'true');
                   setShowPwdModal(false);

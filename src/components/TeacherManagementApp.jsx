@@ -4,13 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import { getSavedItem, setSavedItem, removeSavedItem, setGlobalTeachersList, formatTeacherRow, getLocalDateString } from '../utils/helpers';
 import { User, Home } from './Icons';
+import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
 
 export default function TeacherManagementApp({ onNavigateBack }) {
   const [teachers, setTeachers] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
+  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [formData, setFormData] = useState({
     team: '1팀',
     group: '1조',
@@ -44,6 +45,9 @@ export default function TeacherManagementApp({ onNavigateBack }) {
     if (isAdmin) {
       setIsAdmin(false);
       removeSavedItem('sungdong_admin_logged_in');
+    } else if (hasValidSavedAdminPassword()) {
+      setIsAdmin(true);
+      setSavedItem('sungdong_admin_logged_in', 'true');
     } else {
       setShowPwdModal(true);
       setPwdInput("");
@@ -52,7 +56,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
   };
 
   const checkPassword = () => {
-    if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+    if (verifyAdminPassword(pwdInput)) {
       setIsAdmin(true);
       setSavedItem('sungdong_admin_logged_in', 'true');
       setShowPwdModal(false);
@@ -397,7 +401,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
         <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-[3px] flex items-center justify-center z-50 px-4 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
             <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">담당자 암호</h3>
-            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) { setIsAdmin(true); setSavedItem('sungdong_admin_logged_in', 'true'); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500 text-black" placeholder="••••" />
+            <input ref={pwdInputRef} autoFocus type="password" value={pwdInput} onChange={(e) => { const val = e.target.value; setPwdInput(val); if (verifyAdminPassword(val)) { setIsAdmin(true); setSavedItem('sungdong_admin_logged_in', 'true'); setShowPwdModal(false); } }} onKeyDown={(e) => e.key === 'Enter' && checkPassword()} className="w-full border-2 p-3 rounded-lg mb-4 text-center text-2xl tracking-widest outline-none focus:border-blue-500 text-black" placeholder="••••" />
             {pwdError && <p className="text-red-500 text-xs text-center mb-4">비밀번호가 틀렸습니다.</p>}
             <div className="flex gap-2 text-black">
               <button onClick={() => setShowPwdModal(false)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold touch-manipulation">취소</button>

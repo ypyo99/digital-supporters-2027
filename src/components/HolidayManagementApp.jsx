@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import { Home, LucideCalendar } from './Icons';
 import { getShiftWeight, getSavedItem, setSavedItem, removeSavedItem } from '../utils/helpers';
+import { hasValidSavedAdminPassword, verifyAdminPassword } from '../utils/appSettings';
 
 export default function HolidayManagementApp({ onNavigateBack }) {
   const [holidays, setHolidays] = useState([]);
@@ -17,7 +18,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   const [showApplyPopup, setShowApplyPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
 
-  const [isAdmin, setIsAdmin] = useState(() => getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
+  const [isAdmin, setIsAdmin] = useState(() => hasValidSavedAdminPassword() || getSavedItem('sungdong_admin_logged_in', 'false') === 'true');
   const [showPwdModal, setShowPwdModal] = useState(false);
   const [pwdInput, setPwdInput] = useState("");
   const [pwdError, setPwdError] = useState(false);
@@ -38,6 +39,9 @@ export default function HolidayManagementApp({ onNavigateBack }) {
       if (isAdmin) {
         setIsAdmin(false);
         removeSavedItem('sungdong_admin_logged_in');
+      } else if (hasValidSavedAdminPassword()) {
+        setIsAdmin(true);
+        setSavedItem('sungdong_admin_logged_in', 'true');
       } else {
         setShowPwdModal(true);
         setPwdInput("");
@@ -50,7 +54,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
   const checkPassword = () => {
     try {
-      if (pwdInput === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+      if (verifyAdminPassword(pwdInput)) {
         setIsAdmin(true);
         setSavedItem('sungdong_admin_logged_in', 'true');
         setShowPwdModal(false);
@@ -590,7 +594,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
               onChange={(e) => {
                 const val = e.target.value;
                 setPwdInput(val);
-                if (val === (import.meta.env.VITE_ADMIN_PASSWORD || 'qqq')) {
+                if (verifyAdminPassword(val)) {
                   setIsAdmin(true);
                   setSavedItem('sungdong_admin_logged_in', 'true');
                   setShowPwdModal(false);
