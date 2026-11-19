@@ -38,17 +38,22 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
     } catch (e) { return {}; }
   });
   const scheduleRef = useRef(schedule);
+  const savedScheduleRef = useRef(schedule);
 
   const [memo, setMemo] = useState(() => {
     return getSavedItem('nangman_memo_backup', "");
   });
   const memoRef = useRef(memo);
+  const savedMemoRef = useRef(memo);
+  const hasLocalEditRef = useRef(false);
+  const [baselineVersion, setBaselineVersion] = useState(0);
 
-  const [isTyping, setIsTyping] = useState(false);
-  const isTypingRef = useRef(false);
   const [isAutoScheduling, setIsAutoScheduling] = useState(false);
   const [isManagerMode] = useState(() => hasValidSavedAdminPassword());
   const isManagerModeRef = useRef(isManagerMode);
+  const [showExitSaveModal, setShowExitSaveModal] = useState(false);
+  const [isSavingExit, setIsSavingExit] = useState(false);
+  const pendingExitActionRef = useRef(null);
 
   const [editingCell, setEditingCell] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -58,6 +63,24 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   const touchStartY = useRef(null);
 
   const touchStartX = useRef(null);
+
+  const checkHasUnsavedChanges = (baseSchedule, baseMemo, curSchedule, curMemo) => {
+    if ((baseMemo || "") !== (curMemo || "")) return true;
+    const b = baseSchedule || {};
+    const c = curSchedule || {};
+    const keys = new Set([...Object.keys(b), ...Object.keys(c)]);
+    for (const k of keys) {
+      const bv = b[k] === undefined ? false : b[k];
+      const cv = c[k] === undefined ? false : c[k];
+      if (bv !== cv) return true;
+    }
+    return false;
+  };
+
+  const hasUnsavedChanges = useMemo(
+    () => isManagerMode && checkHasUnsavedChanges(savedScheduleRef.current, savedMemoRef.current, schedule, memo),
+    [isManagerMode, schedule, memo, baselineVersion]
+  );
 
   useEffect(() => {
     document.documentElement.style.overscrollBehaviorY = 'none';
@@ -132,12 +155,17 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
         } else if (data) {
           const loadedData = data.data || {};
           const loadedMemo = data.memo || "";
-          scheduleRef.current = loadedData;
-          memoRef.current = loadedMemo;
-          setSchedule(loadedData);
-          setMemo(loadedMemo);
+          savedScheduleRef.current = loadedData;
+          savedMemoRef.current = loadedMemo;
           safeJsonSetItem('nangman_schedule_backup', loadedData);
           setSavedItem('nangman_memo_backup', loadedMemo);
+          if (!hasLocalEditRef.current) {
+            scheduleRef.current = loadedData;
+            memoRef.current = loadedMemo;
+            setSchedule(loadedData);
+            setMemo(loadedMemo);
+          }
+          setBaselineVersion(v => v + 1);
         }
       } catch (err) {
         console.error("Supabase exception:", err);
@@ -156,10 +184,13 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
           if (newData && !isManagerModeRef.current) {
             const nextData = newData.data || {};
             const nextMemo = newData.memo || "";
+            savedScheduleRef.current = nextData;
+            savedMemoRef.current = nextMemo;
             scheduleRef.current = nextData;
             memoRef.current = nextMemo;
             setSchedule(nextData);
             setMemo(nextMemo);
+            setBaselineVersion(v => v + 1);
           }
         }
       )
@@ -188,15 +219,23 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
         throw error;
       }
 
+      savedScheduleRef.current = nextSchedule;
+      savedMemoRef.current = nextMemo;
+      hasLocalEditRef.current = false;
+      safeJsonSetItem('nangman_schedule_backup', nextSchedule);
+      setSavedItem('nangman_memo_backup', nextMemo);
+      setBaselineVersion(v => v + 1);
       setSaveErrorMsg("");
       setSupabaseTableMissing(false);
+      return true;
     } catch (error) {
       console.error("⚠️ 데이터 저장 오류:", error);
       setSaveErrorMsg(`⚠️ 저장 실패: 슈파베이스 권한이나 테이블 설정이 잘못되었습니다. (${error.message})`);
+      return false;
     }
   };
 
-  const saveBulkChanges = async (changes) => {
+  const saveBulkChanges = (changes) => {
     if (Object.keys(changes).length === 0) return;
     const optimisticData = {};
     Object.keys(changes).forEach(k => {
@@ -205,11 +244,8 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
     });
     const newSchedule = { ...scheduleRef.current, ...optimisticData };
     scheduleRef.current = newSchedule;
+    hasLocalEditRef.current = true;
     setSchedule(newSchedule);
-    safeJsonSetItem('nangman_schedule_backup', newSchedule);
-
-    // 즉시 DB 저장
-    await persistNangmanToDb(newSchedule, memoRef.current);
   };
 
   const getScheduleKey = (dateStr, timeSlot) => {
@@ -218,7 +254,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
 
   // handleCellClick removed, using invisible select instead
 
-  const handleSelectChange = async (key, val) => {
+  const handleSelectChange = (key, val) => {
     let finalValue = false;
     const trimmed = val.trim();
     if (val === '     ') {
@@ -235,12 +271,9 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
 
     const newSchedule = { ...scheduleRef.current, [key]: finalValue };
     scheduleRef.current = newSchedule;
+    hasLocalEditRef.current = true;
     setSchedule(newSchedule);
-    safeJsonSetItem('nangman_schedule_backup', newSchedule);
     setEditingCell(null);
-
-    // 즉시 DB 저장
-    await persistNangmanToDb(newSchedule, memoRef.current);
   };
 
   const copyPreviousWeek = async (e) => {
@@ -351,25 +384,51 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
     saveBulkChanges(changes);
   };
 
-  useEffect(() => {
-    if (!isTyping || !isManagerMode) return;
-    const timer = setTimeout(async () => {
-      setSavedItem('nangman_memo_backup', memo);
-      setIsTyping(false);
-      isTypingRef.current = false;
+  const handleRequestNavigate = (targetFn) => {
+    if (
+      isManagerMode &&
+      checkHasUnsavedChanges(
+        savedScheduleRef.current,
+        savedMemoRef.current,
+        scheduleRef.current,
+        memoRef.current
+      )
+    ) {
+      pendingExitActionRef.current = targetFn;
+      setShowExitSaveModal(true);
+      return;
+    }
+    targetFn();
+  };
 
-      // 즉시 DB 저장
-      await persistNangmanToDb(scheduleRef.current, memo);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [memo, isTyping, isManagerMode]);
+  const handleConfirmSaveAndExit = async () => {
+    if (isSavingExit) return;
+    setIsSavingExit(true);
+    const ok = await persistNangmanToDb(scheduleRef.current, memoRef.current);
+    setIsSavingExit(false);
+    setShowExitSaveModal(false);
+    if (ok) {
+      const nextAction = pendingExitActionRef.current;
+      pendingExitActionRef.current = null;
+      if (nextAction) nextAction();
+    } else {
+      pendingExitActionRef.current = null;
+    }
+  };
 
-  const flushPendingMemo = async () => {
-    if (!isManagerMode || !isTypingRef.current) return;
-    setSavedItem('nangman_memo_backup', memoRef.current);
-    setIsTyping(false);
-    isTypingRef.current = false;
-    await persistNangmanToDb(scheduleRef.current, memoRef.current);
+  const handleDiscardAndExit = () => {
+    if (isSavingExit) return;
+    hasLocalEditRef.current = false;
+    setShowExitSaveModal(false);
+    const nextAction = pendingExitActionRef.current;
+    pendingExitActionRef.current = null;
+    if (nextAction) nextAction();
+  };
+
+  const handleCancelExit = () => {
+    if (isSavingExit) return;
+    setShowExitSaveModal(false);
+    pendingExitActionRef.current = null;
   };
 
   const formatDateString = (date) => getLocalDateString(date);
@@ -427,7 +486,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
             </div>
           )}
 
-          <button onClick={async () => { await flushPendingMemo(); onNavigateBack(); }} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
+          <button onClick={() => handleRequestNavigate(onNavigateBack)} className="text-xs flex flex-col items-center font-bold p-2 rounded-lg shadow-md transition-all touch-manipulation hdr-btn shrink-0">
             <Home className="w-5 h-5 mb-1" /> 처음으로
           </button>
         </div>
@@ -637,7 +696,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold text-gray-700 flex items-center gap-2 text-sm landscape:text-[20px] md:text-[22px]">📢 공지 및 메모</h3>
                 <button
-                  onClick={async () => { await flushPendingMemo(); onNavigateToClassroom(); }}
+                  onClick={() => handleRequestNavigate(onNavigateToClassroom)}
                   className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs md:text-sm font-bold shadow-sm transition-all active:scale-95 touch-manipulation"
                 >
                   평생교육실2
@@ -649,21 +708,66 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                   if (!isManagerMode) return;
                   const nextVal = e.target.value;
                   memoRef.current = nextVal;
+                  hasLocalEditRef.current = true;
                   setMemo(nextVal);
-                  setIsTyping(true);
-                  isTypingRef.current = true;
                 }}
-                onBlur={flushPendingMemo}
                 readOnly={!isManagerMode}
-                placeholder={isManagerMode ? "모든 선생님 화면에 실시간으로 보입니다." : "담당자 모드에서만 작성 가능합니다."}
+                placeholder={isManagerMode ? "수정 후 [처음으로] 버튼을 누르면 저장할 수 있습니다." : "담당자 모드에서만 작성 가능합니다."}
                 className={`w-full p-3 md:p-4 border rounded-xl font-bold h-24 md:h-32 outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] text-black bg-white ${isManagerMode ? 'border-blue-300' : 'border-gray-300'}`}
               />
-              {isTyping && <div className="text-[10px] text-blue-600 mt-1 font-bold animate-pulse text-right">자동 저장 중...</div>}
+              {hasUnsavedChanges && (
+                <div className="text-[11px] text-amber-600 mt-1.5 font-bold text-right">
+                  변경된 내용이 있습니다. [처음으로]를 누르면 저장할 수 있습니다.
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
+
+      {showExitSaveModal && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-[3px] flex items-center justify-center z-[80] px-4"
+          onClick={handleCancelExit}
+        >
+          <div
+            className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-200 animate-fadeIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-extrabold text-slate-900 mb-2 text-center">변경 내용 저장</h3>
+            <p className="text-sm text-slate-600 font-semibold text-center mb-5">
+              변경된 내용을 저장하시겠습니까?
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleCancelExit}
+                disabled={isSavingExit}
+                className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition active:scale-95 disabled:opacity-50 touch-manipulation cursor-pointer"
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                onClick={handleDiscardAndExit}
+                disabled={isSavingExit}
+                className="flex-1 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl font-bold text-sm transition active:scale-95 disabled:opacity-50 touch-manipulation cursor-pointer whitespace-nowrap"
+              >
+                저장 안 함
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmSaveAndExit}
+                disabled={isSavingExit}
+                className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-extrabold text-sm shadow-md shadow-blue-600/25 transition active:scale-95 disabled:opacity-50 touch-manipulation cursor-pointer"
+              >
+                {isSavingExit ? '저장 중...' : '저장'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
