@@ -26,6 +26,29 @@ const CARD_SIZES = {
 const NAME_COLOR_HEX = '#151E2E';
 const DEFAULT_SLOGAN = '배우는 기쁨, 쓰는 즐거움! 디지털로 일상에 재미를 더해 드려요';
 
+const SLOGAN_PRESETS = [
+  '배우는 기쁨, 쓰는 즐거움! 디지털로 일상에 재미를 더해 드려요',
+  '어르신 눈높이에 맞춰 차근차근, 스마트한 일상을 함께 만들어가요',
+  '스마트폰 하나로 더 넓어지는 세상, 천천히 친절하게 안내해 드려요',
+  '디지털이 쉬워지는 시간! 어르신의 편리하고 활기찬 내일을 응원해요',
+  '작은 화면 속 큰 세상, 어르신의 디지털 길잡이가 되어 드리겠습니다',
+  '궁금한 건 언제든 편하게! 어르신 곁에서 디지털로 소통을 이어 드려요',
+  '배움에는 나이가 없습니다! 디지털과 친해지는 행복한 동행을 함께해요',
+  '터치 한 번으로 가까워지는 가족과 세상, 따뜻한 디지털 교육을 전해요',
+  '어려운 디지털도 쉽고 재미있게! 어르신의 똑똑한 스마트 생활을 돕습니다',
+  '사진 촬영부터 길 찾기까지, 일상에 꼭 필요한 디지털을 쉽게 알려드려요',
+  '매일 더 편리해지는 스마트 세상, 어르신의 든든한 디지털 벗이 되겠습니다',
+  '천천히 배우고 즐겁게 익히는 디지털, 어르신의 일상에 활력을 더해 드려요',
+  '소통하는 즐거움, 알아가는 보람! 어르신 맞춤형 디지털 교육을 함께해요',
+  '오늘 배운 스마트폰 활용 하나가 어르신의 내일을 더 풍요롭게 만들어 줍니다',
+  '두려움은 덜고 자신감은 채우고! 디지털 세상 속 즐거운 변화를 선물합니다',
+  '따뜻한 마음과 친절한 설명으로 어르신의 스마트한 디지털 생활을 응원해요',
+  '클릭 한 번으로 여는 새로운 일상, 어르신과 디지털 세상을 따뜻하게 잇습니다',
+  '반복해서 물어보셔도 괜찮아요! 언제나 미소로 함께하는 디지털 서포터즈입니다',
+  '일상이 편해지는 스마트 디지털 교육, 어르신의 행복한 배움을 응원합니다',
+  '디지털로 더 가까워지는 세상, 어르신의 즐겁고 당당한 스마트 라이프를 돕습니다'
+];
+
 const PANEL_THEMES = [
   {
     id: 'navy',
@@ -631,9 +654,9 @@ export default function NameCardApp({ onNavigateBack }) {
               />
             </div>
 
-            <div className="col-span-12">
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="input-slogan" className="block text-xs font-bold text-slate-700">
+            <div className="col-span-12 space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="select-slogan" className="block text-xs font-bold text-slate-700">
                   테마 문구 (이름 아래 문구)
                 </label>
                 {sloganInput !== DEFAULT_SLOGAN && (
@@ -646,6 +669,22 @@ export default function NameCardApp({ onNavigateBack }) {
                   </button>
                 )}
               </div>
+              <select
+                id="select-slogan"
+                value={SLOGAN_PRESETS.includes(sloganInput) ? sloganInput : ''}
+                onChange={(e) => {
+                  if (e.target.value) setSloganInput(e.target.value);
+                }}
+                className="w-full px-3.5 py-2 text-sm text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all"
+                aria-label="추천 테마 문구 20선 선택"
+              >
+                <option value="" disabled>-- 추천 테마 문구 20개 중에서 선택 --</option>
+                {SLOGAN_PRESETS.map((phrase, idx) => (
+                  <option key={idx} value={phrase}>
+                    {idx + 1}. {phrase}
+                  </option>
+                ))}
+              </select>
               <textarea
                 id="input-slogan"
                 rows={2}
