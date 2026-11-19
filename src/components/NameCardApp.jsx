@@ -331,9 +331,26 @@ export default function NameCardApp({ onNavigateBack }) {
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
   const [dirHandle, setDirHandle] = useState(null);
   const [teacherOptions, setTeacherOptions] = useState([]);
+  const [isSloganMenuOpen, setIsSloganMenuOpen] = useState(false);
 
   const cardWrapRef = useRef(null);
   const cardRef = useRef(null);
+  const sloganMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isSloganMenuOpen) return;
+    const handlePointerDown = (e) => {
+      if (sloganMenuRef.current && !sloganMenuRef.current.contains(e.target)) {
+        setIsSloganMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [isSloganMenuOpen]);
 
   // Check local Vite save endpoint & saved FileSystemDirectoryHandle + teachers list
   useEffect(() => {
@@ -710,22 +727,59 @@ export default function NameCardApp({ onNavigateBack }) {
                   </button>
                 )}
               </div>
-              <select
-                id="select-slogan"
-                value={SLOGAN_PRESETS.includes(sloganInput) ? sloganInput : ''}
-                onChange={(e) => {
-                  if (e.target.value) setSloganInput(e.target.value);
-                }}
-                className="w-full px-3.5 py-2 text-sm text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all"
-                aria-label="추천 테마 문구 30선 선택"
-              >
-                <option value="" disabled>-- 추천 테마 문구 30개 중에서 선택 --</option>
-                {SLOGAN_PRESETS.map((phrase, idx) => (
-                  <option key={idx} value={phrase}>
-                    {idx + 1}. {phrase}
-                  </option>
-                ))}
-              </select>
+              <div ref={sloganMenuRef} className="relative">
+                <button
+                  type="button"
+                  id="select-slogan"
+                  onClick={() => setIsSloganMenuOpen(prev => !prev)}
+                  className="w-full px-3 py-2 text-[11.5px] sm:text-xs text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all flex items-center justify-between gap-2 text-left"
+                  aria-label="추천 테마 문구 30선 선택"
+                  aria-expanded={isSloganMenuOpen}
+                >
+                  <span className="truncate">
+                    {SLOGAN_PRESETS.includes(sloganInput)
+                      ? `${SLOGAN_PRESETS.indexOf(sloganInput) + 1}. ${sloganInput}`
+                      : '-- 추천 테마 문구 30개 중에서 선택 --'}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 text-slate-500 shrink-0 transition-transform ${isSloganMenuOpen ? 'rotate-180' : ''}`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+
+                {isSloganMenuOpen && (
+                  <div className="absolute left-0 right-0 mt-1.5 max-h-64 overflow-y-auto bg-white border border-slate-300 rounded-xl shadow-xl z-50 divide-y divide-slate-100">
+                    {SLOGAN_PRESETS.map((phrase, idx) => {
+                      const isSelected = sloganInput === phrase;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setSloganInput(phrase);
+                            setIsSloganMenuOpen(false);
+                          }}
+                          className={`w-full px-3 py-2 text-left text-[11px] sm:text-xs leading-snug break-words transition cursor-pointer ${
+                            isSelected
+                              ? 'bg-blue-50 text-[#13386E] font-extrabold'
+                              : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
+                          }`}
+                        >
+                          <span className="text-slate-400 font-bold mr-1">{idx + 1}.</span>
+                          {phrase}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
               <textarea
                 id="input-slogan"
                 rows={2}
