@@ -39,7 +39,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
     setPopupMessage("");
   };
 
-  const showStatusPopup = (message, durationMs = 1500) => {
+  const showStatusPopup = (message, durationMs = 500) => {
     if (popupTimerRef.current) {
       clearTimeout(popupTimerRef.current);
     }
