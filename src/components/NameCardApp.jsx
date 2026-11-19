@@ -7,6 +7,9 @@ import { SEOUL_SYMBOL_BASE64 } from '../utils/seoulSymbolBase64';
 import { getGlobalTeachersList, getSavedItem } from '../utils/helpers';
 
 const TARGET_NAMECARD_DIR = 'G:\\내 드라이브\\2027-Digital Supporters\\명함';
+const GOOGLE_DRIVE_FOLDER_ID = '13BWCd8p70u9GGBEDHQBaO3ZRJL3DtD1I';
+const GOOGLE_DRIVE_FOLDER_URL = `https://drive.google.com/drive/u/0/folders/${GOOGLE_DRIVE_FOLDER_ID}`;
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwtz2B3wl9Bk3AgoPEO9Jz3PkPRAJEq11N28YW8fZC4x3oVo0ls1p9rkUxMEnL7_ak5Hg/exec';
 const STORAGE_KEY = 'ds_card_custom_defaults_v2';
 const IDB_NAME = 'ds_namecard_fs_v1';
 const IDB_STORE = 'handles';
@@ -481,7 +484,35 @@ export default function NameCardApp({ onNavigateBack }) {
         }
       }
 
-      // 2. 브라우저에서 연결된 저장 폴더(FileSystemDirectoryHandle)가 있으면 직접 저장
+      // 2. 외부/배포 환경에서는 Google Apps Script 웹앱을 통해 지정 구글 드라이브 폴더에 직접 업로드 시도
+      const gasUrl = import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
+      if (gasUrl) {
+        try {
+          const gasRes = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'saveNamecard',
+              folderId: GOOGLE_DRIVE_FOLDER_ID,
+              fileName,
+              imageData: dataUrl
+            })
+          });
+          const gasData = await gasRes.json();
+          if (gasRes.ok && gasData?.success) {
+            setSaveFeedback({
+              type: 'success',
+              text: `구글 드라이브 명함 폴더에 '${fileName}' 저장 완료!`
+            });
+            return;
+          }
+          console.warn('Apps Script 저장 응답:', gasData);
+        } catch (gasErr) {
+          console.warn('구글 드라이브 웹 업로드 실패, 대체 저장 시도:', gasErr);
+        }
+      }
+
+      // 3. 브라우저에서 연결된 저장 폴더(FileSystemDirectoryHandle)가 있으면 직접 저장
       if (dirHandle) {
         try {
           let perm = await dirHandle.queryPermission({ mode: 'readwrite' });
@@ -504,7 +535,7 @@ export default function NameCardApp({ onNavigateBack }) {
         }
       }
 
-      // 3. 기본 브라우저 파일 다운로드
+      // 4. 기본 브라우저 파일 다운로드
       triggerBrowserDownload(dataUrl, fileName);
       setSaveFeedback({
         type: 'success',
@@ -676,11 +707,19 @@ export default function NameCardApp({ onNavigateBack }) {
 
           {/* 저장 경로 안내 및 폴더 연결 바 */}
           <div className="mt-3 p-2.5 sm:px-3.5 rounded-xl bg-slate-50 border border-slate-300 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-1.5 min-w-0 text-slate-700 font-semibold">
+            <div className="flex items-center gap-1.5 min-w-0 text-slate-700 font-semibold flex-wrap">
               <span className="shrink-0">📁 저장 위치:</span>
               <code className="text-[11.5px] font-bold text-[#13386E] bg-white px-2 py-0.5 rounded border border-slate-200 truncate">
                 {TARGET_NAMECARD_DIR}
               </code>
+              <a
+                href={GOOGLE_DRIVE_FOLDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2 py-0.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-[11px] shrink-0 transition"
+              >
+                구글 드라이브 폴더 열기 ↗
+              </a>
               {localApiAvailable ? (
                 <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-extrabold text-[11px] shrink-0">
                   자동 저장 연결됨

@@ -463,6 +463,40 @@ function uploadSignatureToDrive(date, teacher, shift, student, signatureData) {
     }
 }
 
+/**
+ * 명함 이미지를 지정된 구글 드라이브 폴더에 업로드하는 함수
+ */
+function saveNamecardToDrive(params) {
+    try {
+        var folderId = (params && params.folderId) ? String(params.folderId) : "13BWCd8p70u9GGBEDHQBaO3ZRJL3DtD1I";
+        var fileName = (params && params.fileName) ? String(params.fileName) : ("명함_" + Date.now() + ".jpg");
+        var imageData = params && params.imageData ? String(params.imageData) : "";
+        if (!imageData || imageData.indexOf("data:image") !== 0) {
+            return { success: false, error: "올바른 이미지 데이터가 아닙니다." };
+        }
+        var mimeMatch = imageData.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
+        var mimeType = mimeMatch ? mimeMatch[1] : "image/jpeg";
+        var base64Data = imageData.split(",")[1];
+        var folder = DriveApp.getFolderById(folderId);
+
+        var existing = folder.getFilesByName(fileName);
+        while (existing.hasNext()) {
+            existing.next().setTrashed(true);
+        }
+
+        var blob = Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName);
+        var file = folder.createFile(blob);
+        return {
+            success: true,
+            fileId: file.getId(),
+            fileName: file.getName(),
+            url: file.getUrl()
+        };
+    } catch (err) {
+        return { success: false, error: err.toString() };
+    }
+}
+
 function doPost(e) {
     try {
         // =========================================================================
@@ -470,6 +504,10 @@ function doPost(e) {
         // =========================================================================
         if (e.parameter && e.parameter.action === "saveSignatureLog") {
             return handleSignatureUpload(e.parameter);
+        }
+        if (e.parameter && e.parameter.action === "saveNamecard") {
+            return ContentService.createTextOutput(JSON.stringify(saveNamecardToDrive(e.parameter)))
+                .setMimeType(ContentService.MimeType.JSON);
         }
         if (e.parameter && e.parameter.action === "saveLogBatch") {
             // x-www-form-urlencoded 로 오는 경우 (POST body에 action이 포함된 경우)
@@ -485,6 +523,10 @@ function doPost(e) {
             parsedData = e.parameter;
         }
 
+        if (parsedData && parsedData.action === "saveNamecard") {
+            return ContentService.createTextOutput(JSON.stringify(saveNamecardToDrive(parsedData)))
+                .setMimeType(ContentService.MimeType.JSON);
+        }
         if (parsedData.action === "saveLogBatch" || parsedData.mode === "batch") {
              return ContentService.createTextOutput(JSON.stringify(saveLogBatch(parsedData)))
                 .setMimeType(ContentService.MimeType.JSON);
