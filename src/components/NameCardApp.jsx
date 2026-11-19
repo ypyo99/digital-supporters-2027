@@ -732,7 +732,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   type="button"
                   id="select-slogan"
                   onClick={() => setIsSloganMenuOpen(prev => !prev)}
-                  className="w-full px-3 py-2 text-xs sm:text-sm text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all flex items-center justify-between gap-2 text-left"
+                  className="w-full px-3 py-2 text-sm sm:text-base text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all flex items-center justify-between gap-2 text-left"
                   aria-label="추천 테마 문구 30선 선택"
                   aria-expanded={isSloganMenuOpen}
                 >
@@ -766,7 +766,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             setSloganInput(phrase);
                             setIsSloganMenuOpen(false);
                           }}
-                          className={`w-full px-3 py-2.5 text-left text-xs sm:text-sm leading-snug break-words transition cursor-pointer ${
+                          className={`w-full px-3 py-2.5 text-left text-sm sm:text-base leading-snug break-words transition cursor-pointer ${
                             isSelected
                               ? 'bg-blue-50 text-[#13386E] font-extrabold'
                               : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
