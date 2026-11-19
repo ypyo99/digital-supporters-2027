@@ -521,8 +521,8 @@ export default function NameCardApp({ onNavigateBack }) {
       const currentPhone = phoneInput.trim() || '010-2687-7190';
       const currentThemeLabel = activeTheme?.label || '';
 
-      // 1. 이메일 발송 (브라우저에서 FormSubmit으로 직접 전송 - PC/서버 상태와 무관)
-      const sendEmail = async () => {
+      // 1. 이메일 발송 (브라우저에서 FormSubmit 표준 엔드포인트로 multipart/form-data 첨부파일 직접 전송)
+      const sendEmailFromBrowser = async () => {
         try {
           const fd = new FormData();
           fd.append('_subject', emailSubject);
@@ -533,44 +533,68 @@ export default function NameCardApp({ onNavigateBack }) {
           fd.append('테마_문구', sloganInput || '-');
           fd.append('이미지_색상', currentThemeLabel || '-');
           fd.append('attachment', dataUrlToBlob(dataUrl), fileName);
-          const res = await fetch(`https://formsubmit.co/ajax/${NAMECARD_EMAIL_TO}`, {
+
+          // 표준 엔드포인트(https://formsubmit.co/...)는 파일 첨부(attachment)를 지원하며,
+          // multipart/form-data는 CORS-safelisted 요청이므로 no-cors로 브라우저에서 직접 전송 가능
+          await fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
             method: 'POST',
-            headers: { Accept: 'application/json' },
+            mode: 'no-cors',
             body: fd
           });
-          const data = await res.json().catch(() => ({}));
-          return res.ok && String(data?.success) === 'true';
+          return true;
         } catch (mailErr) {
-          console.warn('이메일 발송 실패:', mailErr);
+          console.warn('브라우저 이메일 발송 실패:', mailErr);
           return false;
         }
       };
 
-      // 2. 구글 드라이브 저장
-      const saveToDrive = async () => {
-        // 2-1. PC(localhost)에서는 G:\ 드라이브에 직접 저장
+      // 2. 구글 드라이브 저장 (+ 로컬 PC인 경우 서버에서 인증된 Origin으로 이메일 동시 발송)
+      const saveToDriveAndMail = async () => {
+        // 2-1. PC(localhost)에서는 G:\ 드라이브에 직접 저장 + Node 서버에서 이메일 발송
         if (localApiAvailable) {
           try {
             const res = await fetch('/api/save-namecard', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ fileName, dataUrl })
+              body: JSON.stringify({
+                fileName,
+                dataUrl,
+                teacherName: rawName,
+                phone: currentPhone,
+                slogan: sloganInput,
+                themeLabel: currentThemeLabel,
+                sendEmail: true
+              })
             });
             const data = await res.json();
-            if (res.ok && data?.ok) return { status: 'saved', path: data.path };
+            if (res.ok && data?.ok) {
+              return {
+                status: 'saved',
+                path: data.path,
+                emailSent: Boolean(data.emailSent)
+              };
+            }
           } catch (localErr) {
             console.warn('로컬 직접 저장 실패, 동기화 큐로 대체:', localErr);
           }
         }
 
-        // 2-2. 스마트폰/외부: Supabase 큐 → PC 동기화 워커가 G:\ 구글 드라이브 폴더에 저장
+        // 2-2. 스마트폰/배포 사이트(Netlify): 브라우저에서 즉시 이메일 발송 + Supabase 큐로 구글 드라이브 저장
+        const isActivatedOrigin =
+          typeof window !== 'undefined' &&
+          window.location.origin === 'https://digital-supporters-2027.netlify.app';
+        const browserMailPromise = sendEmailFromBrowser();
+
         const requestId = `nc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         const { data: existingRow, error: fetchErr } = await supabaseClient
           .from('classroom_schedules')
           .select('data')
           .eq('id', NAMECARD_QUEUE_ID)
           .maybeSingle();
-        if (fetchErr) throw new Error('동기화 서버 연결 실패: ' + fetchErr.message);
+        if (fetchErr) {
+          const mailOk = await browserMailPromise;
+          return { status: 'error', error: '동기화 서버 연결 실패: ' + fetchErr.message, emailSent: mailOk };
+        }
 
         const prevQueue = Array.isArray(existingRow?.data?.queue) ? existingRow.data.queue : [];
         const keptQueue = prevQueue
@@ -579,12 +603,28 @@ export default function NameCardApp({ onNavigateBack }) {
           .slice(-14);
         const nextQueue = [
           ...keptQueue,
-          { requestId, fileName, dataUrl, status: 'pending', requestedAt: new Date().toISOString() }
+          {
+            requestId,
+            fileName,
+            dataUrl,
+            teacherName: rawName,
+            phone: currentPhone,
+            slogan: sloganInput,
+            themeLabel: currentThemeLabel,
+            sendEmailFromWorker: !isActivatedOrigin,
+            status: 'pending',
+            requestedAt: new Date().toISOString()
+          }
         ];
         const { error: upsertErr } = await supabaseClient
           .from('classroom_schedules')
           .upsert({ id: NAMECARD_QUEUE_ID, data: { queue: nextQueue }, updated_at: new Date().toISOString() });
-        if (upsertErr) throw new Error('저장 요청 전송 실패: ' + upsertErr.message);
+        if (upsertErr) {
+          const mailOk = await browserMailPromise;
+          return { status: 'error', error: '저장 요청 전송 실패: ' + upsertErr.message, emailSent: mailOk };
+        }
+
+        const browserMailOk = await browserMailPromise;
 
         for (let attempt = 0; attempt < 8; attempt++) {
           await new Promise(resolve => setTimeout(resolve, 750));
@@ -595,16 +635,30 @@ export default function NameCardApp({ onNavigateBack }) {
             .maybeSingle();
           const queueList = Array.isArray(checkRow?.data?.queue) ? checkRow.data.queue : [];
           const matched = queueList.find(item => item && item.requestId === requestId);
-          if (matched?.status === 'saved') return { status: 'saved', path: matched.savedPath };
-          if (matched?.status === 'error') throw new Error(matched.error || '구글 드라이브 저장 오류');
+          if (matched?.status === 'saved') {
+            return {
+              status: 'saved',
+              path: matched.savedPath,
+              emailSent: Boolean(browserMailOk || matched.emailSent)
+            };
+          }
+          if (matched?.status === 'error') {
+            return {
+              status: 'error',
+              error: matched.error || '구글 드라이브 저장 오류',
+              emailSent: browserMailOk
+            };
+          }
         }
-        return { status: 'queued' };
+        return { status: 'queued', emailSent: browserMailOk };
       };
 
-      const [emailOk, driveResult] = await Promise.all([
-        sendEmail(),
-        saveToDrive().catch(e => ({ status: 'error', error: e.message }))
-      ]);
+      const driveResult = await saveToDriveAndMail().catch(e => ({
+        status: 'error',
+        error: e.message,
+        emailSent: false
+      }));
+      const emailOk = Boolean(driveResult.emailSent);
 
       const emailText = emailOk
         ? `✉️ ${NAMECARD_EMAIL_TO} 메일 발송 완료`

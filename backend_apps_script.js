@@ -495,6 +495,7 @@ function saveNamecardToDrive(params) {
         var sloganStr = (params && params.slogan) ? String(params.slogan).trim() : "-";
         var themeStr = (params && params.themeLabel) ? String(params.themeLabel).trim() : "-";
 
+        var mailOk = false;
         try {
             var htmlBody = "<div style='font-family:sans-serif;color:#1e293b;max-width:640px;line-height:1.6;'>"
                 + "<h2 style='margin:0 0 12px 0;color:#0f294a;'>" + emailSubject + "</h2>"
@@ -518,6 +519,7 @@ function saveNamecardToDrive(params) {
                 inlineImages: { namecardImg: blob },
                 attachments: [blob]
             });
+            mailOk = true;
         } catch (mailErr) {
             Logger.log("명함 인쇄 요청 이메일 발송 오류: " + mailErr.toString());
         }
@@ -527,7 +529,7 @@ function saveNamecardToDrive(params) {
             fileId: file.getId(),
             fileName: file.getName(),
             url: file.getUrl(),
-            emailSent: true,
+            emailSent: mailOk,
             emailSubject: emailSubject
         };
     } catch (err) {

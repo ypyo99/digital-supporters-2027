@@ -131,7 +131,7 @@ const sendNamecardPrintEmail = async ({
   fd.append('이미지_색상', themeLabel || '-');
   fd.append('attachment', new Blob([buffer], { type: mimeType }), safeName);
 
-  const fsRes = await fetch(`https://formsubmit.co/ajax/${NAMECARD_EMAIL_TO}`, {
+  const fsRes = await fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
     method: 'POST',
     headers: {
       Origin: CANONICAL_ORIGIN,
@@ -145,7 +145,7 @@ const sendNamecardPrintEmail = async ({
   const needsActivation = /Activate Form|needs Activation|activation/i.test(fsText);
 
   return {
-    ok: fsRes.ok && /"success"\s*:\s*"?true/.test(fsText),
+    ok: fsRes.ok && !needsActivation && (/Thanks!/i.test(fsText) || /"success"\s*:\s*"?true/i.test(fsText)),
     method: 'formsubmit',
     to: NAMECARD_EMAIL_TO,
     subject,
