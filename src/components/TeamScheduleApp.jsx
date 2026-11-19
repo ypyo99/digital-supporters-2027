@@ -1003,8 +1003,8 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
   });
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col font-sans overflow-y-auto">
-      <div className="bg-white flex-1 flex flex-col relative">
+    <div className="w-full min-h-screen app-surface flex flex-col font-sans overflow-y-auto">
+      <div className="flex-1 flex flex-col relative">
         {/* Header */}
         <div className="shrink-0 app-header text-white z-40 relative min-h-[152px] sm:min-h-[96px]">
           <div className="w-full max-w-full mx-auto px-2.5 sm:px-5 pt-3 pb-16 sm:pb-7 flex items-start justify-between relative">
@@ -1135,7 +1135,7 @@ export default function TeamScheduleApp({ team, onNavigateBack }) {
       </div>
 
         {/* 콘텐츠 영역 */}
-        <div className="flex-1 bg-slate-50 pb-12">
+        <div className="flex-1 pb-12">
           <div className="w-full max-w-full mx-auto px-2.5 sm:px-5 py-3 md:py-6">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-40 text-blue-500">

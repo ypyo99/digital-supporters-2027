@@ -24,6 +24,11 @@ body {
   background-color: var(--main-bg-color, #f4f6f9);
 }
 
+/* 모든 하위 화면 공통 배경: 설정의 '배경 회색 농도'를 그대로 따름 */
+.app-surface {
+  background-color: var(--main-bg-color, #f4f6f9);
+}
+
 ::selection {
   background: rgba(37, 99, 235, 0.18);
 }

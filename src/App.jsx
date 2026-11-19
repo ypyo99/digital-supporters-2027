@@ -49,7 +49,7 @@ const StudentFormsAdminApp = lazyWithRetry(() => import('./components/StudentFor
 const ClassApplicantsApp = lazyWithRetry(() => import('./components/ClassApplicantsApp'));
 
 const LoadingFallback = () => (
-  <div className="min-h-[100dvh] flex flex-col items-center justify-center">
+  <div className="min-h-[100dvh] app-surface flex flex-col items-center justify-center">
     <div className="w-12 h-12 border-[3px] border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
     <p className="mt-4 text-base font-semibold text-gray-500 animate-pulse">화면을 불러오는 중...</p>
   </div>

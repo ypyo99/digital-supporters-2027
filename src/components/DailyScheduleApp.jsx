@@ -948,7 +948,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   const datePickerValue = `${y}-${m}-${d}`;
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-[#f4f6f9] dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100">
+    <div className="min-h-[100dvh] flex flex-col app-surface dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100">
       {/* 1. 상단 메인 헤더 (원본 헤더 유지) */}
       <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pb-4 pt-safe-4 flex justify-between items-center">
@@ -1023,7 +1023,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
           {/* 상단 고정 영역: 날짜 선택 바 + 팀 선택 필 */}
           <div
-            className="sticky top-0 z-30 bg-[#f4f6f9] dark:bg-slate-900 pt-1.5 pb-2 -mx-3 px-3 md:-mx-6 md:px-6 shadow-xs border-b border-slate-200/60 dark:border-slate-800"
+            className="sticky top-0 z-30 app-surface dark:bg-slate-900 pt-1.5 pb-2 -mx-3 px-3 md:-mx-6 md:px-6 shadow-xs border-b border-slate-200/60 dark:border-slate-800"
             onTouchStart={(e) => e.stopPropagation()}
             onTouchEnd={(e) => e.stopPropagation()}
           >

@@ -4033,11 +4033,11 @@ export default function MainApp({
               </div>
 
               <div className="p-4 sm:p-5 overflow-y-auto space-y-5 text-left">
-                {/* 1. 메인화면 회색 배경 농도 조절 */}
+                {/* 1. 전체 화면 회색 배경 농도 조절 */}
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <label htmlFor="bg-gray-slider" className="text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900">
-                      1. 메인 배경 회색 농도
+                      1. 화면 배경 회색 농도
                     </label>
                     <div className="flex items-center gap-1.5">
                       <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 text-[13px] font-extrabold tabular-nums">
@@ -4274,7 +4274,7 @@ export default function MainApp({
   })();
 
   return (
-    <div className="min-h-[100dvh] bg-transparent font-sans pb-6">
+    <div className="min-h-[100dvh] app-surface font-sans pb-6">
       <div className="shrink-0 app-header text-white z-20 relative">
         <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pb-4 pt-safe-4 flex justify-between items-center gap-3">
           <div className="flex items-center min-w-0">
@@ -4336,7 +4336,7 @@ export default function MainApp({
               </div>
             </h2>
             <div className="contents">
-              <div className="sticky top-0 z-30 -mx-2.5 sm:-mx-5 px-2.5 sm:px-5 py-2 bg-[#f1f5f9]/85 backdrop-blur-md">
+              <div className="sticky top-0 z-30 -mx-2.5 sm:-mx-5 px-2.5 sm:px-5 py-2 app-surface">
                 <div className="flex items-center gap-1.5 sm:gap-2 w-full">
                   <button type="button" onClick={handlePrevDay} disabled={isDataLoading} aria-label="이전 날" className="w-11 sm:w-12 h-11 sm:h-12 flex items-center justify-center rounded-xl bg-white ring-1 ring-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation text-gray-600 shrink-0 transition-all">
                     <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z" /></svg>

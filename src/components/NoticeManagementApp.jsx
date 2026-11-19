@@ -549,7 +549,7 @@ export default function NoticeManagementApp({ onNavigateBack, initialNotice }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans pb-6">
+    <div className="min-h-screen app-surface flex flex-col font-sans pb-6">
       <style>{`
         @keyframes shineText {
           0% { background-position: 100% 0; }

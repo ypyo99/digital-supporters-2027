@@ -476,7 +476,7 @@ export default function NangmanStudioApp({ onNavigateBack, onNavigateToClassroom
   const endDay = currentDays[3].getDate();
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-gray-50 font-sans text-gray-800">
+    <div className="min-h-[100dvh] flex flex-col app-surface font-sans text-gray-800">
       <div className="shrink-0 app-header text-white z-40 relative">
         <div className={`max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 ${isManagerMode ? 'pb-14 min-h-[120px]' : 'pb-4'} pt-safe-4 flex justify-between items-start relative`}>
           <div>

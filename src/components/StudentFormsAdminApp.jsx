@@ -977,7 +977,7 @@ export default function StudentFormsAdminApp({
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800 overflow-y-auto">
+    <div className="min-h-screen app-surface flex flex-col font-sans text-slate-800 overflow-y-auto">
 
       {/* TOP HEADER */}
       <header className="app-header text-white border-b border-blue-900/30 shadow-md relative z-20 shrink-0">

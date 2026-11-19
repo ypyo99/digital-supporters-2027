@@ -379,7 +379,7 @@ export default function StudentSearchApp({ onNavigateBack }) {
   }, [filteredRecords]);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-transparent font-sans text-gray-800">
+    <div className="min-h-[100dvh] flex flex-col app-surface font-sans text-gray-800">
       <div className="shrink-0 app-header text-white z-40 relative">
         <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pb-4 pt-safe-4 flex justify-between items-center">
           <div>
