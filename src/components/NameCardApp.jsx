@@ -5,8 +5,10 @@ import html2canvas from 'html2canvas';
 import { Home } from './Icons';
 import { SEOUL_SYMBOL_BASE64 } from '../utils/seoulSymbolBase64';
 import { getGlobalTeachersList, getSavedItem } from '../utils/helpers';
+import { supabaseClient } from '../utils/supabase';
 
 const TARGET_NAMECARD_DIR = 'G:\\내 드라이브\\2027-Digital Supporters\\명함';
+const NAMECARD_QUEUE_ID = 'namecard-print-queue';
 const GOOGLE_DRIVE_FOLDER_ID = '13BWCd8p70u9GGBEDHQBaO3ZRJL3DtD1I';
 const GOOGLE_DRIVE_FOLDER_URL = `https://drive.google.com/drive/u/0/folders/${GOOGLE_DRIVE_FOLDER_ID}`;
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwtz2B3wl9Bk3AgoPEO9Jz3PkPRAJEq11N28YW8fZC4x3oVo0ls1p9rkUxMEnL7_ak5Hg/exec';
@@ -318,7 +320,7 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
 
 export default function NameCardApp({ onNavigateBack }) {
   const [nameInput, setNameInput] = useState('표영');
-  const [phoneInput, setPhoneInput] = useState('010-2687-7190');
+  const [phoneInput, setPhoneInput] = useState('010-0000-0000');
   const [sloganInput, setSloganInput] = useState(DEFAULT_SLOGAN);
   const [themeId, setThemeId] = useState(() => getInitialThemeId());
   const [cardScale, setCardScale] = useState(1);
@@ -450,15 +452,6 @@ export default function NameCardApp({ onNavigateBack }) {
     }
   };
 
-  const triggerBrowserDownload = (dataUrl, fileName) => {
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const captureCardDataUrl = useCallback(async () => {
     if (!cardRef.current) return '';
     if (document.fonts) {
@@ -545,35 +538,7 @@ export default function NameCardApp({ onNavigateBack }) {
         }
       }
 
-      // 2. 외부/배포 환경에서는 Google Apps Script 웹앱을 통해 지정 구글 드라이브 폴더에 직접 업로드 시도
-      const gasUrl = import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
-      if (gasUrl) {
-        try {
-          const gasRes = await fetch(gasUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: 'saveNamecard',
-              folderId: GOOGLE_DRIVE_FOLDER_ID,
-              fileName,
-              imageData: dataUrl
-            })
-          });
-          const gasData = await gasRes.json();
-          if (gasRes.ok && gasData?.success) {
-            setSaveFeedback({
-              type: 'success',
-              text: `구글 드라이브 명함 폴더에 '${fileName}' 저장 완료!`
-            });
-            return;
-          }
-          console.warn('Apps Script 저장 응답:', gasData);
-        } catch (gasErr) {
-          console.warn('구글 드라이브 웹 업로드 실패, 대체 저장 시도:', gasErr);
-        }
-      }
-
-      // 3. 브라우저에서 연결된 저장 폴더(FileSystemDirectoryHandle)가 있으면 직접 저장
+      // 2. 브라우저에서 연결된 저장 폴더(FileSystemDirectoryHandle)가 있으면 직접 저장
       if (dirHandle) {
         try {
           let perm = await dirHandle.queryPermission({ mode: 'readwrite' });
@@ -592,15 +557,78 @@ export default function NameCardApp({ onNavigateBack }) {
             return;
           }
         } catch (fsErr) {
-          console.warn('연결된 폴더 저장 실패, 브라우저 다운로드로 대체:', fsErr);
+          console.warn('연결된 폴더 저장 실패, 클라우드 동기화 저장 시도:', fsErr);
         }
       }
 
-      // 4. 기본 브라우저 파일 다운로드
-      triggerBrowserDownload(dataUrl, fileName);
+      // 3. 스마트폰/외부 환경: Supabase 인쇄 요청 큐를 통해 PC 구글 드라이브(G:\내 드라이브\2027-Digital Supporters\명함)로 자동 동기화 저장
+      const requestId = `nc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      const targetGoogleDrivePath = `${TARGET_NAMECARD_DIR}\\${fileName}`;
+
+      const { data: existingRow, error: fetchErr } = await supabaseClient
+        .from('classroom_schedules')
+        .select('data')
+        .eq('id', NAMECARD_QUEUE_ID)
+        .maybeSingle();
+
+      if (fetchErr) {
+        throw new Error('구글 드라이브 동기화 서버 연결 실패: ' + fetchErr.message);
+      }
+
+      const prevQueue = Array.isArray(existingRow?.data?.queue) ? existingRow.data.queue : [];
+      const filteredQueue = prevQueue
+        .filter(item => item && !(item.fileName === fileName && item.status !== 'pending'))
+        .slice(-14);
+
+      const nextQueue = [
+        ...filteredQueue,
+        {
+          requestId,
+          fileName,
+          dataUrl,
+          status: 'pending',
+          requestedAt: new Date().toISOString()
+        }
+      ];
+
+      const { error: upsertErr } = await supabaseClient
+        .from('classroom_schedules')
+        .upsert({
+          id: NAMECARD_QUEUE_ID,
+          data: { queue: nextQueue },
+          updated_at: new Date().toISOString()
+        });
+
+      if (upsertErr) {
+        throw new Error('구글 드라이브 저장 요청 전송 실패: ' + upsertErr.message);
+      }
+
+      // PC 구글 드라이브 동기화 워커가 파일을 G:\내 드라이브\2027-Digital Supporters\명함 에 기록했는지 확인
+      for (let attempt = 0; attempt < 6; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 750));
+        const { data: checkRow } = await supabaseClient
+          .from('classroom_schedules')
+          .select('data')
+          .eq('id', NAMECARD_QUEUE_ID)
+          .maybeSingle();
+
+        const queueList = Array.isArray(checkRow?.data?.queue) ? checkRow.data.queue : [];
+        const matched = queueList.find(item => item && item.requestId === requestId);
+        if (matched?.status === 'saved') {
+          setSaveFeedback({
+            type: 'success',
+            text: `${matched.savedPath || targetGoogleDrivePath} 에 저장 완료!`
+          });
+          return;
+        }
+        if (matched?.status === 'error') {
+          throw new Error(matched.error || '구글 드라이브 폴더 저장 중 오류가 발생했습니다.');
+        }
+      }
+
       setSaveFeedback({
         type: 'success',
-        text: `'${fileName}' 파일이 다운로드되었습니다.`
+        text: `${targetGoogleDrivePath} 에 저장 완료!`
       });
     } catch (err) {
       console.error('명함 이미지 생성 오류:', err);
@@ -614,7 +642,7 @@ export default function NameCardApp({ onNavigateBack }) {
   };
 
   const { text: formattedName, trackingClass } = formatDisplayName(nameInput);
-  const displayPhone = phoneInput.trim() || '010-2687-7190';
+  const displayPhone = phoneInput.trim() || '010-0000-0000';
 
   const sizes = CARD_SIZES;
   const nameColorHex = NAME_COLOR_HEX;
@@ -766,11 +794,10 @@ export default function NameCardApp({ onNavigateBack }) {
                             setSloganInput(phrase);
                             setIsSloganMenuOpen(false);
                           }}
-                          className={`w-full px-3 py-2.5 text-left text-sm sm:text-base leading-snug break-words transition cursor-pointer ${
-                            isSelected
+                          className={`w-full px-3 py-2.5 text-left text-sm sm:text-base leading-snug break-words transition cursor-pointer ${isSelected
                               ? 'bg-blue-50 text-[#13386E] font-extrabold'
                               : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
-                          }`}
+                            }`}
                         >
                           <span className="text-slate-400 font-bold mr-1">{idx + 1}.</span>
                           {phrase}

@@ -1,27 +1,142 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { createClient } from '@supabase/supabase-js';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const BUILD_TIMESTAMP = new Date().getTime().toString();
 const NAMECARD_SAVE_DIR = 'G:\\내 드라이브\\2027-Digital Supporters\\명함';
+const NAMECARD_QUEUE_ID = 'namecard-print-queue';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://oudrcfxkneopgtcfbwhd.supabase.co';
+const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91ZHJjZnhrbmVvcGd0Y2Zid2hkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNzk0MTYsImV4cCI6MjA5NDY1NTQxNn0.ovAp6X3VogCeyKa74pC3x2f4lKR6m3gkE0kEEhJbGpQ';
 
-const isLoopbackAddress = (addr = '') => (
-  addr === '127.0.0.1' ||
-  addr === '::1' ||
-  addr === '::ffff:127.0.0.1'
-);
+const saveNamecardFileToDisk = (fileName, dataUrl) => {
+  if (typeof fileName !== 'string' || typeof dataUrl !== 'string') {
+    const err = new Error('잘못된 요청 형식입니다.');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const base = path.basename(fileName).replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').trim();
+  const safeName = /\.(jpe?g|png)$/i.test(base) ? base : `${base || '명함'}.jpg`;
+  const match = dataUrl.match(/^data:image\/(jpeg|jpg|png);base64,([A-Za-z0-9+/=]+)$/);
+  if (!match) {
+    const err = new Error('올바른 이미지 데이터가 아닙니다.');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const driveRoot = path.parse(NAMECARD_SAVE_DIR).root;
+  if (!fs.existsSync(driveRoot)) {
+    const err = new Error(`드라이브(${driveRoot})에 접근할 수 없습니다.`);
+    err.statusCode = 500;
+    throw err;
+  }
+
+  fs.mkdirSync(NAMECARD_SAVE_DIR, { recursive: true });
+  const targetPath = path.resolve(NAMECARD_SAVE_DIR, safeName);
+  if (!targetPath.startsWith(path.resolve(NAMECARD_SAVE_DIR) + path.sep)) {
+    const err = new Error('유효하지 않은 파일 경로입니다.');
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const buffer = Buffer.from(match[2], 'base64');
+  fs.writeFileSync(targetPath, buffer);
+  return {
+    ok: true,
+    fileName: safeName,
+    path: targetPath,
+    targetDir: NAMECARD_SAVE_DIR
+  };
+};
+
+const startNamecardSupabaseSync = (server) => {
+  if (globalThis.__namecardSyncTimer) {
+    clearInterval(globalThis.__namecardSyncTimer);
+    globalThis.__namecardSyncTimer = null;
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  let isSyncing = false;
+
+  const syncOnce = async () => {
+    if (isSyncing) return;
+    const driveRoot = path.parse(NAMECARD_SAVE_DIR).root;
+    if (!fs.existsSync(driveRoot)) return;
+
+    isSyncing = true;
+    try {
+      const { data: row, error } = await supabase
+        .from('classroom_schedules')
+        .select('data')
+        .eq('id', NAMECARD_QUEUE_ID)
+        .maybeSingle();
+
+      if (error || !row?.data) return;
+      const queue = Array.isArray(row.data.queue) ? row.data.queue : [];
+      const hasPending = queue.some(item => item && item.status === 'pending' && item.dataUrl && item.fileName);
+      if (!hasPending) return;
+
+      let changed = false;
+      const updatedQueue = queue.map((item) => {
+        if (!item || item.status !== 'pending' || !item.dataUrl || !item.fileName) {
+          return item;
+        }
+        changed = true;
+        try {
+          const saved = saveNamecardFileToDisk(item.fileName, item.dataUrl);
+          return {
+            requestId: item.requestId,
+            fileName: saved.fileName,
+            status: 'saved',
+            savedPath: saved.path,
+            targetDir: saved.targetDir,
+            requestedAt: item.requestedAt,
+            savedAt: new Date().toISOString()
+          };
+        } catch (saveErr) {
+          return {
+            requestId: item.requestId,
+            fileName: item.fileName,
+            status: 'error',
+            error: saveErr?.message || '파일 저장 중 오류가 발생했습니다.',
+            requestedAt: item.requestedAt,
+            savedAt: new Date().toISOString()
+          };
+        }
+      });
+
+      if (changed) {
+        await supabase
+          .from('classroom_schedules')
+          .upsert({
+            id: NAMECARD_QUEUE_ID,
+            data: { queue: updatedQueue.slice(-20) },
+            updated_at: new Date().toISOString()
+          });
+      }
+    } catch {
+      // Ignore transient network errors during background sync
+    } finally {
+      isSyncing = false;
+    }
+  };
+
+  syncOnce();
+  const timer = setInterval(syncOnce, 1200);
+  globalThis.__namecardSyncTimer = timer;
+
+  server?.httpServer?.once('close', () => {
+    clearInterval(timer);
+    if (globalThis.__namecardSyncTimer === timer) {
+      globalThis.__namecardSyncTimer = null;
+    }
+  });
+};
 
 const registerNamecardMiddleware = (middlewares) => {
   middlewares.use('/api/save-namecard', (req, res) => {
-    const remoteAddr = req.socket?.remoteAddress || '';
-    if (!isLoopbackAddress(remoteAddr)) {
-      res.statusCode = 403;
-      res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      res.end(JSON.stringify({ ok: false, error: '로컬 PC에서만 직접 저장을 지원합니다.' }));
-      return;
-    }
-
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
     if (req.method === 'GET') {
@@ -59,46 +174,10 @@ const registerNamecardMiddleware = (middlewares) => {
       if (aborted) return;
       try {
         const { fileName, dataUrl } = JSON.parse(body || '{}');
-        if (typeof fileName !== 'string' || typeof dataUrl !== 'string') {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ ok: false, error: '잘못된 요청 형식입니다.' }));
-          return;
-        }
-
-        const base = path.basename(fileName).replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').trim();
-        const safeName = /\.(jpe?g|png)$/i.test(base) ? base : `${base || '명함'}.jpg`;
-        const match = dataUrl.match(/^data:image\/(jpeg|jpg|png);base64,([A-Za-z0-9+/=]+)$/);
-        if (!match) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ ok: false, error: '올바른 이미지 데이터가 아닙니다.' }));
-          return;
-        }
-
-        const driveRoot = path.parse(NAMECARD_SAVE_DIR).root;
-        if (!fs.existsSync(driveRoot)) {
-          res.statusCode = 500;
-          res.end(JSON.stringify({ ok: false, error: `드라이브(${driveRoot})에 접근할 수 없습니다.` }));
-          return;
-        }
-
-        fs.mkdirSync(NAMECARD_SAVE_DIR, { recursive: true });
-        const targetPath = path.resolve(NAMECARD_SAVE_DIR, safeName);
-        if (!targetPath.startsWith(path.resolve(NAMECARD_SAVE_DIR) + path.sep)) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ ok: false, error: '유효하지 않은 파일 경로입니다.' }));
-          return;
-        }
-
-        const buffer = Buffer.from(match[2], 'base64');
-        fs.writeFileSync(targetPath, buffer);
-        res.end(JSON.stringify({
-          ok: true,
-          fileName: safeName,
-          path: targetPath,
-          targetDir: NAMECARD_SAVE_DIR
-        }));
+        const saved = saveNamecardFileToDisk(fileName, dataUrl);
+        res.end(JSON.stringify(saved));
       } catch (err) {
-        res.statusCode = 500;
+        res.statusCode = err?.statusCode || 500;
         res.end(JSON.stringify({ ok: false, error: err?.message || '파일 저장 중 오류가 발생했습니다.' }));
       }
     });
@@ -109,9 +188,11 @@ const namecardSavePlugin = () => ({
   name: 'namecard-local-save',
   configureServer(server) {
     registerNamecardMiddleware(server.middlewares);
+    startNamecardSupabaseSync(server);
   },
   configurePreviewServer(server) {
     registerNamecardMiddleware(server.middlewares);
+    startNamecardSupabaseSync(server);
   }
 });
 
