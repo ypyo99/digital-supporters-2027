@@ -24,6 +24,7 @@ const CARD_SIZES = {
   contact: 29.5
 };
 const NAME_COLOR_HEX = '#151E2E';
+const DEFAULT_SLOGAN = '배우는 기쁨, 쓰는 즐거움! 디지털로 일상에 재미를 더해 드려요';
 
 const PANEL_THEMES = [
   {
@@ -285,6 +286,7 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
 export default function NameCardApp({ onNavigateBack }) {
   const [nameInput, setNameInput] = useState('표영');
   const [phoneInput, setPhoneInput] = useState('010-2687-7190');
+  const [sloganInput, setSloganInput] = useState(DEFAULT_SLOGAN);
   const [themeId, setThemeId] = useState(() => getInitialThemeId());
   const [cardScale, setCardScale] = useState(1);
 
@@ -658,6 +660,31 @@ export default function NameCardApp({ onNavigateBack }) {
                 <span>{isSaving ? '고해상도 저장 중...' : '고해상도 JPG 저장'}</span>
               </button>
             </div>
+
+            <div className="col-span-12">
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="input-slogan" className="block text-xs font-bold text-slate-700">
+                  테마 문구 (이름 아래 문구)
+                </label>
+                {sloganInput !== DEFAULT_SLOGAN && (
+                  <button
+                    type="button"
+                    onClick={() => setSloganInput(DEFAULT_SLOGAN)}
+                    className="text-[11px] font-bold text-[#13386E] hover:underline cursor-pointer"
+                  >
+                    기본 문구로 복원
+                  </button>
+                )}
+              </div>
+              <input
+                id="input-slogan"
+                type="text"
+                value={sloganInput}
+                onChange={(e) => setSloganInput(e.target.value)}
+                placeholder={DEFAULT_SLOGAN}
+                className="w-full px-3.5 py-2 text-sm text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-medium transition-all"
+              />
+            </div>
           </div>
 
           {/* 저장 경로 안내 및 폴더 연결 바 */}
@@ -858,9 +885,9 @@ export default function NameCardApp({ onNavigateBack }) {
                     </div>
                     <div
                       style={{ fontSize: `${sizes.slogan}px` }}
-                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em]"
+                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px]"
                     >
-                      배우는 기쁨, 쓰는 즐거움! 디지털로 일상에 재미를 더해 드려요
+                      {sloganInput}
                     </div>
                   </div>
 
