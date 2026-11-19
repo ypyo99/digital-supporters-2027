@@ -3854,7 +3854,7 @@ export default function MainApp({
                 icon={<IconNameCard />}
                 chipColor="chip-indigo"
                 label="명함 만들기"
-                desc="서포터즈 선생님 명함 제작"
+                desc="디지털교육서포터즈 명함 제작"
               />
             </MenuGroup>
 
@@ -4115,8 +4115,8 @@ export default function MainApp({
                         type="button"
                         onClick={() => handleChangeBgGrayLevel(preset.value)}
                         className={`py-1.5 px-1 rounded-lg border text-[12px] font-bold transition cursor-pointer whitespace-nowrap ${bgGrayLevel === preset.value
-                            ? 'border-blue-600 bg-blue-50 text-blue-700'
-                            : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                          ? 'border-blue-600 bg-blue-50 text-blue-700'
+                          : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
                           }`}
                       >
                         {preset.label}
@@ -4140,8 +4140,8 @@ export default function MainApp({
                       type="button"
                       onClick={() => handleChangeRoomPopupMode('once')}
                       className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${roomPopupMode === 'once'
-                          ? 'border-blue-600 bg-blue-50/70'
-                          : 'border-slate-200 bg-white hover:bg-slate-50'
+                        ? 'border-blue-600 bg-blue-50/70'
+                        : 'border-slate-200 bg-white hover:bg-slate-50'
                         }`}
                     >
                       <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${roomPopupMode === 'once' ? 'border-blue-600' : 'border-slate-400'
@@ -4162,8 +4162,8 @@ export default function MainApp({
                       type="button"
                       onClick={() => handleChangeRoomPopupMode('always')}
                       className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${roomPopupMode === 'always'
-                          ? 'border-blue-600 bg-blue-50/70'
-                          : 'border-slate-200 bg-white hover:bg-slate-50'
+                        ? 'border-blue-600 bg-blue-50/70'
+                        : 'border-slate-200 bg-white hover:bg-slate-50'
                         }`}
                     >
                       <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${roomPopupMode === 'always' ? 'border-blue-600' : 'border-slate-400'
@@ -4189,8 +4189,8 @@ export default function MainApp({
                       3. 관리자 비밀번호
                     </span>
                     <span className={`px-2 py-0.5 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${hasAdminPassword
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                        : 'bg-slate-100 text-slate-600 border border-slate-200'
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}>
                       {hasAdminPassword ? '저장됨 · 관리자 활성' : '미저장'}
                     </span>

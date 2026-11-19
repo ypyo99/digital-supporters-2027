@@ -795,8 +795,8 @@ export default function NameCardApp({ onNavigateBack }) {
                             setIsSloganMenuOpen(false);
                           }}
                           className={`w-full px-3 py-2.5 text-left text-sm sm:text-base leading-snug break-words transition cursor-pointer ${isSelected
-                              ? 'bg-blue-50 text-[#13386E] font-extrabold'
-                              : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
+                            ? 'bg-blue-50 text-[#13386E] font-extrabold'
+                            : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
                             }`}
                         >
                           <span className="text-slate-400 font-bold mr-1">{idx + 1}.</span>
