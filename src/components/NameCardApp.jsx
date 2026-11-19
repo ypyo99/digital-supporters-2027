@@ -662,13 +662,13 @@ export default function NameCardApp({ onNavigateBack }) {
                   </button>
                 )}
               </div>
-              <input
+              <textarea
                 id="input-slogan"
-                type="text"
+                rows={2}
                 value={sloganInput}
                 onChange={(e) => setSloganInput(e.target.value)}
                 placeholder={DEFAULT_SLOGAN}
-                className="w-full px-3.5 py-2 text-sm text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-medium transition-all"
+                className="w-full px-3.5 py-2 text-sm text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-medium leading-relaxed break-words whitespace-pre-wrap resize-none transition-all"
               />
             </div>
 
@@ -845,7 +845,7 @@ export default function NameCardApp({ onNavigateBack }) {
                     </div>
                     <div
                       style={{ fontSize: `${sizes.slogan}px` }}
-                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px]"
+                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px] leading-snug whitespace-pre-wrap break-words"
                     >
                       {sloganInput}
                     </div>
