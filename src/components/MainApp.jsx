@@ -902,16 +902,23 @@ export default function MainApp({
     let showNangman = false;
     let teamKey = '';
     let teamLabel = selectedTeam;
+    let scheduleType = '';
 
     if (selectedTeam === '1팀' || selectedTeam === '2팀') {
       if (isBefore0930) {
         showClassroom = true;
+        showNangman = true;
         teamKey = selectedTeam;
+        teamLabel = `${selectedTeam} (오전)`;
+        scheduleType = 'morning';
       }
     } else if (selectedTeam === '3팀') {
       if (isBefore1300) {
         showClassroom = true;
+        showNangman = false;
         teamKey = '3팀';
+        teamLabel = '3팀 (오후)';
+        scheduleType = 'afternoon';
       }
     } else if (selectedTeam === '취업팀' && currentUser) {
       const group = getTeacherGroup('취업팀', currentUser, dbTeachers) || '';
@@ -920,11 +927,13 @@ export default function MainApp({
         showNangman = true;
         teamKey = '취업팀-오전';
         teamLabel = '취업팀 오전조';
+        scheduleType = 'morning';
       } else if (group.includes('오후') && isBefore1300) {
         showClassroom = true;
-        showNangman = true;
+        showNangman = false;
         teamKey = '취업팀-오후';
         teamLabel = '취업팀 오후조';
+        scheduleType = 'afternoon';
       }
     }
 
@@ -948,10 +957,12 @@ export default function MainApp({
         const mmdd = todayStr.substring(5);
         const holidayInfo = holidaysFullList.find(h => h && h.date && (h.date === todayStr || h.date === mmdd || h.date.endsWith(mmdd)));
 
-        const classroomSlotsList = [
-          "09:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30",
-          "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00"
-        ];
+        const isMorning = scheduleType === 'morning';
+
+        const classroomSlotsList = isMorning
+          ? ["09:30 - 10:30", "10:30 - 11:30", "11:30 - 12:30"]
+          : ["13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00"];
+
         const nangmanSlotsList = ["1팀", "2팀"];
 
         const [classroomRes, nangmanRes] = await Promise.all([
@@ -1011,6 +1022,7 @@ export default function MainApp({
           teamLabel,
           showClassroom,
           showNangman,
+          isMorning,
           classroomSlots,
           classroomMemo: cMemo,
           nangmanSlots,
@@ -3790,7 +3802,12 @@ export default function MainApp({
                         <span className="p-1.5 rounded-lg bg-sky-100 text-sky-800 border border-sky-200">
                           <IconClassroom className="w-4 h-4" />
                         </span>
-                        <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900">평생교육실2 (지하1층)</h4>
+                        <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900 flex items-center gap-1.5">
+                          <span>평생교육실2 (지하1층)</span>
+                          <span className="text-[11.5px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded">
+                            {roomStatusPopup.isMorning ? '오전' : '오후'}
+                          </span>
+                        </h4>
                       </div>
                       <button
                         type="button"
@@ -3800,14 +3817,14 @@ export default function MainApp({
                         주간 보기 &rarr;
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex flex-col gap-1.5 sm:gap-2">
                       {roomStatusPopup.classroomSlots.map(item => (
                         <div
                           key={item.slot}
-                          className={`rounded-lg border px-2.5 py-2 flex items-center justify-between gap-1.5 ${item.isAvailable ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-800'}`}
+                          className={`rounded-xl border px-3 py-2 sm:px-3.5 sm:py-2.5 flex items-center justify-between gap-2 shadow-sm ${item.isAvailable ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'}`}
                         >
-                          <span className="text-[12.5px] sm:text-[13px] font-bold tabular-nums whitespace-nowrap">{item.slot}</span>
-                          <span className={`text-[12px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap ${item.isAvailable ? 'bg-emerald-200/80 text-emerald-950' : 'bg-rose-200/70 text-rose-900'}`}>
+                          <span className="text-[13.5px] sm:text-[14px] font-bold tabular-nums whitespace-nowrap">{item.slot}</span>
+                          <span className={`text-[12px] sm:text-[12.5px] font-extrabold px-2 py-0.5 rounded whitespace-nowrap ${item.isAvailable ? 'bg-emerald-200 text-emerald-950' : 'bg-rose-200 text-rose-950'}`}>
                             {item.label}
                           </span>
                         </div>
@@ -3828,7 +3845,12 @@ export default function MainApp({
                         <span className="p-1.5 rounded-lg bg-pink-100 text-pink-800 border border-pink-200">
                           <IconStudio className="w-4 h-4" />
                         </span>
-                        <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900">낭만스튜디오</h4>
+                        <h4 className="font-extrabold text-[15.5px] sm:text-[16.5px] text-slate-900 flex items-center gap-1.5">
+                          <span>낭만스튜디오</span>
+                          <span className="text-[11.5px] font-bold text-pink-700 bg-pink-100 px-1.5 py-0.5 rounded">
+                            {roomStatusPopup.isMorning ? '오전' : '오후'}
+                          </span>
+                        </h4>
                       </div>
                       <button
                         type="button"
@@ -3838,7 +3860,7 @@ export default function MainApp({
                         주간 보기 &rarr;
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className={`grid ${roomStatusPopup.nangmanSlots.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-2`}>
                       {roomStatusPopup.nangmanSlots.map(item => {
                         const toneClass = item.tone === 'emerald'
                           ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
