@@ -172,6 +172,14 @@ const IconDocumentCheck = (p) => (
     <path d="m9 15.2 2 2 4.2-4.2" strokeWidth={2.3} />
   </svg>
 );
+const IconNameCard = (p) => (
+  <svg {...svgProps} {...p}>
+    <rect x="2.5" y="5" width="19" height="14" rx="3" fill="currentColor" fillOpacity="0.14" stroke="none" />
+    <rect x="2.5" y="5" width="19" height="14" rx="3" />
+    <circle cx="8.2" cy="10.8" r="2" fill="currentColor" fillOpacity="0.22" />
+    <path d="M5.6 15.6a3 3 0 0 1 5.2 0M13.5 10.2h4.5M13.5 14h3.5" />
+  </svg>
+);
 
 // 메뉴 그룹 (제목 + 묶음 목록)
 const MenuGroup = ({ title, icon, children }) => (
@@ -242,7 +250,8 @@ export default function MainApp({
   onNavigateToNangmanStudio,
   onNavigateToNoticeManagement,
   onNavigateToStudentFormsAdmin,
-  onNavigateToClassApplicants
+  onNavigateToClassApplicants,
+  onNavigateToNameCard
 }) {
   const [selectedTeam, setSelectedTeam] = useState(() => getSavedItem('sungdong_team', ""));
   const [currentUser, setCurrentUser] = useState(() => getSavedItem('sungdong_teacher', ""));
@@ -3838,6 +3847,16 @@ export default function MainApp({
                 />
               </div>
             </section>
+
+            <MenuGroup title="서포터즈 도구">
+              <MenuRow
+                onClick={() => { handleLogout(); onNavigateToNameCard(); }}
+                icon={<IconNameCard />}
+                chipColor="chip-indigo"
+                label="명함 만들기"
+                desc="디지털교육서포터즈 명함 편집 · 300DPI 저장"
+              />
+            </MenuGroup>
 
             {hasAdminPassword && (
               <MenuGroup title="관리자 메뉴">

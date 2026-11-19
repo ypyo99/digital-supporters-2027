@@ -47,6 +47,7 @@ const NangmanStudioApp = lazyWithRetry(() => import('./components/NangmanStudioA
 const NoticeManagementApp = lazyWithRetry(() => import('./components/NoticeManagementApp'));
 const StudentFormsAdminApp = lazyWithRetry(() => import('./components/StudentFormsAdminApp'));
 const ClassApplicantsApp = lazyWithRetry(() => import('./components/ClassApplicantsApp'));
+const NameCardApp = lazyWithRetry(() => import('./components/NameCardApp'));
 
 const LoadingFallback = () => (
   <div className="min-h-[100dvh] app-surface flex flex-col items-center justify-center">
@@ -280,6 +281,10 @@ export default function App() {
       return <ClassApplicantsApp onNavigateBack={handleNavigateBack} />;
     }
 
+    if (currentView === 'nameCard') {
+      return <NameCardApp onNavigateBack={handleNavigateBack} />;
+    }
+
     return (
       <MainApp
         onNavigateToClassroom={() => navigateTo('classroom')}
@@ -323,6 +328,7 @@ export default function App() {
           setSelectedNoticeForView(notice);
           navigateTo('noticeManagement');
         }}
+        onNavigateToNameCard={() => navigateTo('nameCard')}
       />
     );
   };
