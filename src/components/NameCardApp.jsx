@@ -600,22 +600,6 @@ export default function NameCardApp({ onNavigateBack }) {
               </span>
               <h3 className="text-slate-800 font-extrabold text-base">명함 정보 수정 및 저장</h3>
             </div>
-
-            {teacherOptions.length > 0 && (
-              <select
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) setNameInput(e.target.value);
-                }}
-                className="px-2.5 py-1.5 text-xs font-bold border border-slate-300 rounded-xl bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#13386E] cursor-pointer"
-                aria-label="선생님 명단에서 이름 선택"
-              >
-                <option value="">선생님 명단에서 선택...</option>
-                {teacherOptions.map(n => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-            )}
           </div>
 
           <div className="grid grid-cols-12 gap-3 items-end">
