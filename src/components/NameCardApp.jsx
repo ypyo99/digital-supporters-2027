@@ -338,23 +338,39 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
   ctx.restore();
 };
 
-const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg) => {
+const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {}) => {
   if (!profileImg || !(profileImg.naturalWidth || profileImg.width)) return;
   const s = canvas.width / 900;
   const ctx = canvas.getContext('2d');
 
-  // 좌측 테마 패널(w: 316) 중앙 원형 프로필 프레임 (중심 158, 252 / 반지름 104)
-  const cx = 158 * s;
-  const cy = 252 * s;
-  const radius = 104 * s;
+  const photoScale = Number.isFinite(photoAdjust.scale) ? photoAdjust.scale : 1;
+  const offsetX = (Number.isFinite(photoAdjust.offsetX) ? photoAdjust.offsetX : 0) * s;
+  const offsetY = (Number.isFinite(photoAdjust.offsetY) ? photoAdjust.offsetY : 0) * s;
+
+  // 좌측 테마 패널(w: 236)과 우측 화이트 영역 경계선에 걸치는 원형 프로필 프레임
+  const cx = 236 * s;
+  const cy = 282 * s;
+  const radius = 96 * s;
+  const dashedRadius = radius + 17 * s;
 
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-  // 외곽 글로우 + 화이트 링
+  // 1. 바깥쪽 점선(dashed) 원형 링
   ctx.save();
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.32)';
-  ctx.shadowBlur = 22 * s;
+  ctx.beginPath();
+  ctx.arc(cx, cy, dashedRadius, 0, Math.PI * 2);
+  ctx.setLineDash([4.5 * s, 4 * s]);
+  ctx.strokeStyle = theme.accent;
+  ctx.lineWidth = 1.6 * s;
+  ctx.stroke();
+  ctx.restore();
+
+  // 2. 흰색 원형 테두리 + 그림자
+  ctx.save();
+  ctx.shadowColor = 'rgba(15, 23, 42, 0.24)';
+  ctx.shadowBlur = 24 * s;
+  ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 8 * s;
   ctx.beginPath();
   ctx.arc(cx, cy, radius + 6 * s, 0, Math.PI * 2);
@@ -362,27 +378,63 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg) => {
   ctx.fill();
   ctx.restore();
 
-  // 포인트 컬러 얇은 아우터 링
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius + 12 * s, 0, Math.PI * 2);
-  ctx.strokeStyle = theme.accent;
-  ctx.lineWidth = 2.2 * s;
-  ctx.stroke();
-
-  // 원형 클리핑 후 비율 유지(object-fit: cover) 그리기
+  // 3. 원형 클리핑 + 흰 배경 + 크기/위치 조절 적용된 프로필 사진
+  ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.clip();
 
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+
   const iw = profileImg.naturalWidth || profileImg.width;
   const ih = profileImg.naturalHeight || profileImg.height;
   const diameter = radius * 2;
-  const scale = Math.max(diameter / iw, diameter / ih);
-  const sw = diameter / scale;
-  const sh = diameter / scale;
-  const sx = (iw - sw) / 2;
-  const sy = Math.max(0, (ih - sh) * 0.25);
-  ctx.drawImage(profileImg, sx, sy, sw, sh, cx - radius, cy - radius, diameter, diameter);
+  const baseScale = Math.max(diameter / iw, diameter / ih);
+  const drawScale = baseScale * photoScale;
+  const dw = iw * drawScale;
+  const dh = ih * drawScale;
+  const dx = cx + offsetX - dw / 2;
+  const dy = cy + offsetY - dh / 2;
+  ctx.drawImage(profileImg, dx, dy, dw, dh);
+  ctx.restore();
+
+  // 4. 4시 방향 포인트 컬러 원형 배지 + 4각 별(✦) 아이콘
+  const angle = (42 * Math.PI) / 180;
+  const bx = cx + dashedRadius * Math.cos(angle);
+  const by = cy + dashedRadius * Math.sin(angle);
+  const badgeR = 14.5 * s;
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(15, 23, 42, 0.22)';
+  ctx.shadowBlur = 10 * s;
+  ctx.shadowOffsetY = 3 * s;
+  ctx.beginPath();
+  ctx.arc(bx, by, badgeR + 2.5 * s, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(bx, by, badgeR, 0, Math.PI * 2);
+  ctx.fillStyle = theme.accent;
+  ctx.fill();
+
+  // 중앙 4각 별(✦)
+  const starOuter = 6.2 * s;
+  const starInner = 2.0 * s;
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const r = i % 2 === 0 ? starOuter : starInner;
+    const a = (i * Math.PI) / 4 - Math.PI / 2;
+    const px = bx + r * Math.cos(a);
+    const py = by + r * Math.sin(a);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
 
   ctx.restore();
 };
@@ -414,6 +466,9 @@ export default function NameCardApp({ onNavigateBack }) {
   const [previewDataUrl, setPreviewDataUrl] = useState('');
   const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
   const [profilePreviewDataUrl, setProfilePreviewDataUrl] = useState('');
+  const [photoScale, setPhotoScale] = useState(1);
+  const [photoOffsetX, setPhotoOffsetX] = useState(0);
+  const [photoOffsetY, setPhotoOffsetY] = useState(0);
   const [isPreviewFresh, setIsPreviewFresh] = useState(false);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
@@ -556,6 +611,9 @@ export default function NameCardApp({ onNavigateBack }) {
     reader.onload = () => {
       if (typeof reader.result === 'string') {
         setProfilePhotoUrl(reader.result);
+        setPhotoScale(1);
+        setPhotoOffsetX(0);
+        setPhotoOffsetY(0);
       }
     };
     reader.readAsDataURL(file);
@@ -611,13 +669,17 @@ export default function NameCardApp({ onNavigateBack }) {
         })
       ]);
       if (profileImg) {
-        drawProfileCardPhotoOnCanvas(profileCanvas, activeTheme, profileImg);
+        drawProfileCardPhotoOnCanvas(profileCanvas, activeTheme, profileImg, {
+          scale: photoScale,
+          offsetX: photoOffsetX,
+          offsetY: photoOffsetY
+        });
       }
       profileUrl = profileCanvas.toDataURL('image/jpeg', 0.96);
     }
 
     return { defaultUrl, profileUrl };
-  }, [activeTheme, profilePhotoUrl]);
+  }, [activeTheme, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY]);
 
   // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
   useEffect(() => {
@@ -639,7 +701,7 @@ export default function NameCardApp({ onNavigateBack }) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, captureCardsDataUrls]);
+  }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, captureCardsDataUrls]);
 
   const handleDownloadOrSave = async (targetMode = 'auto') => {
     if (!cardRef.current || isSaving) return;
@@ -1108,6 +1170,132 @@ export default function NameCardApp({ onNavigateBack }) {
                   </button>
                 )}
               </div>
+
+              {profilePhotoUrl && (
+                <div className="p-3 bg-slate-50/90 rounded-xl border border-slate-300 space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-extrabold text-slate-800">프로필 사진 크기 · 위치 조절</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPhotoScale(1);
+                        setPhotoOffsetX(0);
+                        setPhotoOffsetY(0);
+                      }}
+                      className="px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition"
+                    >
+                      기본값 초기화
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {/* 크기 조절 */}
+                    <div className="bg-white rounded-xl border border-slate-200 px-3 py-2 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                        <span>사진 크기</span>
+                        <span className="text-[#13386E] font-extrabold">{Math.round(photoScale * 100)}%</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setPhotoScale(v => Math.max(0.6, +(v - 0.05).toFixed(2)))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="사진 축소"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="range"
+                          min="0.6"
+                          max="2.2"
+                          step="0.05"
+                          value={photoScale}
+                          onChange={(e) => setPhotoScale(parseFloat(e.target.value))}
+                          className="w-full accent-[#13386E] cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setPhotoScale(v => Math.min(2.2, +(v + 0.05).toFixed(2)))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="사진 확대"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 좌우 위치 */}
+                    <div className="bg-white rounded-xl border border-slate-200 px-3 py-2 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                        <span>좌우 위치</span>
+                        <span className="text-[#13386E] font-extrabold">{photoOffsetX > 0 ? `+${photoOffsetX}` : photoOffsetX}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setPhotoOffsetX(v => Math.max(-120, v - 4))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="왼쪽으로 이동"
+                        >
+                          ◀
+                        </button>
+                        <input
+                          type="range"
+                          min="-120"
+                          max="120"
+                          step="2"
+                          value={photoOffsetX}
+                          onChange={(e) => setPhotoOffsetX(parseInt(e.target.value, 10))}
+                          className="w-full accent-[#13386E] cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setPhotoOffsetX(v => Math.min(120, v + 4))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="오른쪽으로 이동"
+                        >
+                          ▶
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 상하 위치 */}
+                    <div className="bg-white rounded-xl border border-slate-200 px-3 py-2 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                        <span>상하 위치</span>
+                        <span className="text-[#13386E] font-extrabold">{photoOffsetY > 0 ? `+${photoOffsetY}` : photoOffsetY}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setPhotoOffsetY(v => Math.max(-120, v - 4))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="위로 이동"
+                        >
+                          ▲
+                        </button>
+                        <input
+                          type="range"
+                          min="-120"
+                          max="120"
+                          step="2"
+                          value={photoOffsetY}
+                          onChange={(e) => setPhotoOffsetY(parseInt(e.target.value, 10))}
+                          className="w-full accent-[#13386E] cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setPhotoOffsetY(v => Math.min(120, v + 4))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="아래로 이동"
+                        >
+                          ▼
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1169,72 +1357,47 @@ export default function NameCardApp({ onNavigateBack }) {
                   <div
                     id="profile-business-card"
                     ref={profileCardRef}
-                    className="ds-namecard-font relative w-[900px] h-[500px] bg-white overflow-hidden box-border rounded-[6px] flex"
+                    className="ds-namecard-font relative w-[900px] h-[500px] bg-[#FAF9F6] overflow-hidden box-border rounded-[6px] flex"
                     style={{
                       boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
                     }}
                   >
-                    {/* 좌측 프로필 쇼케이스 패널 (316px) */}
+                    {/* 좌측 다크 테마 패널 (236px + 도트 패턴 + 상단 좌측 정렬 시그니처) */}
                     <div
-                      className="relative w-[316px] h-[500px] shrink-0 flex flex-col items-center justify-between py-[34px] px-[26px] overflow-hidden"
+                      className="relative w-[236px] h-[500px] shrink-0 overflow-hidden"
                       style={{
-                        background: `linear-gradient(155deg, ${activeTheme.grad[0]} 0%, ${activeTheme.grad[1]} 55%, ${activeTheme.grad[2]} 100%)`
+                        background: `linear-gradient(160deg, ${activeTheme.grad[0]} 0%, ${activeTheme.grad[1]} 52%, ${activeTheme.grad[2]} 100%)`
                       }}
                     >
-                      {/* 배경 장식 */}
+                      {/* 미세 도트 격자 패턴 */}
                       <div
-                        className="absolute -top-16 -left-16 w-[240px] h-[240px] rounded-full opacity-25 pointer-events-none"
-                        style={{ backgroundColor: activeTheme.glowHex }}
-                      />
-                      <div
-                        className="absolute -bottom-24 -right-16 w-[260px] h-[260px] rounded-full border-[2px] opacity-20 pointer-events-none"
-                        style={{ borderColor: '#FFFFFF' }}
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.16) 1.1px, transparent 1.1px)',
+                          backgroundSize: '18px 18px'
+                        }}
                       />
 
-                      {/* 상단 영문 시그니처 */}
-                      <div className="relative z-10 w-full flex flex-col items-center text-center">
+                      {/* 좌측 상단 짧은 포인트 바 + 3줄 영문 타이틀 */}
+                      <div className="relative z-10 pt-[36px] pl-[30px]">
                         <div
-                          className="w-[36px] h-[4px] rounded-full mb-2.5"
+                          className="w-[34px] h-[4px] rounded-full mb-3"
                           style={{ backgroundColor: activeTheme.accent }}
                         />
-                        <div className="text-[12px] font-extrabold tracking-[0.26em] text-white/95 leading-snug">
-                          DIGITAL EDUCATION
+                        <div className="text-[14px] font-extrabold tracking-[0.22em] text-white leading-[1.45]">
+                          DIGITAL
                         </div>
-                        <div className="text-[11px] font-bold tracking-[0.3em] text-white/75 mt-0.5">
+                        <div className="text-[14px] font-extrabold tracking-[0.22em] text-white leading-[1.45]">
+                          EDUCATION
+                        </div>
+                        <div className="text-[14px] font-extrabold tracking-[0.22em] text-white/75 leading-[1.45]">
                           SUPPORTERS
                         </div>
                       </div>
-
-                      {/* 중앙 원형 프로필 사진 (캡처 시 캔버스에서 비율 왜곡 없이 정밀 합성) */}
-                      <div className="relative z-10 flex items-center justify-center my-auto">
-                        <div
-                          className="w-[228px] h-[228px] rounded-full flex items-center justify-center p-[6px]"
-                          style={{ border: `2px solid ${activeTheme.accent}` }}
-                        >
-                          <div
-                            className="w-[212px] h-[212px] rounded-full bg-white p-[4px] shadow-2xl overflow-hidden flex items-center justify-center"
-                          >
-                            <div
-                              data-html2canvas-ignore="true"
-                              className="w-full h-full rounded-full bg-cover bg-center"
-                              style={{ backgroundImage: `url("${profilePhotoUrl}")` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 하단 지역 태그 */}
-                      <div className="relative z-10 flex items-center gap-2 text-white/85 text-[11px] font-bold tracking-[0.22em]">
-                        <span
-                          className="w-2 h-2 rounded-full inline-block"
-                          style={{ backgroundColor: activeTheme.accent }}
-                        />
-                        <span>SEOUL · SEONGDONG</span>
-                      </div>
                     </div>
 
-                    {/* 우측 정보 영역 (584px) */}
-                    <div className="relative flex-1 h-[500px] bg-white px-[46px] py-[38px] flex flex-col justify-between">
+                    {/* 우측 정보 영역 (프로필 사진 돌출부 피해서 pl-[136px]부터 시작) */}
+                    <div className="relative flex-1 h-[500px] bg-[#FAF9F6] pl-[136px] pr-[44px] py-[38px] flex flex-col justify-between">
                       {/* 우측 상단 포인트 라인 */}
                       <div
                         className="absolute top-0 right-0 w-[180px] h-[6px]"
@@ -1248,13 +1411,13 @@ export default function NameCardApp({ onNavigateBack }) {
                         <img
                           src={SEOUL_SYMBOL_BASE64}
                           alt="서울시 로고"
-                          className="h-[52px] w-auto mr-[16px] object-contain"
+                          className="h-[48px] w-auto mr-[15px] object-contain"
                         />
                         <div>
-                          <div className="text-[17px] font-medium text-[#475569] leading-none mb-1.5 tracking-[-0.01em]">
+                          <div className="text-[16px] font-medium text-[#475569] leading-none mb-1.5 tracking-[-0.01em]">
                             사회복지법인 서울가톨릭사회복지회
                           </div>
-                          <div className="text-[24px] font-extrabold text-[#0F172A] leading-none tracking-[-0.02em]">
+                          <div className="text-[23px] font-extrabold text-[#0F172A] leading-none tracking-[-0.02em]">
                             시립성동노인종합복지관
                           </div>
                         </div>
@@ -1262,14 +1425,14 @@ export default function NameCardApp({ onNavigateBack }) {
 
                       {/* 2. 성함 + 직책 배지 + 테마 문구 */}
                       <div>
-                        <div className="flex items-center flex-wrap gap-3.5">
+                        <div className="flex items-center flex-wrap gap-3">
                           <div
-                            className={`text-[54px] font-black leading-none text-[#0F172A] whitespace-nowrap ${trackingClass}`}
+                            className={`text-[48px] font-black leading-none text-[#0F172A] whitespace-nowrap ${trackingClass}`}
                           >
                             {formattedName}
                           </div>
                           <span
-                            className="inline-flex items-center px-4 py-1.5 rounded-full text-[20px] font-extrabold text-white tracking-[-0.01em] shadow-xs whitespace-nowrap"
+                            className="inline-flex items-center px-3.5 py-1.5 rounded-full text-[18px] font-extrabold text-white tracking-[-0.01em] shadow-xs whitespace-nowrap"
                             style={{ backgroundColor: activeTheme.swatch }}
                           >
                             디지털교육서포터즈
@@ -1277,7 +1440,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
 
                         <div
-                          className="mt-4 pl-4 text-[19px] font-medium text-[#334155] leading-snug whitespace-pre-wrap break-words"
+                          className="mt-4 pl-3.5 text-[18px] font-medium text-[#334155] leading-snug whitespace-pre-wrap break-words"
                           style={{ borderLeft: `4px solid ${activeTheme.accent}` }}
                         >
                           {sloganInput}
@@ -1288,40 +1451,40 @@ export default function NameCardApp({ onNavigateBack }) {
                       <div className="pt-4 border-t border-slate-200 flex flex-col space-y-2.5">
                         <div className="flex items-center">
                           <span
-                            className="w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0"
+                            className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0"
                             style={{ backgroundColor: `${activeTheme.swatch}14`, color: activeTheme.swatch }}
                           >
-                            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
                             </svg>
                           </span>
                           <span
-                            className="text-[16px] font-bold ml-3 mr-3.5 w-[52px]"
+                            className="text-[15.5px] font-bold ml-3 mr-3 w-[48px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             휴대폰
                           </span>
-                          <span className="text-[26px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans">
+                          <span className="text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans">
                             {displayPhone}
                           </span>
                         </div>
 
                         <div className="flex items-center">
                           <span
-                            className="w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0"
+                            className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0"
                             style={{ backgroundColor: `${activeTheme.swatch}14`, color: activeTheme.swatch }}
                           >
-                            <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M3 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16H3zm4-14v2h2V7H7zm0 4v2h2v-2H7zm4-4v2h2V7h-2zm0 4v2h2v-2h-2zm6 10V9h3a1 1 0 0 1 1 1v11h-4zm1-8v2h2v-2h-2zm0 4v2h2v-2h-2z" />
                             </svg>
                           </span>
                           <span
-                            className="text-[16px] font-bold ml-3 mr-3.5 w-[52px]"
+                            className="text-[15.5px] font-bold ml-3 mr-3 w-[48px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             복지관
                           </span>
-                          <span className="text-[26px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans">
+                          <span className="text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans">
                             02-2298-5117
                           </span>
                         </div>
