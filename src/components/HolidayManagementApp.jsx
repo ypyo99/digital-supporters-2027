@@ -8,15 +8,6 @@ import { hasValidSavedAdminPassword } from '../utils/appSettings';
 
 const WEEKDAY_NAMES = ['일', '월', '화', '수', '목', '금', '토'];
 
-const QUICK_TYPE_PRESETS = [
-  { label: '법정공휴일', name: '', content1: '휴관', content2: '휴강', vacation_available: false },
-  { label: '간담회', name: '팀장간담회', content1: '소양교육', content2: '간담회', vacation_available: true },
-  { label: '소양교육', name: '소양교육', content1: '전체교육', content2: '휴강', vacation_available: false },
-  { label: '직무교육', name: '직무교육', content1: '직원교육', content2: '휴강', vacation_available: false },
-  { label: '안전교육', name: '안전교육', content1: '보건교육', content2: '휴강', vacation_available: false },
-  { label: '임시휴무', name: '복지관 휴관', content1: '임시휴무', content2: '휴강', vacation_available: false }
-];
-
 const KOREA_PUBLIC_HOLIDAYS = {
   2026: [
     { date: '01-01', name: '신정' },
@@ -182,7 +173,6 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   const popupTimerRef = useRef(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all"); // 'all' | 'upcoming' | 'vacation'
   const [selectedMonth, setSelectedMonth] = useState("all"); // 'all' | 1..12
 
   const [editModalData, setEditModalData] = useState(null);
@@ -252,21 +242,17 @@ export default function HolidayManagementApp({ onNavigateBack }) {
   }, [holidays]);
 
   const holidaySummary = useMemo(() => {
-    let upcoming = 0;
-    let vacation = 0;
     const monthCounts = new Map();
 
     holidays.forEach(h => {
       const meta = getHolidayDateMeta(h.date, targetYear);
-      if (meta.diffDays !== null && meta.diffDays >= 0) upcoming += 1;
-      if (h.vacation_available) vacation += 1;
       if (meta.month >= 1 && meta.month <= 12) {
         monthCounts.set(meta.month, (monthCounts.get(meta.month) || 0) + 1);
       }
     });
 
     const months = Array.from(monthCounts.entries()).sort((a, b) => a[0] - b[0]);
-    return { total: holidays.length, upcoming, vacation, months };
+    return { total: holidays.length, months };
   }, [holidays, targetYear]);
 
   const filteredHolidays = useMemo(() => {
@@ -274,15 +260,13 @@ export default function HolidayManagementApp({ onNavigateBack }) {
     return holidays.filter(h => {
       const meta = getHolidayDateMeta(h.date, targetYear);
       if (selectedMonth !== 'all' && meta.month !== selectedMonth) return false;
-      if (statusFilter === 'upcoming' && (meta.diffDays === null || meta.diffDays < 0)) return false;
-      if (statusFilter === 'vacation' && !h.vacation_available) return false;
       if (q) {
         const hay = `${h.date || ''} ${meta.mmdd} ${meta.weekday} ${h.name || ''} ${h.content1 || ''} ${h.content2 || ''}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [holidays, targetYear, selectedMonth, statusFilter, searchQuery]);
+  }, [holidays, targetYear, selectedMonth, searchQuery]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -292,16 +276,6 @@ export default function HolidayManagementApp({ onNavigateBack }) {
       return;
     }
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-  };
-
-  const applyQuickPreset = (preset) => {
-    setFormData(prev => ({
-      ...prev,
-      name: preset.name ? preset.name : prev.name,
-      content1: preset.content1,
-      content2: preset.content2,
-      vacation_available: preset.vacation_available
-    }));
   };
 
   const handleAdd = async (e) => {
@@ -846,64 +820,10 @@ export default function HolidayManagementApp({ onNavigateBack }) {
           </div>
         ) : (
           <>
-            {/* 요약 배지(필터 겸용) */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={() => setStatusFilter('all')}
-                className={`text-left rounded-2xl p-3 sm:px-4 sm:py-3 border transition cursor-pointer active:scale-[0.99] ${
-                  statusFilter === 'all'
-                    ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-500/20'
-                    : 'bg-white border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <div className="text-[11px] sm:text-xs font-bold text-slate-500">전체 등록</div>
-                <div className="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5 tabular-nums">{holidaySummary.total}건</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStatusFilter(prev => prev === 'upcoming' ? 'all' : 'upcoming')}
-                className={`text-left rounded-2xl p-3 sm:px-4 sm:py-3 border transition cursor-pointer active:scale-[0.99] ${
-                  statusFilter === 'upcoming'
-                    ? 'bg-indigo-50 border-indigo-400 ring-2 ring-indigo-500/20'
-                    : 'bg-white border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <div className="text-[11px] sm:text-xs font-bold text-slate-500">다가오는 일정</div>
-                <div className="text-lg sm:text-xl font-extrabold text-indigo-700 mt-0.5 tabular-nums">{holidaySummary.upcoming}건</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStatusFilter(prev => prev === 'vacation' ? 'all' : 'vacation')}
-                className={`text-left rounded-2xl p-3 sm:px-4 sm:py-3 border transition cursor-pointer active:scale-[0.99] ${
-                  statusFilter === 'vacation'
-                    ? 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-500/20'
-                    : 'bg-white border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                <div className="text-[11px] sm:text-xs font-bold text-slate-500">개별수업 가능</div>
-                <div className="text-lg sm:text-xl font-extrabold text-emerald-700 mt-0.5 tabular-nums">{holidaySummary.vacation}건</div>
-              </button>
-            </div>
-
             {/* 빠른 추가 카드 */}
             <form onSubmit={handleAdd} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-5 space-y-3 animate-fadeIn">
-              <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-sm sm:text-base font-extrabold text-slate-800">새 공휴일 / 휴무일 빠른 등록</span>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {QUICK_TYPE_PRESETS.map(preset => (
-                    <button
-                      key={preset.label}
-                      type="button"
-                      onClick={() => applyQuickPreset(preset)}
-                      className="px-2.5 py-1 rounded-full text-[11.5px] sm:text-xs font-bold bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-300 transition active:scale-95 cursor-pointer"
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
@@ -1024,12 +944,11 @@ export default function HolidayManagementApp({ onNavigateBack }) {
 
                 <div className="text-xs font-bold text-slate-500 whitespace-nowrap">
                   표시 중: <span className="text-slate-900 font-extrabold">{filteredHolidays.length}건</span>
-                  {(selectedMonth !== 'all' || statusFilter !== 'all' || searchQuery) && (
+                  {(selectedMonth !== 'all' || searchQuery) && (
                     <button
                       type="button"
                       onClick={() => {
                         setSelectedMonth('all');
-                        setStatusFilter('all');
                         setSearchQuery('');
                       }}
                       className="ml-2 text-blue-600 hover:underline font-bold cursor-pointer"
