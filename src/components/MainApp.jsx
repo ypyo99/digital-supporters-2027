@@ -3550,7 +3550,6 @@ export default function MainApp({
                             onNavigateToNoticeManagement(data || notice);
                           }}
                         >
-                          {isNewNotice && <span className="inline-block align-middle mr-1.5 px-1.5 py-px rounded-md bg-rose-500 text-white text-[11px] sm:text-[12px] font-bold tracking-normal">NEW</span>}
                           <span className={textClass}>
                             {notice.is_top ? '📌 ' : '· '}
                             {datePrefixMatch && !isToday ? (
@@ -3560,6 +3559,7 @@ export default function MainApp({
                               </>
                             ) : rawTitle}
                           </span>
+                          {isNewNotice && <span className="inline-block align-middle ml-1.5 px-1.5 py-px rounded-md bg-rose-500 text-white text-[11px] sm:text-[12px] font-bold tracking-normal">NEW</span>}
                         </p>
                       );
                     })}
