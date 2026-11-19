@@ -675,6 +675,36 @@ export default function NameCardApp({ onNavigateBack }) {
               />
             </div>
 
+            {/* 오른쪽 그림 테마색 선택 (4가지) */}
+            <div className="col-span-12 p-3 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-wrap items-center justify-between gap-2.5">
+              <span className="text-xs font-bold text-slate-700 shrink-0">오른쪽 그림 테마색</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1 max-w-[540px]">
+                {PANEL_THEMES.map(theme => {
+                  const selected = theme.id === activeTheme.id;
+                  return (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      onClick={() => handleSelectTheme(theme.id)}
+                      className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-extrabold transition cursor-pointer active:scale-95 ${
+                        selected
+                          ? 'bg-white border-[#13386E] text-slate-900 ring-2 ring-[#13386E]/20 shadow-xs'
+                          : 'bg-white/80 border-slate-300 text-slate-600 hover:bg-white hover:border-slate-400'
+                      }`}
+                    >
+                      <span
+                        className="w-4 h-4 rounded-full border border-black/15 shrink-0 flex items-center justify-center"
+                        style={{ background: `linear-gradient(135deg, ${theme.grad[0]}, ${theme.grad[2]})` }}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: theme.accent }} />
+                      </span>
+                      <span className="whitespace-nowrap">{theme.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="col-span-12">
               <button
                 type="button"
@@ -696,36 +726,6 @@ export default function NameCardApp({ onNavigateBack }) {
               {saveFeedback.text}
             </div>
           )}
-
-          {/* 오른쪽 그림 테마색 선택 (4가지) */}
-          <div className="mt-3.5 p-3 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-wrap items-center justify-between gap-2.5">
-            <span className="text-xs font-bold text-slate-700 shrink-0">오른쪽 그림 테마색</span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1 max-w-[540px]">
-              {PANEL_THEMES.map(theme => {
-                const selected = theme.id === activeTheme.id;
-                return (
-                  <button
-                    key={theme.id}
-                    type="button"
-                    onClick={() => handleSelectTheme(theme.id)}
-                    className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-extrabold transition cursor-pointer active:scale-95 ${
-                      selected
-                        ? 'bg-white border-[#13386E] text-slate-900 ring-2 ring-[#13386E]/20 shadow-xs'
-                        : 'bg-white/80 border-slate-300 text-slate-600 hover:bg-white hover:border-slate-400'
-                    }`}
-                  >
-                    <span
-                      className="w-4 h-4 rounded-full border border-black/15 shrink-0 flex items-center justify-center"
-                      style={{ background: `linear-gradient(135deg, ${theme.grad[0]}, ${theme.grad[2]})` }}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: theme.accent }} />
-                    </span>
-                    <span className="whitespace-nowrap">{theme.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </div>
 
         {/* 명함 본체 미리보기 (900x500px, 9:5 비율 반응형 축소) */}
