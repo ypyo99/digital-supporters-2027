@@ -136,19 +136,40 @@ const svgProps = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", s
 const IconClassroom = (p) => (<svg {...svgProps} {...p}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M7 20h10M12 16v4M7 8h6M7 11h4" /></svg>);
 const IconStudio = (p) => (<svg {...svgProps} {...p}><rect x="2" y="7" width="14" height="10" rx="2" /><path d="m16 11 6-3v8l-6-3" /><circle cx="6.5" cy="10.5" r="0.6" fill="currentColor" /></svg>);
 const IconMegaphone = (p) => (<svg {...svgProps} {...p}><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1Z" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" /></svg>);
-const IconCalendarStar = (p) => (<svg {...svgProps} {...p}><rect x="3" y="4.5" width="18" height="16.5" rx="2" /><path d="M8 2.5v4M16 2.5v4M3 9.5h18" /><path d="m12 12.2 1.1 2.2 2.4.35-1.75 1.7.4 2.4L12 17.7l-2.15 1.15.4-2.4-1.75-1.7 2.4-.35Z" /></svg>);
-const IconTimetable = (p) => (<svg {...svgProps} {...p}><rect x="3" y="3.5" width="18" height="17" rx="2" /><path d="M3 9h18M3 14.5h18M9 3.5v17M15 3.5v17" /></svg>);
+const IconCalendarStar = (p) => (
+  <svg {...svgProps} {...p}>
+    <path d="M3 9.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1H3v-1Z" fill="currentColor" fillOpacity="0.2" stroke="none" />
+    <rect x="3" y="4.5" width="18" height="16.5" rx="3" />
+    <path d="M8 2.5v3.5M16 2.5v3.5M3 10h18" />
+    <path d="m12 12.2 1.15 2.3 2.55.38-1.85 1.8.44 2.52L12 18l-2.29 1.2.44-2.52-1.85-1.8 2.55-.38Z" fill="currentColor" fillOpacity="0.25" />
+  </svg>
+);
+const IconTimetable = (p) => (
+  <svg {...svgProps} {...p}>
+    <rect x="3" y="3.5" width="18" height="5.5" rx="2" fill="currentColor" fillOpacity="0.18" stroke="none" />
+    <rect x="9" y="9" width="6" height="5.5" fill="currentColor" fillOpacity="0.25" stroke="none" />
+    <rect x="3" y="3.5" width="18" height="17" rx="3" />
+    <path d="M3 9h18M3 14.5h18M9 9v11.5M15 9v11.5" />
+  </svg>
+);
 const IconSearchUser = (p) => (<svg {...svgProps} {...p}><circle cx="10.5" cy="10.5" r="7" /><path d="m21 21-5.5-5.5" /><circle cx="10.5" cy="9" r="2.2" /><path d="M6.8 14.3a4.3 4.3 0 0 1 7.4 0" /></svg>);
-const IconPeople = (p) => (<svg {...svgProps} {...p}><circle cx="9" cy="8" r="3.2" /><path d="M3 19.5a6 6 0 0 1 12 0" /><path d="M16 5.2a3 3 0 0 1 0 5.6M17.5 14.2a5.5 5.5 0 0 1 3.5 5.3" /></svg>);
+const IconPeople = (p) => (
+  <svg {...svgProps} {...p}>
+    <circle cx="9" cy="8" r="3.2" fill="currentColor" fillOpacity="0.16" />
+    <path d="M3 19.5a6 6 0 0 1 12 0" />
+    <path d="M15.8 5.2a3 3 0 0 1 0 5.6M17.5 14.2a5.5 5.5 0 0 1 3.5 5.3" />
+  </svg>
+);
 const IconChevronRight = (p) => (<svg {...svgProps} strokeWidth={2.5} {...p}><path d="m9 18 6-6-6-6" /></svg>);
 const IconExternal = (p) => (<svg {...svgProps} strokeWidth={2.3} {...p}><path d="M14 4h6v6M20 4l-9 9" /><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>);
 const IconLock = (p) => (<svg {...svgProps} {...p}><rect x="4.5" y="10.5" width="15" height="10" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" /></svg>);
 const IconCheck = (p) => (<svg {...svgProps} strokeWidth={3} {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>);
 const IconDocumentCheck = (p) => (
   <svg {...svgProps} {...p}>
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <path d="m9 15 2 2 4-4" />
+    <path d="M14 2H6.5A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V8L14 2Z" fill="currentColor" fillOpacity="0.14" stroke="none" />
+    <path d="M14 2H6.5A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V8z" />
+    <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+    <path d="m9 15.2 2 2 4.2-4.2" strokeWidth={2.3} />
   </svg>
 );
 
@@ -3835,7 +3856,7 @@ export default function MainApp({
                   variant="admin"
                   chipColor="chip-blue"
                   onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
-                  icon={<UsersIcon />}
+                  icon={<IconPeople />}
                   label="선생님 명단 관리"
                 />
                 <MenuRow

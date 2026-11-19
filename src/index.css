@@ -128,68 +128,74 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 0.875rem;
-  background: #dbeafe;
+  width: 46px;
+  height: 46px;
+  border-radius: 0.95rem;
+  background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%);
   color: #1d4ed8;
   border: 1px solid #93c5fd;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 2px 5px -1px rgba(15, 23, 42, 0.08);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.menu-row:hover .row-chip,
+.menu-tile:hover .row-chip {
+  transform: scale(1.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 4px 10px -2px rgba(15, 23, 42, 0.13);
 }
 .row-chip svg {
   width: 24px;
   height: 24px;
-  stroke-width: 2.3;
+  stroke-width: 2.1;
 }
 
 /* 항목별 특화 컬러 칩 (시인성 강화) */
 .chip-blue {
-  background: #dbeafe;
-  color: #1e40af;
+  background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1d4ed8;
   border-color: #93c5fd;
 }
 .chip-emerald {
-  background: #d1fae5;
-  color: #065f46;
+  background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #047857;
   border-color: #6ee7b7;
 }
 .chip-indigo {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: linear-gradient(145deg, #eef2ff 0%, #e0e7ff 100%);
+  color: #4338ca;
   border-color: #a5b4fc;
 }
 .chip-amber {
-  background: #fef3c7;
-  color: #92400e;
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%);
+  color: #b45309;
   border-color: #fcd34d;
 }
 .chip-teal {
-  background: #ccfbf1;
-  color: #115e59;
+  background: linear-gradient(145deg, #f0fdfa 0%, #ccfbf1 100%);
+  color: #0f766e;
   border-color: #5eead4;
 }
 .chip-sky {
-  background: #e0f2fe;
-  color: #075985;
+  background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: #0369a1;
   border-color: #7dd3fc;
 }
 .chip-pink {
-  background: #fce7f3;
-  color: #9d174d;
+  background: linear-gradient(145deg, #fdf2f8 0%, #fce7f3 100%);
+  color: #be185d;
   border-color: #f9a8d4;
 }
 .chip-purple {
-  background: #f3e8ff;
-  color: #6b21a8;
+  background: linear-gradient(145deg, #faf5ff 0%, #f3e8ff 100%);
+  color: #7e22ce;
   border-color: #d8b4fe;
 }
 .chip-rose {
-  background: #ffe4e6;
-  color: #9f1239;
+  background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%);
+  color: #be123c;
   border-color: #fda4af;
 }
 .chip-slate {
-  background: #e2e8f0;
+  background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
   color: #334155;
   border-color: #94a3b8;
 }
@@ -258,11 +264,6 @@ a.menu-row:hover .row-trail {
 }
 
 /* 관리자 메뉴 */
-.menu-row.is-admin .row-chip {
-  background: #f1f5f9;
-  color: #475569;
-  border-color: #cbd5e1;
-}
 .menu-row.is-admin:hover .row-trail {
   color: #1e293b;
 }
