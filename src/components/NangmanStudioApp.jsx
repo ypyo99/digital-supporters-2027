@@ -732,7 +732,7 @@ CREATE POLICY "Allow public all access" ON public.nangman_schedules FOR ALL USIN
                 }}
                 readOnly={!isManagerMode}
                 placeholder={isManagerMode ? "수정 후 상단 [데이터 저장] 버튼을 눌러 저장하세요." : "담당자 모드에서만 작성 가능합니다."}
-                className={`w-full p-3 md:p-4 border rounded-xl font-bold h-24 md:h-32 outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] text-black bg-white ${isManagerMode ? 'border-blue-300' : 'border-gray-300'}`}
+                className={`w-full p-3 md:p-4 border rounded-xl font-bold h-[116px] md:h-[148px] outline-none transition-all text-sm landscape:text-[20px] md:text-[22px] leading-relaxed text-black bg-white ${isManagerMode ? 'border-blue-300' : 'border-gray-300'}`}
               />
               {hasUnsavedChanges && (
                 <div className="text-[11px] text-amber-600 mt-1.5 font-bold text-right">
