@@ -44,6 +44,8 @@ export default function TeacherManagementApp({ onNavigateBack }) {
   const [teamFilter, setTeamFilter] = useState('all');
   const [showInactive, setShowInactive] = useState(false);
   const [notice, setNotice] = useState('');
+  const [editingCell, setEditingCell] = useState(null); // { id, field }
+  const [editValue, setEditValue] = useState('');
 
   const showNotice = (msg) => {
     setNotice(msg);
@@ -158,6 +160,140 @@ export default function TeacherManagementApp({ onNavigateBack }) {
     setShowForm(false);
     setIsEditing(false);
     setCurrentId(null);
+  };
+
+  const handleSaveCell = async (teacherId, field, overrideValue) => {
+    if (!editingCell && overrideValue === undefined) return;
+    setEditingCell(null);
+
+    const original = teachers.find(t => t.id === teacherId);
+    if (!original) return;
+
+    const rawVal = overrideValue !== undefined ? overrideValue : editValue;
+    const trimmed = typeof rawVal === 'string' ? rawVal.trim() : rawVal;
+
+    if (field === 'name' && !trimmed) {
+      alert('이름은 비워둘 수 없습니다.');
+      return;
+    }
+
+    let dbField = field;
+    let dbValue = trimmed;
+
+    if (field === 'group') {
+      dbField = 'group_name';
+      if ((original.group || '') === trimmed) return;
+    } else if (field === 'seq_num') {
+      if (trimmed === '') {
+        dbValue = null;
+      } else {
+        const parsed = parseInt(trimmed, 10);
+        if (Number.isNaN(parsed)) {
+          alert('번호는 숫자로 입력해 주세요.');
+          return;
+        }
+        dbValue = parsed;
+      }
+      const origSeq = original.seq_num != null ? String(original.seq_num) : '';
+      if ((dbValue != null ? String(dbValue) : '') === origSeq) return;
+    } else if (field === 'hire_date' || field === 'resign_date') {
+      dbValue = trimmed || null;
+      if ((dbValue || '') === (original[field] || '')) return;
+    } else if ((original[field] || '') === trimmed) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabaseClient
+        .from('teachers')
+        .update({ [dbField]: dbValue })
+        .eq('id', teacherId);
+      if (error) throw error;
+      await fetchTeachers();
+      showNotice('데이터가 저장되었습니다.');
+    } catch (err) {
+      console.error(err);
+      alert('수정 중 오류가 발생했습니다: ' + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleToggleActive = async (teacher) => {
+    const nextActive = teacher.is_active === false;
+    setIsLoading(true);
+    try {
+      const { error } = await supabaseClient
+        .from('teachers')
+        .update({ is_active: nextActive })
+        .eq('id', teacher.id);
+      if (error) throw error;
+      await fetchTeachers();
+      showNotice(nextActive ? `${teacher.name} 선생님이 재직 상태로 변경되었습니다.` : `${teacher.name} 선생님이 퇴직처리 완료되었습니다.`);
+    } catch (err) {
+      console.error(err);
+      alert('상태 변경 중 오류가 발생했습니다: ' + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderCell = (teacher, field, { type = 'text', align = 'center', className = '', placeholder = '(입력)' } = {}) => {
+    const isCellEditing = editingCell && editingCell.id === teacher.id && editingCell.field === field;
+    const rawValue = field === 'seq_num'
+      ? (teacher.seq_num != null ? String(teacher.seq_num) : '')
+      : (teacher[field] || '');
+
+    if (isCellEditing) {
+      if (type === 'select') {
+        return (
+          <select
+            value={editValue}
+            onChange={(e) => handleSaveCell(teacher.id, field, e.target.value)}
+            onBlur={() => setEditingCell(null)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setEditingCell(null);
+            }}
+            className="w-full p-1 border border-indigo-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 text-xs font-bold text-black bg-white"
+            autoFocus
+          >
+            {TEAM_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+          </select>
+        );
+      }
+      return (
+        <input
+          type={type === 'date' ? 'date' : 'text'}
+          inputMode={type === 'numeric' ? 'numeric' : undefined}
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={() => handleSaveCell(teacher.id, field)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.currentTarget.blur();
+            } else if (e.key === 'Escape') {
+              setEditingCell(null);
+            }
+          }}
+          className={`w-full p-1 border border-indigo-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 text-xs font-semibold text-black bg-white ${align === 'center' ? 'text-center' : 'text-left'}`}
+          autoFocus
+        />
+      );
+    }
+
+    return (
+      <div
+        onClick={() => {
+          setEditingCell({ id: teacher.id, field });
+          setEditValue(rawValue);
+        }}
+        className={`${className} cursor-pointer hover:bg-blue-50/80 px-1.5 py-1 rounded-md transition-colors min-h-[28px] flex items-center ${align === 'center' ? 'justify-center' : 'justify-start'}`}
+        title="클릭하여 바로 수정"
+      >
+        {rawValue || <span className="text-gray-400 italic text-xs font-normal">{placeholder}</span>}
+      </div>
+    );
   };
 
   const teamCounts = useMemo(() => {
@@ -279,7 +415,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
             )}
 
             {/* 상단 도구 모음: 검색 / 팀 필터 / 새 선생님 등록 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-4 space-y-3">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-300 p-3.5 sm:p-4 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
                 <div className="relative flex-1">
                   <input
@@ -342,57 +478,157 @@ export default function TeacherManagementApp({ onNavigateBack }) {
               </div>
             </div>
 
-            {/* 선생님 목록 (선생님별 카드) */}
+            {/* 선생님 목록: 모바일 카드 뷰 + PC 엑셀형 표 뷰 */}
             {isLoading && teachers.length === 0 ? (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 text-center py-10">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-300 text-center py-10">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
               </div>
             ) : filteredTeachers.length === 0 ? (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 py-10 text-center text-slate-500 text-sm font-semibold">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-300 py-10 text-center text-slate-500 text-sm font-semibold">
                 {teachers.length === 0 ? '등록된 선생님이 없습니다.' : '조건에 맞는 선생님이 없습니다.'}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {filteredTeachers.map(t => {
-                  const inactive = t.is_active === false;
-                  const isSky = t.team === '2팀' || t.team === '취업팀';
-                  return (
-                    <div
-                      key={t.id}
-                      className={`flex flex-col rounded-2xl border shadow-sm p-4 transition hover:shadow-md ${
-                        inactive
-                          ? 'bg-slate-100 border-slate-200 opacity-80'
-                          : `bg-white border-slate-200 border-t-4 ${isSky ? 'border-t-sky-400' : 'border-t-indigo-400'}`
-                      }`}
-                    >
-                      <div className="flex items-center flex-wrap gap-1.5">
-                        <span className={`px-2 py-0.5 rounded-md text-xs font-black ${isSky ? 'bg-sky-100 text-sky-800' : 'bg-indigo-100 text-indigo-800'}`}>{t.team}</span>
-                        <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700">{t.group}</span>
-                        {t.seq_num && <span className="text-xs font-bold text-slate-500">#{t.seq_num}</span>}
-                        {inactive && <span className="ml-auto px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600">퇴직</span>}
-                      </div>
+              <>
+                {/* 모바일 카드 뷰 */}
+                <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {filteredTeachers.map(t => {
+                    const inactive = t.is_active === false;
+                    const isSky = t.team === '2팀' || t.team === '취업팀';
+                    return (
+                      <div
+                        key={t.id}
+                        className={`flex flex-col rounded-2xl border-[1.5px] shadow-sm p-4 transition ${
+                          inactive
+                            ? 'bg-slate-100 border-slate-400 opacity-85'
+                            : `bg-white border-slate-400 border-t-4 ${isSky ? 'border-t-sky-400' : 'border-t-indigo-400'}`
+                        }`}
+                      >
+                        <div className="flex items-center flex-wrap gap-1.5">
+                          <span className={`px-2 py-0.5 rounded-md text-xs font-black ${isSky ? 'bg-sky-100 text-sky-800' : 'bg-indigo-100 text-indigo-800'}`}>{t.team}</span>
+                          <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300">{t.group}</span>
+                          {t.seq_num && <span className="text-xs font-bold text-slate-500">#{t.seq_num}</span>}
+                          {inactive && <span className="ml-auto px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600 border border-red-300">퇴직</span>}
+                        </div>
 
-                      <div className={`mt-1.5 text-lg font-extrabold break-words ${inactive ? 'line-through text-slate-400' : 'text-slate-900'}`}>{t.name}</div>
+                        <div className={`mt-1.5 text-lg font-extrabold break-words ${inactive ? 'line-through text-slate-400' : 'text-slate-900'}`}>{t.name}</div>
 
-                      <div className="mt-2.5 grid grid-cols-3 gap-1.5 text-xs font-semibold text-slate-700">
-                        {[t.shift1, t.shift2, t.shift3].map((s, i) => (
-                          <span key={i} className="px-1 py-1 rounded-lg bg-slate-50 border border-slate-200 text-center tabular-nums truncate" title={s || ''}>{s || '-'}</span>
-                        ))}
-                      </div>
+                        <div className="mt-2.5 grid grid-cols-3 gap-1.5 text-xs font-semibold text-slate-700">
+                          {[t.shift1, t.shift2, t.shift3].map((s, i) => (
+                            <span key={i} className="px-1 py-1 rounded-lg bg-slate-50 border border-slate-300 text-center tabular-nums truncate" title={s || ''}>{s || '-'}</span>
+                          ))}
+                        </div>
 
-                      <div className="mt-2 mb-3 text-xs font-medium text-slate-500 tabular-nums">
-                        입사 {t.hire_date || '-'} · 퇴사 {t.resign_date || '-'}
-                      </div>
+                        <div className="mt-2 mb-3 text-xs font-medium text-slate-500 tabular-nums">
+                          입사 {t.hire_date || '-'} · 퇴사 {t.resign_date || '-'}
+                        </div>
 
-                      <div className="flex items-center justify-end gap-1.5 mt-auto pt-3 border-t border-slate-100">
-                        <button onClick={() => handleEdit(t)} className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold active:scale-95 transition cursor-pointer">수정</button>
-                        <button onClick={() => handleDelete(t.id)} className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer">삭제</button>
-                        <button onClick={() => handleTransferClick(t)} className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold active:scale-95 transition cursor-pointer">이관</button>
+                        <div className="flex items-center justify-end gap-1.5 mt-auto pt-3 border-t border-slate-300">
+                          <button onClick={() => handleEdit(t)} className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-300 text-xs font-bold active:scale-95 transition cursor-pointer">수정</button>
+                          <button onClick={() => handleDelete(t.id)} className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 text-xs font-bold active:scale-95 transition cursor-pointer">삭제</button>
+                          <button onClick={() => handleTransferClick(t)} className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-300 text-xs font-bold active:scale-95 transition cursor-pointer">이관</button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+
+                {/* PC 엑셀형 테이블 뷰 (셀 클릭 바로 수정) */}
+                <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-300 p-4">
+                  <div className="overflow-x-auto overflow-y-auto max-h-[70vh] border border-slate-300 rounded-xl relative">
+                    <table className="w-full text-center border-collapse text-sm">
+                      <thead className="sticky top-0 z-20 bg-slate-100 shadow-xs">
+                        <tr className="text-slate-700 border-b-2 border-slate-400 font-bold whitespace-nowrap">
+                          <th className="p-2.5 w-20 border-r border-slate-300">팀</th>
+                          <th className="p-2.5 w-16 border-r border-slate-300">조</th>
+                          <th className="p-2.5 w-16 border-r border-slate-300">번호</th>
+                          <th className="p-2.5 min-w-[96px] border-r border-slate-300">이름</th>
+                          <th className="p-2.5 min-w-[110px] border-r border-slate-300">시간대 1</th>
+                          <th className="p-2.5 min-w-[110px] border-r border-slate-300">시간대 2</th>
+                          <th className="p-2.5 min-w-[110px] border-r border-slate-300">시간대 3</th>
+                          <th className="p-2.5 w-32 border-r border-slate-300">입사일</th>
+                          <th className="p-2.5 w-32 border-r border-slate-300">퇴사일</th>
+                          <th className="p-2.5 w-24 border-r border-slate-300">상태</th>
+                          <th className="p-2.5 w-44">관리</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-300">
+                        {filteredTeachers.map(t => {
+                          const inactive = t.is_active === false;
+                          const isSky = t.team === '2팀' || t.team === '취업팀';
+                          return (
+                            <tr
+                              key={t.id}
+                              className={`transition-colors ${
+                                inactive
+                                  ? 'bg-slate-100 text-slate-400'
+                                  : (isSky ? 'bg-sky-50/40 hover:bg-sky-50' : 'hover:bg-blue-50/30')
+                              }`}
+                            >
+                              <td className="p-1.5 border-r border-slate-300 font-bold whitespace-nowrap">
+                                {renderCell(t, 'team', {
+                                  type: 'select',
+                                  className: isSky ? 'text-sky-800 font-extrabold' : 'text-indigo-800 font-extrabold'
+                                })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                {renderCell(t, 'group', { className: 'text-slate-700 font-semibold' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap tabular-nums">
+                                {renderCell(t, 'seq_num', { type: 'numeric', className: 'text-slate-700 font-bold tabular-nums', placeholder: '-' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 font-bold whitespace-nowrap">
+                                {renderCell(t, 'name', {
+                                  className: inactive ? 'line-through text-slate-400 font-bold' : 'text-slate-900 font-extrabold'
+                                })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                {renderCell(t, 'shift1', { className: 'text-slate-700 font-medium tabular-nums' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                {renderCell(t, 'shift2', { className: 'text-slate-700 font-medium tabular-nums' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                {renderCell(t, 'shift3', { className: 'text-slate-700 font-medium tabular-nums' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                {renderCell(t, 'hire_date', { type: 'date', className: 'text-slate-600 text-xs font-medium tabular-nums', placeholder: '-' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                {renderCell(t, 'resign_date', { type: 'date', className: 'text-slate-600 text-xs font-medium tabular-nums', placeholder: '-' })}
+                              </td>
+                              <td className="p-1.5 border-r border-slate-300 whitespace-nowrap">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleActive(t)}
+                                  disabled={isLoading}
+                                  className={`px-2.5 py-1 rounded-full text-xs font-bold transition-colors shadow-xs cursor-pointer ${
+                                    inactive
+                                      ? 'bg-rose-100 text-rose-700 border border-rose-300 hover:bg-rose-200'
+                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-400 hover:bg-emerald-200'
+                                  }`}
+                                  title="클릭하여 재직/퇴직 상태 변경"
+                                >
+                                  {inactive ? '퇴직완료' : '재직중'}
+                                </button>
+                              </td>
+                              <td className="p-1.5 whitespace-nowrap">
+                                <div className="inline-flex items-center gap-1.5">
+                                  <button type="button" onClick={() => handleEdit(t)} disabled={isLoading} className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer">수정</button>
+                                  <button type="button" onClick={() => handleDelete(t.id)} disabled={isLoading} className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer">삭제</button>
+                                  <button type="button" onClick={() => handleTransferClick(t)} disabled={isLoading} className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-300 rounded-lg text-xs font-bold disabled:opacity-50 transition cursor-pointer">이관</button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500 font-medium">
+                    💡 표의 각 셀을 클릭하면 바로 수정하고 Enter 또는 바깥 영역 클릭 시 자동 저장됩니다.
+                  </p>
+                </div>
+              </>
             )}
           </div>
         )}
