@@ -429,33 +429,6 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {
     }
   });
 
-  // 좌측 하단 'SEONGDONG · SEOUL' 텍스트 (파란 박스 아래 영역)
-  const footerText = 'SEONGDONG · SEOUL';
-  const footerSpacing = 2.1 * s;
-  ctx.font = `700 ${11.2 * s}px "Outfit", "Noto Sans KR", sans-serif`;
-  let totalFooterW = 0;
-  for (let i = 0; i < footerText.length; i++) {
-    totalFooterW += ctx.measureText(footerText[i]).width + (i < footerText.length - 1 ? footerSpacing : 0);
-  }
-  const footerStartX = ((pw * s) - totalFooterW) / 2;
-  const footerY = 468 * s;
-
-  // 텍스트 위 얇은 포인트 구분선
-  ctx.beginPath();
-  ctx.moveTo(footerStartX, footerY - 16 * s);
-  ctx.lineTo(footerStartX + 26 * s, footerY - 16 * s);
-  ctx.strokeStyle = theme.accent;
-  ctx.lineWidth = 2.0 * s;
-  ctx.stroke();
-
-  ctx.fillStyle = 'rgba(226, 232, 240, 0.78)';
-  let curFX = footerStartX;
-  for (let i = 0; i < footerText.length; i++) {
-    const ch = footerText[i];
-    ctx.fillText(ch, curFX, footerY);
-    curFX += ctx.measureText(ch).width + footerSpacing;
-  }
-
   ctx.restore();
 
   if (!profileImg || !(profileImg.naturalWidth || profileImg.width)) return;
@@ -1542,17 +1515,6 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
                         <div className="text-[14px] font-extrabold tracking-[0.22em] text-white/75 leading-[1.45]">
                           SUPPORTERS
-                        </div>
-                      </div>
-
-                      {/* 좌측 하단 지역 표기 */}
-                      <div className="relative z-10 pb-[28px] flex flex-col items-center">
-                        <div
-                          className="w-[26px] h-[2px] mb-2"
-                          style={{ backgroundColor: activeTheme.accent }}
-                        />
-                        <div className="text-[11px] font-bold tracking-[0.22em] text-slate-200/80">
-                          SEONGDONG · SEOUL
                         </div>
                       </div>
                     </div>
