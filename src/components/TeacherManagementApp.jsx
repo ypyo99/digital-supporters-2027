@@ -42,7 +42,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
   const [formData, setFormData] = useState(() => createEmptyForm());
   const [searchQuery, setSearchQuery] = useState('');
   const [teamFilter, setTeamFilter] = useState('all');
-  const [showInactive, setShowInactive] = useState(true);
+  const [showInactive, setShowInactive] = useState(false);
   const [notice, setNotice] = useState('');
 
   const showNotice = (msg) => {
@@ -308,7 +308,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
                       onChange={(e) => setShowInactive(e.target.checked)}
                       className="w-4 h-4 text-indigo-600 rounded border-gray-300"
                     />
-                    <span className="text-xs sm:text-sm font-bold text-slate-700">퇴사자 표시</span>
+                    <span className="text-xs sm:text-sm font-bold text-slate-700">퇴직자 보기</span>
                   </label>
                   <button
                     type="button"
@@ -366,7 +366,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
                                 <span className={`px-2 py-0.5 rounded-md text-xs font-black ${t.team === '2팀' || t.team === '취업팀' ? 'bg-sky-100 text-sky-800' : 'bg-indigo-100 text-indigo-800'}`}>{t.team}</span>
                                 <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700">{t.group}</span>
                                 {t.seq_num && <span className="text-xs font-bold text-slate-500">#{t.seq_num}</span>}
-                                {inactive && <span className="px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600">퇴사</span>}
+                                {inactive && <span className="px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600">퇴직</span>}
                               </div>
                               <div className={`mt-1 text-base font-extrabold break-words ${inactive ? 'line-through text-slate-400' : 'text-slate-900'}`}>{t.name}</div>
                             </div>
@@ -415,7 +415,7 @@ export default function TeacherManagementApp({ onNavigateBack }) {
                               <td className="py-2 px-2 border-r border-gray-100">{t.group}</td>
                               <td className="py-2 px-2 border-r border-gray-100 tabular-nums">{t.seq_num}</td>
                               <td className="py-2 px-2 border-r border-gray-100 font-bold">
-                                {inactive && <span className="text-xs text-red-600 bg-red-100 px-1 py-0.5 rounded mr-1 whitespace-nowrap">퇴사</span>}
+                                {inactive && <span className="text-xs text-red-600 bg-red-100 px-1 py-0.5 rounded mr-1 whitespace-nowrap">퇴직</span>}
                                 <span className={inactive ? 'line-through' : 'text-gray-900'}>{t.name}</span>
                               </td>
                               <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift1}</td>
@@ -497,11 +497,11 @@ export default function TeacherManagementApp({ onNavigateBack }) {
                 </div>
               </div>
 
-              <label htmlFor="is_active" className="flex items-start gap-2 p-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer">
-                <input type="checkbox" id="is_active" name="is_active" checked={formData.is_active} onChange={handleInputChange} className="mt-0.5 w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
-                <span className="text-sm font-bold text-slate-700 select-none">
-                  현재 재직 중
-                  <span className="block text-xs font-medium text-slate-500">체크 해제 시 메인 화면의 선생님 목록에서 숨김 처리됩니다.</span>
+              <label htmlFor="is_resigned" className={`flex items-start gap-2 p-2.5 rounded-xl border cursor-pointer ${formData.is_active === false ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-slate-50'}`}>
+                <input type="checkbox" id="is_resigned" checked={formData.is_active === false} onChange={(e) => setFormData(prev => ({ ...prev, is_active: !e.target.checked }))} className="mt-0.5 w-4 h-4 text-rose-600 rounded border-gray-300 focus:ring-rose-500" />
+                <span className={`text-sm font-bold select-none ${formData.is_active === false ? 'text-rose-700' : 'text-slate-700'}`}>
+                  퇴직처리 완료
+                  <span className="block text-xs font-medium text-slate-500">체크하면 선생님 목록과 메인 화면의 선생님 목록에서 숨김 처리됩니다.</span>
                 </span>
               </label>
             </div>
