@@ -244,46 +244,6 @@ export default function MainApp({
   const [studentCounts, setStudentCounts] = useState({});
   const [records, setRecords] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const ADMIN_MENU_TTL_MS = 60 * 60 * 1000;
-  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(() => {
-    if (!hasValidSavedAdminPassword()) return false;
-    if (getSavedItem('sungdong_admin_menu_open', '') !== 'true') return false;
-    const openedAt = Number(getSavedItem('sungdong_admin_menu_opened_at', '0'));
-    if (!openedAt || Date.now() - openedAt >= ADMIN_MENU_TTL_MS) {
-      setSavedItem('sungdong_admin_menu_open', 'false');
-      setSavedItem('sungdong_admin_menu_opened_at', '');
-      return false;
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    if (!isAdminMenuOpen) return;
-    const openedAt = Number(getSavedItem('sungdong_admin_menu_opened_at', '0')) || Date.now();
-    const remaining = ADMIN_MENU_TTL_MS - (Date.now() - openedAt);
-    if (remaining <= 0) {
-      setIsAdminMenuOpen(false);
-      setSavedItem('sungdong_admin_menu_open', 'false');
-      setSavedItem('sungdong_admin_menu_opened_at', '');
-      return;
-    }
-    const timer = setTimeout(() => {
-      setIsAdminMenuOpen(false);
-      setSavedItem('sungdong_admin_menu_open', 'false');
-      setSavedItem('sungdong_admin_menu_opened_at', '');
-    }, remaining);
-    return () => clearTimeout(timer);
-  }, [isAdminMenuOpen]);
-
-  const toggleAdminMenu = () => {
-    if (!hasValidSavedAdminPassword()) return;
-    setIsAdminMenuOpen(prev => {
-      const next = !prev;
-      setSavedItem('sungdong_admin_menu_open', String(next));
-      setSavedItem('sungdong_admin_menu_opened_at', next ? String(Date.now()) : '');
-      return next;
-    });
-  };
   const [showSavePopup, setShowSavePopup] = useState(false);
   const [showValidationError, setShowValidationError] = useState(false);
   const [validationErrorMsg, setValidationErrorMsg] = useState("");
@@ -372,9 +332,6 @@ export default function MainApp({
   const handleClearAdminPassword = () => {
     clearSavedAdminPassword();
     setHasAdminPassword(false);
-    setIsAdminMenuOpen(false);
-    setSavedItem('sungdong_admin_menu_open', 'false');
-    setSavedItem('sungdong_admin_menu_opened_at', '');
     setAdminPwdInput('');
     setAdminPwdError('');
     setAdminPwdNotice('저장된 관리자 비밀번호가 삭제되었습니다.');
@@ -3862,55 +3819,40 @@ export default function MainApp({
             </section>
 
             {hasAdminPassword && (
-              <section className="menu-group">
-                <button
-                  type="button"
-                  className="admin-toggle"
-                  aria-expanded={isAdminMenuOpen}
-                  onClick={toggleAdminMenu}
-                >
-                  <IconLock className="w-[18px] h-[18px] text-slate-700" />
-                  관리자 메뉴
-                  <span className="toggle-sub">담당자 전용</span>
-                  <IconChevronRight className="toggle-caret" />
-                </button>
-                {isAdminMenuOpen && (
-                  <div className="menu-list mt-2 animate-fadeIn">
-                    <MenuRow
-                      variant="admin"
-                      chipColor="chip-emerald"
-                      onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin({ isAdminMode: true }); }}
-                      icon={<IconDocumentCheck />}
-                      label={
-                        <>
-                          참여자 서류 관리ㆍ인쇄<br />
-                        </>
-                      }
-                    />
-                    <MenuRow
-                      variant="admin"
-                      chipColor="chip-blue"
-                      onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
-                      icon={<UsersIcon />}
-                      label="선생님 명단 관리"
-                    />
-                    <MenuRow
-                      variant="admin"
-                      chipColor="chip-rose"
-                      onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
-                      icon={<IconCalendarStar />}
-                      label="공휴일ㆍ휴무일 관리"
-                    />
-                    <MenuRow
-                      variant="admin"
-                      chipColor="chip-purple"
-                      onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
-                      icon={<IconTimetable />}
-                      label="시간표 작성"
-                    />
-                  </div>
-                )}
-              </section>
+              <MenuGroup title="관리자 메뉴">
+                <MenuRow
+                  variant="admin"
+                  chipColor="chip-emerald"
+                  onClick={() => { handleLogout(); onNavigateToStudentFormsAdmin({ isAdminMode: true }); }}
+                  icon={<IconDocumentCheck />}
+                  label={
+                    <>
+                      참여자 서류 관리ㆍ인쇄<br />
+                    </>
+                  }
+                />
+                <MenuRow
+                  variant="admin"
+                  chipColor="chip-blue"
+                  onClick={() => { handleLogout(); onNavigateToTeacherManagement(); }}
+                  icon={<UsersIcon />}
+                  label="선생님 명단 관리"
+                />
+                <MenuRow
+                  variant="admin"
+                  chipColor="chip-rose"
+                  onClick={() => { handleLogout(); onNavigateToHolidayManagement(); }}
+                  icon={<IconCalendarStar />}
+                  label="공휴일ㆍ휴무일 관리"
+                />
+                <MenuRow
+                  variant="admin"
+                  chipColor="chip-purple"
+                  onClick={() => { handleLogout(); onNavigateToAutoSchedule(); }}
+                  icon={<IconTimetable />}
+                  label="시간표 작성"
+                />
+              </MenuGroup>
             )}
 
             <div className="mt-4 sm:mt-5 text-center text-[12px] text-gray-600 font-semibold tracking-wider select-none" aria-hidden="true">
