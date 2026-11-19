@@ -285,8 +285,8 @@ export function renderApplicationFormHtml(app, studentName, isBlank = false) {
           <span>신청자 : </span>
           <span style="font-weight: 700; margin-right: 6px;">${escapeHtml(signerName)}</span>
           ${signatureData
-            ? `<img src="${signatureData}" style="height: 38px; max-width: 130px; object-fit: contain; vertical-align: middle; border-bottom: 1px solid #111;" alt="서명">`
-            : `<span style="display: inline-block; width: 90px; border-bottom: 1px solid #111; height: 24px;"></span>`
+            ? `<img src="${signatureData}" style="height: 23px; max-width: 78px; object-fit: contain; vertical-align: middle; border-bottom: 1px solid #111;" alt="서명">`
+            : `<span style="display: inline-block; width: 54px; border-bottom: 1px solid #111; height: 20px;"></span>`
           }
           <span style="color: #64748b; font-size: 13px; margin-left: 4px;">(서명)</span>
         </div>
@@ -1655,6 +1655,11 @@ export function buildBatchPrintHtml(renderedPagesHtml, title = '참여자_서류
       }
       .doc-page-app #signerRow {
         font-size: 15px !important;
+      }
+      .doc-page-app #signerRow img {
+        height: 23px !important;
+        max-width: 78px !important;
+        object-fit: contain !important;
       }
       .doc-page-app #printFooterLogo {
         display: flex !important;
