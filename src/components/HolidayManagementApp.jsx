@@ -821,13 +821,33 @@ export default function HolidayManagementApp({ onNavigateBack }) {
         ) : (
           <>
             {/* 빠른 추가 카드 */}
-            <form onSubmit={handleAdd} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-5 space-y-3 animate-fadeIn">
-              <div className="flex items-center justify-between gap-2">
+            <form onSubmit={handleAdd} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-5 space-y-3 animate-fadeIn overflow-hidden">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-sm sm:text-base font-extrabold text-slate-800">새 공휴일 / 휴무일 빠른 등록</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <label className="flex items-center gap-1.5 cursor-pointer bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      name="vacation_available"
+                      checked={formData.vacation_available}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    />
+                    <span className="text-xs sm:text-sm font-bold text-blue-800">개별수업 가능</span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={saving || loading}
+                    className="px-4 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-sm active:scale-95 disabled:opacity-50 transition whitespace-nowrap cursor-pointer"
+                  >
+                    + 등록
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
-                <div className="sm:col-span-3 min-w-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-end">
+                <div className="sm:col-span-1 lg:col-span-4 min-w-0">
                   <label className="flex items-center justify-between text-[11.5px] font-bold text-blue-600 mb-1">
                     <span>날짜 선택 *</span>
                     {formMeta.weekday && (
@@ -838,7 +858,7 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       </span>
                     )}
                   </label>
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1.5 min-w-0">
                     <input
                       type="date"
                       value={toDateInputValue(formData.date, targetYear)}
@@ -854,12 +874,12 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       value={formData.date}
                       onChange={handleInputChange}
                       placeholder="MM-DD"
-                      className="w-[74px] p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold text-center"
+                      className="w-[78px] shrink-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold text-center"
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-3 min-w-0">
+                <div className="sm:col-span-1 lg:col-span-3 min-w-0">
                   <label className="block text-[11.5px] font-bold text-blue-600 mb-1">이름 *</label>
                   <input
                     type="text"
@@ -867,12 +887,12 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="예: 삼일절, 소양교육"
-                    className="w-full p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
+                    className="w-full min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 sm:col-span-4 min-w-0">
-                  <div>
+                <div className="grid grid-cols-2 gap-2.5 sm:col-span-2 lg:col-span-5 min-w-0">
+                  <div className="min-w-0">
                     <label className="block text-[11.5px] font-bold text-slate-600 mb-1">내용1</label>
                     <input
                       type="text"
@@ -880,10 +900,10 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       value={formData.content1}
                       onChange={handleInputChange}
                       placeholder="예: 휴관"
-                      className="w-full p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
+                      className="w-full min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
                     />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-[11.5px] font-bold text-slate-600 mb-1">내용2</label>
                     <input
                       type="text"
@@ -891,30 +911,9 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       value={formData.content2}
                       onChange={handleInputChange}
                       placeholder="예: 휴강"
-                      className="w-full p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
+                      className="w-full min-w-0 p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-medium"
                     />
                   </div>
-                </div>
-
-                <div className="sm:col-span-2 flex items-center gap-2">
-                  <label className="flex-1 flex items-center justify-center gap-1.5 cursor-pointer bg-blue-50 px-2.5 py-2 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      name="vacation_available"
-                      checked={formData.vacation_available}
-                      onChange={handleInputChange}
-                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                    />
-                    <span className="text-xs font-bold text-blue-800">개별수업</span>
-                  </label>
-
-                  <button
-                    type="submit"
-                    disabled={saving || loading}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-sm active:scale-95 disabled:opacity-50 transition whitespace-nowrap cursor-pointer"
-                  >
-                    + 등록
-                  </button>
                 </div>
               </div>
             </form>
