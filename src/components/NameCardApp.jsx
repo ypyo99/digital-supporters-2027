@@ -222,12 +222,37 @@ const dataUrlToBlob = (dataUrl) => {
   return new Blob([bytes], { type: mime });
 };
 
-const drawRightPanelOnCanvas = (canvas, theme) => {
+const traceRoundedRect = (ctx, x, y, w, h, r) => {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+};
+
+const loadImageElement = (src) =>
+  new Promise((resolve) => {
+    if (!src) {
+      resolve(null);
+      return;
+    }
+    const img = new window.Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+
+const drawRightPanelOnCanvas = (canvas, theme, profileImg = null) => {
   const s = canvas.width / 900;
   const pw = 250;
   const ph = 500;
   const ox = (900 - pw) * s;
   const ctx = canvas.getContext('2d');
+  const hasProfile = Boolean(profileImg && (profileImg.naturalWidth || profileImg.width));
 
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -276,32 +301,28 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
     ctx.stroke();
   });
 
-  ctx.beginPath();
-  ctx.arc(110.0 * s, 405.0 * s, 9.5 * s, 0, Math.PI * 2);
-  ctx.fillStyle = theme.accent;
-  ctx.fill();
-
-  const bx = 42.0 * s;
-  const by = 48.0 * s;
+  const bx = (hasProfile ? 34.0 : 42.0) * s;
+  const by = (hasProfile ? 34.0 : 48.0) * s;
   const bw = 40.0 * s;
   const bh = 5.0 * s;
   const br = 2.5 * s;
-  ctx.beginPath();
-  if (ctx.roundRect) {
-    ctx.roundRect(bx, by, bw, bh, br);
-  } else {
-    ctx.rect(bx, by, bw, bh);
-  }
+  traceRoundedRect(ctx, bx, by, bw, bh, br);
   ctx.fillStyle = theme.accent;
   ctx.fill();
 
-  const texts = [
-    { text: 'DIGITAL', y: 80.0 * s, opacity: 1.0 },
-    { text: 'EDUCATION', y: 106.0 * s, opacity: 1.0 },
-    { text: 'SUPPORTERS', y: 132.0 * s, opacity: 0.88 }
-  ];
+  const texts = hasProfile
+    ? [
+        { text: 'DIGITAL', y: 63.0 * s, opacity: 1.0 },
+        { text: 'EDUCATION', y: 86.0 * s, opacity: 1.0 },
+        { text: 'SUPPORTERS', y: 109.0 * s, opacity: 0.9 }
+      ]
+    : [
+        { text: 'DIGITAL', y: 80.0 * s, opacity: 1.0 },
+        { text: 'EDUCATION', y: 106.0 * s, opacity: 1.0 },
+        { text: 'SUPPORTERS', y: 132.0 * s, opacity: 0.88 }
+      ];
 
-  const fontSize = 16.0 * s;
+  const fontSize = (hasProfile ? 15.0 : 16.0) * s;
   const letterSpacing = 3.2 * s;
   ctx.font = `800 ${fontSize}px "Outfit", "Noto Sans KR", sans-serif`;
   ctx.textBaseline = 'alphabetic';
@@ -315,6 +336,72 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
       curX += ctx.measureText(ch).width + letterSpacing;
     }
   });
+
+  if (hasProfile) {
+    const fx = 34.0 * s;
+    const fy = 136.0 * s;
+    const fw = 182.0 * s;
+    const fh = 236.0 * s;
+    const fr = 22.0 * s;
+    const borderPad = 4.5 * s;
+
+    // 외곽 그림자 및 흰색 액자 프레임
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+    ctx.shadowBlur = 18 * s;
+    ctx.shadowOffsetY = 8 * s;
+    traceRoundedRect(
+      ctx,
+      fx - borderPad,
+      fy - borderPad,
+      fw + borderPad * 2,
+      fh + borderPad * 2,
+      fr + 3 * s
+    );
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+    ctx.fill();
+    ctx.restore();
+
+    // 포인트 컬러 외곽 테두리
+    ctx.save();
+    traceRoundedRect(
+      ctx,
+      fx - borderPad - 1.5 * s,
+      fy - borderPad - 1.5 * s,
+      fw + (borderPad + 1.5 * s) * 2,
+      fh + (borderPad + 1.5 * s) * 2,
+      fr + 4.5 * s
+    );
+    ctx.strokeStyle = theme.accent;
+    ctx.lineWidth = 2.0 * s;
+    ctx.stroke();
+    ctx.restore();
+
+    // 프로필 사진 크롭(object-fit: cover) 렌더링
+    ctx.save();
+    traceRoundedRect(ctx, fx, fy, fw, fh, fr);
+    ctx.clip();
+    const iw = profileImg.naturalWidth || profileImg.width;
+    const ih = profileImg.naturalHeight || profileImg.height;
+    const scale = Math.max(fw / iw, fh / ih);
+    const sw = fw / scale;
+    const sh = fh / scale;
+    const sx = (iw - sw) / 2;
+    const sy = Math.max(0, (ih - sh) * 0.32);
+    ctx.drawImage(profileImg, sx, sy, sw, sh, fx, fy, fw, fh);
+    ctx.restore();
+
+    // 하단 포인트 원
+    ctx.beginPath();
+    ctx.arc(125.0 * s, 434.0 * s, 7.5 * s, 0, Math.PI * 2);
+    ctx.fillStyle = theme.accent;
+    ctx.fill();
+  } else {
+    ctx.beginPath();
+    ctx.arc(110.0 * s, 405.0 * s, 9.5 * s, 0, Math.PI * 2);
+    ctx.fillStyle = theme.accent;
+    ctx.fill();
+  }
 
   ctx.restore();
 };
@@ -344,6 +431,8 @@ export default function NameCardApp({ onNavigateBack }) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveFeedback, setSaveFeedback] = useState(null); // { type: 'success' | 'error', text: string }
   const [previewDataUrl, setPreviewDataUrl] = useState('');
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
+  const [profilePreviewDataUrl, setProfilePreviewDataUrl] = useState('');
   const [isPreviewFresh, setIsPreviewFresh] = useState(false);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
@@ -355,6 +444,7 @@ export default function NameCardApp({ onNavigateBack }) {
   const cardWrapRef = useRef(null);
   const cardRef = useRef(null);
   const sloganMenuRef = useRef(null);
+  const profileFileInputRef = useRef(null);
 
   useEffect(() => {
     if (!isSloganMenuOpen) return;
@@ -473,8 +563,25 @@ export default function NameCardApp({ onNavigateBack }) {
     }
   };
 
-  const captureCardDataUrl = useCallback(async () => {
-    if (!cardRef.current) return '';
+  const handleProfilePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드할 수 있습니다.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setProfilePhotoUrl(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const captureCardsDataUrls = useCallback(async () => {
+    if (!cardRef.current) return { defaultUrl: '', profileUrl: '' };
     if (document.fonts) {
       await document.fonts.ready;
     }
@@ -495,9 +602,25 @@ export default function NameCardApp({ onNavigateBack }) {
         }
       }
     });
-    drawRightPanelOnCanvas(canvas, activeTheme);
-    return canvas.toDataURL('image/jpeg', 0.96);
-  }, [activeTheme]);
+
+    let profileUrl = '';
+    if (profilePhotoUrl) {
+      const profileImg = await loadImageElement(profilePhotoUrl);
+      if (profileImg) {
+        const profileCanvas = document.createElement('canvas');
+        profileCanvas.width = canvas.width;
+        profileCanvas.height = canvas.height;
+        const pCtx = profileCanvas.getContext('2d');
+        pCtx.drawImage(canvas, 0, 0);
+        drawRightPanelOnCanvas(profileCanvas, activeTheme, profileImg);
+        profileUrl = profileCanvas.toDataURL('image/jpeg', 0.96);
+      }
+    }
+
+    drawRightPanelOnCanvas(canvas, activeTheme, null);
+    const defaultUrl = canvas.toDataURL('image/jpeg', 0.96);
+    return { defaultUrl, profileUrl };
+  }, [activeTheme, profilePhotoUrl]);
 
   // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
   useEffect(() => {
@@ -505,9 +628,10 @@ export default function NameCardApp({ onNavigateBack }) {
     setIsPreviewFresh(false);
     const timer = setTimeout(async () => {
       try {
-        const url = await captureCardDataUrl();
-        if (!cancelled && url) {
-          setPreviewDataUrl(url);
+        const { defaultUrl, profileUrl } = await captureCardsDataUrls();
+        if (!cancelled) {
+          if (defaultUrl) setPreviewDataUrl(defaultUrl);
+          setProfilePreviewDataUrl(profileUrl || '');
           setIsPreviewFresh(true);
         }
       } catch (e) {
@@ -518,21 +642,27 @@ export default function NameCardApp({ onNavigateBack }) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [nameInput, phoneInput, sloganInput, themeId, captureCardDataUrl]);
+  }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, captureCardsDataUrls]);
 
-  const handleDownloadOrSave = async () => {
+  const handleDownloadOrSave = async (targetMode = 'auto') => {
     if (!cardRef.current || isSaving) return;
 
     setIsSaving(true);
     setSaveFeedback(null);
 
     try {
-      const dataUrl = (isPreviewFresh && previewDataUrl)
-        ? previewDataUrl
-        : await captureCardDataUrl();
-      if (!isPreviewFresh && dataUrl) {
-        setPreviewDataUrl(dataUrl);
+      const wantProfile =
+        targetMode === 'profile' || (targetMode === 'auto' && Boolean(profilePhotoUrl));
+      let dataUrl = '';
+      if (isPreviewFresh) {
+        dataUrl = wantProfile ? (profilePreviewDataUrl || previewDataUrl) : previewDataUrl;
+      }
+      if (!dataUrl) {
+        const { defaultUrl, profileUrl } = await captureCardsDataUrls();
+        if (defaultUrl) setPreviewDataUrl(defaultUrl);
+        setProfilePreviewDataUrl(profileUrl || '');
         setIsPreviewFresh(true);
+        dataUrl = wantProfile ? (profileUrl || defaultUrl) : defaultUrl;
       }
       const rawName = (nameInput.trim() || '디지털교육서포터즈').replace(/\s*선생님\s*$/, '').trim() || '디지털교육서포터즈';
       const safeTeacherName = rawName.replace(/[<>:"/\\|?*]/g, '_');
@@ -918,15 +1048,69 @@ export default function NameCardApp({ onNavigateBack }) {
               </div>
             </div>
 
-            <div className="col-span-12">
-              <button
-                type="button"
-                onClick={handleDownloadOrSave}
-                disabled={isSaving}
-                className="w-full py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
-              </button>
+            {/* 프로필사진 업로드 & 인쇄 요청 버튼 */}
+            <div className="col-span-12 flex flex-col gap-2.5">
+              <input
+                ref={profileFileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePhotoUpload}
+                className="hidden"
+              />
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => profileFileInputRef.current?.click()}
+                  className="py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-sm font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                    <circle cx="12" cy="13" r="3" />
+                  </svg>
+                  <span>{profilePhotoUrl ? '프로필사진 변경' : '프로필사진'}</span>
+                </button>
+
+                {profilePhotoUrl && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl">
+                    <img
+                      src={profilePhotoUrl}
+                      alt="업로드된 프로필"
+                      className="w-7 h-7 rounded-lg object-cover border border-slate-300 shrink-0"
+                    />
+                    <span className="text-xs font-bold text-slate-700">프로필 사진 적용됨</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfilePhotoUrl('');
+                        setProfilePreviewDataUrl('');
+                      }}
+                      className="ml-1 px-2 py-0.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg cursor-pointer transition"
+                    >
+                      사진 삭제
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleDownloadOrSave('default')}
+                  disabled={isSaving}
+                  className="flex-1 min-w-[160px] py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>{isSaving ? '고해상도 저장 중...' : (profilePhotoUrl ? '기본 명함 인쇄 요청 (사진 없음)' : '인쇄 요청')}</span>
+                </button>
+
+                {profilePhotoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadOrSave('profile')}
+                    disabled={isSaving}
+                    className="flex-1 min-w-[180px] py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>{isSaving ? '고해상도 저장 중...' : '프로필사진 명함 인쇄 요청'}</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -941,15 +1125,74 @@ export default function NameCardApp({ onNavigateBack }) {
         </div>
 
         {/* 명함 본체 미리보기 (900x500px, 9:5 비율 반응형 축소 + 스마트폰 길게 눌러 저장용 실제 <img> 오버레이) */}
-        <div ref={cardWrapRef} className="w-full max-w-[900px] flex flex-col items-center">
-          <div
-            id="card-fit"
-            style={{
-              width: `${900 * cardScale}px`,
-              height: `${500 * cardScale}px`,
-              position: 'relative'
-            }}
-          >
+        <div ref={cardWrapRef} className="w-full max-w-[900px] flex flex-col items-center gap-6">
+          {/* 새로 추가: 업로드된 프로필 사진을 포함한 명함 */}
+          {profilePhotoUrl && (
+            <div className="w-full flex flex-col items-center">
+              <div className="w-full flex items-center justify-between px-1 mb-2">
+                <span className="text-xs sm:text-sm font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded-full">
+                  프로필 사진 포함 명함 (이미지를 길게 누르면 스마트폰 갤러리에 저장됩니다)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleDownloadOrSave('profile')}
+                  disabled={isSaving}
+                  className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold rounded-xl shadow-xs cursor-pointer transition"
+                >
+                  이 명함 인쇄 요청
+                </button>
+              </div>
+              <div
+                style={{
+                  width: `${900 * cardScale}px`,
+                  height: `${500 * cardScale}px`,
+                  position: 'relative'
+                }}
+              >
+                {profilePreviewDataUrl ? (
+                  <img
+                    src={profilePreviewDataUrl}
+                    alt={`${nameInput.trim() || '디지털교육서포터즈'}_프로필명함.jpg`}
+                    className="w-full h-full object-contain rounded-[6px]"
+                    style={{
+                      WebkitTouchCallout: 'default',
+                      boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-white/80 rounded-[6px] border border-slate-300 text-sm font-bold text-slate-600">
+                    프로필 사진 명함 생성 중...
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 기존 명함 (프로필 사진 없이 만들고 싶은 사람을 위해 그대로 유지) */}
+          <div className="w-full flex flex-col items-center">
+            {profilePhotoUrl && (
+              <div className="w-full flex items-center justify-between px-1 mb-2">
+                <span className="text-xs sm:text-sm font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-3 py-1 rounded-full">
+                  기본 명함 - 프로필 사진 없음 (이미지를 길게 누르면 스마트폰 갤러리에 저장됩니다)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleDownloadOrSave('default')}
+                  disabled={isSaving}
+                  className="px-3.5 py-1.5 bg-[#13386E] hover:bg-[#1a4484] text-white text-xs font-extrabold rounded-xl shadow-xs cursor-pointer transition"
+                >
+                  이 명함 인쇄 요청
+                </button>
+              </div>
+            )}
+            <div
+              id="card-fit"
+              style={{
+                width: `${900 * cardScale}px`,
+                height: `${500 * cardScale}px`,
+                position: 'relative'
+              }}
+            >
             {previewDataUrl && (
               <img
                 src={previewDataUrl}
@@ -1143,6 +1386,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
