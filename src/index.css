@@ -9,7 +9,7 @@ html {
 body {
   min-height: 100vh;
   color: #1e293b;
-  background-color: #f1f5f9;
+  background-color: var(--main-outer-bg-color, #f1f5f9);
   background-image:
     radial-gradient(1200px 600px at 50% -10%, rgba(59, 130, 246, 0.10), transparent 60%),
     radial-gradient(800px 500px at 100% 100%, rgba(99, 102, 241, 0.06), transparent 60%);
@@ -18,6 +18,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "ss06";
   letter-spacing: -0.011em;
+}
+
+.main-menu-surface {
+  background-color: var(--main-bg-color, #f4f6f9);
 }
 
 ::selection {
@@ -657,4 +661,400 @@ input[type="date"].opacity-0::-webkit-calendar-picker-indicator {
 }
 *::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* ───────── 다크 모드 (html.dark) ───────── */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  color: #e2e8f0;
+  background-color: var(--main-outer-bg-color, #080e1a);
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, rgba(59, 130, 246, 0.14), transparent 60%),
+    radial-gradient(800px 500px at 100% 100%, rgba(99, 102, 241, 0.10), transparent 60%);
+}
+
+html.dark .main-menu-surface {
+  background-color: var(--main-bg-color, #111723);
+}
+
+html.dark .select-refined {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+html.dark .menu-backdrop .menu-list,
+html.dark .menu-backdrop .menu-tile,
+html.dark .menu-list,
+html.dark .menu-tile {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.45), 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+html.dark .menu-group-title {
+  color: #cbd5e1;
+}
+
+html.dark .menu-group-title::before {
+  background: #64748b;
+}
+
+html.dark .menu-row {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+html.dark .menu-row + .menu-row::before {
+  background: #334155;
+}
+
+html.dark .menu-row:hover,
+html.dark .menu-tile:hover {
+  background: #263449;
+  border-color: #475569;
+}
+
+html.dark .menu-row:active,
+html.dark .menu-tile:active {
+  background: #334155;
+}
+
+html.dark .row-label {
+  color: #f8fafc;
+}
+
+html.dark .row-desc {
+  color: #cbd5e1;
+}
+
+html.dark .row-trail {
+  color: #94a3b8;
+}
+
+html.dark .menu-row:hover .row-trail {
+  color: #f8fafc;
+}
+
+html.dark .menu-row.is-disabled .row-label {
+  color: #64748b;
+}
+
+html.dark .menu-row.is-disabled .row-chip {
+  background: #0f172a;
+  color: #64748b;
+  border-color: #334155;
+}
+
+html.dark .menu-row.is-disabled .row-desc {
+  color: #f87171;
+}
+
+html.dark .menu-row.is-disabled:hover {
+  background: #1e293b;
+}
+
+html.dark .menu-row.is-disabled:hover .row-trail {
+  color: #475569;
+}
+
+html.dark .menu-row.is-admin .row-chip,
+html.dark .chip-slate {
+  background: rgba(100, 116, 139, 0.25);
+  color: #cbd5e1;
+  border-color: #475569;
+}
+
+html.dark .chip-blue {
+  background: rgba(37, 99, 235, 0.22);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+html.dark .chip-emerald {
+  background: rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+html.dark .chip-indigo {
+  background: rgba(99, 102, 241, 0.22);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.45);
+}
+
+html.dark .chip-amber {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+html.dark .chip-teal {
+  background: rgba(20, 184, 166, 0.22);
+  color: #5eead4;
+  border-color: rgba(20, 184, 166, 0.45);
+}
+
+html.dark .chip-sky {
+  background: rgba(14, 165, 233, 0.22);
+  color: #7dd3fc;
+  border-color: rgba(14, 165, 233, 0.45);
+}
+
+html.dark .chip-pink {
+  background: rgba(236, 72, 153, 0.22);
+  color: #f9a8d4;
+  border-color: rgba(236, 72, 153, 0.45);
+}
+
+html.dark .chip-purple {
+  background: rgba(168, 85, 247, 0.22);
+  color: #d8b4fe;
+  border-color: rgba(168, 85, 247, 0.45);
+}
+
+html.dark .chip-rose {
+  background: rgba(244, 63, 94, 0.22);
+  color: #fda4af;
+  border-color: rgba(244, 63, 94, 0.45);
+}
+
+html.dark .menu-backdrop .admin-toggle,
+html.dark .admin-toggle {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+html.dark .menu-backdrop .admin-toggle:hover,
+html.dark .menu-backdrop .admin-toggle:active,
+html.dark .admin-toggle:hover,
+html.dark .admin-toggle:active {
+  background: #263449;
+  border-color: #475569;
+}
+
+html.dark .admin-toggle .toggle-sub,
+html.dark .admin-toggle .toggle-caret {
+  color: #94a3b8;
+}
+
+html.dark .step-badge {
+  background: #0f172a;
+  color: #cbd5e1;
+  box-shadow: inset 0 0 0 2px #475569;
+}
+
+html.dark .step-badge.is-done {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html.dark .shine-text-normal {
+  background: linear-gradient(120deg, #93c5fd 40%, #ffffff 50%, #93c5fd 60%);
+  background-size: 300% 100%;
+  color: transparent !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+html.dark .shine-text-top {
+  background: linear-gradient(120deg, #fda4af 40%, #ffffff 50%, #fda4af 60%);
+  background-size: 300% 100%;
+  color: transparent !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+html.dark .save-bar {
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.92) 40%, #0f172a 100%);
+}
+
+/* 서브 화면 전반의 다크 모드 폴백 (명시적 dark: 클래스는 그대로 존중) */
+.dark .bg-white:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+}
+.dark .bg-white\/95:not([class*="dark:bg-"]),
+.dark .bg-white\/90:not([class*="dark:bg-"]),
+.dark .bg-white\/80:not([class*="dark:bg-"]) {
+  background-color: rgba(30, 41, 59, 0.92);
+}
+.dark .bg-\[\#f4f6f9\]:not([class*="dark:bg-"]) {
+  background-color: var(--main-bg-color, #111723);
+}
+.dark .bg-slate-50:not([class*="dark:bg-"]),
+.dark .bg-gray-50:not([class*="dark:bg-"]) {
+  background-color: #0f172a;
+}
+.dark .bg-slate-50\/70:not([class*="dark:bg-"]),
+.dark .bg-slate-50\/80:not([class*="dark:bg-"]),
+.dark .bg-gray-50\/70:not([class*="dark:bg-"]),
+.dark .bg-gray-50\/80:not([class*="dark:bg-"]) {
+  background-color: rgba(15, 23, 42, 0.72);
+}
+.dark .bg-slate-100:not([class*="dark:bg-"]),
+.dark .bg-gray-100:not([class*="dark:bg-"]) {
+  background-color: #1e293b;
+}
+.dark .bg-slate-200:not([class*="dark:bg-"]),
+.dark .bg-slate-200\/90:not([class*="dark:bg-"]),
+.dark .bg-gray-200:not([class*="dark:bg-"]) {
+  background-color: #334155;
+}
+
+.dark .hover\:bg-slate-50:hover:not([class*="dark:hover:bg-"]),
+.dark .hover\:bg-gray-50:hover:not([class*="dark:hover:bg-"]),
+.dark .hover\:bg-slate-100:hover:not([class*="dark:hover:bg-"]),
+.dark .hover\:bg-gray-100:hover:not([class*="dark:hover:bg-"]) {
+  background-color: #263449;
+}
+.dark .hover\:bg-slate-200\/70:hover:not([class*="dark:hover:bg-"]),
+.dark .hover\:bg-slate-200:hover:not([class*="dark:hover:bg-"]),
+.dark .hover\:bg-gray-200:hover:not([class*="dark:hover:bg-"]) {
+  background-color: #334155;
+}
+
+.dark .text-slate-950:not([class*="dark:text-"]),
+.dark .text-slate-900:not([class*="dark:text-"]),
+.dark .text-gray-900:not([class*="dark:text-"]),
+.dark .text-gray-950:not([class*="dark:text-"]) {
+  color: #f8fafc;
+}
+.dark .text-slate-800:not([class*="dark:text-"]),
+.dark .text-gray-800:not([class*="dark:text-"]) {
+  color: #f1f5f9;
+}
+.dark .text-slate-700:not([class*="dark:text-"]),
+.dark .text-gray-700:not([class*="dark:text-"]) {
+  color: #e2e8f0;
+}
+.dark .text-slate-600:not([class*="dark:text-"]),
+.dark .text-gray-600:not([class*="dark:text-"]) {
+  color: #cbd5e1;
+}
+.dark .text-slate-500:not([class*="dark:text-"]),
+.dark .text-gray-500:not([class*="dark:text-"]) {
+  color: #94a3b8;
+}
+.dark .text-slate-400:not([class*="dark:text-"]),
+.dark .text-gray-400:not([class*="dark:text-"]) {
+  color: #94a3b8;
+}
+
+.dark .border-slate-100:not([class*="dark:border-"]),
+.dark .border-gray-100:not([class*="dark:border-"]),
+.dark .border-slate-200:not([class*="dark:border-"]),
+.dark .border-gray-200:not([class*="dark:border-"]) {
+  border-color: #334155;
+}
+.dark .border-slate-300:not([class*="dark:border-"]),
+.dark .border-gray-300:not([class*="dark:border-"]),
+.dark .border-slate-400:not([class*="dark:border-"]) {
+  border-color: #475569;
+}
+.dark .ring-gray-200:not([class*="dark:ring-"]),
+.dark .ring-gray-200\/80:not([class*="dark:ring-"]),
+.dark .ring-slate-200:not([class*="dark:ring-"]) {
+  --tw-ring-color: #334155;
+}
+.dark .divide-slate-200:not([class*="dark:divide-"]) > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-200:not([class*="dark:divide-"]) > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-100:not([class*="dark:divide-"]) > :not([hidden]) ~ :not([hidden]) {
+  border-color: #334155;
+}
+
+/* 파스텔 카드 배경(-50) 다크 반투명 변환 */
+.dark .bg-rose-50:not([class*="dark:bg-"]) {
+  background-color: rgba(244, 63, 94, 0.14);
+}
+.dark .bg-emerald-50:not([class*="dark:bg-"]),
+.dark .bg-green-50:not([class*="dark:bg-"]) {
+  background-color: rgba(16, 185, 129, 0.14);
+}
+.dark .bg-blue-50:not([class*="dark:bg-"]),
+.dark .bg-sky-50:not([class*="dark:bg-"]) {
+  background-color: rgba(59, 130, 246, 0.14);
+}
+.dark .bg-indigo-50:not([class*="dark:bg-"]) {
+  background-color: rgba(99, 102, 241, 0.16);
+}
+.dark .bg-amber-50:not([class*="dark:bg-"]),
+.dark .bg-yellow-50:not([class*="dark:bg-"]) {
+  background-color: rgba(245, 158, 11, 0.14);
+}
+.dark .bg-purple-50:not([class*="dark:bg-"]) {
+  background-color: rgba(168, 85, 247, 0.14);
+}
+
+.dark .bg-rose-50.text-rose-700:not([class*="dark:text-"]),
+.dark .bg-rose-50.text-rose-800:not([class*="dark:text-"]),
+.dark .bg-rose-50.text-rose-950:not([class*="dark:text-"]),
+.dark .bg-rose-50 .text-rose-700:not([class*="dark:text-"]) {
+  color: #fecdd3;
+}
+.dark .bg-emerald-50.text-emerald-900:not([class*="dark:text-"]),
+.dark .bg-emerald-50.text-emerald-950:not([class*="dark:text-"]),
+.dark .bg-green-50.text-green-900:not([class*="dark:text-"]) {
+  color: #a7f3d0;
+}
+.dark .bg-indigo-50.text-indigo-900:not([class*="dark:text-"]),
+.dark .bg-blue-50.text-blue-900:not([class*="dark:text-"]) {
+  color: #c7d2fe;
+}
+.dark .bg-amber-50.text-amber-900:not([class*="dark:text-"]),
+.dark .bg-yellow-50.text-yellow-900:not([class*="dark:text-"]) {
+  color: #fde68a;
+}
+
+.dark .bg-sky-100:not([class*="dark:bg-"]) {
+  background-color: rgba(14, 165, 233, 0.22);
+}
+.dark .bg-pink-100:not([class*="dark:bg-"]) {
+  background-color: rgba(236, 72, 153, 0.22);
+}
+.dark .text-sky-700:not([class*="dark:text-"]),
+.dark .text-sky-800:not([class*="dark:text-"]) {
+  color: #7dd3fc;
+}
+.dark .text-pink-800:not([class*="dark:text-"]) {
+  color: #f9a8d4;
+}
+.dark .border-rose-200:not([class*="dark:border-"]) {
+  border-color: rgba(244, 63, 94, 0.35);
+}
+.dark .border-emerald-300:not([class*="dark:border-"]) {
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.dark .border-indigo-300:not([class*="dark:border-"]) {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+.dark .border-sky-200:not([class*="dark:border-"]) {
+  border-color: rgba(14, 165, 233, 0.35);
+}
+.dark .border-pink-200:not([class*="dark:border-"]) {
+  border-color: rgba(236, 72, 153, 0.35);
+}
+.dark .text-blue-600:not([class*="dark:text-"]) {
+  color: #60a5fa;
+}
+.dark .text-rose-800:not([class*="dark:text-"]) {
+  color: #fda4af;
+}
+
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([class*="dark:bg-"]),
+html.dark select:not([class*="dark:bg-"]),
+html.dark textarea:not([class*="dark:bg-"]) {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+html.dark * {
+  scrollbar-color: #475569 transparent;
+}
+html.dark *::-webkit-scrollbar-thumb {
+  background: #475569;
 }

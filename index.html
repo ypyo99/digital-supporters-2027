@@ -20,7 +20,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2563EB">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
   <link rel="icon" type="image/svg+xml" href="/icon-c-bulb.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="/pwa-icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/pwa-icon-512.png">
@@ -34,6 +34,32 @@
     window.addEventListener('error', function (e) {
       alert("⚠️ JS 오류 발생: " + e.message + "\n위치: " + e.filename + ":" + e.lineno);
     });
+  </script>
+  <script>
+    (function () {
+      try {
+        var theme = window.localStorage.getItem('sungdong_theme_mode');
+        var isDark = theme === 'dark';
+        var rawGray = window.localStorage.getItem('sungdong_bg_gray_level');
+        var gray = rawGray !== null && rawGray !== '' && !isNaN(Number(rawGray))
+          ? Math.max(0, Math.min(100, Math.round(Number(rawGray))))
+          : 20;
+        var ratio = gray / 100;
+        var lerp = function (a, b) { return Math.round(a + (b - a) * ratio); };
+        var root = document.documentElement;
+        if (isDark) {
+          root.classList.add('dark');
+          root.style.setProperty('--main-bg-color', 'rgb(' + lerp(9, 51) + ', ' + lerp(13, 65) + ', ' + lerp(22, 85) + ')');
+          root.style.setProperty('--main-outer-bg-color', 'rgb(' + lerp(3, 30) + ', ' + lerp(7, 41) + ', ' + lerp(18, 59) + ')');
+          var tm = document.querySelector('meta[name="theme-color"]');
+          if (tm) tm.setAttribute('content', '#0f172a');
+        } else {
+          root.classList.remove('dark');
+          root.style.setProperty('--main-bg-color', 'rgb(' + lerp(255, 200) + ', ' + lerp(255, 210) + ', ' + lerp(255, 225) + ')');
+          root.style.setProperty('--main-outer-bg-color', 'rgb(' + lerp(252, 197) + ', ' + lerp(253, 213) + ', ' + lerp(255, 225) + ')');
+        }
+      } catch (e) {}
+    })();
   </script>
 </head>
 

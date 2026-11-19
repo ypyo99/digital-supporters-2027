@@ -95,6 +95,15 @@ import {
   attachRoEuro
 } from '../utils/helpers';
 import {
+  DEFAULT_BG_GRAY_LEVEL,
+  getThemeMode,
+  getBgGrayLevel,
+  getRoomPopupMode,
+  saveThemeMode,
+  saveBgGrayLevel,
+  saveRoomPopupMode
+} from '../utils/appSettings';
+import {
   User,
   MainCalendarIcon,
   CalendarIcon,
@@ -107,7 +116,8 @@ import {
   CalendarDaysIcon,
   UsersIcon,
   PresentationIcon,
-  LucideCalendar
+  LucideCalendar,
+  Settings
 } from './Icons';
 
 // 주어진 문자열을 쉼표(,)나 슬래시(/) 단위로 쪼갠 뒤,
@@ -315,6 +325,39 @@ export default function MainApp({
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
   const [roomStatusPopup, setRoomStatusPopup] = useState(null);
   const roomPopupDismissedRef = useRef(null);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [themeMode, setThemeMode] = useState(() => getThemeMode());
+  const [bgGrayLevel, setBgGrayLevel] = useState(() => getBgGrayLevel());
+  const [roomPopupMode, setRoomPopupMode] = useState(() => getRoomPopupMode());
+
+  const handleChangeThemeMode = (mode) => {
+    const saved = saveThemeMode(mode);
+    setThemeMode(saved);
+  };
+
+  const handleChangeBgGrayLevel = (level) => {
+    const saved = saveBgGrayLevel(level);
+    setBgGrayLevel(saved);
+  };
+
+  const handleChangeRoomPopupMode = (mode) => {
+    const saved = saveRoomPopupMode(mode);
+    setRoomPopupMode(saved);
+    if (saved === 'always') {
+      try {
+        window.__sungdong_initial_room_popup_shown = false;
+        window.sessionStorage.removeItem('sungdong_room_popup_session_done');
+        const todayStr = getLocalDateString(new Date());
+        removeSavedItem(`sungdong_room_popup_hide_today_${todayStr}`);
+      } catch (_) {}
+      roomPopupDismissedRef.current = null;
+    } else {
+      try {
+        window.__sungdong_initial_room_popup_shown = true;
+        window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      } catch (_) {}
+    }
+  };
 
   // 당일이 지난 오래된 팝업 숨김 키 정리 (오늘 저장된 키는 보존)
   useEffect(() => {
@@ -331,8 +374,10 @@ export default function MainApp({
 
   const closeRoomStatusPopup = (hideToday = false) => {
     try {
-      window.__sungdong_initial_room_popup_shown = true;
-      window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      if (getRoomPopupMode() !== 'always') {
+        window.__sungdong_initial_room_popup_shown = true;
+        window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      }
       if (hideToday === true) {
         const todayStr = (roomStatusPopup && roomStatusPopup.dateStr) || getLocalDateString(new Date());
         setSavedItem(`sungdong_room_popup_hide_today_${todayStr}`, 'true');
@@ -916,17 +961,19 @@ export default function MainApp({
       }
     } catch (_) {}
 
-    // 다른 작업을 하다가 메인화면으로 돌아온 경우 또는 이미 팝업을 표시한 경우 다시 띄우지 않음
-    try {
-      if (window.__sungdong_initial_room_popup_shown) {
-        setRoomStatusPopup(null);
-        return;
-      }
-      if (window.sessionStorage.getItem('sungdong_room_popup_session_done') === 'true') {
-        setRoomStatusPopup(null);
-        return;
-      }
-    } catch (_) {}
+    // 다른 작업을 하다가 메인화면으로 돌아온 경우 또는 이미 팝업을 표시한 경우 다시 띄우지 않음 ('항시 표시' 모드 제외)
+    if (roomPopupMode !== 'always') {
+      try {
+        if (window.__sungdong_initial_room_popup_shown) {
+          setRoomStatusPopup(null);
+          return;
+        }
+        if (window.sessionStorage.getItem('sungdong_room_popup_session_done') === 'true') {
+          setRoomStatusPopup(null);
+          return;
+        }
+      } catch (_) {}
+    }
 
     if (isLoggedIn || !selectedTeam) {
       setRoomStatusPopup(null);
@@ -936,6 +983,10 @@ export default function MainApp({
     // 취업팀은 선생님 이름까지 선택해야 팝업 표시
     if (selectedTeam === '취업팀' && !currentUser) {
       setRoomStatusPopup(null);
+      return;
+    }
+
+    if (showSettingsModal) {
       return;
     }
 
@@ -1060,10 +1111,12 @@ export default function MainApp({
           nangmanMemo: nMemo,
           holidayName: holidayInfo ? (holidayInfo.name || '휴무일') : ''
         });
-        try {
-          window.__sungdong_initial_room_popup_shown = true;
-          window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
-        } catch (_) {}
+        if (roomPopupMode !== 'always') {
+          try {
+            window.__sungdong_initial_room_popup_shown = true;
+            window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+          } catch (_) {}
+        }
       } catch (err) {
         console.error('교육실 사용현황 로드 실패:', err);
       }
@@ -1071,7 +1124,7 @@ export default function MainApp({
 
     loadRoomStatus();
     return () => { isMounted = false; };
-  }, [isLoggedIn, selectedTeam, currentUser, dbTeachers, holidaysFullList]);
+  }, [isLoggedIn, selectedTeam, currentUser, dbTeachers, holidaysFullList, roomPopupMode, showSettingsModal]);
 
   useEffect(() => {
     const loadHolidays = async () => {
@@ -2470,8 +2523,12 @@ export default function MainApp({
     setIsLoggedIn(false);
     setRecords([]);
     try {
-      window.__sungdong_initial_room_popup_shown = true;
-      window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      if (getRoomPopupMode() !== 'always') {
+        window.__sungdong_initial_room_popup_shown = true;
+        window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      } else {
+        roomPopupDismissedRef.current = null;
+      }
     } catch (_) {}
     if (window.history.state && window.history.state.subView === 'logWrite') {
       window.history.back();
@@ -3326,10 +3383,12 @@ export default function MainApp({
     if (!isLoginReady) return;
 
     if (currentUser) {
-      try {
-      window.__sungdong_initial_room_popup_shown = true;
-      window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
-    } catch (_) {}
+      if (getRoomPopupMode() !== 'always') {
+        try {
+          window.__sungdong_initial_room_popup_shown = true;
+          window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+        } catch (_) {}
+      }
       const todayStr = getInitialWeekday();
       setDate(todayStr);
       isLoggedInRef.current = true;
@@ -3439,25 +3498,35 @@ export default function MainApp({
         </div>
 
         <div
-          className="flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] bg-[#f4f6f9] sm:bg-[#f4f6f9]/95 sm:backdrop-blur-xl px-2.5 pb-4 pt-safe-4 sm:px-5 sm:pb-6 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
+          className="main-menu-surface relative flex flex-col flex-1 sm:flex-none w-full max-w-md sm:max-w-[600px] md:max-w-[680px] lg:max-w-[1020px] sm:backdrop-blur-xl px-2.5 pb-4 pt-safe-4 sm:px-5 sm:pb-6 sm:pt-safe-5 sm:rounded-[28px] sm:shadow-xl sm:ring-1 sm:ring-gray-900/5 dark:sm:ring-white/10 sm:min-h-[600px] shrink-0 sm:my-auto animate-fadeIn"
           style={{
             transform: `translateY(${pullDistance * 0.1}px)`,
             transition: pullDistance === 0 ? 'transform 0.3s ease-out' : 'none'
           }}
         >
-          <div className="text-center mb-4 sm:mb-6 shrink-0 mt-2 sm:mt-1">
-            <div className="flex items-center justify-center gap-2 sm:gap-2.5 mb-2.5 sm:mb-3.5">
+          <button
+            type="button"
+            onClick={() => setShowSettingsModal(true)}
+            className="safe-top-btn absolute right-2.5 sm:right-5 z-20 p-2 rounded-full bg-white/90 dark:bg-slate-800/95 hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-200 ring-1 ring-slate-200/90 dark:ring-slate-600 shadow-sm active:scale-95 transition-all touch-manipulation"
+            aria-label="설정"
+            title="앱 설정"
+          >
+            <Settings className="w-5 h-5 sm:w-[22px] sm:h-[22px]" />
+          </button>
+
+          <div className="text-center mb-4 sm:mb-6 shrink-0 mt-2 sm:mt-1 px-10 sm:px-14">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 mb-2.5 sm:mb-3.5">
               <img
                 src="/Logo_of_Seoul.jpg"
                 alt="서울시 로고"
-                className="h-[28px] sm:h-[38px] md:h-[42px] object-contain mix-blend-multiply shrink-0"
+                className="h-[26px] min-[390px]:h-[28px] sm:h-[38px] md:h-[42px] object-contain mix-blend-multiply dark:mix-blend-normal dark:bg-white dark:rounded-lg dark:p-0.5 shrink-0"
                 onError={(e) => e.target.style.display = 'none'}
               />
-              <h1 className="text-[26px] sm:text-[38px] md:text-[42px] leading-tight font-extrabold tracking-[-0.035em] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap">
+              <h1 className="text-[23px] min-[390px]:text-[26px] sm:text-[38px] md:text-[42px] leading-tight font-extrabold tracking-[-0.035em] bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 dark:from-blue-400 dark:via-sky-300 dark:to-indigo-400 bg-clip-text text-transparent whitespace-nowrap">
                 성동노인종합복지관
               </h1>
             </div>
-            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white ring-1 ring-gray-200/80 shadow-sm pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-bold text-gray-800 whitespace-nowrap tracking-tight">
+            <h2 className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full bg-white dark:bg-slate-800 ring-1 ring-gray-200/80 dark:ring-slate-700 shadow-sm pl-2 pr-3.5 sm:pl-2.5 sm:pr-4 py-1 sm:py-1.5 text-[clamp(13px,3.9vw,16px)] sm:text-[18px] md:text-[19px] font-bold text-gray-800 dark:text-slate-100 whitespace-nowrap tracking-tight">
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 transition-transform duration-300 hover:scale-110"
                 viewBox="0 0 128 128"
@@ -3941,6 +4010,198 @@ export default function MainApp({
                   type="button"
                   onClick={() => closeRoomStatusPopup(false)}
                   className="px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer text-center"
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 앱 설정 모달 */}
+        {showSettingsModal && (
+          <div
+            className="fixed inset-0 bg-slate-900/55 dark:bg-black/70 backdrop-blur-[3px] flex items-center justify-center z-[80] p-3 sm:p-4"
+            onClick={() => setShowSettingsModal(false)}
+          >
+            <div
+              className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[88vh] animate-fadeIn border border-slate-200 dark:border-slate-700"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="bg-gradient-to-r from-slate-700 to-slate-800 dark:from-slate-900 dark:to-slate-950 text-white px-4 py-3.5 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-blue-300" />
+                  <h3 className="font-extrabold text-[17px] sm:text-[18px] tracking-tight">앱 설정</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(false)}
+                  className="p-1 rounded-lg text-white/90 hover:bg-white/20 active:scale-90 transition"
+                  aria-label="설정 닫기"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+
+              <div className="p-4 sm:p-5 overflow-y-auto space-y-5 text-left">
+                {/* 1. 화면 테마 (다크 모드 / 라이트 모드) */}
+                <div>
+                  <label className="block text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900 dark:text-slate-100 mb-2">
+                    1. 화면 테마
+                  </label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => handleChangeThemeMode('light')}
+                      className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl border-2 text-[14px] sm:text-[15px] font-extrabold transition cursor-pointer active:scale-[0.98] ${
+                        themeMode === 'light'
+                          ? 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-950/60 dark:text-blue-300 shadow-sm'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/60'
+                      }`}
+                    >
+                      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
+                        <circle cx="12" cy="12" r="4" />
+                        <path strokeLinecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41" />
+                      </svg>
+                      라이트 모드
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleChangeThemeMode('dark')}
+                      className={`flex items-center justify-center gap-2 py-3 px-3 rounded-xl border-2 text-[14px] sm:text-[15px] font-extrabold transition cursor-pointer active:scale-[0.98] ${
+                        themeMode === 'dark'
+                          ? 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/70 dark:text-blue-300 shadow-sm'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/60'
+                      }`}
+                    >
+                      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+                      </svg>
+                      다크 모드
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. 메인화면 회색 배경 농도 조절 */}
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <label htmlFor="bg-gray-slider" className="text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900 dark:text-slate-100">
+                      2. 메인 배경 회색 농도
+                    </label>
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-[13px] font-extrabold tabular-nums">
+                        {bgGrayLevel}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleChangeBgGrayLevel(DEFAULT_BG_GRAY_LEVEL)}
+                        disabled={bgGrayLevel === DEFAULT_BG_GRAY_LEVEL}
+                        className="px-2 py-0.5 rounded-md text-[12px] font-bold border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                      >
+                        기본값
+                      </button>
+                    </div>
+                  </div>
+                  <input
+                    id="bg-gray-slider"
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={bgGrayLevel}
+                    onChange={(e) => handleChangeBgGrayLevel(Number(e.target.value))}
+                    className="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg accent-blue-600 cursor-pointer"
+                  />
+                  <div className="grid grid-cols-4 gap-1.5 mt-2.5">
+                    {[
+                      { value: 0, label: '0% 밝게' },
+                      { value: 20, label: '20% 기본' },
+                      { value: 50, label: '50% 중간' },
+                      { value: 85, label: '85% 진하게' }
+                    ].map(preset => (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => handleChangeBgGrayLevel(preset.value)}
+                        className={`py-1.5 px-1 rounded-lg border text-[12px] font-bold transition cursor-pointer whitespace-nowrap ${
+                          bgGrayLevel === preset.value
+                            ? 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-400 dark:bg-blue-950/70 dark:text-blue-300'
+                            : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60'
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. 평생교육실2 · 낭만스튜디오 팝업 표시 방식 */}
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <div className="mb-2">
+                    <span className="block text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900 dark:text-slate-100">
+                      3. 교육실 현황 팝업 표시
+                    </span>
+                    <span className="block text-[12.5px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                      평생교육실2 · 낭만스튜디오 사용현황 자동 팝업
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => handleChangeRoomPopupMode('once')}
+                      className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${
+                        roomPopupMode === 'once'
+                          ? 'border-blue-600 bg-blue-50/70 dark:border-blue-400 dark:bg-blue-950/60'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                      }`}
+                    >
+                      <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                        roomPopupMode === 'once' ? 'border-blue-600 dark:border-blue-400' : 'border-slate-400 dark:border-slate-500'
+                      }`}>
+                        {roomPopupMode === 'once' && <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" />}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-[14px] sm:text-[14.5px] font-extrabold text-slate-900 dark:text-slate-100">
+                          앱 처음 실행 시 한 번만 표시
+                        </div>
+                        <div className="text-[12.5px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                          앱 실행 후 처음 메인 화면에서 1회만 팝업을 띄웁니다.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleChangeRoomPopupMode('always')}
+                      className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${
+                        roomPopupMode === 'always'
+                          ? 'border-blue-600 bg-blue-50/70 dark:border-blue-400 dark:bg-blue-950/60'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                      }`}
+                    >
+                      <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                        roomPopupMode === 'always' ? 'border-blue-600 dark:border-blue-400' : 'border-slate-400 dark:border-slate-500'
+                      }`}>
+                        {roomPopupMode === 'always' && <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" />}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-[14px] sm:text-[14.5px] font-extrabold text-slate-900 dark:text-slate-100">
+                          항시 표시
+                        </div>
+                        <div className="text-[12.5px] text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                          메인 화면으로 돌아올 때마다 조건에 맞으면 다시 팝업을 띄웁니다.
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-200 dark:border-slate-700 flex justify-end shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(false)}
+                  className="px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer"
                 >
                   확인
                 </button>

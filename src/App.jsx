@@ -7,6 +7,7 @@ import {
   setSavedItem,
   fetchAllTeachersFromDb
 } from './utils/helpers';
+import { applyAppAppearance, getRoomPopupMode } from './utils/appSettings';
 
 const lazyWithRetry = (componentImport) =>
   lazy(async () => {
@@ -69,13 +70,19 @@ export default function App() {
   });
   const [selectedNoticeForView, setSelectedNoticeForView] = useState(null);
 
+  useEffect(() => {
+    applyAppAppearance();
+  }, []);
+
   // [화면 전환 및 브라우저 History(뒤로가기) 연동]
   const navigateTo = (viewName, replace = false) => {
     if (viewName === currentView) return;
     if (viewName !== 'main') {
       try {
-        window.__sungdong_initial_room_popup_shown = true;
-        window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+        if (getRoomPopupMode() !== 'always') {
+          window.__sungdong_initial_room_popup_shown = true;
+          window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+        }
       } catch (_) {}
     }
     const targetUrl = viewName === 'main' ? window.location.pathname : `?view=${viewName}`;
