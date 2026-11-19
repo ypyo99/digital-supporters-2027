@@ -1,6 +1,6 @@
 // 디지털교육서포터즈 명함 만들기 (ypyo99/ds-namecard 통합)
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import { Home } from './Icons';
 import { SEOUL_SYMBOL_BASE64 } from '../utils/seoulSymbolBase64';
@@ -325,6 +325,8 @@ export default function NameCardApp({ onNavigateBack }) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveFeedback, setSaveFeedback] = useState(null); // { type: 'success' | 'error', text: string }
+  const [previewDataUrl, setPreviewDataUrl] = useState('');
+  const [isPreviewFresh, setIsPreviewFresh] = useState(false);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
   const [dirHandle, setDirHandle] = useState(null);
@@ -440,6 +442,53 @@ export default function NameCardApp({ onNavigateBack }) {
     document.body.removeChild(link);
   };
 
+  const captureCardDataUrl = useCallback(async () => {
+    if (!cardRef.current) return '';
+    if (document.fonts) {
+      await document.fonts.ready;
+    }
+    const canvas = await html2canvas(cardRef.current, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#faf9f6',
+      logging: false,
+      onclone: (doc) => {
+        const cs = doc.getElementById('card-scale');
+        const cf = doc.getElementById('card-fit');
+        if (cs) cs.style.transform = 'none';
+        if (cf) {
+          cf.style.width = '900px';
+          cf.style.height = '500px';
+          cf.style.maxWidth = 'none';
+        }
+      }
+    });
+    drawRightPanelOnCanvas(canvas, activeTheme);
+    return canvas.toDataURL('image/jpeg', 0.96);
+  }, [activeTheme]);
+
+  // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
+  useEffect(() => {
+    let cancelled = false;
+    setIsPreviewFresh(false);
+    const timer = setTimeout(async () => {
+      try {
+        const url = await captureCardDataUrl();
+        if (!cancelled && url) {
+          setPreviewDataUrl(url);
+          setIsPreviewFresh(true);
+        }
+      } catch (e) {
+        console.warn('미리보기 이미지 생성 실패:', e);
+      }
+    }, 280);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [nameInput, phoneInput, sloganInput, themeId, captureCardDataUrl]);
+
   const handleDownloadOrSave = async () => {
     if (!cardRef.current || isSaving) return;
 
@@ -447,31 +496,13 @@ export default function NameCardApp({ onNavigateBack }) {
     setSaveFeedback(null);
 
     try {
-      if (document.fonts) {
-        await document.fonts.ready;
+      const dataUrl = (isPreviewFresh && previewDataUrl)
+        ? previewDataUrl
+        : await captureCardDataUrl();
+      if (!isPreviewFresh && dataUrl) {
+        setPreviewDataUrl(dataUrl);
+        setIsPreviewFresh(true);
       }
-
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 3,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#faf9f6',
-        logging: false,
-        onclone: (doc) => {
-          const cs = doc.getElementById('card-scale');
-          const cf = doc.getElementById('card-fit');
-          if (cs) cs.style.transform = 'none';
-          if (cf) {
-            cf.style.width = '900px';
-            cf.style.height = '500px';
-            cf.style.maxWidth = 'none';
-          }
-        }
-      });
-
-      drawRightPanelOnCanvas(canvas, activeTheme);
-
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.96);
       const safeTeacherName = (nameInput.trim() || '디지털교육서포터즈').replace(/[<>:"/\\|?*]/g, '_');
       const fileName = `${safeTeacherName}_디지털교육서포터즈_명함(9x5cm).jpg`;
 
@@ -716,11 +747,10 @@ export default function NameCardApp({ onNavigateBack }) {
                       key={theme.id}
                       type="button"
                       onClick={() => handleSelectTheme(theme.id)}
-                      className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-extrabold transition cursor-pointer active:scale-95 ${
-                        selected
-                          ? 'bg-white border-[#13386E] text-slate-900 ring-2 ring-[#13386E]/20 shadow-xs'
-                          : 'bg-white/80 border-slate-300 text-slate-600 hover:bg-white hover:border-slate-400'
-                      }`}
+                      className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-extrabold transition cursor-pointer active:scale-95 ${selected
+                        ? 'bg-white border-[#13386E] text-slate-900 ring-2 ring-[#13386E]/20 shadow-xs'
+                        : 'bg-white/80 border-slate-300 text-slate-600 hover:bg-white hover:border-slate-400'
+                        }`}
                     >
                       <span
                         className="w-4 h-4 rounded-full border border-black/15 shrink-0 flex items-center justify-center"
@@ -742,24 +772,23 @@ export default function NameCardApp({ onNavigateBack }) {
                 disabled={isSaving}
                 className="w-full py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>{isSaving ? '고해상도 저장 중...' : '고해상도 JPG 저장'}</span>
+                <span>{isSaving ? '고해상도 저장 중...' : '구글 드라이브에 저장'}</span>
               </button>
             </div>
           </div>
 
           {saveFeedback && (
-            <div className={`mt-2.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border ${
-              saveFeedback.type === 'error'
-                ? 'bg-rose-50 text-rose-700 border-rose-300'
-                : 'bg-emerald-50 text-emerald-800 border-emerald-300'
-            }`}>
+            <div className={`mt-2.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border ${saveFeedback.type === 'error'
+              ? 'bg-rose-50 text-rose-700 border-rose-300'
+              : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+              }`}>
               {saveFeedback.text}
             </div>
           )}
         </div>
 
-        {/* 명함 본체 미리보기 (900x500px, 9:5 비율 반응형 축소) */}
-        <div ref={cardWrapRef} className="w-full max-w-[900px] flex justify-center">
+        {/* 명함 본체 미리보기 (900x500px, 9:5 비율 반응형 축소 + 스마트폰 길게 눌러 저장용 실제 <img> 오버레이) */}
+        <div ref={cardWrapRef} className="w-full max-w-[900px] flex flex-col items-center">
           <div
             id="card-fit"
             style={{
@@ -768,6 +797,17 @@ export default function NameCardApp({ onNavigateBack }) {
               position: 'relative'
             }}
           >
+            {previewDataUrl && (
+              <img
+                src={previewDataUrl}
+                alt={`${nameInput.trim() || '디지털교육서포터즈'}_명함.jpg`}
+                data-html2canvas-ignore="true"
+                className={`absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 transition-opacity duration-150 ${
+                  isPreviewFresh ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
+                style={{ WebkitTouchCallout: 'default' }}
+              />
+            )}
             <div
               id="card-scale"
               style={{
