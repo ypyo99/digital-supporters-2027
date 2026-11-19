@@ -847,8 +847,8 @@ export default function HolidayManagementApp({ onNavigateBack }) {
               </div>
 
               <div className="grid grid-cols-12 gap-2 sm:gap-2.5 items-end">
-                {/* 날짜 선택과 이름을 한 줄에 배치 (모바일 7:5, 데스크톱 4:3) */}
-                <div className="col-span-7 sm:col-span-7 lg:col-span-4 min-w-0">
+                {/* 날짜 선택과 이름을 한 줄에 배치 (모바일 6:6, 데스크톱 4:3) */}
+                <div className="col-span-6 sm:col-span-6 lg:col-span-4 min-w-0">
                   <label className="flex items-center justify-between text-[11px] sm:text-[11.5px] font-bold text-blue-600 mb-1">
                     <span className="truncate">날짜 선택 *</span>
                     {formMeta.weekday && (
@@ -859,28 +859,23 @@ export default function HolidayManagementApp({ onNavigateBack }) {
                       </span>
                     )}
                   </label>
-                  <div className="flex gap-1 sm:gap-1.5 min-w-0">
-                    <input
-                      type="date"
-                      value={toDateInputValue(formData.date, targetYear)}
-                      onChange={(e) => {
-                        const mmdd = normalizeHolidayDate(e.target.value);
+                  <input
+                    type="date"
+                    value={toDateInputValue(formData.date, targetYear)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (!val) {
+                        setFormData(prev => ({ ...prev, date: '' }));
+                      } else {
+                        const mmdd = normalizeHolidayDate(val);
                         if (mmdd) setFormData(prev => ({ ...prev, date: mmdd }));
-                      }}
-                      className="flex-1 min-w-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
-                    />
-                    <input
-                      type="text"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleInputChange}
-                      placeholder="MM-DD"
-                      className="w-[58px] sm:w-[74px] shrink-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold text-center"
-                    />
-                  </div>
+                      }
+                    }}
+                    className="w-full min-w-0 p-1.5 sm:p-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 font-bold"
+                  />
                 </div>
 
-                <div className="col-span-5 sm:col-span-5 lg:col-span-3 min-w-0">
+                <div className="col-span-6 sm:col-span-6 lg:col-span-3 min-w-0">
                   <label className="block text-[11px] sm:text-[11.5px] font-bold text-blue-600 mb-1 truncate">이름 *</label>
                   <input
                     type="text"
@@ -1245,25 +1240,21 @@ export default function HolidayManagementApp({ onNavigateBack }) {
             </div>
             <div className="p-4 sm:p-5 space-y-3.5 text-left">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">날짜 (달력 또는 MM-DD) *</label>
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    value={toDateInputValue(editModalData.date, targetYear)}
-                    onChange={(e) => {
-                      const mmdd = normalizeHolidayDate(e.target.value);
+                <label className="block text-xs font-bold text-slate-600 mb-1">날짜 선택 *</label>
+                <input
+                  type="date"
+                  value={toDateInputValue(editModalData.date, targetYear)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) {
+                      setEditModalData(prev => ({ ...prev, date: '' }));
+                    } else {
+                      const mmdd = normalizeHolidayDate(val);
                       if (mmdd) setEditModalData(prev => ({ ...prev, date: mmdd }));
-                    }}
-                    className="flex-1 p-2.5 border border-slate-300 rounded-xl text-sm font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={editModalData.date}
-                    onChange={(e) => setEditModalData(prev => ({ ...prev, date: e.target.value }))}
-                    placeholder="MM-DD"
-                    className="w-24 p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-center bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+                    }
+                  }}
+                  className="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500"
+                />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">이름 *</label>
