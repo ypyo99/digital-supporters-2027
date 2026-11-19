@@ -342,103 +342,58 @@ export default function TeacherManagementApp({ onNavigateBack }) {
               </div>
             </div>
 
-            {/* 선생님 목록 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              {isLoading && teachers.length === 0 ? (
-                <div className="text-center py-10">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                </div>
-              ) : filteredTeachers.length === 0 ? (
-                <div className="py-10 text-center text-slate-500 text-sm font-semibold">
-                  {teachers.length === 0 ? '등록된 선생님이 없습니다.' : '조건에 맞는 선생님이 없습니다.'}
-                </div>
-              ) : (
-                <>
-                  {/* 모바일 카드 뷰 */}
-                  <div className="md:hidden divide-y divide-slate-100">
-                    {filteredTeachers.map(t => {
-                      const inactive = t.is_active === false;
-                      return (
-                        <div key={t.id} className={`p-3.5 ${inactive ? 'bg-slate-100/70' : ''}`}>
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="flex items-center flex-wrap gap-1.5">
-                                <span className={`px-2 py-0.5 rounded-md text-xs font-black ${t.team === '2팀' || t.team === '취업팀' ? 'bg-sky-100 text-sky-800' : 'bg-indigo-100 text-indigo-800'}`}>{t.team}</span>
-                                <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700">{t.group}</span>
-                                {t.seq_num && <span className="text-xs font-bold text-slate-500">#{t.seq_num}</span>}
-                                {inactive && <span className="px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600">퇴직</span>}
-                              </div>
-                              <div className={`mt-1 text-base font-extrabold break-words ${inactive ? 'line-through text-slate-400' : 'text-slate-900'}`}>{t.name}</div>
-                            </div>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-1.5 text-xs font-semibold text-slate-600">
-                            {[t.shift1, t.shift2, t.shift3].filter(Boolean).map((s, i) => (
-                              <span key={i} className="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 tabular-nums">{s}</span>
-                            ))}
-                          </div>
-                          <div className="mt-1.5 text-[11.5px] font-medium text-slate-500 tabular-nums">
-                            입사 {t.hire_date || '-'} · 퇴사 {t.resign_date || '-'}
-                          </div>
-                          <div className="flex items-center justify-end gap-1.5 mt-2.5">
-                            <button onClick={() => handleEdit(t)} className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold active:scale-95 transition cursor-pointer">수정</button>
-                            <button onClick={() => handleDelete(t.id)} className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer">삭제</button>
-                            <button onClick={() => handleTransferClick(t)} className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold active:scale-95 transition cursor-pointer">이관</button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+            {/* 선생님 목록 (선생님별 카드) */}
+            {isLoading && teachers.length === 0 ? (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 text-center py-10">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              </div>
+            ) : filteredTeachers.length === 0 ? (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 py-10 text-center text-slate-500 text-sm font-semibold">
+                {teachers.length === 0 ? '등록된 선생님이 없습니다.' : '조건에 맞는 선생님이 없습니다.'}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {filteredTeachers.map(t => {
+                  const inactive = t.is_active === false;
+                  const isSky = t.team === '2팀' || t.team === '취업팀';
+                  return (
+                    <div
+                      key={t.id}
+                      className={`flex flex-col rounded-2xl border shadow-sm p-4 transition hover:shadow-md ${
+                        inactive
+                          ? 'bg-slate-100 border-slate-200 opacity-80'
+                          : `bg-white border-slate-200 border-t-4 ${isSky ? 'border-t-sky-400' : 'border-t-indigo-400'}`
+                      }`}
+                    >
+                      <div className="flex items-center flex-wrap gap-1.5">
+                        <span className={`px-2 py-0.5 rounded-md text-xs font-black ${isSky ? 'bg-sky-100 text-sky-800' : 'bg-indigo-100 text-indigo-800'}`}>{t.team}</span>
+                        <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-700">{t.group}</span>
+                        {t.seq_num && <span className="text-xs font-bold text-slate-500">#{t.seq_num}</span>}
+                        {inactive && <span className="ml-auto px-1.5 py-0.5 rounded text-[11px] font-extrabold bg-red-100 text-red-600">퇴직</span>}
+                      </div>
 
-                  {/* 데스크톱 테이블 뷰 */}
-                  <div className="hidden md:block overflow-x-auto overflow-y-auto max-h-[72vh] relative">
-                    <table className="w-full text-center border-collapse text-sm">
-                      <thead className="sticky top-0 z-20 shadow-xs">
-                        <tr className="bg-indigo-50 border-b border-gray-200 text-indigo-900 font-bold whitespace-nowrap">
-                          <th className="py-2.5 px-2 border-r border-gray-200 w-16">팀</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200 w-14">조</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200 w-14">번호</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200">이름</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200">시간대 1</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200">시간대 2</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200">시간대 3</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200 w-28">입사일</th>
-                          <th className="py-2.5 px-2 border-r border-gray-200 w-28">퇴사일</th>
-                          <th className="py-2.5 px-2 w-44">관리</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredTeachers.map(t => {
-                          const inactive = t.is_active === false;
-                          return (
-                            <tr key={t.id} className={`border-b border-gray-100 transition-colors ${inactive ? 'bg-gray-100 text-gray-400' : (t.team === '2팀' || t.team === '취업팀' ? 'bg-sky-50/60 hover:bg-sky-100' : 'hover:bg-indigo-50/40')}`}>
-                              <td className="py-2 px-2 border-r border-gray-100 font-bold">{t.team}</td>
-                              <td className="py-2 px-2 border-r border-gray-100">{t.group}</td>
-                              <td className="py-2 px-2 border-r border-gray-100 tabular-nums">{t.seq_num}</td>
-                              <td className="py-2 px-2 border-r border-gray-100 font-bold">
-                                {inactive && <span className="text-xs text-red-600 bg-red-100 px-1 py-0.5 rounded mr-1 whitespace-nowrap">퇴직</span>}
-                                <span className={inactive ? 'line-through' : 'text-gray-900'}>{t.name}</span>
-                              </td>
-                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift1}</td>
-                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift2}</td>
-                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.shift3}</td>
-                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.hire_date || '-'}</td>
-                              <td className="py-2 px-2 border-r border-gray-100 text-gray-600 tabular-nums">{t.resign_date || '-'}</td>
-                              <td className="py-2 px-2 whitespace-nowrap">
-                                <div className="inline-flex items-center gap-1.5">
-                                  <button onClick={() => handleEdit(t)} className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold transition cursor-pointer">수정</button>
-                                  <button onClick={() => handleDelete(t.id)} className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg text-xs font-bold transition cursor-pointer">삭제</button>
-                                  <button onClick={() => handleTransferClick(t)} className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-xs font-bold transition cursor-pointer">이관</button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-            </div>
+                      <div className={`mt-1.5 text-lg font-extrabold break-words ${inactive ? 'line-through text-slate-400' : 'text-slate-900'}`}>{t.name}</div>
+
+                      <div className="mt-2.5 grid grid-cols-3 gap-1.5 text-xs font-semibold text-slate-700">
+                        {[t.shift1, t.shift2, t.shift3].map((s, i) => (
+                          <span key={i} className="px-1 py-1 rounded-lg bg-slate-50 border border-slate-200 text-center tabular-nums truncate" title={s || ''}>{s || '-'}</span>
+                        ))}
+                      </div>
+
+                      <div className="mt-2 mb-3 text-xs font-medium text-slate-500 tabular-nums">
+                        입사 {t.hire_date || '-'} · 퇴사 {t.resign_date || '-'}
+                      </div>
+
+                      <div className="flex items-center justify-end gap-1.5 mt-auto pt-3 border-t border-slate-100">
+                        <button onClick={() => handleEdit(t)} className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold active:scale-95 transition cursor-pointer">수정</button>
+                        <button onClick={() => handleDelete(t.id)} className="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold active:scale-95 transition cursor-pointer">삭제</button>
+                        <button onClick={() => handleTransferClick(t)} className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold active:scale-95 transition cursor-pointer">이관</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </main>
