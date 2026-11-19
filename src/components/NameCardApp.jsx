@@ -588,9 +588,6 @@ export default function NameCardApp({ onNavigateBack }) {
             </span>
             <span>서포터즈 명함 만들기</span>
           </h2>
-          <span className="text-xs text-slate-600 font-bold bg-white border border-slate-300 px-3 py-1 rounded-full shadow-xs">
-            9×5cm · 300DPI 고해상도 JPG
-          </span>
         </div>
 
         {/* 컨트롤 패널 */}
