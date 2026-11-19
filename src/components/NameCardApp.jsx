@@ -511,9 +511,12 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {
   const drawScale = baseScale * photoScale;
   const dw = iw * drawScale;
   const dh = ih * drawScale;
-  const dx = cx + offsetX - dw / 2;
-  const dy = cy + offsetY - dh / 2;
-  ctx.drawImage(profileImg, dx, dy, dw, dh);
+  const rotationRad = ((Number.isFinite(photoAdjust.rotation) ? photoAdjust.rotation : 0) * Math.PI) / 180;
+  ctx.save();
+  ctx.translate(cx + offsetX, cy + offsetY);
+  ctx.rotate(rotationRad);
+  ctx.drawImage(profileImg, -dw / 2, -dh / 2, dw, dh);
+  ctx.restore();
   ctx.restore();
 
   // 4. 4시 방향 포인트 컬러 원형 배지 + 4각 별(✦) 아이콘
@@ -586,6 +589,7 @@ export default function NameCardApp({ onNavigateBack }) {
   const [photoScale, setPhotoScale] = useState(1);
   const [photoOffsetX, setPhotoOffsetX] = useState(0);
   const [photoOffsetY, setPhotoOffsetY] = useState(0);
+  const [photoRotation, setPhotoRotation] = useState(0);
   const [isPreviewFresh, setIsPreviewFresh] = useState(false);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
@@ -731,6 +735,7 @@ export default function NameCardApp({ onNavigateBack }) {
         setPhotoScale(1);
         setPhotoOffsetX(0);
         setPhotoOffsetY(0);
+        setPhotoRotation(0);
       }
     };
     reader.readAsDataURL(file);
@@ -789,14 +794,15 @@ export default function NameCardApp({ onNavigateBack }) {
         drawProfileCardPhotoOnCanvas(profileCanvas, activeTheme, profileImg, {
           scale: photoScale,
           offsetX: photoOffsetX,
-          offsetY: photoOffsetY
+          offsetY: photoOffsetY,
+          rotation: photoRotation
         });
       }
       profileUrl = profileCanvas.toDataURL('image/jpeg', 0.96);
     }
 
     return { defaultUrl, profileUrl };
-  }, [activeTheme, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY]);
+  }, [activeTheme, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, photoRotation]);
 
   // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
   useEffect(() => {
@@ -818,7 +824,7 @@ export default function NameCardApp({ onNavigateBack }) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, captureCardsDataUrls]);
+  }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, photoRotation, captureCardsDataUrls]);
 
   const handleDownloadOrSave = async (targetMode = 'auto') => {
     if (!cardRef.current || isSaving) return;
@@ -1282,13 +1288,14 @@ export default function NameCardApp({ onNavigateBack }) {
               {profilePhotoUrl && (
                 <div className="p-3 bg-slate-50/90 rounded-xl border border-slate-300 space-y-2.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-extrabold text-slate-800">프로필 사진 크기 · 위치 조절</span>
+                    <span className="text-xs font-extrabold text-slate-800">프로필 사진 크기 · 위치 · 기울기 조절</span>
                     <button
                       type="button"
                       onClick={() => {
                         setPhotoScale(1);
                         setPhotoOffsetX(0);
                         setPhotoOffsetY(0);
+                        setPhotoRotation(0);
                       }}
                       className="px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition"
                     >
@@ -1296,7 +1303,7 @@ export default function NameCardApp({ onNavigateBack }) {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
                     {/* 크기 조절 */}
                     <div className="bg-white rounded-xl border border-slate-200 px-3 py-2 flex flex-col gap-1.5">
                       <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
@@ -1398,6 +1405,41 @@ export default function NameCardApp({ onNavigateBack }) {
                           aria-label="아래로 이동"
                         >
                           ▼
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 사진 기울기 */}
+                    <div className="bg-white rounded-xl border border-slate-200 px-3 py-2 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                        <span>사진 기울기</span>
+                        <span className="text-[#13386E] font-extrabold">{photoRotation > 0 ? `+${photoRotation}°` : `${photoRotation}°`}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setPhotoRotation(v => Math.max(-45, v - 1))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="반시계 방향 기울기"
+                        >
+                          ↺
+                        </button>
+                        <input
+                          type="range"
+                          min="-45"
+                          max="45"
+                          step="1"
+                          value={photoRotation}
+                          onChange={(e) => setPhotoRotation(parseInt(e.target.value, 10))}
+                          className="w-full accent-[#13386E] cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setPhotoRotation(v => Math.min(45, v + 1))}
+                          className="w-7 h-7 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-extrabold text-slate-700 cursor-pointer shrink-0"
+                          aria-label="시계 방향 기울기"
+                        >
+                          ↻
                         </button>
                       </div>
                     </div>
