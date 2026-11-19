@@ -73,7 +73,10 @@ export default function App() {
   const navigateTo = (viewName, replace = false) => {
     if (viewName === currentView) return;
     if (viewName !== 'main') {
-      try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
+      try {
+        window.__sungdong_initial_room_popup_shown = true;
+        window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+      } catch (_) {}
     }
     const targetUrl = viewName === 'main' ? window.location.pathname : `?view=${viewName}`;
     if (replace) {

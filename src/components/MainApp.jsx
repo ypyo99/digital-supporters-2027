@@ -316,13 +316,23 @@ export default function MainApp({
   const [roomStatusPopup, setRoomStatusPopup] = useState(null);
   const roomPopupDismissedRef = useRef(null);
 
+  // 이전 버전에서 localStorage에 남아 앱 재실행 시 팝업을 영구 차단하던 레거시 키 정리
+  useEffect(() => {
+    try {
+      Object.keys(window.localStorage).forEach(k => {
+        if (k.startsWith('sungdong_room_popup_hide_')) {
+          window.localStorage.removeItem(k);
+        }
+      });
+    } catch (_) {}
+  }, []);
+
   const closeRoomStatusPopup = (hideToday = false) => {
-    try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
+    try {
+      window.__sungdong_initial_room_popup_shown = true;
+      window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+    } catch (_) {}
     roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
-    if (hideToday && roomStatusPopup) {
-      const hideKey = `sungdong_room_popup_hide_${roomStatusPopup.dateStr}_${roomStatusPopup.teamKey}`;
-      setSavedItem(hideKey, 'true');
-    }
     setRoomStatusPopup(null);
   };
 
@@ -897,6 +907,10 @@ export default function MainApp({
         setRoomStatusPopup(null);
         return;
       }
+      if (window.sessionStorage.getItem('sungdong_room_popup_session_done') === 'true') {
+        setRoomStatusPopup(null);
+        return;
+      }
     } catch (_) {}
 
     if (isLoggedIn || !selectedTeam) {
@@ -952,10 +966,6 @@ export default function MainApp({
     }
 
     const todayStr = getLocalDateString(now);
-    const hideKey = `sungdong_room_popup_hide_${todayStr}_${teamKey}`;
-    if (getSavedItem(hideKey, '') === 'true') {
-      return;
-    }
     let isMounted = true;
     const loadRoomStatus = async () => {
       try {
@@ -1035,7 +1045,10 @@ export default function MainApp({
           nangmanMemo: nMemo,
           holidayName: holidayInfo ? (holidayInfo.name || '휴무일') : ''
         });
-        try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
+        try {
+          window.__sungdong_initial_room_popup_shown = true;
+          window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+        } catch (_) {}
       } catch (err) {
         console.error('교육실 사용현황 로드 실패:', err);
       }
@@ -2441,7 +2454,10 @@ export default function MainApp({
     isLoggedInRef.current = false;
     setIsLoggedIn(false);
     setRecords([]);
-    try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
+    try {
+      window.__sungdong_initial_room_popup_shown = true;
+      window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+    } catch (_) {}
     if (window.history.state && window.history.state.subView === 'logWrite') {
       window.history.back();
     }
@@ -3295,7 +3311,10 @@ export default function MainApp({
     if (!isLoginReady) return;
 
     if (currentUser) {
-      try { window.__sungdong_initial_room_popup_shown = true; } catch (_) {}
+      try {
+      window.__sungdong_initial_room_popup_shown = true;
+      window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
+    } catch (_) {}
       const todayStr = getInitialWeekday();
       setDate(todayStr);
       isLoggedInRef.current = true;
