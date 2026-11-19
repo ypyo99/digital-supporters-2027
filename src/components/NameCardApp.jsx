@@ -772,7 +772,7 @@ export default function NameCardApp({ onNavigateBack }) {
                 disabled={isSaving}
                 className="w-full py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>{isSaving ? '고해상도 저장 중...' : '구글 드라이브에 저장'}</span>
+                <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
               </button>
             </div>
           </div>
@@ -802,9 +802,8 @@ export default function NameCardApp({ onNavigateBack }) {
                 src={previewDataUrl}
                 alt={`${nameInput.trim() || '디지털교육서포터즈'}_명함.jpg`}
                 data-html2canvas-ignore="true"
-                className={`absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 transition-opacity duration-150 ${
-                  isPreviewFresh ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                }`}
+                className={`absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 transition-opacity duration-150 ${isPreviewFresh ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                  }`}
                 style={{ WebkitTouchCallout: 'default' }}
               />
             )}
