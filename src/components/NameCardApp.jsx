@@ -339,9 +339,126 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
 };
 
 const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {}) => {
-  if (!profileImg || !(profileImg.naturalWidth || profileImg.width)) return;
   const s = canvas.width / 900;
   const ctx = canvas.getContext('2d');
+  const pw = 236;
+  const ph = 500;
+
+  // 0. 좌측 테마 패널(w: 236)을 300DPI 캔버스로 선명하게 렌더링 (도트 패턴·초승달·궤도·타이틀·SEONGDONG · SEOUL)
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.beginPath();
+  ctx.rect(0, 0, pw * s, ph * s);
+  ctx.clip();
+
+  const baseGrad = ctx.createLinearGradient(0, 0, pw * 0.45 * s, ph * s);
+  baseGrad.addColorStop(0, theme.grad[0]);
+  baseGrad.addColorStop(0.52, theme.grad[1]);
+  baseGrad.addColorStop(1, theme.grad[2]);
+  ctx.fillStyle = baseGrad;
+  ctx.fillRect(0, 0, pw * s, ph * s);
+
+  const topGlow = ctx.createRadialGradient(
+    36 * s,
+    40 * s,
+    0,
+    36 * s,
+    40 * s,
+    240 * s
+  );
+  topGlow.addColorStop(0, theme.glowRgba);
+  topGlow.addColorStop(1, theme.glowZeroRgba);
+  ctx.fillStyle = topGlow;
+  ctx.fillRect(0, 0, pw * s, ph * s);
+
+  // 선명한 도트 격자 패턴
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+  for (let gx = 16; gx < pw; gx += 18) {
+    for (let gy = 16; gy < ph; gy += 18) {
+      ctx.beginPath();
+      ctx.arc(gx * s, gy * s, 1.15 * s, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 좌측 하단 기하학 초승달 & 동심 궤도 장식
+  const ocx = -10 * s;
+  const ocy = 512 * s;
+  [230, 150, 92].forEach((r, idx) => {
+    ctx.beginPath();
+    ctx.arc(ocx, ocy, r * s, 0, Math.PI * 2);
+    ctx.fillStyle = theme.crescents[idx];
+    ctx.fill();
+  });
+
+  [275, 224, 174, 124].forEach((r, idx) => {
+    ctx.beginPath();
+    ctx.arc(ocx, ocy, r * s, 0, Math.PI * 2);
+    ctx.strokeStyle = theme.orbits[idx]?.color || 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = (idx === 1 ? 1.5 : 1.1) * s;
+    ctx.stroke();
+  });
+
+  // 궤도 위 포인트 도트 (프로필 원과 겹치지 않는 좌측 중단 위치)
+  const dotAngle = -72 * (Math.PI / 180);
+  ctx.beginPath();
+  ctx.arc(ocx + 224 * s * Math.cos(dotAngle), ocy + 224 * s * Math.sin(dotAngle), 5.5 * s, 0, Math.PI * 2);
+  ctx.fillStyle = theme.accent;
+  ctx.fill();
+
+  // 좌측 상단 포인트 바 + 3줄 영문 타이틀
+  const lx = 28 * s;
+  traceRoundedRect(ctx, lx, 34 * s, 36 * s, 4.5 * s, 2.25 * s);
+  ctx.fillStyle = theme.accent;
+  ctx.fill();
+
+  const headerTexts = [
+    { text: 'DIGITAL', y: 66 * s, opacity: 1.0 },
+    { text: 'EDUCATION', y: 90 * s, opacity: 1.0 },
+    { text: 'SUPPORTERS', y: 114 * s, opacity: 0.78 }
+  ];
+  ctx.font = `800 ${15 * s}px "Outfit", "Noto Sans KR", sans-serif`;
+  ctx.textBaseline = 'alphabetic';
+  headerTexts.forEach((item) => {
+    ctx.fillStyle = `rgba(255, 255, 255, ${item.opacity})`;
+    let curX = lx;
+    for (let i = 0; i < item.text.length; i++) {
+      const ch = item.text[i];
+      ctx.fillText(ch, curX, item.y);
+      curX += ctx.measureText(ch).width + 3.0 * s;
+    }
+  });
+
+  // 좌측 하단 'SEONGDONG · SEOUL' 텍스트 (파란 박스 아래 영역)
+  const footerText = 'SEONGDONG · SEOUL';
+  const footerSpacing = 2.1 * s;
+  ctx.font = `700 ${11.2 * s}px "Outfit", "Noto Sans KR", sans-serif`;
+  let totalFooterW = 0;
+  for (let i = 0; i < footerText.length; i++) {
+    totalFooterW += ctx.measureText(footerText[i]).width + (i < footerText.length - 1 ? footerSpacing : 0);
+  }
+  const footerStartX = ((pw * s) - totalFooterW) / 2;
+  const footerY = 468 * s;
+
+  // 텍스트 위 얇은 포인트 구분선
+  ctx.beginPath();
+  ctx.moveTo(footerStartX, footerY - 16 * s);
+  ctx.lineTo(footerStartX + 26 * s, footerY - 16 * s);
+  ctx.strokeStyle = theme.accent;
+  ctx.lineWidth = 2.0 * s;
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.78)';
+  let curFX = footerStartX;
+  for (let i = 0; i < footerText.length; i++) {
+    const ch = footerText[i];
+    ctx.fillText(ch, curFX, footerY);
+    curFX += ctx.measureText(ch).width + footerSpacing;
+  }
+
+  ctx.restore();
+
+  if (!profileImg || !(profileImg.naturalWidth || profileImg.width)) return;
 
   const photoScale = Number.isFinite(photoAdjust.scale) ? photoAdjust.scale : 1;
   const offsetX = (Number.isFinite(photoAdjust.offsetX) ? photoAdjust.offsetX : 0) * s;
@@ -349,7 +466,7 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {
 
   // 좌측 테마 패널(w: 236)과 우측 화이트 영역 경계선에 걸치는 원형 프로필 프레임
   const cx = 236 * s;
-  const cy = 282 * s;
+  const cy = 274 * s;
   const radius = 96 * s;
   const dashedRadius = radius + 17 * s;
 
@@ -1353,9 +1470,9 @@ export default function NameCardApp({ onNavigateBack }) {
                       boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
                     }}
                   >
-                    {/* 좌측 다크 테마 패널 (236px + 도트 패턴 + 상단 좌측 정렬 시그니처) */}
+                    {/* 좌측 다크 테마 패널 (236px + 도트 패턴 + 상단 좌측 정렬 시그니처 + 하단 SEONGDONG · SEOUL) */}
                     <div
-                      className="relative w-[236px] h-[500px] shrink-0 overflow-hidden"
+                      className="relative w-[236px] h-[500px] shrink-0 overflow-hidden flex flex-col justify-between"
                       style={{
                         background: `linear-gradient(160deg, ${activeTheme.grad[0]} 0%, ${activeTheme.grad[1]} 52%, ${activeTheme.grad[2]} 100%)`
                       }}
@@ -1383,6 +1500,17 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
                         <div className="text-[14px] font-extrabold tracking-[0.22em] text-white/75 leading-[1.45]">
                           SUPPORTERS
+                        </div>
+                      </div>
+
+                      {/* 좌측 하단 지역 표기 */}
+                      <div className="relative z-10 pb-[28px] flex flex-col items-center">
+                        <div
+                          className="w-[26px] h-[2px] mb-2"
+                          style={{ backgroundColor: activeTheme.accent }}
+                        />
+                        <div className="text-[11px] font-bold tracking-[0.22em] text-slate-200/80">
+                          SEONGDONG · SEOUL
                         </div>
                       </div>
                     </div>
