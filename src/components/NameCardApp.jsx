@@ -622,7 +622,7 @@ export default function NameCardApp({ onNavigateBack }) {
           </div>
 
           <div className="grid grid-cols-12 gap-3 items-end">
-            <div className="col-span-5 md:col-span-4">
+            <div className="col-span-5 sm:col-span-6">
               <label htmlFor="input-name" className="block text-xs font-bold text-slate-700 mb-1.5">
                 선생님 성함
               </label>
@@ -636,7 +636,7 @@ export default function NameCardApp({ onNavigateBack }) {
               />
             </div>
 
-            <div className="col-span-7 md:col-span-4">
+            <div className="col-span-7 sm:col-span-6">
               <label htmlFor="input-phone" className="block text-xs font-bold text-slate-700 mb-1.5">
                 휴대폰 번호
               </label>
@@ -648,17 +648,6 @@ export default function NameCardApp({ onNavigateBack }) {
                 placeholder="010-0000-0000"
                 className="w-full px-3.5 py-2 text-sm text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
               />
-            </div>
-
-            <div className="col-span-12 md:col-span-4">
-              <button
-                type="button"
-                onClick={handleDownloadOrSave}
-                disabled={isSaving}
-                className="w-full py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>{isSaving ? '고해상도 저장 중...' : '고해상도 JPG 저장'}</span>
-              </button>
             </div>
 
             <div className="col-span-12">
@@ -684,6 +673,17 @@ export default function NameCardApp({ onNavigateBack }) {
                 placeholder={DEFAULT_SLOGAN}
                 className="w-full px-3.5 py-2 text-sm text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-medium transition-all"
               />
+            </div>
+
+            <div className="col-span-12">
+              <button
+                type="button"
+                onClick={handleDownloadOrSave}
+                disabled={isSaving}
+                className="w-full py-2.5 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>{isSaving ? '고해상도 저장 중...' : '고해상도 JPG 저장'}</span>
+              </button>
             </div>
           </div>
 
