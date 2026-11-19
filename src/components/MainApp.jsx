@@ -381,13 +381,13 @@ export default function MainApp({
         window.sessionStorage.removeItem('sungdong_room_popup_session_done');
         const todayStr = getLocalDateString(new Date());
         removeSavedItem(`sungdong_room_popup_hide_today_${todayStr}`);
-      } catch (_) {}
+      } catch (_) { }
       roomPopupDismissedRef.current = null;
     } else {
       try {
         window.__sungdong_initial_room_popup_shown = true;
         window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
-      } catch (_) {}
+      } catch (_) { }
     }
   };
 
@@ -401,7 +401,7 @@ export default function MainApp({
           window.localStorage.removeItem(k);
         }
       });
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   const closeRoomStatusPopup = (hideToday = false) => {
@@ -414,7 +414,7 @@ export default function MainApp({
         const todayStr = (roomStatusPopup && roomStatusPopup.dateStr) || getLocalDateString(new Date());
         setSavedItem(`sungdong_room_popup_hide_today_${todayStr}`, 'true');
       }
-    } catch (_) {}
+    } catch (_) { }
     roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
     setRoomStatusPopup(null);
   };
@@ -991,7 +991,7 @@ export default function MainApp({
         setRoomStatusPopup(null);
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
 
     // 다른 작업을 하다가 메인화면으로 돌아온 경우 또는 이미 팝업을 표시한 경우 다시 띄우지 않음 ('항시 표시' 모드 제외)
     if (roomPopupMode !== 'always') {
@@ -1004,7 +1004,7 @@ export default function MainApp({
           setRoomStatusPopup(null);
           return;
         }
-      } catch (_) {}
+      } catch (_) { }
     }
 
     if (isLoggedIn || !selectedTeam) {
@@ -1147,7 +1147,7 @@ export default function MainApp({
           try {
             window.__sungdong_initial_room_popup_shown = true;
             window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
-          } catch (_) {}
+          } catch (_) { }
         }
       } catch (err) {
         console.error('교육실 사용현황 로드 실패:', err);
@@ -2561,7 +2561,7 @@ export default function MainApp({
       } else {
         roomPopupDismissedRef.current = null;
       }
-    } catch (_) {}
+    } catch (_) { }
     if (window.history.state && window.history.state.subView === 'logWrite') {
       window.history.back();
     }
@@ -3419,7 +3419,7 @@ export default function MainApp({
         try {
           window.__sungdong_initial_room_popup_shown = true;
           window.sessionStorage.setItem('sungdong_room_popup_session_done', 'true');
-        } catch (_) {}
+        } catch (_) { }
       }
       const todayStr = getInitialWeekday();
       setDate(todayStr);
@@ -3487,7 +3487,7 @@ export default function MainApp({
   const handleMainScroll = (e) => {
     try {
       window.sessionStorage.setItem('sungdong_main_menu_scroll', String(e.currentTarget.scrollTop));
-    } catch (err) {}
+    } catch (err) { }
   };
 
   useLayoutEffect(() => {
@@ -3502,7 +3502,7 @@ export default function MainApp({
             }
           });
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   }, [isLoggedIn]);
 
@@ -3854,7 +3854,7 @@ export default function MainApp({
                 icon={<IconNameCard />}
                 chipColor="chip-indigo"
                 label="명함 만들기"
-                desc="디지털교육서포터즈 명함 편집 · 300DPI 저장"
+                desc="서포터즈 선생님 명함 제작"
               />
             </MenuGroup>
 
@@ -4114,11 +4114,10 @@ export default function MainApp({
                         key={preset.value}
                         type="button"
                         onClick={() => handleChangeBgGrayLevel(preset.value)}
-                        className={`py-1.5 px-1 rounded-lg border text-[12px] font-bold transition cursor-pointer whitespace-nowrap ${
-                          bgGrayLevel === preset.value
+                        className={`py-1.5 px-1 rounded-lg border text-[12px] font-bold transition cursor-pointer whitespace-nowrap ${bgGrayLevel === preset.value
                             ? 'border-blue-600 bg-blue-50 text-blue-700'
                             : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
-                        }`}
+                          }`}
                       >
                         {preset.label}
                       </button>
@@ -4140,15 +4139,13 @@ export default function MainApp({
                     <button
                       type="button"
                       onClick={() => handleChangeRoomPopupMode('once')}
-                      className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${
-                        roomPopupMode === 'once'
+                      className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${roomPopupMode === 'once'
                           ? 'border-blue-600 bg-blue-50/70'
                           : 'border-slate-200 bg-white hover:bg-slate-50'
-                      }`}
+                        }`}
                     >
-                      <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                        roomPopupMode === 'once' ? 'border-blue-600' : 'border-slate-400'
-                      }`}>
+                      <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${roomPopupMode === 'once' ? 'border-blue-600' : 'border-slate-400'
+                        }`}>
                         {roomPopupMode === 'once' && <span className="w-2 h-2 rounded-full bg-blue-600" />}
                       </span>
                       <div className="min-w-0">
@@ -4164,15 +4161,13 @@ export default function MainApp({
                     <button
                       type="button"
                       onClick={() => handleChangeRoomPopupMode('always')}
-                      className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${
-                        roomPopupMode === 'always'
+                      className={`w-full text-left p-3 rounded-xl border-2 flex items-start gap-2.5 transition cursor-pointer active:scale-[0.99] ${roomPopupMode === 'always'
                           ? 'border-blue-600 bg-blue-50/70'
                           : 'border-slate-200 bg-white hover:bg-slate-50'
-                      }`}
+                        }`}
                     >
-                      <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                        roomPopupMode === 'always' ? 'border-blue-600' : 'border-slate-400'
-                      }`}>
+                      <span className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${roomPopupMode === 'always' ? 'border-blue-600' : 'border-slate-400'
+                        }`}>
                         {roomPopupMode === 'always' && <span className="w-2 h-2 rounded-full bg-blue-600" />}
                       </span>
                       <div className="min-w-0">
@@ -4193,11 +4188,10 @@ export default function MainApp({
                     <span className="text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900">
                       3. 관리자 비밀번호
                     </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${
-                      hasAdminPassword
+                    <span className={`px-2 py-0.5 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${hasAdminPassword
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                         : 'bg-slate-100 text-slate-600 border border-slate-200'
-                    }`}>
+                      }`}>
                       {hasAdminPassword ? '저장됨 · 관리자 활성' : '미저장'}
                     </span>
                   </div>
