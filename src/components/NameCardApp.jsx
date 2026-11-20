@@ -28,40 +28,47 @@ const CARD_SIZES = {
   contact: 29.5
 };
 const NAME_COLOR_HEX = '#151E2E';
-const DEFAULT_SLOGAN = '배우는 기쁨, 쓰는 즐거움! 디지털로 일상에 재미를 더해 드려요';
+const DEFAULT_SLOGAN = '배우는 기쁨, 쓰는 즐거움!\n디지털로 일상에 재미를 더해 드려요';
 
 const SLOGAN_PRESETS = [
-  '천천히 배워도 괜찮아요! 손안의 스마트폰이 든든한 친구가 됩니다',
-  '하나씩 차근차근, 함께 웃으며! 스마트폰이 쉬워지는 시간이에요',
-  '몰라도 괜찮아요, 물어보세요! 친절하게 끝까지 알려 드릴게요',
-  '오늘 배운 한 가지가 내일의 자신감! 즐거운 디지털 배움터입니다',
-  '늦은 배움은 없어요! 지금 시작하는 스마트폰이 가장 빠릅니다',
-  '누르고, 찍고, 보내고! 손끝으로 열리는 새로운 세상을 만나요',
-  '배우는 재미, 써보는 기쁨! 스마트폰과 친해지는 행복한 시간',
-  '어렵던 스마트폰이 놀이가 되는 곳! 즐겁게 배우고 신나게 써요',
-  '손주와 영상통화, 친구와 단톡방! 디지털로 마음을 잇습니다',
-  '사진 한 장, 메시지 한 줄! 소중한 사람과 더 가까워지는 방법',
-  '멀리 있어도 가까이! 스마트폰으로 사랑을 전하는 법을 알려 드려요',
-  '안부는 문자로, 웃음은 사진으로! 소통이 즐거워지는 스마트폰 교실',
-  '기차표 예매부터 은행 업무까지! 혼자서도 척척 해내는 디지털 생활',
-  '키오스크 앞에서도 당당하게! 생활 속 디지털이 쉬워집니다',
-  '길 찾기, 병원 예약, 장보기까지! 스마트폰으로 편리한 하루를 만들어요',
-  '내 손으로 직접 하는 기쁨! 디지털 자립을 함께 응원합니다',
-  '스스로 해냈다는 뿌듯함! 그 순간을 위해 곁에서 도와드려요',
-  '똑똑하게 쓰고 안전하게 지켜요! 스미싱·보이스피싱 걱정 끝',
-  '의심되면 누르지 말고 물어보세요! 안전한 디지털 생활을 지켜드려요',
-  '믿고 배우는 스마트폰 교실! 쉽고 안전하게 알려 드립니다',
-  '어르신의 디지털 첫걸음, 함께 걷겠습니다! 언제든 편하게 찾아주세요',
-  '열 번 물어도 열 번 웃으며! 마음까지 전하는 스마트폰 선생님',
-  '디지털 세상의 친절한 길잡이! 모르는 건 언제든 물어보세요',
-  '배움에 나이는 숫자일 뿐! 오늘도 한 뼘 더 자라는 우리',
-  '함께라서 쉽고, 함께라서 즐거운! 복지관 스마트폰 교실입니다',
-  '사진 꾸미고, 영상 만들고! 나만의 추억을 스마트폰에 담아요',
-  '유튜브도, 카카오톡도 내 마음대로! 일상이 더 신나는 디지털 생활',
-  '손안의 작은 세상, 활짝 열어 드려요! 매일매일 새로운 즐거움',
-  '스마트폰 하나로 하루가 풍성하게! 재미와 편리함을 함께 배워요',
-  '디지털로 젊어지는 마음! 배우는 즐거움이 일상의 활력이 됩니다'
+  '천천히 배워도 괜찮아요!\n손안의 스마트폰이 든든한 친구가 됩니다',
+  '하나씩 차근차근, 함께 웃으며!\n스마트폰이 쉬워지는 시간이에요',
+  '몰라도 괜찮아요, 물어보세요!\n친절하게 끝까지 알려 드릴게요',
+  '오늘 배운 한 가지가 내일의 자신감!\n즐거운 디지털 배움터입니다',
+  '늦은 배움은 없어요!\n지금 시작하는 스마트폰이 가장 빠릅니다',
+  '누르고, 찍고, 보내고!\n손끝으로 열리는 새로운 세상을 만나요',
+  '배우는 재미, 써보는 기쁨!\n스마트폰과 친해지는 행복한 시간',
+  '어렵던 스마트폰이 놀이가 되는 곳!\n즐겁게 배우고 신나게 써요',
+  '손주와 영상통화, 친구와 단톡방!\n디지털로 마음을 잇습니다',
+  '사진 한 장, 메시지 한 줄!\n소중한 사람과 더 가까워지는 방법',
+  '멀리 있어도 가까이!\n스마트폰으로 사랑을 전하는 법을 알려 드려요',
+  '안부는 문자로, 웃음은 사진으로!\n소통이 즐거워지는 스마트폰 교실',
+  '기차표 예매부터 은행 업무까지!\n혼자서도 척척 해내는 디지털 생활',
+  '키오스크 앞에서도 당당하게!\n생활 속 디지털이 쉬워집니다',
+  '길 찾기, 병원 예약, 장보기까지!\n스마트폰으로 편리한 하루를 만들어요',
+  '내 손으로 직접 하는 기쁨!\n디지털 자립을 함께 응원합니다',
+  '스스로 해냈다는 뿌듯함!\n그 순간을 위해 곁에서 도와드려요',
+  '똑똑하게 쓰고 안전하게 지켜요!\n스미싱·보이스피싱 걱정 끝',
+  '의심되면 누르지 말고 물어보세요!\n안전한 디지털 생활을 지켜드려요',
+  '믿고 배우는 스마트폰 교실!\n쉽고 안전하게 알려 드립니다',
+  '어르신의 디지털 첫걸음, 함께 걷겠습니다!\n언제든 편하게 찾아주세요',
+  '열 번 물어도 열 번 웃으며!\n마음까지 전하는 스마트폰 선생님',
+  '디지털 세상의 친절한 길잡이!\n모르는 건 언제든 물어보세요',
+  '배움에 나이는 숫자일 뿐!\n오늘도 한 뼘 더 자라는 우리',
+  '함께라서 쉽고, 함께라서 즐거운!\n복지관 스마트폰 교실입니다',
+  '사진 꾸미고, 영상 만들고!\n나만의 추억을 스마트폰에 담아요',
+  '유튜브도, 카카오톡도 내 마음대로!\n일상이 더 신나는 디지털 생활',
+  '손안의 작은 세상, 활짝 열어 드려요!\n매일매일 새로운 즐거움',
+  '스마트폰 하나로 하루가 풍성하게!\n재미와 편리함을 함께 배워요',
+  '디지털로 젊어지는 마음!\n배우는 즐거움이 일상의 활력이 됩니다'
 ];
+
+const normalizePresetSlogan = (raw) => {
+  if (typeof raw !== 'string') return DEFAULT_SLOGAN;
+  const allPresets = [DEFAULT_SLOGAN, ...SLOGAN_PRESETS];
+  const matched = allPresets.find(p => p === raw || p.replace(/\n/g, ' ') === raw.trim());
+  return matched || raw;
+};
 
 const PANEL_THEMES = [
   {
@@ -651,7 +658,9 @@ export default function NameCardApp({ onNavigateBack }) {
     typeof initSaved.phoneInput === 'string' ? initSaved.phoneInput : '010-'
   );
   const [sloganInput, setSloganInput] = useState(() =>
-    typeof initSaved.sloganInput === 'string' ? initSaved.sloganInput : DEFAULT_SLOGAN
+    typeof initSaved.sloganInput === 'string'
+      ? normalizePresetSlogan(initSaved.sloganInput)
+      : DEFAULT_SLOGAN
   );
   const [themeId, setThemeId] = useState(() =>
     initSaved.themeId && PANEL_THEMES.some(t => t.id === initSaved.themeId)
@@ -1622,7 +1631,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             setSloganInput(phrase);
                             setIsSloganMenuOpen(false);
                           }}
-                          className={`w-full px-4 py-3 text-left text-lg sm:text-xl leading-snug break-words transition cursor-pointer ${isSelected
+                          className={`w-full px-4 py-3 text-left text-lg sm:text-xl leading-snug break-keep break-words whitespace-pre-line transition cursor-pointer ${isSelected
                             ? 'bg-blue-50 text-[#13386E] font-extrabold'
                             : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
                             }`}
