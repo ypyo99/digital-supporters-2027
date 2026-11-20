@@ -49,7 +49,30 @@ const sendEmail = async (item, { safeName, mimeType, buffer }) => {
       })
     });
     const json = await res.json().catch(() => null);
-    return Boolean(json?.success && json?.emailSent !== false);
+    if (json?.success && json?.emailSent !== false) return true;
+    // GAS 메일 권한 미승인 시 FormSubmit 백업
+    try {
+      const formBody = new URLSearchParams();
+      formBody.append('선생님_성함', `${item.teacherName || '-'} 선생님`);
+      formBody.append('휴대폰_번호', item.phone || '-');
+      formBody.append('테마_문구', item.slogan || '-');
+      formBody.append('테마_색상', item.themeLabel || '-');
+      formBody.append('파일명', safeName);
+      formBody.append('_subject', `명함 인쇄 요청: ${item.teacherName || '서포터즈'} 선생님`);
+      formBody.append('_captcha', 'false');
+      formBody.append('_template', 'table');
+      await fetch(`https://formsubmit.co/${EMAIL_TO}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept: 'application/json'
+        },
+        body: formBody.toString()
+      });
+      return true;
+    } catch {
+      return false;
+    }
   } catch (e) {
     console.warn('Worker 이메일 발송 실패:', e);
     return false;

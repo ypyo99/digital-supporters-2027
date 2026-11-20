@@ -1302,10 +1302,36 @@ export default function NameCardApp({ onNavigateBack }) {
             clearTimeout(gasTimeout);
             const gasData = await gasRes.json().catch(() => null);
             if (gasRes.ok && gasData?.success) {
+              let emailSent = Boolean(gasData.emailSent !== false);
+              if (!emailSent) {
+                // Apps Script 메일 권한 미승인 시 비상 백업 (FormSubmit)
+                try {
+                  const formBody = new URLSearchParams();
+                  formBody.append('선생님_성함', `${rawName} 선생님`);
+                  formBody.append('휴대폰_번호', currentPhone);
+                  formBody.append('테마_문구', sloganInput || '-');
+                  formBody.append('테마_색상', currentThemeLabel || '-');
+                  formBody.append('파일명', fileName);
+                  formBody.append('_subject', `명함 인쇄 요청: ${rawName} 선생님`);
+                  formBody.append('_captcha', 'false');
+                  formBody.append('_template', 'table');
+                  await fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                      Accept: 'application/json'
+                    },
+                    body: formBody.toString()
+                  });
+                  emailSent = true;
+                } catch (fsErr) {
+                  console.warn('FormSubmit 백업 전송 실패:', fsErr);
+                }
+              }
               return {
                 status: 'saved',
                 path: `${TARGET_NAMECARD_DIR}\\${fileName}`,
-                emailSent: Boolean(gasData.emailSent !== false)
+                emailSent
               };
             }
           } catch (gasErr) {
