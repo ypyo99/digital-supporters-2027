@@ -1993,7 +1993,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         <img
                           src={SEOUL_SYMBOL_BASE64}
                           alt="서울시 로고"
-                          className="h-[48px] w-auto mr-[15px] object-contain"
+                          className="h-[58px] w-auto mr-[16px] object-contain"
                         />
                         <div>
                           <div className="text-[16px] font-medium text-[#475569] leading-none mb-1.5 tracking-[-0.01em]">
