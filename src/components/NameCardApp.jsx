@@ -1526,7 +1526,7 @@ export default function NameCardApp({ onNavigateBack }) {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-[940px] mx-auto px-2.5 sm:px-5 pt-4 flex flex-col items-center">
+      <main className="flex-1 w-full max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-4 flex flex-col items-center">
         {/* 상단 제목 */}
         <div className="w-full flex flex-wrap items-center justify-between gap-2 px-1 mb-3">
           <h2 className="text-[19px] sm:text-xl font-bold text-slate-800 flex items-center gap-2 tracking-tight">
