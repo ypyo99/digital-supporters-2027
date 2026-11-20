@@ -2072,42 +2072,42 @@ export default function NameCardApp({ onNavigateBack }) {
 
                       {/* 3. 하단 연락처 */}
                       <div className="pt-4 border-t border-slate-200 flex flex-col space-y-2.5">
-                        <div className="flex items-center">
+                        <div className="flex items-center h-[34px]">
                           <span
                             className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0"
                             style={{ backgroundColor: `${activeTheme.swatch}14`, color: activeTheme.swatch }}
                           >
-                            <svg className="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-[17px] h-[17px] block" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
                             </svg>
                           </span>
                           <span
-                            className="text-[15.5px] font-bold ml-3 mr-3 w-[48px]"
+                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[4px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             휴대폰
                           </span>
-                          <span className="text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans">
+                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums relative -top-[4px]">
                             {displayPhone}
                           </span>
                         </div>
 
-                        <div className="flex items-center">
+                        <div className="flex items-center h-[34px]">
                           <span
                             className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0"
                             style={{ backgroundColor: `${activeTheme.swatch}14`, color: activeTheme.swatch }}
                           >
-                            <svg className="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="currentColor">
+                            <svg className="w-[17px] h-[17px] block" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M3 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16H3zm4-14v2h2V7H7zm0 4v2h2v-2H7zm4-4v2h2V7h-2zm0 4v2h2v-2h-2zm6 10V9h3a1 1 0 0 1 1 1v11h-4zm1-8v2h2v-2h-2zm0 4v2h2v-2h-2z" />
                             </svg>
                           </span>
                           <span
-                            className="text-[15.5px] font-bold ml-3 mr-3 w-[48px]"
+                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[4px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             복지관
                           </span>
-                          <span className="text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans">
+                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums relative -top-[4px]">
                             02-2298-5117
                           </span>
                         </div>
