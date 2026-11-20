@@ -1576,8 +1576,7 @@ export default function NameCardApp({ onNavigateBack }) {
 
               {profilePhotoUrl && (
                 <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-300 space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-base sm:text-lg font-extrabold text-slate-800">프로필 사진 크기 · 위치 · 기울기 조절</span>
+                  <div className="flex items-center justify-end gap-2">
                     <button
                       type="button"
                       onClick={() => {
