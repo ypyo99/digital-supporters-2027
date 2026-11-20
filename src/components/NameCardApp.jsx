@@ -1631,13 +1631,13 @@ export default function NameCardApp({ onNavigateBack }) {
                             setSloganInput(phrase);
                             setIsSloganMenuOpen(false);
                           }}
-                          className={`w-full px-4 py-3 text-left text-lg sm:text-xl leading-snug break-keep break-words whitespace-pre-line transition cursor-pointer ${isSelected
+                          className={`w-full px-4 py-2.5 text-left text-base sm:text-lg leading-snug truncate transition cursor-pointer ${isSelected
                             ? 'bg-blue-50 text-[#13386E] font-extrabold'
                             : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
                             }`}
                         >
                           <span className="text-slate-400 font-bold mr-1.5">{idx + 1}.</span>
-                          {phrase}
+                          {phrase.replace(/\n/g, ' ')}
                         </button>
                       );
                     })}
