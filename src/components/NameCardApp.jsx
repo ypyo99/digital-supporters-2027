@@ -9,6 +9,7 @@ import { supabaseClient } from '../utils/supabase';
 
 const TARGET_NAMECARD_DIR = 'G:\\내 드라이브\\2027-Digital Supporters\\명함';
 const NAMECARD_QUEUE_ID = 'namecard-print-queue';
+const NAMECARD_DRIVE_CONFIG_ID = 'namecard-drive-config';
 const NAMECARD_EMAIL_TO = 'ypyo99@gmail.com';
 const GOOGLE_DRIVE_FOLDER_ID = '13BWCd8p70u9GGBEDHQBaO3ZRJL3DtD1I';
 const GOOGLE_DRIVE_FOLDER_URL = `https://drive.google.com/drive/u/0/folders/${GOOGLE_DRIVE_FOLDER_ID}`;
@@ -1313,7 +1314,21 @@ export default function NameCardApp({ onNavigateBack }) {
           window.location.origin === 'https://digital-supporters-2027.netlify.app';
         const browserMailPromise = sendEmailFromBrowser();
 
-        const gasUrl = import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
+        let remoteGasUrl = '';
+        try {
+          const { data: cfgRow } = await supabaseClient
+            .from('classroom_schedules')
+            .select('data')
+            .eq('id', NAMECARD_DRIVE_CONFIG_ID)
+            .maybeSingle();
+          if (cfgRow?.data?.gasUrl) {
+            remoteGasUrl = String(cfgRow.data.gasUrl).trim();
+          }
+        } catch {
+          // ignore config lookup error
+        }
+
+        const gasUrl = remoteGasUrl || import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
         if (gasUrl) {
           try {
             const gasRes = await fetch(gasUrl, {
@@ -1357,12 +1372,12 @@ export default function NameCardApp({ onNavigateBack }) {
         }
 
         const prevQueue = Array.isArray(existingRow?.data?.queue) ? existingRow.data.queue : [];
-        const pendingOnly = prevQueue.filter(item => item && item.status === 'pending' && item.fileName !== fileName).slice(-4);
-        const keptPendingIds = new Set(pendingOnly.map(item => item.requestId));
-        const keptQueue = prevQueue
-          .filter(item => item && item.fileName !== fileName)
-          .map(item => (item.status === 'pending' && keptPendingIds.has(item.requestId) ? item : { ...item, dataUrl: undefined }))
+        const pendingOnly = prevQueue.filter(item => item && item.status === 'pending' && item.fileName !== fileName).slice(-30);
+        const completedOnly = prevQueue
+          .filter(item => item && item.status !== 'pending' && item.fileName !== fileName)
+          .map(item => ({ ...item, dataUrl: undefined }))
           .slice(-8);
+        const keptQueue = [...completedOnly, ...pendingOnly];
         const nextQueue = [
           ...keptQueue,
           {
