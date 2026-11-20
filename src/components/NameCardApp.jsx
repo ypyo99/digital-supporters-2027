@@ -644,6 +644,34 @@ const formatPhoneInput = (rawValue = '') => {
   return `010-${tail.slice(0, 4)}-${tail.slice(4, 8)}`;
 };
 
+const buildCardFileName = (rawName) => {
+  const cleanName = String(rawName || '디지털교육서포터즈').replace(/\s*선생님\s*$/, '').trim() || '디지털교육서포터즈';
+  const safeTeacherName = cleanName.replace(/[<>:"/\\|?*]/g, '_');
+  const now = new Date();
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const dateStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+  const timeStr = `${pad2(now.getHours())}-${pad2(now.getMinutes())}-${pad2(now.getSeconds())}`;
+  return `${safeTeacherName} 명함_${dateStr}_${timeStr}.jpg`;
+};
+
+const dataUrlToNamedBlobUrl = (dataUrl, fileName) => {
+  if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:')) return dataUrl;
+  try {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    const file = new File([u8arr], fileName, { type: mime });
+    return URL.createObjectURL(file);
+  } catch (e) {
+    return dataUrl;
+  }
+};
+
 export default function NameCardApp({ onNavigateBack }) {
   const initialSavedStateRef = useRef(null);
   if (initialSavedStateRef.current === null) {
@@ -672,8 +700,13 @@ export default function NameCardApp({ onNavigateBack }) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveFeedback, setSaveFeedback] = useState(null); // { type: 'success' | 'error', text: string }
   const [previewDataUrl, setPreviewDataUrl] = useState('');
+  const [previewBlobUrl, setPreviewBlobUrl] = useState('');
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(() => loadSavedProfilePhotoSync());
   const [profilePreviewDataUrl, setProfilePreviewDataUrl] = useState('');
+  const [profilePreviewBlobUrl, setProfilePreviewBlobUrl] = useState('');
+  const [cardFileName, setCardFileName] = useState(() => buildCardFileName(initSaved.nameInput || '표영'));
+  const previewBlobRef = useRef('');
+  const profileBlobRef = useRef('');
   const [photoScale, setPhotoScale] = useState(() =>
     Number.isFinite(initSaved.photoScale) ? initSaved.photoScale : 1
   );
@@ -1229,15 +1262,40 @@ export default function NameCardApp({ onNavigateBack }) {
     return { defaultUrl, profileUrl };
   }, [activeTheme, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, photoRotation]);
 
-  // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
+  // 스마트폰에서 명함 이미지를 길게 누르거나 PC에서 우클릭 저장 시 지정된 파일명으로 다운로드되도록 동기화
   useEffect(() => {
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
         const { defaultUrl, profileUrl } = await captureCardsDataUrls();
         if (!cancelled) {
+          const nextName = buildCardFileName(nameInput);
+          setCardFileName(nextName);
           setPreviewDataUrl(defaultUrl || '');
           setProfilePreviewDataUrl(profileUrl || '');
+
+          if (defaultUrl) {
+            if (previewBlobRef.current && previewBlobRef.current.startsWith('blob:')) {
+              URL.revokeObjectURL(previewBlobRef.current);
+            }
+            const blobUrl = dataUrlToNamedBlobUrl(defaultUrl, nextName);
+            previewBlobRef.current = blobUrl;
+            setPreviewBlobUrl(blobUrl);
+          } else {
+            setPreviewBlobUrl('');
+          }
+
+          if (profileUrl) {
+            if (profileBlobRef.current && profileBlobRef.current.startsWith('blob:')) {
+              URL.revokeObjectURL(profileBlobRef.current);
+            }
+            const blobUrl = dataUrlToNamedBlobUrl(profileUrl, nextName);
+            profileBlobRef.current = blobUrl;
+            setProfilePreviewBlobUrl(blobUrl);
+          } else {
+            setProfilePreviewBlobUrl('');
+          }
+
           setIsPreviewFresh(true);
         }
       } catch (e) {
@@ -1249,6 +1307,33 @@ export default function NameCardApp({ onNavigateBack }) {
       clearTimeout(timer);
     };
   }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, photoRotation, captureCardsDataUrls]);
+
+  useEffect(() => {
+    return () => {
+      if (previewBlobRef.current && previewBlobRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(previewBlobRef.current);
+      }
+      if (profileBlobRef.current && profileBlobRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(profileBlobRef.current);
+      }
+    };
+  }, []);
+
+  const refreshCardFileNameOnContextMenu = (isProfile) => {
+    const nextFileName = buildCardFileName(nameInput);
+    setCardFileName(nextFileName);
+    const targetDataUrl = isProfile ? profilePreviewDataUrl : previewDataUrl;
+    if (targetDataUrl) {
+      const targetRef = isProfile ? profileBlobRef : previewBlobRef;
+      const setTargetState = isProfile ? setProfilePreviewBlobUrl : setPreviewBlobUrl;
+      if (targetRef.current && targetRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(targetRef.current);
+      }
+      const newBlobUrl = dataUrlToNamedBlobUrl(targetDataUrl, nextFileName);
+      targetRef.current = newBlobUrl;
+      setTargetState(newBlobUrl);
+    }
+  };
 
   const handleDownloadOrSave = async (targetMode = 'auto') => {
     if ((!cardRef.current && !profileCardRef.current) || isSaving) return;
@@ -1271,12 +1356,7 @@ export default function NameCardApp({ onNavigateBack }) {
         dataUrl = wantProfile ? (profileUrl || defaultUrl) : defaultUrl;
       }
       const rawName = (nameInput.trim() || '디지털교육서포터즈').replace(/\s*선생님\s*$/, '').trim() || '디지털교육서포터즈';
-      const safeTeacherName = rawName.replace(/[<>:"/\\|?*]/g, '_');
-      const now = new Date();
-      const pad2 = (n) => String(n).padStart(2, '0');
-      const dateStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
-      const timeStr = `${pad2(now.getHours())}-${pad2(now.getMinutes())}-${pad2(now.getSeconds())}`;
-      const fileName = `${safeTeacherName}_명함_${dateStr}_${timeStr}.jpg`;
+      const fileName = buildCardFileName(rawName);
       const emailSubject = `명함 인쇄 요청: ${rawName} 선생님`;
       const currentPhone = formatPhoneInput(phoneInput);
       const currentThemeLabel = activeTheme?.label || '';
@@ -1907,14 +1987,27 @@ export default function NameCardApp({ onNavigateBack }) {
                   position: 'relative'
                 }}
               >
-                {profilePreviewDataUrl && (
-                  <img
-                    src={profilePreviewDataUrl}
-                    alt={`${nameInput.trim() || '디지털교육서포터즈'}_프로필명함.jpg`}
+                {(profilePreviewBlobUrl || profilePreviewDataUrl) && (
+                  <a
+                    href={profilePreviewBlobUrl || profilePreviewDataUrl}
+                    download={cardFileName}
                     data-html2canvas-ignore="true"
-                    className="absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 pointer-events-auto opacity-[0.01]"
-                    style={{ WebkitTouchCallout: 'default' }}
-                  />
+                    className="absolute inset-0 w-full h-full z-20 pointer-events-auto block"
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                    onContextMenu={() => {
+                      refreshCardFileNameOnContextMenu(true);
+                    }}
+                  >
+                    <img
+                      src={profilePreviewBlobUrl || profilePreviewDataUrl}
+                      alt={cardFileName}
+                      data-html2canvas-ignore="true"
+                      className="w-full h-full object-contain rounded-[6px] opacity-[0.01]"
+                      style={{ WebkitTouchCallout: 'default' }}
+                    />
+                  </a>
                 )}
                 {/* 원형 프로필 사진 직접 터치(드래그/핀치 줌) 및 마우스 드래그/휠 조작 영역 (잠금 해제 시에만 활성) */}
                 {!isPhotoLocked && (
@@ -2272,14 +2365,27 @@ export default function NameCardApp({ onNavigateBack }) {
                   position: 'relative'
                 }}
               >
-                {previewDataUrl && (
-                  <img
-                    src={previewDataUrl}
-                    alt={`${nameInput.trim() || '디지털교육서포터즈'}_명함.jpg`}
+                {(previewBlobUrl || previewDataUrl) && (
+                  <a
+                    href={previewBlobUrl || previewDataUrl}
+                    download={cardFileName}
                     data-html2canvas-ignore="true"
-                    className="absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 pointer-events-auto opacity-[0.01]"
-                    style={{ WebkitTouchCallout: 'default' }}
-                  />
+                    className="absolute inset-0 w-full h-full z-20 pointer-events-auto block"
+                    onClick={(e) => {
+                      e.preventDefault();
+                    }}
+                    onContextMenu={() => {
+                      refreshCardFileNameOnContextMenu(false);
+                    }}
+                  >
+                    <img
+                      src={previewBlobUrl || previewDataUrl}
+                      alt={cardFileName}
+                      data-html2canvas-ignore="true"
+                      className="w-full h-full object-contain rounded-[6px] opacity-[0.01]"
+                      style={{ WebkitTouchCallout: 'default' }}
+                    />
+                  </a>
                 )}
                 <div
                   id="card-scale"
