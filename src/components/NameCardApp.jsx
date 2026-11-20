@@ -686,6 +686,7 @@ export default function NameCardApp({ onNavigateBack }) {
   const [photoRotation, setPhotoRotation] = useState(() =>
     Number.isFinite(initSaved.photoRotation) ? initSaved.photoRotation : 0
   );
+  const [isPhotoLocked, setIsPhotoLocked] = useState(true);
   const [isPreviewFresh, setIsPreviewFresh] = useState(false);
   const hasHydratedPhotoRef = useRef(false);
 
@@ -805,7 +806,7 @@ export default function NameCardApp({ onNavigateBack }) {
 
   useEffect(() => {
     const el = photoHitAreaRef.current;
-    if (!el || !profilePhotoUrl) return;
+    if (!el || !profilePhotoUrl || isPhotoLocked) return;
 
     const clampOff = (v) => Math.max(-120, Math.min(120, Math.round(v)));
     const clampSc = (v) => Math.max(0.6, Math.min(2.2, Math.round(v * 100) / 100));
@@ -936,7 +937,7 @@ export default function NameCardApp({ onNavigateBack }) {
       el.removeEventListener('touchcancel', handleTouchEnd);
       el.removeEventListener('wheel', handleWheel);
     };
-  }, [profilePhotoUrl]);
+  }, [profilePhotoUrl, isPhotoLocked]);
 
   useEffect(() => {
     let active = true;
@@ -1680,23 +1681,41 @@ export default function NameCardApp({ onNavigateBack }) {
 
               {profilePhotoUrl && (
                 <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-300 space-y-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm sm:text-base font-bold text-slate-700">사진 위치/크기 조정</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPhotoScale(1);
-                        setPhotoOffsetX(0);
-                        setPhotoOffsetY(0);
-                        setPhotoRotation(0);
-                      }}
-                      className="px-3 py-1.5 text-sm sm:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0"
-                    >
-                      기본값 초기화
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsPhotoLocked(v => !v);
+                          setIsDraggingPhoto(false);
+                        }}
+                        aria-pressed={isPhotoLocked}
+                        className={`px-3 py-1.5 text-sm sm:text-base font-bold rounded-lg border cursor-pointer transition shrink-0 ${
+                          isPhotoLocked
+                            ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300'
+                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
+                        }`}
+                      >
+                        {isPhotoLocked ? '🔒 잠금됨' : '🔓 조절 중'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isPhotoLocked}
+                        onClick={() => {
+                          setPhotoScale(1);
+                          setPhotoOffsetX(0);
+                          setPhotoOffsetY(0);
+                          setPhotoRotation(0);
+                        }}
+                        className="px-3 py-1.5 text-sm sm:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0 disabled:opacity-45 disabled:cursor-not-allowed"
+                      >
+                        기본값 초기화
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  <div className={`grid grid-cols-1 md:grid-cols-2 gap-2.5 transition-opacity ${isPhotoLocked ? 'opacity-50 pointer-events-none select-none' : ''}`}>
                     {/* 크기 조절 */}
                     <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
                       <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 크기</span>
@@ -1889,41 +1908,43 @@ export default function NameCardApp({ onNavigateBack }) {
                     style={{ WebkitTouchCallout: 'default' }}
                   />
                 )}
-                {/* 원형 프로필 사진 직접 터치(드래그/핀치 줌) 및 마우스 드래그/휠 조작 영역 */}
-                <div
-                  ref={photoHitAreaRef}
-                  data-html2canvas-ignore="true"
-                  title="드래그하여 사진 이동 · 두 손가락(또는 휠)으로 크기 조절"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    photoGestureRef.current = {
-                      mode: 'mouse',
-                      startX: e.clientX,
-                      startY: e.clientY,
-                      startOffsetX: photoOffsetX,
-                      startOffsetY: photoOffsetY,
-                      startScale: photoScale,
-                      startDist: 0,
-                      startMidX: 0,
-                      startMidY: 0
-                    };
-                    setIsDraggingPhoto(true);
-                  }}
-                  style={{
-                    position: 'absolute',
-                    left: `${(236 - 102) * cardScale}px`,
-                    top: `${(274 - 102) * cardScale}px`,
-                    width: `${204 * cardScale}px`,
-                    height: `${204 * cardScale}px`,
-                    borderRadius: '9999px',
-                    zIndex: 30,
-                    touchAction: 'none',
-                    cursor: isDraggingPhoto ? 'grabbing' : 'grab',
-                    userSelect: 'none',
-                    WebkitUserSelect: 'none'
-                  }}
-                />
+                {/* 원형 프로필 사진 직접 터치(드래그/핀치 줌) 및 마우스 드래그/휠 조작 영역 (잠금 해제 시에만 활성) */}
+                {!isPhotoLocked && (
+                  <div
+                    ref={photoHitAreaRef}
+                    data-html2canvas-ignore="true"
+                    title="드래그하여 사진 이동 · 두 손가락(또는 휠)으로 크기 조절"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      photoGestureRef.current = {
+                        mode: 'mouse',
+                        startX: e.clientX,
+                        startY: e.clientY,
+                        startOffsetX: photoOffsetX,
+                        startOffsetY: photoOffsetY,
+                        startScale: photoScale,
+                        startDist: 0,
+                        startMidX: 0,
+                        startMidY: 0
+                      };
+                      setIsDraggingPhoto(true);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: `${(236 - 102) * cardScale}px`,
+                      top: `${(274 - 102) * cardScale}px`,
+                      width: `${204 * cardScale}px`,
+                      height: `${204 * cardScale}px`,
+                      borderRadius: '9999px',
+                      zIndex: 30,
+                      touchAction: 'none',
+                      cursor: isDraggingPhoto ? 'grabbing' : 'grab',
+                      userSelect: 'none',
+                      WebkitUserSelect: 'none'
+                    }}
+                  />
+                )}
                 {/* 명함 내 프로필 사진 우측 삭제(X) 버튼 (저장 이미지에는 포함되지 않음) */}
                 <button
                   type="button"
