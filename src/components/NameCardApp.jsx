@@ -1918,11 +1918,14 @@ export default function NameCardApp({ onNavigateBack }) {
                           </span>
                         </div>
 
-                        <div
-                          className="mt-6 pl-3.5 text-[18.5px] font-medium text-[#334155] leading-[1.55] whitespace-pre-wrap break-keep break-words"
-                          style={{ borderLeft: `4px solid ${activeTheme.accent}` }}
-                        >
-                          {sloganInput}
+                        <div className="mt-6 flex items-stretch gap-3.5">
+                          <div
+                            className="w-[4px] shrink-0 rounded-full mt-[6px] mb-[2px]"
+                            style={{ backgroundColor: activeTheme.accent }}
+                          />
+                          <div className="text-[18.5px] font-medium text-[#334155] leading-[1.55] whitespace-pre-wrap break-keep break-words">
+                            {sloganInput}
+                          </div>
                         </div>
                       </div>
 
