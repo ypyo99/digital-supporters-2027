@@ -1347,6 +1347,11 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
 
                                           return (
                                             <div className="flex items-center gap-1 sm:gap-1.5">
+                                              <div
+                                                className={`min-h-[26px] sm:min-h-[30px] min-w-[48px] sm:min-w-[60px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
+                                              >
+                                                {btnLabel}
+                                              </div>
                                               {isEnded && (
                                                 <div
                                                   className="min-h-[26px] sm:min-h-[30px] min-w-[44px] sm:min-w-[52px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700"
@@ -1354,11 +1359,6 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                                   종료
                                                 </div>
                                               )}
-                                              <div
-                                                className={`min-h-[26px] sm:min-h-[30px] min-w-[48px] sm:min-w-[60px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
-                                              >
-                                                {btnLabel}
-                                              </div>
                                             </div>
                                           );
                                         })()}
