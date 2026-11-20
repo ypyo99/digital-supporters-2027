@@ -2082,12 +2082,12 @@ export default function NameCardApp({ onNavigateBack }) {
                             </svg>
                           </span>
                           <span
-                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[4px]"
+                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[8px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             휴대폰
                           </span>
-                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums relative -top-[4px]">
+                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums relative -top-[14px]">
                             {displayPhone}
                           </span>
                         </div>
@@ -2102,12 +2102,12 @@ export default function NameCardApp({ onNavigateBack }) {
                             </svg>
                           </span>
                           <span
-                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[4px]"
+                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[8px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             복지관
                           </span>
-                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums relative -top-[4px]">
+                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums relative -top-[14px]">
                             02-2298-5117
                           </span>
                         </div>
