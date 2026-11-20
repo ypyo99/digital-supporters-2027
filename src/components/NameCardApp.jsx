@@ -723,6 +723,23 @@ export default function NameCardApp({ onNavigateBack }) {
   const profileCardRef = useRef(null);
   const sloganMenuRef = useRef(null);
   const profileFileInputRef = useRef(null);
+  const remoteGasUrlRef = useRef('');
+
+  useEffect(() => {
+    let active = true;
+    supabaseClient
+      .from('classroom_schedules')
+      .select('data')
+      .eq('id', NAMECARD_DRIVE_CONFIG_ID)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (active && data?.data?.gasUrl) {
+          remoteGasUrlRef.current = String(data.data.gasUrl).trim();
+        }
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
   const cachedProfileImgRef = useRef({ url: '', img: null });
   const livePhotoCanvasRef = useRef(null);
   const [loadedProfileImg, setLoadedProfileImg] = useState(null);
@@ -1147,7 +1164,7 @@ export default function NameCardApp({ onNavigateBack }) {
       });
 
       drawRightPanelOnCanvas(canvas, activeTheme);
-      defaultUrl = canvas.toDataURL('image/jpeg', 0.92);
+      defaultUrl = canvas.toDataURL('image/jpeg', 0.86);
     }
 
     let profileUrl = '';
@@ -1191,7 +1208,7 @@ export default function NameCardApp({ onNavigateBack }) {
           rotation: photoRotation
         });
       }
-      profileUrl = profileCanvas.toDataURL('image/jpeg', 0.92);
+      profileUrl = profileCanvas.toDataURL('image/jpeg', 0.86);
     }
 
     return { defaultUrl, profileUrl };
@@ -1250,7 +1267,7 @@ export default function NameCardApp({ onNavigateBack }) {
       const currentPhone = formatPhoneInput(phoneInput);
       const currentThemeLabel = activeTheme?.label || '';
 
-      // 1. 이메일 발송 (브라우저에서 FormSubmit 표준 엔드포인트로 multipart/form-data 첨부파일 직접 전송)
+      // 1. 이메일 발송 (브라우저에서 FormSubmit으로 첨부파일 직접 전송, 서버 응답 지연 시 최대 4초까지만 대기)
       const sendEmailFromBrowser = async () => {
         try {
           const fd = new FormData();
@@ -1263,14 +1280,17 @@ export default function NameCardApp({ onNavigateBack }) {
           fd.append('이미지_색상', currentThemeLabel || '-');
           fd.append('attachment', dataUrlToBlob(dataUrl), fileName);
 
-          // 표준 엔드포인트(https://formsubmit.co/...)는 파일 첨부(attachment)를 지원하며,
-          // multipart/form-data는 CORS-safelisted 요청이므로 no-cors로 브라우저에서 직접 전송 가능
-          await fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
+          const postPromise = fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
             method: 'POST',
             mode: 'no-cors',
             body: fd
-          });
-          return true;
+          }).then(() => true);
+
+          // 요청 전송(약 0.5~1초) 후 FormSubmit 서버의 SMTP 완료 응답 대기만 최대 4초로 제한해 UI 지연을 방지
+          return await Promise.race([
+            postPromise,
+            new Promise(resolve => setTimeout(() => resolve(true), 4000))
+          ]);
         } catch (mailErr) {
           console.warn('브라우저 이메일 발송 실패:', mailErr);
           return false;
@@ -1308,32 +1328,21 @@ export default function NameCardApp({ onNavigateBack }) {
           }
         }
 
-        // 2-2. 스마트폰/배포 사이트(Netlify): Google Apps Script 직접 업로드 우선 시도 후 Supabase 큐로 구글 드라이브 저장
+        // 2-2. 스마트폰/배포 사이트(Netlify): Google Apps Script 직접 업로드와 이메일 발송을 완전 병렬 실행
         const isActivatedOrigin =
           typeof window !== 'undefined' &&
           window.location.origin === 'https://digital-supporters-2027.netlify.app';
         const browserMailPromise = sendEmailFromBrowser();
 
-        let remoteGasUrl = '';
-        try {
-          const { data: cfgRow } = await supabaseClient
-            .from('classroom_schedules')
-            .select('data')
-            .eq('id', NAMECARD_DRIVE_CONFIG_ID)
-            .maybeSingle();
-          if (cfgRow?.data?.gasUrl) {
-            remoteGasUrl = String(cfgRow.data.gasUrl).trim();
-          }
-        } catch {
-          // ignore config lookup error
-        }
-
-        const gasUrl = remoteGasUrl || import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
+        const gasUrl = remoteGasUrlRef.current || import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
         if (gasUrl) {
           try {
+            const gasController = new AbortController();
+            const gasTimeout = setTimeout(() => gasController.abort(), 12000);
             const gasRes = await fetch(gasUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              signal: gasController.signal,
               body: JSON.stringify({
                 action: 'saveNamecard',
                 folderId: GOOGLE_DRIVE_FOLDER_ID,
@@ -1346,6 +1355,7 @@ export default function NameCardApp({ onNavigateBack }) {
                 emailTo: NAMECARD_EMAIL_TO
               })
             });
+            clearTimeout(gasTimeout);
             const gasData = await gasRes.json().catch(() => null);
             if (gasRes.ok && gasData?.success) {
               const browserMailOk = await browserMailPromise;
@@ -1403,8 +1413,8 @@ export default function NameCardApp({ onNavigateBack }) {
 
         const browserMailOk = await browserMailPromise;
 
-        for (let attempt = 0; attempt < 10; attempt++) {
-          await new Promise(resolve => setTimeout(resolve, 700));
+        for (let attempt = 0; attempt < 4; attempt++) {
+          await new Promise(resolve => setTimeout(resolve, 500));
           const { data: checkRow } = await supabaseClient
             .from('classroom_schedules')
             .select('data')
