@@ -210,6 +210,78 @@ const persistDirHandle = async (handle) => {
   }
 };
 
+const NAMECARD_STATE_STORAGE_KEY = 'sungdong_namecard_state_v1';
+const NAMECARD_PHOTO_STORAGE_KEY = 'sungdong_namecard_photo_v1';
+const IDB_PHOTO_KEY = 'profilePhotoUrl';
+
+const loadSavedNamecardState = () => {
+  try {
+    const raw = window.localStorage.getItem(NAMECARD_STATE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const saveNamecardState = (state) => {
+  try {
+    window.localStorage.setItem(NAMECARD_STATE_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // ignore storage errors
+  }
+};
+
+const loadSavedProfilePhotoSync = () => {
+  try {
+    return window.localStorage.getItem(NAMECARD_PHOTO_STORAGE_KEY) || '';
+  } catch {
+    return '';
+  }
+};
+
+const loadSavedProfilePhotoIdb = async () => {
+  try {
+    const db = await openFsDb();
+    return await new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(IDB_PHOTO_KEY);
+      req.onsuccess = () => resolve(typeof req.result === 'string' ? req.result : '');
+      req.onerror = () => resolve('');
+    });
+  } catch {
+    return '';
+  }
+};
+
+const persistProfilePhoto = async (dataUrl) => {
+  try {
+    if (dataUrl) {
+      window.localStorage.setItem(NAMECARD_PHOTO_STORAGE_KEY, dataUrl);
+    } else {
+      window.localStorage.removeItem(NAMECARD_PHOTO_STORAGE_KEY);
+    }
+  } catch {
+    // localStorage 용량 초과 시 IndexedDB에 저장
+  }
+  try {
+    const db = await openFsDb();
+    await new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      if (dataUrl) {
+        tx.objectStore(IDB_STORE).put(dataUrl, IDB_PHOTO_KEY);
+      } else {
+        tx.objectStore(IDB_STORE).delete(IDB_PHOTO_KEY);
+      }
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    });
+  } catch {
+    // ignore IndexedDB errors
+  }
+};
+
 const dataUrlToBlob = (dataUrl) => {
   const [header, base64] = dataUrl.split(',');
   const mimeMatch = header.match(/data:(.*?);base64/);
@@ -565,22 +637,79 @@ const formatPhoneInput = (rawValue = '') => {
 };
 
 export default function NameCardApp({ onNavigateBack }) {
-  const [nameInput, setNameInput] = useState('표영');
-  const [phoneInput, setPhoneInput] = useState('010-');
-  const [sloganInput, setSloganInput] = useState(DEFAULT_SLOGAN);
-  const [themeId, setThemeId] = useState(() => getInitialThemeId());
+  const initialSavedStateRef = useRef(null);
+  if (initialSavedStateRef.current === null) {
+    initialSavedStateRef.current = loadSavedNamecardState() || {};
+  }
+  const initSaved = initialSavedStateRef.current;
+
+  const [nameInput, setNameInput] = useState(() =>
+    typeof initSaved.nameInput === 'string' ? initSaved.nameInput : '표영'
+  );
+  const [phoneInput, setPhoneInput] = useState(() =>
+    typeof initSaved.phoneInput === 'string' ? initSaved.phoneInput : '010-'
+  );
+  const [sloganInput, setSloganInput] = useState(() =>
+    typeof initSaved.sloganInput === 'string' ? initSaved.sloganInput : DEFAULT_SLOGAN
+  );
+  const [themeId, setThemeId] = useState(() =>
+    initSaved.themeId && PANEL_THEMES.some(t => t.id === initSaved.themeId)
+      ? initSaved.themeId
+      : getInitialThemeId()
+  );
   const [cardScale, setCardScale] = useState(1);
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveFeedback, setSaveFeedback] = useState(null); // { type: 'success' | 'error', text: string }
   const [previewDataUrl, setPreviewDataUrl] = useState('');
-  const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState(() => loadSavedProfilePhotoSync());
   const [profilePreviewDataUrl, setProfilePreviewDataUrl] = useState('');
-  const [photoScale, setPhotoScale] = useState(1);
-  const [photoOffsetX, setPhotoOffsetX] = useState(0);
-  const [photoOffsetY, setPhotoOffsetY] = useState(0);
-  const [photoRotation, setPhotoRotation] = useState(0);
+  const [photoScale, setPhotoScale] = useState(() =>
+    Number.isFinite(initSaved.photoScale) ? initSaved.photoScale : 1
+  );
+  const [photoOffsetX, setPhotoOffsetX] = useState(() =>
+    Number.isFinite(initSaved.photoOffsetX) ? initSaved.photoOffsetX : 0
+  );
+  const [photoOffsetY, setPhotoOffsetY] = useState(() =>
+    Number.isFinite(initSaved.photoOffsetY) ? initSaved.photoOffsetY : 0
+  );
+  const [photoRotation, setPhotoRotation] = useState(() =>
+    Number.isFinite(initSaved.photoRotation) ? initSaved.photoRotation : 0
+  );
   const [isPreviewFresh, setIsPreviewFresh] = useState(false);
+  const hasHydratedPhotoRef = useRef(false);
+
+  // 변경된 입력값 및 사진 조절 상태를 즉시 저장해 화면 이탈 후 재진입 시 완벽히 복원
+  useEffect(() => {
+    saveNamecardState({
+      nameInput,
+      phoneInput,
+      sloganInput,
+      themeId,
+      photoScale,
+      photoOffsetX,
+      photoOffsetY,
+      photoRotation
+    });
+  }, [nameInput, phoneInput, sloganInput, themeId, photoScale, photoOffsetX, photoOffsetY, photoRotation]);
+
+  // IndexedDB에 저장된 프로필 사진 복원 및 변경 시 자동 동기화
+  useEffect(() => {
+    let active = true;
+    if (!hasHydratedPhotoRef.current) {
+      hasHydratedPhotoRef.current = true;
+      if (!profilePhotoUrl) {
+        loadSavedProfilePhotoIdb().then((savedPhoto) => {
+          if (active && savedPhoto) {
+            setProfilePhotoUrl(savedPhoto);
+          }
+        });
+      }
+      return () => { active = false; };
+    }
+    persistProfilePhoto(profilePhotoUrl);
+    return () => { active = false; };
+  }, [profilePhotoUrl]);
 
   const [localApiAvailable, setLocalApiAvailable] = useState(false);
   const [localApiEndpoint, setLocalApiEndpoint] = useState('/api/save-namecard');
@@ -875,7 +1004,7 @@ export default function NameCardApp({ onNavigateBack }) {
       }
 
       const savedTeacher = (getSavedItem('sungdong_teacher', '') || '').replace(/\n/g, ' ').trim();
-      if (active && savedTeacher) {
+      if (active && savedTeacher && typeof initialSavedStateRef.current?.nameInput !== 'string') {
         setNameInput(savedTeacher);
       }
     })();
