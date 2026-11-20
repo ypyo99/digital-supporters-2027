@@ -1500,7 +1500,9 @@ export default function NameCardApp({ onNavigateBack }) {
 
             {/* 이미지 색상 선택 (4가지) */}
             <div className="col-span-12 p-3.5 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-wrap items-center justify-between gap-3">
-              <span className="text-base sm:text-lg font-bold text-slate-700 shrink-0">이미지 색상</span>
+              <span className="text-base sm:text-lg font-bold text-slate-700 shrink-0 text-center leading-tight">
+                이미지<br />색상
+              </span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 flex-1 max-w-[640px]">
                 {PANEL_THEMES.map(theme => {
                   const selected = theme.id === activeTheme.id;
