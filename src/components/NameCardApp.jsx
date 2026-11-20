@@ -1845,29 +1845,6 @@ export default function NameCardApp({ onNavigateBack }) {
                 <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
               </button>
             </div>
-
-            {profilePhotoUrl && (
-              <div className="flex items-center justify-start gap-2.5 px-3.5 py-2 bg-white border border-slate-300 rounded-xl w-fit shadow-xs">
-                <div className="flex items-center gap-2.5">
-                  <img
-                    src={profilePhotoUrl}
-                    alt="업로드된 프로필"
-                    className="w-9 h-9 rounded-lg object-cover border border-slate-300 shrink-0"
-                  />
-                  <span className="text-base font-bold text-slate-700">프로필 사진 적용됨</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setProfilePhotoUrl('');
-                    setProfilePreviewDataUrl('');
-                  }}
-                  className="ml-1 px-3 py-1 text-sm sm:text-base font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg cursor-pointer transition"
-                >
-                  사진 삭제
-                </button>
-              </div>
-            )}
           </div>
 
           {/* 새로 추가: 업로드된 프로필 사진을 포함한 완전히 새로운 디자인의 명함 */}
@@ -1926,6 +1903,32 @@ export default function NameCardApp({ onNavigateBack }) {
                     WebkitUserSelect: 'none'
                   }}
                 />
+                {/* 명함 내 프로필 사진 우측 삭제(X) 버튼 (저장 이미지에는 포함되지 않음) */}
+                <button
+                  type="button"
+                  data-html2canvas-ignore="true"
+                  title="프로필 사진 삭제"
+                  aria-label="프로필 사진 삭제"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  onClick={() => {
+                    setProfilePhotoUrl('');
+                    setProfilePreviewDataUrl('');
+                  }}
+                  style={{
+                    position: 'absolute',
+                    left: `${(236 + 104) * cardScale}px`,
+                    top: `${(274 - 78) * cardScale}px`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 40
+                  }}
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white border-2 border-white shadow-md flex items-center justify-center cursor-pointer transition"
+                >
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
                 <div
                   id="profile-card-scale"
                   style={{
