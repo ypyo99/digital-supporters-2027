@@ -17,7 +17,7 @@ var DEFAULT_EMAIL_TO = 'ypyo99@gmail.com';
  */
 function testSendMail() {
   var email = DEFAULT_EMAIL_TO;
-  var subject = '📇 [테스트] 명함 메일 발송 권한 승인 완료';
+  var subject = '[테스트] 명함 메일 발송 권한 승인 완료';
   var body = '구글 앱스 스크립트에서 Gmail 메일 발송 권한이 정상적으로 승인되었습니다.\n이제 명함 만들기에서 메일이 1초 만에 전송됩니다!';
   GmailApp.sendEmail(email, subject, body);
   Logger.log('테스트 메일 발송 성공: ' + email);
@@ -72,7 +72,7 @@ function doPost(e) {
         '첨부파일로 300DPI 인쇄용 고해상도 명함 이미지가 포함되어 있습니다.';
 
       var htmlBody = '<div style="font-family: \'Malgun Gothic\', sans-serif; line-height: 1.6; color: #1e293b; max-width: 580px;">' +
-        '<h2 style="color: #13386e; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 0;">📇 디지털교육서포터즈 명함 인쇄 요청</h2>' +
+        '<h2 style="color: #13386e; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 0;">디지털교육서포터즈 명함 인쇄 요청</h2>' +
         '<p style="color: #475569; font-size: 14px; margin-bottom: 16px;">새로운 명함 인쇄 요청이 접수되었습니다. 아래 정보 및 첨부된 고해상도 이미지(9×5cm, 300DPI)를 확인해 주세요.</p>' +
         '<table style="border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14px;">' +
         '<tr><td style="padding: 10px 14px; background: #f8fafc; font-weight: bold; width: 110px; border: 1px solid #e2e8f0; color: #334155;">선생님 성함</td><td style="padding: 10px 14px; border: 1px solid #e2e8f0; font-weight: bold; color: #0f172a;">' + teacherName + ' 선생님</td></tr>' +
