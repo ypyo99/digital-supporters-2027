@@ -2281,6 +2281,14 @@ export default function NameCardApp({ onNavigateBack }) {
                   boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
                 }}
               >
+                {/* 상단 포인트 라인 */}
+                <div
+                  className="absolute top-0 left-0 w-[180px] h-[6px] z-10"
+                  style={{
+                    background: `linear-gradient(90deg, ${activeTheme.grad[0]} 0%, ${activeTheme.accent} 100%)`
+                  }}
+                />
+
                 {/* 우측 테크/궤도 패널 */}
                 <svg
                   id="deco-svg"
