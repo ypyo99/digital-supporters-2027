@@ -1767,7 +1767,7 @@ export default function NameCardApp({ onNavigateBack }) {
           {profilePhotoUrl && (
             <div className="w-full flex flex-col items-center">
               <div className="w-full flex items-center justify-between px-1 mb-2">
-                <span className="text-xs sm:text-sm font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded-full">
+                <span className="text-base sm:text-lg font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-4 py-1.5 rounded-full">
                   이미지를 길게 누르면 갤러리에 저장됨
                 </span>
                 <button
@@ -2062,7 +2062,7 @@ export default function NameCardApp({ onNavigateBack }) {
           {!profilePhotoUrl && (
           <div className="w-full flex flex-col items-center">
             <div className="w-full flex items-center justify-between px-1 mb-2">
-              <span className="text-xs sm:text-sm font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-3 py-1 rounded-full">
+              <span className="text-base sm:text-lg font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-full">
                 이미지를 길게 누르면 갤러리에 저장됨
               </span>
             </div>
