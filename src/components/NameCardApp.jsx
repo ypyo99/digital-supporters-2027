@@ -629,130 +629,6 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {
   ctx.restore();
 };
 
-const drawPhoneGlyph = (ctx, cx, cy, size, color, withWaves = false) => {
-  const sc = size / 24;
-  ctx.save();
-  ctx.translate(cx - 12 * sc, cy - 12 * sc);
-  ctx.scale(sc, sc);
-  ctx.fillStyle = color;
-  ctx.fill(new Path2D('M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z'));
-  if (withWaves) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2.6;
-    ctx.lineCap = 'round';
-    ctx.stroke(new Path2D('M15 7c1.3.7 2.3 1.7 3 3'));
-    ctx.stroke(new Path2D('M15 3.5c2.9.9 5.3 3.3 6.2 6.2'));
-  }
-  ctx.restore();
-};
-
-const drawBuildingGlyph = (ctx, cx, cy, size, color, cutoutColor = '#FAF9F6', simple = false) => {
-  const sc = size / 24;
-  ctx.save();
-  ctx.translate(cx - 12 * sc, cy - 12 * sc);
-  ctx.scale(sc, sc);
-  ctx.fillStyle = color;
-  if (simple) {
-    ctx.fill(new Path2D('M3 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16H3zm4-14v2h2V7H7zm0 4v2h2v-2H7zm4-4v2h2V7h-2zm0 4v2h2v-2h-2zm6 10V9h3a1 1 0 0 1 1 1v11h-4zm1-8v2h2v-2h-2zm0 4v2h2v-2h-2z'));
-  } else {
-    ctx.fillRect(2, 2.5, 12, 19);
-    ctx.fillRect(15.2, 8, 6, 13.5);
-    ctx.fillRect(1, 20.5, 22, 1.8);
-    ctx.fillStyle = cutoutColor;
-    ctx.fillRect(6.5, 15.5, 3, 6);
-    [[4.2, 5], [9, 5], [4.2, 8.8], [9, 8.8], [4.2, 12.6], [9, 12.6]].forEach(([x, y]) => {
-      ctx.fillRect(x, y, 2.8, 2.8);
-    });
-    [10, 13.5, 17].forEach((y) => {
-      ctx.fillRect(17, y, 2.4, 2.4);
-    });
-  }
-  ctx.restore();
-};
-
-const drawProfileCardContactsOnCanvas = (canvas, theme, phoneText) => {
-  const s = canvas.width / 900;
-  const ctx = canvas.getContext('2d');
-  ctx.save();
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  // 구분선
-  ctx.beginPath();
-  ctx.moveTo(372 * s, 369 * s);
-  ctx.lineTo(856 * s, 369 * s);
-  ctx.strokeStyle = '#E2E8F0';
-  ctx.lineWidth = 1.2 * s;
-  ctx.stroke();
-
-  const rows = [
-    { cy: 404 * s, label: '휴대폰', value: phoneText, isPhone: true },
-    { cy: 446 * s, label: '복지관', value: '02-2298-5117', isPhone: false }
-  ];
-
-  rows.forEach(({ cy, label, value, isPhone }) => {
-    const iconCx = 388 * s;
-    ctx.beginPath();
-    ctx.arc(iconCx, cy, 16 * s, 0, Math.PI * 2);
-    ctx.fillStyle = `${theme.swatch}14`;
-    ctx.fill();
-
-    if (isPhone) {
-      drawPhoneGlyph(ctx, iconCx, cy, 17 * s, theme.swatch, false);
-    } else {
-      drawBuildingGlyph(ctx, iconCx, cy, 17 * s, theme.swatch, '#FAF9F6', true);
-    }
-
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
-    ctx.fillStyle = theme.swatch;
-    ctx.font = `700 ${16 * s}px "Noto Sans KR", "Pretendard Variable", sans-serif`;
-    ctx.fillText(label, 418 * s, cy + 0.5 * s);
-
-    ctx.fillStyle = '#0F172A';
-    ctx.font = `800 ${24 * s}px "Noto Sans KR", "Pretendard Variable", sans-serif`;
-    ctx.fillText(value, 479 * s, cy + 0.5 * s);
-  });
-
-  ctx.restore();
-};
-
-const drawDefaultCardContactsOnCanvas = (canvas, phoneText) => {
-  const s = canvas.width / 900;
-  const ctx = canvas.getContext('2d');
-  const iconSize = CARD_SIZES.contact * (24 / 26.5);
-  const labelSize = CARD_SIZES.contact * (18.5 / 26.5);
-  const valueSize = CARD_SIZES.contact;
-
-  ctx.save();
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  const rows = [
-    { cy: 396 * s, label: '휴대폰', value: phoneText, isPhone: true },
-    { cy: 444 * s, label: '복지관', value: '02-2298-5117', isPhone: false }
-  ];
-
-  rows.forEach(({ cy, label, value, isPhone }) => {
-    const iconCx = (60 + iconSize / 2) * s;
-    if (isPhone) {
-      drawPhoneGlyph(ctx, iconCx, cy, iconSize * s, '#13386E', true);
-    } else {
-      drawBuildingGlyph(ctx, iconCx, cy, iconSize * s, '#13386E', '#faf9f6', false);
-    }
-
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#13386E';
-    ctx.font = `700 ${labelSize * s}px "Noto Sans KR", "Pretendard Variable", sans-serif`;
-    ctx.fillText(label, 99 * s, cy + 0.5 * s);
-
-    ctx.fillStyle = '#0A0F1D';
-    ctx.font = `800 ${valueSize * s}px "Noto Sans KR", "Pretendard Variable", sans-serif`;
-    ctx.fillText(value, 172 * s, cy + 0.5 * s);
-  });
-
-  ctx.restore();
-};
-
 const formatPhoneInput = (rawValue = '') => {
   const trimmed = String(rawValue || '').trim();
   if (!trimmed || trimmed === '0' || trimmed === '01' || trimmed === '010' || trimmed === '010-') {
@@ -1297,7 +1173,6 @@ export default function NameCardApp({ onNavigateBack }) {
       });
 
       drawRightPanelOnCanvas(canvas, activeTheme);
-      drawDefaultCardContactsOnCanvas(canvas, formatPhoneInput(phoneInput));
       defaultUrl = canvas.toDataURL('image/jpeg', 0.86);
     }
 
@@ -1342,12 +1217,11 @@ export default function NameCardApp({ onNavigateBack }) {
           rotation: photoRotation
         });
       }
-      drawProfileCardContactsOnCanvas(profileCanvas, activeTheme, formatPhoneInput(phoneInput));
       profileUrl = profileCanvas.toDataURL('image/jpeg', 0.86);
     }
 
     return { defaultUrl, profileUrl };
-  }, [activeTheme, profilePhotoUrl, phoneInput, photoScale, photoOffsetX, photoOffsetY, photoRotation]);
+  }, [activeTheme, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, photoRotation]);
 
   // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
   useEffect(() => {
@@ -2196,47 +2070,83 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
                       </div>
 
-                      {/* 3. 하단 연락처 (Canvas에서 100% 정밀 정렬 렌더링) */}
-                      <div data-html2canvas-ignore="true" className="pt-4 border-t border-slate-200 flex flex-col space-y-2.5">
-                        <div className="flex items-center h-[34px]">
-                          <span
-                            className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0"
-                            style={{ backgroundColor: `${activeTheme.swatch}14`, color: activeTheme.swatch }}
-                          >
-                            <svg className="w-[17px] h-[17px] block" viewBox="0 0 24 24" fill="currentColor">
+                      {/* 3. 하단 연락처 */}
+                      <div className="pt-4 border-t border-slate-200">
+                        <svg
+                          width="464"
+                          height="78"
+                          viewBox="0 0 464 78"
+                          className="block w-full h-[78px] overflow-visible"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          {/* 1행: 휴대폰 */}
+                          <circle cx="16" cy="17" r="16" fill={activeTheme.swatch} fillOpacity="0.08" />
+                          <g transform="translate(7.5, 8.5)">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill={activeTheme.swatch}>
                               <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
                             </svg>
-                          </span>
-                          <span
-                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0"
-                            style={{ color: activeTheme.swatch }}
+                          </g>
+                          <text
+                            x="46"
+                            y="17"
+                            dominantBaseline="central"
+                            fill={activeTheme.swatch}
+                            fontSize="16"
+                            fontWeight="700"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                           >
                             휴대폰
-                          </span>
-                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums">
-                            {displayPhone}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center h-[34px]">
-                          <span
-                            className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0"
-                            style={{ backgroundColor: `${activeTheme.swatch}14`, color: activeTheme.swatch }}
+                          </text>
+                          <text
+                            x="104"
+                            y="17"
+                            dominantBaseline="central"
+                            fill="#0F172A"
+                            fontSize="24"
+                            fontWeight="800"
+                            letterSpacing="0.02em"
+                            style={{
+                              fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                              fontVariantNumeric: 'tabular-nums'
+                            }}
                           >
-                            <svg className="w-[17px] h-[17px] block" viewBox="0 0 24 24" fill="currentColor">
+                            {displayPhone}
+                          </text>
+
+                          {/* 2행: 복지관 */}
+                          <circle cx="16" cy="61" r="16" fill={activeTheme.swatch} fillOpacity="0.08" />
+                          <g transform="translate(7.5, 52.5)">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill={activeTheme.swatch}>
                               <path d="M3 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16H3zm4-14v2h2V7H7zm0 4v2h2v-2H7zm4-4v2h2V7h-2zm0 4v2h2v-2h-2zm6 10V9h3a1 1 0 0 1 1 1v11h-4zm1-8v2h2v-2h-2zm0 4v2h2v-2h-2z" />
                             </svg>
-                          </span>
-                          <span
-                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0"
-                            style={{ color: activeTheme.swatch }}
+                          </g>
+                          <text
+                            x="46"
+                            y="61"
+                            dominantBaseline="central"
+                            fill={activeTheme.swatch}
+                            fontSize="16"
+                            fontWeight="700"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                           >
                             복지관
-                          </span>
-                          <span className="inline-block leading-none text-[24px] font-extrabold text-[#0F172A] tracking-[0.03em] font-sans tabular-nums">
+                          </text>
+                          <text
+                            x="104"
+                            y="61"
+                            dominantBaseline="central"
+                            fill="#0F172A"
+                            fontSize="24"
+                            fontWeight="800"
+                            letterSpacing="0.02em"
+                            style={{
+                              fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                              fontVariantNumeric: 'tabular-nums'
+                            }}
+                          >
                             02-2298-5117
-                          </span>
-                        </div>
+                          </text>
+                        </svg>
                       </div>
                     </div>
                     {/* 실시간 미리보기용 프로필 사진 (슬라이더 조절 시 60fps 즉시 반응, html2canvas 캡처 시에는 무시) */}
@@ -2468,7 +2378,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   {/* 3. 구분선 및 하단 연락처 */}
                   <div>
                     <div className="w-[530px] border-t-[1.5px] border-[#CBD5E1] mb-5" />
-                    <div data-html2canvas-ignore="true" className="flex flex-col space-y-3">
+                    <div className="flex flex-col space-y-3">
                       <div className="flex items-center">
                         <svg
                           style={{ width: `${contactIconSize}px`, height: `${contactIconSize}px` }}
