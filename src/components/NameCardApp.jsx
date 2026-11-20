@@ -1392,7 +1392,7 @@ export default function NameCardApp({ onNavigateBack }) {
 
           <div className="grid grid-cols-12 gap-3.5 items-end">
             <div className="col-span-5 sm:col-span-6">
-              <label htmlFor="input-name" className="block text-sm sm:text-base font-bold text-slate-700 mb-1.5">
+              <label htmlFor="input-name" className="block text-base sm:text-lg font-bold text-slate-700 mb-1.5">
                 선생님 성함
               </label>
               <input
@@ -1401,12 +1401,12 @@ export default function NameCardApp({ onNavigateBack }) {
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder="성함 입력"
-                className="w-full px-4 py-2.5 text-base sm:text-lg text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
+                className="w-full px-4 py-3 text-lg sm:text-xl text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
               />
             </div>
 
             <div className="col-span-7 sm:col-span-6">
-              <label htmlFor="input-phone" className="block text-sm sm:text-base font-bold text-slate-700 mb-1.5">
+              <label htmlFor="input-phone" className="block text-base sm:text-lg font-bold text-slate-700 mb-1.5">
                 휴대폰 번호
               </label>
               <input
@@ -1417,20 +1417,20 @@ export default function NameCardApp({ onNavigateBack }) {
                 onChange={(e) => setPhoneInput(formatPhoneInput(e.target.value))}
                 placeholder="010-"
                 maxLength={13}
-                className="w-full px-4 py-2.5 text-base sm:text-lg text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
+                className="w-full px-4 py-3 text-lg sm:text-xl text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
               />
             </div>
 
-            <div className="col-span-12 space-y-2">
+            <div className="col-span-12 space-y-2.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="select-slogan" className="block text-sm sm:text-base font-bold text-slate-700">
+                <label htmlFor="select-slogan" className="block text-base sm:text-lg font-bold text-slate-700">
                   테마 문구 (이름 아래 문구)
                 </label>
                 {sloganInput !== DEFAULT_SLOGAN && (
                   <button
                     type="button"
                     onClick={() => setSloganInput(DEFAULT_SLOGAN)}
-                    className="text-xs sm:text-sm font-bold text-[#13386E] hover:underline cursor-pointer"
+                    className="text-sm sm:text-base font-bold text-[#13386E] hover:underline cursor-pointer"
                   >
                     기본 문구로 복원
                   </button>
@@ -1441,7 +1441,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   type="button"
                   id="select-slogan"
                   onClick={() => setIsSloganMenuOpen(prev => !prev)}
-                  className="w-full px-4 py-2.5 text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all flex items-center justify-between gap-2 text-left"
+                  className="w-full px-4 py-3 text-lg sm:text-xl text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold cursor-pointer transition-all flex items-center justify-between gap-2 text-left"
                   aria-label="추천 테마 문구 30선 선택"
                   aria-expanded={isSloganMenuOpen}
                 >
@@ -1475,7 +1475,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             setSloganInput(phrase);
                             setIsSloganMenuOpen(false);
                           }}
-                          className={`w-full px-4 py-3 text-left text-base sm:text-lg leading-snug break-words transition cursor-pointer ${isSelected
+                          className={`w-full px-4 py-3 text-left text-lg sm:text-xl leading-snug break-words transition cursor-pointer ${isSelected
                             ? 'bg-blue-50 text-[#13386E] font-extrabold'
                             : 'text-slate-800 font-semibold hover:bg-slate-50 active:bg-slate-100'
                             }`}
@@ -1494,14 +1494,14 @@ export default function NameCardApp({ onNavigateBack }) {
                 value={sloganInput}
                 onChange={(e) => setSloganInput(e.target.value)}
                 placeholder={DEFAULT_SLOGAN}
-                className="w-full px-4 py-2.5 text-base sm:text-lg text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-medium leading-relaxed break-words whitespace-pre-wrap resize-none transition-all"
+                className="w-full px-4 py-3 text-lg sm:text-xl text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-medium leading-relaxed break-words whitespace-pre-wrap resize-none transition-all"
               />
             </div>
 
             {/* 이미지 색상 선택 (4가지) */}
             <div className="col-span-12 p-3.5 bg-slate-50/90 rounded-xl border border-slate-300 flex flex-wrap items-center justify-between gap-3">
-              <span className="text-sm sm:text-base font-bold text-slate-700 shrink-0">이미지 색상</span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 flex-1 max-w-[600px]">
+              <span className="text-base sm:text-lg font-bold text-slate-700 shrink-0">이미지 색상</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 flex-1 max-w-[640px]">
                 {PANEL_THEMES.map(theme => {
                   const selected = theme.id === activeTheme.id;
                   return (
@@ -1509,13 +1509,13 @@ export default function NameCardApp({ onNavigateBack }) {
                       key={theme.id}
                       type="button"
                       onClick={() => handleSelectTheme(theme.id)}
-                      className={`flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl border text-sm sm:text-base font-extrabold transition cursor-pointer active:scale-95 ${selected
+                      className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-base sm:text-lg font-extrabold transition cursor-pointer active:scale-95 ${selected
                         ? 'bg-white border-[#13386E] text-slate-900 ring-2 ring-[#13386E]/20 shadow-xs'
                         : 'bg-white/80 border-slate-300 text-slate-600 hover:bg-white hover:border-slate-400'
                         }`}
                     >
                       <span
-                        className="w-5 h-5 rounded-full border border-black/15 shrink-0 flex items-center justify-center"
+                        className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-black/15 shrink-0 flex items-center justify-center"
                         style={{ background: `linear-gradient(135deg, ${theme.grad[0]}, ${theme.grad[2]})` }}
                       >
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: theme.accent }} />
@@ -1540,9 +1540,9 @@ export default function NameCardApp({ onNavigateBack }) {
                 <button
                   type="button"
                   onClick={() => profileFileInputRef.current?.click()}
-                  className="py-3 px-5 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-base sm:text-lg font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="py-3.5 px-6 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-lg sm:text-xl font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
                     <circle cx="12" cy="13" r="3" />
                   </svg>
@@ -1550,20 +1550,20 @@ export default function NameCardApp({ onNavigateBack }) {
                 </button>
 
                 {profilePhotoUrl && (
-                  <div className="flex items-center gap-2 px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl">
+                  <div className="flex items-center gap-2.5 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl">
                     <img
                       src={profilePhotoUrl}
                       alt="업로드된 프로필"
-                      className="w-8 h-8 rounded-lg object-cover border border-slate-300 shrink-0"
+                      className="w-9 h-9 rounded-lg object-cover border border-slate-300 shrink-0"
                     />
-                    <span className="text-sm font-bold text-slate-700">프로필 사진 적용됨</span>
+                    <span className="text-base font-bold text-slate-700">프로필 사진 적용됨</span>
                     <button
                       type="button"
                       onClick={() => {
                         setProfilePhotoUrl('');
                         setProfilePreviewDataUrl('');
                       }}
-                      className="ml-1 px-2.5 py-1 text-xs sm:text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg cursor-pointer transition"
+                      className="ml-1 px-3 py-1 text-sm sm:text-base font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg cursor-pointer transition"
                     >
                       사진 삭제
                     </button>
@@ -1575,7 +1575,7 @@ export default function NameCardApp({ onNavigateBack }) {
                     type="button"
                     onClick={() => handleDownloadOrSave('default')}
                     disabled={isSaving}
-                    className="flex-1 min-w-[160px] py-3 px-5 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-base sm:text-lg font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="flex-1 min-w-[160px] py-3.5 px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-lg sm:text-xl font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
                   </button>
