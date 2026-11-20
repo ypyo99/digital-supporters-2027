@@ -1134,31 +1134,15 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
           {activeTab === 'schedule' && (
             <div className="space-y-2.5 animate-fadeIn">
 
-              {/* 1. 슬림 1줄 출석 현황 요약 바 */}
-              <div className="min-h-[40px] sm:min-h-[44px] bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-800 rounded-xl px-3 py-1 sm:py-1.5 shadow-2xs flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-2 sm:gap-3 text-[12.5px] sm:text-[13.5px] font-bold flex-wrap">
-                  <span className="text-emerald-700 dark:text-emerald-400">출석 <strong className="font-black">{isLoading ? '-' : stats.attendedCount}</strong></span>
-                  <span className="text-slate-300 dark:text-slate-600">·</span>
-                  <span className="text-rose-700 dark:text-rose-400">결석 <strong className="font-black">{isLoading ? '-' : stats.absentCount}</strong></span>
-                  <span className="text-slate-300 dark:text-slate-600">·</span>
-                  <span className="text-amber-700 dark:text-amber-400">휴가 <strong className="font-black">{isLoading ? '-' : stats.vacationCount}</strong></span>
-                  <span className="text-slate-300 dark:text-slate-600">·</span>
-                  <span className="text-slate-600 dark:text-slate-300">확인 전 <strong className="font-black">{isLoading ? '-' : stats.unconfirmedCount}</strong></span>
-                </div>
-                <span className="text-[12.5px] sm:text-[13.5px] font-extrabold text-blue-700 dark:text-blue-400 shrink-0">
-                  {isLoading ? '- / -명' : `${stats.checkedCount} / ${stats.totalStudents}명`}
-                </span>
-              </div>
-
-              {/* 2. 회차 색상 안내 토글 & 우측 전체 수업 내용 보기 토글 버튼 */}
+              {/* 회차 색상 안내 토글 & 우측 전체 수업 내용 보기 토글 버튼 */}
               <div className="flex items-center justify-between gap-2 px-0.5 sm:px-1">
                 <button
                   type="button"
                   onClick={() => setShowLegend(prev => !prev)}
-                  className="inline-flex items-center gap-1 px-2 py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200/70 transition-all touch-manipulation cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200/70 transition-all touch-manipulation cursor-pointer"
                 >
                   <span>회차 색상</span>
-                  <span className="text-[10px] leading-none">{showLegend ? '▴' : '▾'}</span>
+                  <span className="text-[12px] leading-none">{showLegend ? '▴' : '▾'}</span>
                 </button>
 
                 {/* 우측 끝: 전체 수업 내용 보기 / 수업 내용 접기 토글버튼 */}
@@ -1166,14 +1150,14 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[11.5px] sm:text-[12.5px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
+                  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
                       : 'text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95 cursor-pointer'
                     }`}
                   title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
                 >
                   <span>{isAllExpanded ? '수업 내용 접기' : '수업 내용 보기'}</span>
-                  <span className="text-[10px] leading-none">{isAllExpanded ? '▴' : '▾'}</span>
+                  <span className="text-[12px] leading-none">{isAllExpanded ? '▴' : '▾'}</span>
                 </button>
               </div>
 
