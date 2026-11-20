@@ -1873,11 +1873,6 @@ export default function NameCardApp({ onNavigateBack }) {
           {/* 새로 추가: 업로드된 프로필 사진을 포함한 완전히 새로운 디자인의 명함 */}
           {profilePhotoUrl && (
             <div className="w-full flex flex-col items-center">
-              <div className="w-full flex items-center justify-between px-1 mb-2">
-                <span className="text-base sm:text-lg font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-4 py-1.5 rounded-full">
-                  이미지를 길게 누르면 갤러리에 저장됨
-                </span>
-              </div>
               <div
                 id="profile-card-fit"
                 style={{
@@ -2157,17 +2152,20 @@ export default function NameCardApp({ onNavigateBack }) {
                   </div>
                 </div>
               </div>
+              <div
+                style={{ width: `${900 * cardScale}px` }}
+                className="mt-2.5"
+              >
+                <div className="w-full text-center text-base sm:text-lg font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-4 py-1.5 rounded-full">
+                  이미지를 길게 누르면 갤러리에 저장됨
+                </div>
+              </div>
             </div>
           )}
 
           {/* 기존 명함 (프로필 사진이 선택되지 않은 경우에만 표시/생성) */}
           {!profilePhotoUrl && (
           <div className="w-full flex flex-col items-center">
-            <div className="w-full flex items-center justify-between px-1 mb-2">
-              <span className="text-base sm:text-lg font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-full">
-                이미지를 길게 누르면 갤러리에 저장됨
-              </span>
-            </div>
             <div
               id="card-fit"
               style={{
@@ -2370,6 +2368,14 @@ export default function NameCardApp({ onNavigateBack }) {
                 </div>
               </div>
             </div>
+            </div>
+            <div
+              style={{ width: `${900 * cardScale}px` }}
+              className="mt-2.5"
+            >
+              <div className="w-full text-center text-base sm:text-lg font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-full">
+                이미지를 길게 누르면 갤러리에 저장됨
+              </div>
             </div>
           </div>
           )}
