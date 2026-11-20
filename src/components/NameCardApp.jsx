@@ -2052,7 +2052,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             {formattedName}
                           </div>
                           <span
-                            className="inline-block px-3 py-1 rounded-lg bg-white text-[25px] font-extrabold leading-[1.1] tracking-[-0.01em] whitespace-nowrap"
+                            className="inline-block px-3 py-1 rounded-lg bg-[#FAF9F6] text-[25px] font-extrabold leading-[1.1] tracking-[-0.01em] whitespace-nowrap"
                             style={{ color: activeTheme.swatch }}
                           >
                             디지털교육서포터즈
