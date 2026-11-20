@@ -1578,7 +1578,7 @@ export default function NameCardApp({ onNavigateBack }) {
             <div className="w-full flex flex-col items-center">
               <div className="w-full flex items-center justify-between px-1 mb-2">
                 <span className="text-xs sm:text-sm font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded-full">
-                  프로필 사진 포함 명함 (이미지를 길게 누르면 스마트폰 갤러리에 저장됩니다)
+                  이미지를 길게 누르면 갤러리에 저장됨
                 </span>
                 <button
                   type="button"
@@ -1836,6 +1836,11 @@ export default function NameCardApp({ onNavigateBack }) {
           {/* 기존 명함 (프로필 사진이 선택되지 않은 경우에만 표시/생성) */}
           {!profilePhotoUrl && (
           <div className="w-full flex flex-col items-center">
+            <div className="w-full flex items-center justify-between px-1 mb-2">
+              <span className="text-xs sm:text-sm font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-3 py-1 rounded-full">
+                이미지를 길게 누르면 갤러리에 저장됨
+              </span>
+            </div>
             <div
               id="card-fit"
               style={{
