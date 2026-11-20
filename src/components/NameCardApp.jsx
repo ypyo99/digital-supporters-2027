@@ -1547,7 +1547,7 @@ export default function NameCardApp({ onNavigateBack }) {
                   disabled={isSaving}
                   className="flex-1 min-w-0 py-3.5 px-4 sm:px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-base sm:text-xl font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
                 >
-                  <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
+                  <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
                 </button>
               </div>
 
