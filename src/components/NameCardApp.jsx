@@ -2378,38 +2378,61 @@ export default function NameCardApp({ onNavigateBack }) {
                   {/* 3. 구분선 및 하단 연락처 */}
                   <div>
                     <div className="w-[530px] border-t-[1.5px] border-[#CBD5E1] mb-5" />
-                    <div className="flex flex-col space-y-3">
-                      <div className="flex items-center">
+                    <svg
+                      width="530"
+                      height="74"
+                      viewBox="0 0 530 74"
+                      className="block w-full h-[74px] overflow-visible"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      {/* 1행: 휴대폰 */}
+                      <g transform="translate(0, 1.65)">
                         <svg
-                          style={{ width: `${contactIconSize}px`, height: `${contactIconSize}px` }}
-                          className="text-[#13386E] shrink-0"
+                          width={`${contactIconSize}`}
+                          height={`${contactIconSize}`}
                           viewBox="0 0 24 24"
-                          fill="currentColor"
+                          fill="#13386E"
                         >
                           <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
                           <path d="M15 7c1.3.7 2.3 1.7 3 3" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
                           <path d="M15 3.5c2.9.9 5.3 3.3 6.2 6.2" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
                         </svg>
-                        <span
-                          style={{ fontSize: `${contactLabelSize}px` }}
-                          className="font-bold text-[#13386E] ml-3 mr-4 tracking-[-0.01em]"
-                        >
-                          휴대폰
-                        </span>
-                        <span
-                          style={{ fontSize: `${sizes.contact}px` }}
-                          className="font-extrabold text-[#0A0F1D] tracking-[0.03em] font-sans"
-                        >
-                          {displayPhone}
-                        </span>
-                      </div>
+                      </g>
+                      <text
+                        x="39"
+                        y="15"
+                        dominantBaseline="central"
+                        fill="#13386E"
+                        fontSize={`${contactLabelSize}`}
+                        fontWeight="700"
+                        letterSpacing="-0.01em"
+                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
+                      >
+                        휴대폰
+                      </text>
+                      <text
+                        x="116"
+                        y="15"
+                        dominantBaseline="central"
+                        fill="#0A0F1D"
+                        fontSize={`${sizes.contact}`}
+                        fontWeight="800"
+                        letterSpacing="0.03em"
+                        style={{
+                          fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                          fontVariantNumeric: 'tabular-nums'
+                        }}
+                      >
+                        {displayPhone}
+                      </text>
 
-                      <div className="flex items-center">
+                      {/* 2행: 복지관 */}
+                      <g transform="translate(0, 41.65)">
                         <svg
-                          style={{ width: `${contactIconSize}px`, height: `${contactIconSize}px` }}
-                          className="text-[#13386E] shrink-0"
+                          width={`${contactIconSize}`}
+                          height={`${contactIconSize}`}
                           viewBox="0 0 24 24"
-                          fill="currentColor"
+                          fill="#13386E"
                         >
                           <rect x="2" y="2.5" width="12" height="19" rx="0.6" />
                           <rect x="6.5" y="15.5" width="3" height="6" fill="#faf9f6" />
@@ -2425,20 +2448,35 @@ export default function NameCardApp({ onNavigateBack }) {
                           <rect x="17" y="17" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
                           <rect x="1" y="20.5" width="22" height="1.8" rx="0.4" />
                         </svg>
-                        <span
-                          style={{ fontSize: `${contactLabelSize}px` }}
-                          className="font-bold text-[#13386E] ml-3 mr-4 tracking-[-0.01em]"
-                        >
-                          복지관
-                        </span>
-                        <span
-                          style={{ fontSize: `${sizes.contact}px` }}
-                          className="font-extrabold text-[#0A0F1D] tracking-[0.03em] font-sans"
-                        >
-                          02-2298-5117
-                        </span>
-                      </div>
-                    </div>
+                      </g>
+                      <text
+                        x="39"
+                        y="55"
+                        dominantBaseline="central"
+                        fill="#13386E"
+                        fontSize={`${contactLabelSize}`}
+                        fontWeight="700"
+                        letterSpacing="-0.01em"
+                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
+                      >
+                        복지관
+                      </text>
+                      <text
+                        x="116"
+                        y="55"
+                        dominantBaseline="central"
+                        fill="#0A0F1D"
+                        fontSize={`${sizes.contact}`}
+                        fontWeight="800"
+                        letterSpacing="0.03em"
+                        style={{
+                          fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                          fontVariantNumeric: 'tabular-nums'
+                        }}
+                      >
+                        02-2298-5117
+                      </text>
+                    </svg>
                   </div>
                 </div>
               </div>
