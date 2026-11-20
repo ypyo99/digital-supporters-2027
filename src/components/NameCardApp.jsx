@@ -2339,8 +2339,8 @@ export default function NameCardApp({ onNavigateBack }) {
                       id="card-logo"
                       src={SEOUL_SYMBOL_BASE64}
                       alt="서울시 로고"
-                      style={{ height: `${sizes.logo}px` }}
-                      className="w-auto mr-[18px] object-contain"
+                      style={{ height: `${sizes.logo}px`, position: 'relative', top: '9px' }}
+                      className="w-auto mr-[18px] object-contain relative top-[9px]"
                     />
                     <div>
                       <div
