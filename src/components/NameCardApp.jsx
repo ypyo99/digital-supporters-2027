@@ -2082,7 +2082,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             </svg>
                           </span>
                           <span
-                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[8px]"
+                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[5px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             휴대폰
@@ -2102,7 +2102,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             </svg>
                           </span>
                           <span
-                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[8px]"
+                            className="inline-block leading-none text-[16px] font-bold ml-3.5 mr-3 w-[48px] shrink-0 relative -top-[5px]"
                             style={{ color: activeTheme.swatch }}
                           >
                             복지관
