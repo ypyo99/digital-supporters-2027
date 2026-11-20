@@ -596,6 +596,191 @@ export default function NameCardApp({ onNavigateBack }) {
   const cachedProfileImgRef = useRef({ url: '', img: null });
   const livePhotoCanvasRef = useRef(null);
   const [loadedProfileImg, setLoadedProfileImg] = useState(null);
+  const photoHitAreaRef = useRef(null);
+  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
+  const photoGestureRef = useRef({
+    mode: 'none',
+    startX: 0,
+    startY: 0,
+    startOffsetX: 0,
+    startOffsetY: 0,
+    startScale: 1,
+    startDist: 0,
+    startMidX: 0,
+    startMidY: 0
+  });
+  const latestPhotoStateRef = useRef({
+    scale: photoScale,
+    offsetX: photoOffsetX,
+    offsetY: photoOffsetY,
+    cardScale
+  });
+  latestPhotoStateRef.current = {
+    scale: photoScale,
+    offsetX: photoOffsetX,
+    offsetY: photoOffsetY,
+    cardScale
+  };
+
+  useEffect(() => {
+    if (!isDraggingPhoto) return;
+    const handleMouseMove = (e) => {
+      const g = photoGestureRef.current;
+      if (g.mode !== 'mouse') return;
+      const sf = latestPhotoStateRef.current.cardScale || 1;
+      const dx = (e.clientX - g.startX) / sf;
+      const dy = (e.clientY - g.startY) / sf;
+      setPhotoOffsetX(Math.max(-120, Math.min(120, Math.round(g.startOffsetX + dx))));
+      setPhotoOffsetY(Math.max(-120, Math.min(120, Math.round(g.startOffsetY + dy))));
+    };
+    const handleMouseUp = () => {
+      if (photoGestureRef.current.mode === 'mouse') {
+        photoGestureRef.current.mode = 'none';
+      }
+      setIsDraggingPhoto(false);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingPhoto]);
+
+  useEffect(() => {
+    const el = photoHitAreaRef.current;
+    if (!el || !profilePhotoUrl) return;
+
+    const clampOff = (v) => Math.max(-120, Math.min(120, Math.round(v)));
+    const clampSc = (v) => Math.max(0.6, Math.min(2.2, Math.round(v * 100) / 100));
+
+    const getTouchMetrics = (touches) => {
+      const t0 = touches[0];
+      const t1 = touches[1];
+      const dx = t1.clientX - t0.clientX;
+      const dy = t1.clientY - t0.clientY;
+      return {
+        dist: Math.hypot(dx, dy) || 1,
+        midX: (t0.clientX + t1.clientX) / 2,
+        midY: (t0.clientY + t1.clientY) / 2
+      };
+    };
+
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const cur = latestPhotoStateRef.current;
+      if (e.touches.length >= 2) {
+        const { dist, midX, midY } = getTouchMetrics(e.touches);
+        photoGestureRef.current = {
+          mode: 'touch-pinch',
+          startX: midX,
+          startY: midY,
+          startOffsetX: cur.offsetX,
+          startOffsetY: cur.offsetY,
+          startScale: cur.scale,
+          startDist: dist,
+          startMidX: midX,
+          startMidY: midY
+        };
+      } else {
+        const t = e.touches[0];
+        photoGestureRef.current = {
+          mode: 'touch-drag',
+          startX: t.clientX,
+          startY: t.clientY,
+          startOffsetX: cur.offsetX,
+          startOffsetY: cur.offsetY,
+          startScale: cur.scale,
+          startDist: 0,
+          startMidX: 0,
+          startMidY: 0
+        };
+      }
+      setIsDraggingPhoto(true);
+    };
+
+    const handleTouchMove = (e) => {
+      const g = photoGestureRef.current;
+      if (g.mode === 'none' || e.touches.length === 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const cur = latestPhotoStateRef.current;
+      const sf = cur.cardScale || 1;
+
+      if (e.touches.length >= 2) {
+        const { dist, midX, midY } = getTouchMetrics(e.touches);
+        if (g.mode !== 'touch-pinch') {
+          photoGestureRef.current = {
+            mode: 'touch-pinch',
+            startX: midX,
+            startY: midY,
+            startOffsetX: cur.offsetX,
+            startOffsetY: cur.offsetY,
+            startScale: cur.scale,
+            startDist: dist,
+            startMidX: midX,
+            startMidY: midY
+          };
+          return;
+        }
+        const newScale = clampSc(g.startScale * (dist / (g.startDist || 1)));
+        const dx = (midX - g.startMidX) / sf;
+        const dy = (midY - g.startMidY) / sf;
+        setPhotoScale(newScale);
+        setPhotoOffsetX(clampOff(g.startOffsetX + dx));
+        setPhotoOffsetY(clampOff(g.startOffsetY + dy));
+      } else if (e.touches.length === 1 && g.mode === 'touch-drag') {
+        const t = e.touches[0];
+        const dx = (t.clientX - g.startX) / sf;
+        const dy = (t.clientY - g.startY) / sf;
+        setPhotoOffsetX(clampOff(g.startOffsetX + dx));
+        setPhotoOffsetY(clampOff(g.startOffsetY + dy));
+      }
+    };
+
+    const handleTouchEnd = (e) => {
+      if (e.touches.length === 1) {
+        const cur = latestPhotoStateRef.current;
+        const t = e.touches[0];
+        photoGestureRef.current = {
+          mode: 'touch-drag',
+          startX: t.clientX,
+          startY: t.clientY,
+          startOffsetX: cur.offsetX,
+          startOffsetY: cur.offsetY,
+          startScale: cur.scale,
+          startDist: 0,
+          startMidX: 0,
+          startMidY: 0
+        };
+      } else if (e.touches.length === 0) {
+        photoGestureRef.current.mode = 'none';
+        setIsDraggingPhoto(false);
+      }
+    };
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const delta = e.deltaY < 0 ? 0.05 : -0.05;
+      setPhotoScale(v => clampSc(v + delta));
+    };
+
+    el.addEventListener('touchstart', handleTouchStart, { passive: false });
+    el.addEventListener('touchmove', handleTouchMove, { passive: false });
+    el.addEventListener('touchend', handleTouchEnd, { passive: false });
+    el.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener('touchstart', handleTouchStart);
+      el.removeEventListener('touchmove', handleTouchMove);
+      el.removeEventListener('touchend', handleTouchEnd);
+      el.removeEventListener('touchcancel', handleTouchEnd);
+      el.removeEventListener('wheel', handleWheel);
+    };
+  }, [profilePhotoUrl]);
 
   useEffect(() => {
     let active = true;
@@ -1399,8 +1584,13 @@ export default function NameCardApp({ onNavigateBack }) {
 
               {profilePhotoUrl && (
                 <div className="p-3 bg-slate-50/90 rounded-xl border border-slate-300 space-y-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-extrabold text-slate-800">프로필 사진 크기 · 위치 · 기울기 조절</span>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-extrabold text-slate-800">프로필 사진 크기 · 위치 · 기울기 조절</span>
+                      <span className="text-[11px] font-bold text-[#13386E] bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
+                        사진 드래그로 이동 · 두 손가락/휠로 크기 조절
+                      </span>
+                    </div>
                     <button
                       type="button"
                       onClick={() => {
@@ -1607,6 +1797,41 @@ export default function NameCardApp({ onNavigateBack }) {
                     style={{ WebkitTouchCallout: 'default' }}
                   />
                 )}
+                {/* 원형 프로필 사진 직접 터치(드래그/핀치 줌) 및 마우스 드래그/휠 조작 영역 */}
+                <div
+                  ref={photoHitAreaRef}
+                  data-html2canvas-ignore="true"
+                  title="드래그하여 사진 이동 · 두 손가락(또는 휠)으로 크기 조절"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    photoGestureRef.current = {
+                      mode: 'mouse',
+                      startX: e.clientX,
+                      startY: e.clientY,
+                      startOffsetX: photoOffsetX,
+                      startOffsetY: photoOffsetY,
+                      startScale: photoScale,
+                      startDist: 0,
+                      startMidX: 0,
+                      startMidY: 0
+                    };
+                    setIsDraggingPhoto(true);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    left: `${(236 - 102) * cardScale}px`,
+                    top: `${(274 - 102) * cardScale}px`,
+                    width: `${204 * cardScale}px`,
+                    height: `${204 * cardScale}px`,
+                    borderRadius: '9999px',
+                    zIndex: 30,
+                    touchAction: 'none',
+                    cursor: isDraggingPhoto ? 'grabbing' : 'grab',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none'
+                  }}
+                />
                 <div
                   id="profile-card-scale"
                   style={{
