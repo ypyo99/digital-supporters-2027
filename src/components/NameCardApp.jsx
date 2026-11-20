@@ -1392,27 +1392,23 @@ export default function NameCardApp({ onNavigateBack }) {
 
           <div className="grid grid-cols-12 gap-3.5 items-end">
             <div className="col-span-5 sm:col-span-6">
-              <label htmlFor="input-name" className="block text-base sm:text-lg font-bold text-slate-700 mb-1.5">
-                선생님 성함
-              </label>
               <input
                 id="input-name"
                 type="text"
+                aria-label="선생님 성함"
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
-                placeholder="성함 입력"
+                placeholder="선생님 성함 입력"
                 className="w-full px-4 py-3 text-lg sm:text-xl text-slate-900 bg-sky-50 border border-sky-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#13386E] font-bold transition-all"
               />
             </div>
 
             <div className="col-span-7 sm:col-span-6">
-              <label htmlFor="input-phone" className="block text-base sm:text-lg font-bold text-slate-700 mb-1.5">
-                휴대폰 번호
-              </label>
               <input
                 id="input-phone"
                 type="tel"
                 inputMode="numeric"
+                aria-label="휴대폰 번호"
                 value={phoneInput}
                 onChange={(e) => setPhoneInput(formatPhoneInput(e.target.value))}
                 placeholder="010-"
@@ -1422,11 +1418,8 @@ export default function NameCardApp({ onNavigateBack }) {
             </div>
 
             <div className="col-span-12 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <label htmlFor="select-slogan" className="block text-base sm:text-lg font-bold text-slate-700">
-                  테마 문구 (이름 아래 문구)
-                </label>
-                {sloganInput !== DEFAULT_SLOGAN && (
+              {sloganInput !== DEFAULT_SLOGAN && (
+                <div className="flex justify-end">
                   <button
                     type="button"
                     onClick={() => setSloganInput(DEFAULT_SLOGAN)}
@@ -1434,8 +1427,8 @@ export default function NameCardApp({ onNavigateBack }) {
                   >
                     기본 문구로 복원
                   </button>
-                )}
-              </div>
+                </div>
+              )}
               <div ref={sloganMenuRef} className="relative">
                 <button
                   type="button"
