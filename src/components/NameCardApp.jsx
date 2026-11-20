@@ -1648,7 +1648,7 @@ export default function NameCardApp({ onNavigateBack }) {
               </div>
             </div>
 
-            {/* 프로필사진 업로드 & 인쇄 요청 버튼 */}
+            {/* 프로필사진 파일 입력 & 크기·위치·기울기 조절 */}
             <div className="col-span-12 flex flex-col gap-2.5">
               <input
                 ref={profileFileInputRef}
@@ -1657,30 +1657,6 @@ export default function NameCardApp({ onNavigateBack }) {
                 onChange={handleProfilePhotoUpload}
                 className="hidden"
               />
-              {!profilePhotoUrl && (
-                <div className="flex items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => profileFileInputRef.current?.click()}
-                    className="shrink-0 py-3.5 px-4 sm:px-6 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-base sm:text-xl font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
-                  >
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-                      <circle cx="12" cy="13" r="3" />
-                    </svg>
-                    <span>프로필사진</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleDownloadOrSave('auto')}
-                    disabled={isSaving}
-                    className="flex-1 min-w-0 py-3.5 px-4 sm:px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-base sm:text-xl font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
-                  >
-                    <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
-                  </button>
-                </div>
-              )}
 
               {profilePhotoUrl && (
                 <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-300 space-y-3">
@@ -1844,56 +1820,63 @@ export default function NameCardApp({ onNavigateBack }) {
         </div>
 
         {/* 명함 본체 미리보기 (900x500px, 9:5 비율 반응형 축소 + 스마트폰 길게 눌러 저장용 실제 <img> 오버레이) */}
-        <div ref={cardWrapRef} className="w-full max-w-[900px] flex flex-col items-center gap-6">
+        <div ref={cardWrapRef} className="w-full max-w-[900px] flex flex-col items-center gap-3">
+          {/* 프로필사진 변경 / 인쇄 요청 / 프로필 사진 적용됨 (왼쪽 정렬) */}
+          <div className="w-full flex flex-col items-start gap-2.5 px-1">
+            <div className="flex flex-wrap items-center justify-start gap-2.5">
+              <button
+                type="button"
+                onClick={() => profileFileInputRef.current?.click()}
+                className="shrink-0 py-3 px-4 sm:px-5 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-base sm:text-lg font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                  <circle cx="12" cy="13" r="3" />
+                </svg>
+                <span>{profilePhotoUrl ? '프로필사진 변경' : '프로필사진'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDownloadOrSave('auto')}
+                disabled={isSaving}
+                className="shrink-0 py-3 px-5 sm:px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-base sm:text-lg font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
+              </button>
+            </div>
+
+            {profilePhotoUrl && (
+              <div className="flex items-center justify-start gap-2.5 px-3.5 py-2 bg-white border border-slate-300 rounded-xl w-fit shadow-xs">
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src={profilePhotoUrl}
+                    alt="업로드된 프로필"
+                    className="w-9 h-9 rounded-lg object-cover border border-slate-300 shrink-0"
+                  />
+                  <span className="text-base font-bold text-slate-700">프로필 사진 적용됨</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfilePhotoUrl('');
+                    setProfilePreviewDataUrl('');
+                  }}
+                  className="ml-1 px-3 py-1 text-sm sm:text-base font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg cursor-pointer transition"
+                >
+                  사진 삭제
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* 새로 추가: 업로드된 프로필 사진을 포함한 완전히 새로운 디자인의 명함 */}
           {profilePhotoUrl && (
             <div className="w-full flex flex-col items-center">
-              <div className="w-full flex flex-wrap items-center justify-between gap-2.5 px-1 mb-2.5">
-                <span className="text-base sm:text-lg font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-4 py-1.5 rounded-full whitespace-nowrap">
+              <div className="w-full flex items-center justify-between px-1 mb-2">
+                <span className="text-base sm:text-lg font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-4 py-1.5 rounded-full">
                   이미지를 길게 누르면 갤러리에 저장됨
                 </span>
-
-                <div className="flex flex-wrap items-center justify-end gap-2 ml-auto">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-300 rounded-xl shadow-xs">
-                    <img
-                      src={profilePhotoUrl}
-                      alt="업로드된 프로필"
-                      className="w-7 h-7 rounded-lg object-cover border border-slate-300 shrink-0"
-                    />
-                    <span className="text-sm font-bold text-slate-700 whitespace-nowrap">프로필 사진 적용됨</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setProfilePhotoUrl('');
-                        setProfilePreviewDataUrl('');
-                      }}
-                      className="ml-0.5 px-2.5 py-0.5 text-xs sm:text-sm font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg cursor-pointer transition whitespace-nowrap"
-                    >
-                      사진 삭제
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => profileFileInputRef.current?.click()}
-                    className="shrink-0 py-2 px-3.5 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-sm sm:text-base font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                  >
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-                      <circle cx="12" cy="13" r="3" />
-                    </svg>
-                    <span>프로필사진 변경</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleDownloadOrSave('auto')}
-                    disabled={isSaving}
-                    className="py-2 px-4 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-sm sm:text-base font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                  >
-                    <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
-                  </button>
-                </div>
               </div>
               <div
                 id="profile-card-fit"
