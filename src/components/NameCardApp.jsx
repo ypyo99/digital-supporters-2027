@@ -338,6 +338,48 @@ const drawRightPanelOnCanvas = (canvas, theme) => {
   ctx.restore();
 };
 
+const drawClampedProfilePhoto = (ctx, profileImg, cx, cy, radius, photoAdjust = {}, s = 1) => {
+  if (!profileImg || !(profileImg.naturalWidth || profileImg.width)) return;
+
+  const photoScale = Number.isFinite(photoAdjust.scale) ? photoAdjust.scale : 1;
+  const offsetX = (Number.isFinite(photoAdjust.offsetX) ? photoAdjust.offsetX : 0) * s;
+  const offsetY = (Number.isFinite(photoAdjust.offsetY) ? photoAdjust.offsetY : 0) * s;
+  const rotationRad = ((Number.isFinite(photoAdjust.rotation) ? photoAdjust.rotation : 0) * Math.PI) / 180;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.clip();
+
+  const iw = profileImg.naturalWidth || profileImg.width;
+  const ih = profileImg.naturalHeight || profileImg.height;
+  const diameter = radius * 2;
+  const baseScale = Math.max(diameter / iw, diameter / ih);
+  const drawScale = baseScale * photoScale;
+  const dw = iw * drawScale;
+  const dh = ih * drawScale;
+  const pad = diameter * 2;
+  const edgeW = Math.min(2, iw);
+  const edgeH = Math.min(2, ih);
+
+  ctx.translate(cx + offsetX, cy + offsetY);
+  ctx.rotate(rotationRad);
+
+  // 4개 모서리 및 4개 변의 경계 픽셀을 바깥쪽으로 연장하여 이동/축소/회전 시 흰 여백 방지
+  ctx.drawImage(profileImg, 0, 0, edgeW, edgeH, -dw / 2 - pad, -dh / 2 - pad, pad + 1, pad + 1);
+  ctx.drawImage(profileImg, Math.max(0, iw - edgeW), 0, edgeW, edgeH, dw / 2 - 1, -dh / 2 - pad, pad + 1, pad + 1);
+  ctx.drawImage(profileImg, 0, Math.max(0, ih - edgeH), edgeW, edgeH, -dw / 2 - pad, dh / 2 - 1, pad + 1, pad + 1);
+  ctx.drawImage(profileImg, Math.max(0, iw - edgeW), Math.max(0, ih - edgeH), edgeW, edgeH, dw / 2 - 1, dh / 2 - 1, pad + 1, pad + 1);
+
+  ctx.drawImage(profileImg, 0, 0, iw, edgeH, -dw / 2, -dh / 2 - pad, dw, pad + 1);
+  ctx.drawImage(profileImg, 0, Math.max(0, ih - edgeH), iw, edgeH, -dw / 2, dh / 2 - 1, dw, pad + 1);
+  ctx.drawImage(profileImg, 0, 0, edgeW, ih, -dw / 2 - pad, -dh / 2, pad + 1, dh);
+  ctx.drawImage(profileImg, Math.max(0, iw - edgeW), 0, edgeW, ih, dw / 2 - 1, -dh / 2, pad + 1, dh);
+
+  ctx.drawImage(profileImg, -dw / 2, -dh / 2, dw, dh);
+  ctx.restore();
+};
+
 const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {}) => {
   const s = canvas.width / 900;
   const ctx = canvas.getContext('2d');
@@ -433,10 +475,6 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {
 
   if (!profileImg || !(profileImg.naturalWidth || profileImg.width)) return;
 
-  const photoScale = Number.isFinite(photoAdjust.scale) ? photoAdjust.scale : 1;
-  const offsetX = (Number.isFinite(photoAdjust.offsetX) ? photoAdjust.offsetX : 0) * s;
-  const offsetY = (Number.isFinite(photoAdjust.offsetY) ? photoAdjust.offsetY : 0) * s;
-
   // 좌측 테마 패널(w: 236)과 우측 화이트 영역 경계선에 걸치는 원형 프로필 프레임
   const cx = 236 * s;
   const cy = 274 * s;
@@ -468,29 +506,8 @@ const drawProfileCardPhotoOnCanvas = (canvas, theme, profileImg, photoAdjust = {
   ctx.fill();
   ctx.restore();
 
-  // 3. 원형 클리핑 + 흰 배경 + 크기/위치 조절 적용된 프로필 사진
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.clip();
-
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
-
-  const iw = profileImg.naturalWidth || profileImg.width;
-  const ih = profileImg.naturalHeight || profileImg.height;
-  const diameter = radius * 2;
-  const baseScale = Math.max(diameter / iw, diameter / ih);
-  const drawScale = baseScale * photoScale;
-  const dw = iw * drawScale;
-  const dh = ih * drawScale;
-  const rotationRad = ((Number.isFinite(photoAdjust.rotation) ? photoAdjust.rotation : 0) * Math.PI) / 180;
-  ctx.save();
-  ctx.translate(cx + offsetX, cy + offsetY);
-  ctx.rotate(rotationRad);
-  ctx.drawImage(profileImg, -dw / 2, -dh / 2, dw, dh);
-  ctx.restore();
-  ctx.restore();
+  // 3. 원형 클리핑 + 경계 픽셀 연장 + 크기/위치/기울기 조절 적용된 프로필 사진
+  drawClampedProfilePhoto(ctx, profileImg, cx, cy, radius, photoAdjust, s);
 
   // 4. 4시 방향 포인트 컬러 원형 배지 + 4각 별(✦) 아이콘
   const angle = (42 * Math.PI) / 180;
@@ -577,6 +594,49 @@ export default function NameCardApp({ onNavigateBack }) {
   const sloganMenuRef = useRef(null);
   const profileFileInputRef = useRef(null);
   const cachedProfileImgRef = useRef({ url: '', img: null });
+  const livePhotoCanvasRef = useRef(null);
+  const [loadedProfileImg, setLoadedProfileImg] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    if (!profilePhotoUrl) {
+      setLoadedProfileImg(null);
+      return;
+    }
+    if (cachedProfileImgRef.current.url === profilePhotoUrl && cachedProfileImgRef.current.img) {
+      setLoadedProfileImg(cachedProfileImgRef.current.img);
+      return;
+    }
+    loadImageElement(profilePhotoUrl).then((img) => {
+      if (!active) return;
+      if (img) {
+        cachedProfileImgRef.current = { url: profilePhotoUrl, img };
+        setLoadedProfileImg(img);
+      }
+    });
+    return () => { active = false; };
+  }, [profilePhotoUrl]);
+
+  useEffect(() => {
+    const canvas = livePhotoCanvasRef.current;
+    if (!canvas || !loadedProfileImg) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawClampedProfilePhoto(
+      ctx,
+      loadedProfileImg,
+      192,
+      192,
+      192,
+      {
+        scale: photoScale,
+        offsetX: photoOffsetX,
+        offsetY: photoOffsetY,
+        rotation: photoRotation
+      },
+      2
+    );
+  }, [loadedProfileImg, photoScale, photoOffsetX, photoOffsetY, photoRotation]);
 
   useEffect(() => {
     if (!isSloganMenuOpen) return;
@@ -1723,15 +1783,14 @@ export default function NameCardApp({ onNavigateBack }) {
                           overflow: 'hidden'
                         }}
                       >
-                        <img
-                          src={profilePhotoUrl}
-                          alt=""
+                        <canvas
+                          ref={livePhotoCanvasRef}
+                          width={384}
+                          height={384}
                           style={{
                             width: '100%',
                             height: '100%',
-                            objectFit: 'cover',
-                            transform: `translate(${photoOffsetX}px, ${photoOffsetY}px) scale(${photoScale}) rotate(${photoRotation}deg)`,
-                            transformOrigin: 'center center'
+                            display: 'block'
                           }}
                         />
                       </div>
