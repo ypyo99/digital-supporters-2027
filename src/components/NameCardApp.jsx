@@ -576,6 +576,7 @@ export default function NameCardApp({ onNavigateBack }) {
   const profileCardRef = useRef(null);
   const sloganMenuRef = useRef(null);
   const profileFileInputRef = useRef(null);
+  const cachedProfileImgRef = useRef({ url: '', img: null });
 
   useEffect(() => {
     if (!isSloganMenuOpen) return;
@@ -703,48 +704,92 @@ export default function NameCardApp({ onNavigateBack }) {
     }
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setProfilePhotoUrl(reader.result);
+      if (typeof reader.result !== 'string') return;
+      const rawDataUrl = reader.result;
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 1000;
+        const w = img.naturalWidth || img.width;
+        const h = img.naturalHeight || img.height;
+        let finalUrl = rawDataUrl;
+        if (w > maxDim || h > maxDim || rawDataUrl.length > 450000) {
+          const scale = Math.min(1, maxDim / Math.max(w, h));
+          const tw = Math.max(1, Math.round(w * scale));
+          const th = Math.max(1, Math.round(h * scale));
+          const c = document.createElement('canvas');
+          c.width = tw;
+          c.height = th;
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, tw, th);
+          ctx.drawImage(img, 0, 0, tw, th);
+          finalUrl = c.toDataURL('image/jpeg', 0.92);
+        }
+        cachedProfileImgRef.current = { url: '', img: null };
+        setProfilePhotoUrl(finalUrl);
         setPhotoScale(1);
         setPhotoOffsetX(0);
         setPhotoOffsetY(0);
         setPhotoRotation(0);
-      }
+      };
+      img.onerror = () => {
+        cachedProfileImgRef.current = { url: '', img: null };
+        setProfilePhotoUrl(rawDataUrl);
+        setPhotoScale(1);
+        setPhotoOffsetX(0);
+        setPhotoOffsetY(0);
+        setPhotoRotation(0);
+      };
+      img.src = rawDataUrl;
     };
     reader.readAsDataURL(file);
     e.target.value = '';
   };
 
   const captureCardsDataUrls = useCallback(async () => {
-    if (!cardRef.current) return { defaultUrl: '', profileUrl: '' };
     if (document.fonts) {
       await document.fonts.ready;
     }
-    const canvas = await html2canvas(cardRef.current, {
-      scale: 3,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#faf9f6',
-      logging: false,
-      onclone: (doc) => {
-        const cs = doc.getElementById('card-scale');
-        const cf = doc.getElementById('card-fit');
-        if (cs) cs.style.transform = 'none';
-        if (cf) {
-          cf.style.width = '900px';
-          cf.style.height = '500px';
-          cf.style.maxWidth = 'none';
-        }
-      }
-    });
 
-    drawRightPanelOnCanvas(canvas, activeTheme);
-    const defaultUrl = canvas.toDataURL('image/jpeg', 0.96);
+    let defaultUrl = '';
+    if (!profilePhotoUrl && cardRef.current) {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#faf9f6',
+        logging: false,
+        onclone: (doc) => {
+          const cs = doc.getElementById('card-scale');
+          const cf = doc.getElementById('card-fit');
+          if (cs) cs.style.transform = 'none';
+          if (cf) {
+            cf.style.width = '900px';
+            cf.style.height = '500px';
+            cf.style.maxWidth = 'none';
+          }
+        }
+      });
+
+      drawRightPanelOnCanvas(canvas, activeTheme);
+      defaultUrl = canvas.toDataURL('image/jpeg', 0.92);
+    }
 
     let profileUrl = '';
     if (profilePhotoUrl && profileCardRef.current) {
+      const getCachedProfileImg = async () => {
+        if (cachedProfileImgRef.current.url === profilePhotoUrl && cachedProfileImgRef.current.img) {
+          return cachedProfileImgRef.current.img;
+        }
+        const loaded = await loadImageElement(profilePhotoUrl);
+        if (loaded) {
+          cachedProfileImgRef.current = { url: profilePhotoUrl, img: loaded };
+        }
+        return loaded;
+      };
+
       const [profileImg, profileCanvas] = await Promise.all([
-        loadImageElement(profilePhotoUrl),
+        getCachedProfileImg(),
         html2canvas(profileCardRef.current, {
           scale: 3,
           useCORS: true,
@@ -771,7 +816,7 @@ export default function NameCardApp({ onNavigateBack }) {
           rotation: photoRotation
         });
       }
-      profileUrl = profileCanvas.toDataURL('image/jpeg', 0.96);
+      profileUrl = profileCanvas.toDataURL('image/jpeg', 0.92);
     }
 
     return { defaultUrl, profileUrl };
@@ -785,14 +830,14 @@ export default function NameCardApp({ onNavigateBack }) {
       try {
         const { defaultUrl, profileUrl } = await captureCardsDataUrls();
         if (!cancelled) {
-          if (defaultUrl) setPreviewDataUrl(defaultUrl);
+          setPreviewDataUrl(defaultUrl || '');
           setProfilePreviewDataUrl(profileUrl || '');
           setIsPreviewFresh(true);
         }
       } catch (e) {
         console.warn('미리보기 이미지 생성 실패:', e);
       }
-    }, 280);
+    }, 500);
     return () => {
       cancelled = true;
       clearTimeout(timer);
@@ -800,7 +845,7 @@ export default function NameCardApp({ onNavigateBack }) {
   }, [nameInput, phoneInput, sloganInput, themeId, profilePhotoUrl, photoScale, photoOffsetX, photoOffsetY, photoRotation, captureCardsDataUrls]);
 
   const handleDownloadOrSave = async (targetMode = 'auto') => {
-    if (!cardRef.current || isSaving) return;
+    if ((!cardRef.current && !profileCardRef.current) || isSaving) return;
 
     setIsSaving(true);
     setSaveFeedback(null);
@@ -888,11 +933,43 @@ export default function NameCardApp({ onNavigateBack }) {
           }
         }
 
-        // 2-2. 스마트폰/배포 사이트(Netlify): 브라우저에서 즉시 이메일 발송 + Supabase 큐로 구글 드라이브 저장
+        // 2-2. 스마트폰/배포 사이트(Netlify): Google Apps Script 직접 업로드 우선 시도 후 Supabase 큐로 구글 드라이브 저장
         const isActivatedOrigin =
           typeof window !== 'undefined' &&
           window.location.origin === 'https://digital-supporters-2027.netlify.app';
         const browserMailPromise = sendEmailFromBrowser();
+
+        const gasUrl = import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
+        if (gasUrl) {
+          try {
+            const gasRes = await fetch(gasUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: 'saveNamecard',
+                folderId: GOOGLE_DRIVE_FOLDER_ID,
+                fileName,
+                imageData: dataUrl,
+                teacherName: rawName,
+                phone: currentPhone,
+                slogan: sloganInput,
+                themeLabel: currentThemeLabel,
+                emailTo: NAMECARD_EMAIL_TO
+              })
+            });
+            const gasData = await gasRes.json().catch(() => null);
+            if (gasRes.ok && gasData?.success) {
+              const browserMailOk = await browserMailPromise;
+              return {
+                status: 'saved',
+                path: `${TARGET_NAMECARD_DIR}\\${fileName}`,
+                emailSent: Boolean(browserMailOk || gasData.emailSent)
+              };
+            }
+          } catch (gasErr) {
+            console.warn('Apps Script 직접 업로드 실패, 동기화 큐로 대체:', gasErr);
+          }
+        }
 
         const requestId = `nc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         const { data: existingRow, error: fetchErr } = await supabaseClient
@@ -906,10 +983,12 @@ export default function NameCardApp({ onNavigateBack }) {
         }
 
         const prevQueue = Array.isArray(existingRow?.data?.queue) ? existingRow.data.queue : [];
+        const pendingOnly = prevQueue.filter(item => item && item.status === 'pending' && item.fileName !== fileName).slice(-4);
+        const keptPendingIds = new Set(pendingOnly.map(item => item.requestId));
         const keptQueue = prevQueue
           .filter(item => item && item.fileName !== fileName)
-          .map(item => (item.status === 'pending' ? item : { ...item, dataUrl: undefined }))
-          .slice(-10);
+          .map(item => (item.status === 'pending' && keptPendingIds.has(item.requestId) ? item : { ...item, dataUrl: undefined }))
+          .slice(-8);
         const nextQueue = [
           ...keptQueue,
           {
@@ -935,8 +1014,8 @@ export default function NameCardApp({ onNavigateBack }) {
 
         const browserMailOk = await browserMailPromise;
 
-        for (let attempt = 0; attempt < 8; attempt++) {
-          await new Promise(resolve => setTimeout(resolve, 750));
+        for (let attempt = 0; attempt < 10; attempt++) {
+          await new Promise(resolve => setTimeout(resolve, 700));
           const { data: checkRow } = await supabaseClient
             .from('classroom_schedules')
             .select('data')
@@ -1613,29 +1692,91 @@ export default function NameCardApp({ onNavigateBack }) {
                         </div>
                       </div>
                     </div>
+                    {/* 실시간 미리보기용 프로필 사진 (슬라이더 조절 시 60fps 즉시 반응, html2canvas 캡처 시에는 무시) */}
+                    <div
+                      data-html2canvas-ignore="true"
+                      className="pointer-events-none absolute z-20"
+                      style={{ left: '236px', top: '274px', width: 0, height: 0 }}
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: '-113px',
+                          top: '-113px',
+                          width: '226px',
+                          height: '226px',
+                          borderRadius: '9999px',
+                          border: `1.6px dashed ${activeTheme.accent}`
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: '-102px',
+                          top: '-102px',
+                          width: '204px',
+                          height: '204px',
+                          borderRadius: '9999px',
+                          border: '6px solid #FFFFFF',
+                          backgroundColor: '#FFFFFF',
+                          boxShadow: '0 8px 24px rgba(15, 23, 42, 0.24)',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <img
+                          src={profilePhotoUrl}
+                          alt=""
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transform: `translate(${photoOffsetX}px, ${photoOffsetY}px) scale(${photoScale}) rotate(${photoRotation}deg)`,
+                            transformOrigin: 'center center'
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: `${113 * Math.cos((42 * Math.PI) / 180) - 17}px`,
+                          top: `${113 * Math.sin((42 * Math.PI) / 180) - 17}px`,
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: '9999px',
+                          backgroundColor: '#FFFFFF',
+                          boxShadow: '0 3px 10px rgba(15, 23, 42, 0.22)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '29px',
+                            height: '29px',
+                            borderRadius: '9999px',
+                            backgroundColor: activeTheme.accent,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#FFFFFF',
+                            fontSize: '13px',
+                            lineHeight: 1
+                          }}
+                        >
+                          ✦
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* 기존 명함 (프로필 사진 없이 만들고 싶은 사람을 위해 그대로 유지) */}
+          {/* 기존 명함 (프로필 사진이 선택되지 않은 경우에만 표시/생성) */}
+          {!profilePhotoUrl && (
           <div className="w-full flex flex-col items-center">
-            {profilePhotoUrl && (
-              <div className="w-full flex items-center justify-between px-1 mb-2">
-                <span className="text-xs sm:text-sm font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-3 py-1 rounded-full">
-                  기본 명함 - 프로필 사진 없음 (이미지를 길게 누르면 스마트폰 갤러리에 저장됩니다)
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleDownloadOrSave('default')}
-                  disabled={isSaving}
-                  className="px-3.5 py-1.5 bg-[#13386E] hover:bg-[#1a4484] text-white text-xs font-extrabold rounded-xl shadow-xs cursor-pointer transition"
-                >
-                  인쇄 요청
-                </button>
-              </div>
-            )}
             <div
               id="card-fit"
               style={{
@@ -1840,6 +1981,7 @@ export default function NameCardApp({ onNavigateBack }) {
             </div>
             </div>
           </div>
+          )}
         </div>
       </main>
     </div>
