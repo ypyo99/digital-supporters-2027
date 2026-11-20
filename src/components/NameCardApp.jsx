@@ -1680,10 +1680,10 @@ export default function NameCardApp({ onNavigateBack }) {
               />
 
               {profilePhotoUrl && (
-                <div className={`bg-slate-50/90 rounded-xl border border-slate-300 ${isPhotoLocked ? 'px-3.5 py-2.5' : 'p-3.5 space-y-3'}`}>
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-sm sm:text-base font-bold text-slate-700">사진 위치/크기 조정</span>
-                    <div className="flex items-center gap-2 shrink-0">
+                <div className={`bg-slate-50/90 rounded-xl border border-slate-300 ${isPhotoLocked ? 'px-3 py-2 sm:px-3.5 sm:py-2.5' : 'p-3 sm:p-3.5 space-y-3'}`}>
+                  <div className="flex items-center justify-between gap-1.5 sm:gap-2 min-w-0">
+                    <span className="text-xs sm:text-sm md:text-base font-bold text-slate-700 whitespace-nowrap shrink-0">사진 위치/크기 조정</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                       <button
                         type="button"
                         onClick={() => {
@@ -1692,7 +1692,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         }}
                         aria-pressed={!isPhotoLocked}
                         aria-expanded={!isPhotoLocked}
-                        className={`px-3 py-1.5 text-sm sm:text-base font-bold rounded-lg border cursor-pointer transition shrink-0 ${
+                        className={`px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm md:text-base font-bold rounded-lg border cursor-pointer transition shrink-0 whitespace-nowrap ${
                           isPhotoLocked
                             ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300'
                             : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
@@ -1709,7 +1709,7 @@ export default function NameCardApp({ onNavigateBack }) {
                             setPhotoOffsetY(0);
                             setPhotoRotation(0);
                           }}
-                          className="px-3 py-1.5 text-sm sm:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0"
+                          className="px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm md:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0 whitespace-nowrap"
                         >
                           기본값 초기화
                         </button>
