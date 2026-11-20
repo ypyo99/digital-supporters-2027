@@ -52,6 +52,12 @@ const checkIsCanceled = (status) => {
   return isFirstWord || isSecondWord;
 };
 
+const checkIsEnded = (status) => {
+  if (!status) return false;
+  const tokens = status.split(/[,/]+/).map(t => t.trim());
+  return tokens[0] === "종료" || (tokens.length > 1 && tokens[1] === "종료");
+};
+
 // 회차 배지 스타일 (대비 개선 및 범례 일치)
 const getSessionBadgeStyle = (count) => {
   if (count >= 15) {
@@ -681,10 +687,11 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
     if (s.includes("선생님휴가") || (s.includes("휴가") && (!row.student || row.student.trim() === '-'))) {
       return 'vacation';
     }
-    if (s.includes("결석") || checkIsCanceled(s)) {
+    const hasAttendance = hasIndependentKeyword(s, ["1", "출석"]);
+    if ((s.includes("결석") && !hasAttendance) || (checkIsCanceled(s) && !hasAttendance)) {
       return 'absent';
     }
-    if (hasIndependentKeyword(s, ["1", "출석"]) || /^[1-9]\d*/.test(s) || s.length > 2) {
+    if (hasAttendance || /^[1-9]\d*/.test(s) || s.length > 2) {
       return 'attended';
     }
     return 'unconfirmed';
@@ -1320,6 +1327,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                       <div className="shrink-0 ml-1">
                                         {(() => {
                                           const att = getRowAttendance(row, names[0]);
+                                          const isEnded = checkIsEnded(rawStatus);
                                           let btnClass = '';
                                           let btnLabel = '';
 
@@ -1338,10 +1346,19 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                                           }
 
                                           return (
-                                            <div
-                                              className={`min-h-[26px] sm:min-h-[30px] min-w-[48px] sm:min-w-[60px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
-                                            >
-                                              {btnLabel}
+                                            <div className="flex items-center gap-1 sm:gap-1.5">
+                                              {isEnded && (
+                                                <div
+                                                  className="min-h-[26px] sm:min-h-[30px] min-w-[44px] sm:min-w-[52px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700"
+                                                >
+                                                  종료
+                                                </div>
+                                              )}
+                                              <div
+                                                className={`min-h-[26px] sm:min-h-[30px] min-w-[48px] sm:min-w-[60px] px-2 sm:px-2.5 py-0.5 sm:py-1 text-[12.5px] sm:text-[13.5px] font-bold rounded-lg shadow-2xs select-none flex items-center justify-center cursor-default whitespace-nowrap ${btnClass}`}
+                                              >
+                                                {btnLabel}
+                                              </div>
                                             </div>
                                           );
                                         })()}
