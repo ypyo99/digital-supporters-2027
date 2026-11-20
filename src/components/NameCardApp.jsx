@@ -1592,14 +1592,11 @@ export default function NameCardApp({ onNavigateBack }) {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                     {/* 크기 조절 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex flex-col gap-2">
-                      <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-700">
-                        <span>사진 크기</span>
-                        <span className="text-[#13386E] font-extrabold">{Math.round(photoScale * 100)}%</span>
-                      </div>
-                      <div className="flex items-center gap-2">
+                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 크기</span>
+                      <div className="flex-1 min-w-0 flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setPhotoScale(v => Math.max(0.6, +(v - 0.05).toFixed(2)))}
@@ -1615,7 +1612,7 @@ export default function NameCardApp({ onNavigateBack }) {
                           step="0.05"
                           value={photoScale}
                           onChange={(e) => setPhotoScale(parseFloat(e.target.value))}
-                          className="w-full accent-[#13386E] cursor-pointer"
+                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
                         />
                         <button
                           type="button"
@@ -1629,12 +1626,9 @@ export default function NameCardApp({ onNavigateBack }) {
                     </div>
 
                     {/* 좌우 위치 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex flex-col gap-2">
-                      <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-700">
-                        <span>좌우 위치</span>
-                        <span className="text-[#13386E] font-extrabold">{photoOffsetX > 0 ? `+${photoOffsetX}` : photoOffsetX}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
+                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">좌우 위치</span>
+                      <div className="flex-1 min-w-0 flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setPhotoOffsetX(v => Math.max(-120, v - 4))}
@@ -1650,7 +1644,7 @@ export default function NameCardApp({ onNavigateBack }) {
                           step="2"
                           value={photoOffsetX}
                           onChange={(e) => setPhotoOffsetX(parseInt(e.target.value, 10))}
-                          className="w-full accent-[#13386E] cursor-pointer"
+                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
                         />
                         <button
                           type="button"
@@ -1664,12 +1658,9 @@ export default function NameCardApp({ onNavigateBack }) {
                     </div>
 
                     {/* 상하 위치 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex flex-col gap-2">
-                      <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-700">
-                        <span>상하 위치</span>
-                        <span className="text-[#13386E] font-extrabold">{photoOffsetY > 0 ? `+${photoOffsetY}` : photoOffsetY}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
+                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">상하 위치</span>
+                      <div className="flex-1 min-w-0 flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setPhotoOffsetY(v => Math.max(-120, v - 4))}
@@ -1685,7 +1676,7 @@ export default function NameCardApp({ onNavigateBack }) {
                           step="2"
                           value={photoOffsetY}
                           onChange={(e) => setPhotoOffsetY(parseInt(e.target.value, 10))}
-                          className="w-full accent-[#13386E] cursor-pointer"
+                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
                         />
                         <button
                           type="button"
@@ -1699,12 +1690,9 @@ export default function NameCardApp({ onNavigateBack }) {
                     </div>
 
                     {/* 사진 기울기 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex flex-col gap-2">
-                      <div className="flex items-center justify-between text-sm sm:text-base font-bold text-slate-700">
-                        <span>사진 기울기</span>
-                        <span className="text-[#13386E] font-extrabold">{photoRotation > 0 ? `+${photoRotation}°` : `${photoRotation}°`}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
+                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 기울기</span>
+                      <div className="flex-1 min-w-0 flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setPhotoRotation(v => Math.max(-45, v - 1))}
@@ -1720,7 +1708,7 @@ export default function NameCardApp({ onNavigateBack }) {
                           step="1"
                           value={photoRotation}
                           onChange={(e) => setPhotoRotation(parseInt(e.target.value, 10))}
-                          className="w-full accent-[#13386E] cursor-pointer"
+                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
                         />
                         <button
                           type="button"
