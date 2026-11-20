@@ -1821,30 +1821,31 @@ export default function NameCardApp({ onNavigateBack }) {
 
         {/* 명함 본체 미리보기 (900x500px, 9:5 비율 반응형 축소 + 스마트폰 길게 눌러 저장용 실제 <img> 오버레이) */}
         <div ref={cardWrapRef} className="w-full max-w-[900px] flex flex-col items-center gap-3">
-          {/* 프로필사진 변경 / 인쇄 요청 / 프로필 사진 적용됨 (왼쪽 정렬) */}
-          <div className="w-full flex flex-col items-start gap-2.5 px-1">
-            <div className="flex flex-wrap items-center justify-start gap-2.5">
-              <button
-                type="button"
-                onClick={() => profileFileInputRef.current?.click()}
-                className="shrink-0 py-3 px-4 sm:px-5 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-base sm:text-lg font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
-              >
-                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-                  <circle cx="12" cy="13" r="3" />
-                </svg>
-                <span>{profilePhotoUrl ? '프로필사진 변경' : '프로필사진'}</span>
-              </button>
+          {/* 프로필사진(좌측 정렬) / 인쇄 요청(우측 정렬) */}
+          <div
+            style={{ width: `${900 * cardScale}px` }}
+            className="flex flex-wrap items-center justify-between gap-2.5"
+          >
+            <button
+              type="button"
+              onClick={() => profileFileInputRef.current?.click()}
+              className="shrink-0 py-3 px-4 sm:px-5 bg-indigo-50 hover:bg-indigo-100 active:scale-[0.98] text-[#13386E] border border-indigo-300 text-base sm:text-lg font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+            >
+              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                <circle cx="12" cy="13" r="3" />
+              </svg>
+              <span>{profilePhotoUrl ? '프로필사진 변경' : '프로필사진'}</span>
+            </button>
 
-              <button
-                type="button"
-                onClick={() => handleDownloadOrSave('auto')}
-                disabled={isSaving}
-                className="shrink-0 py-3 px-5 sm:px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-base sm:text-lg font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
-              >
-                <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => handleDownloadOrSave('auto')}
+              disabled={isSaving}
+              className="ml-auto shrink-0 py-3 px-5 sm:px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-base sm:text-lg font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+            >
+              <span>{isSaving ? '인쇄요청 중' : '인쇄 요청'}</span>
+            </button>
           </div>
 
           {/* 새로 추가: 업로드된 프로필 사진을 포함한 완전히 새로운 디자인의 명함 */}
