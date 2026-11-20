@@ -747,7 +747,7 @@ export default function NameCardApp({ onNavigateBack }) {
           remoteGasUrlRef.current = String(data.data.gasUrl).trim();
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => { active = false; };
   }, []);
   const cachedProfileImgRef = useRef({ url: '', img: null });
@@ -1680,26 +1680,10 @@ export default function NameCardApp({ onNavigateBack }) {
               />
 
               {profilePhotoUrl && (
-                <div className={`bg-slate-50/90 rounded-xl border border-slate-300 ${isPhotoLocked ? 'px-3 py-2 sm:px-3.5 sm:py-2.5' : 'p-3 sm:p-3.5 space-y-3'}`}>
-                  <div className="flex items-center justify-between gap-1.5 sm:gap-2 min-w-0">
-                    <span className="text-xs sm:text-sm md:text-base font-bold text-slate-700 whitespace-nowrap shrink-0">사진 위치/크기 조정</span>
+                <div className={`bg-slate-50/90 rounded-xl border border-slate-300 ${isPhotoLocked ? 'px-3 sm:px-3.5 py-2.5' : 'p-3 sm:p-3.5 space-y-3'}`}>
+                  <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+                    <span className="text-xs sm:text-base font-bold text-slate-700 whitespace-nowrap shrink-0">사진 위치/크기 조정</span>
                     <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsPhotoLocked(v => !v);
-                          setIsDraggingPhoto(false);
-                        }}
-                        aria-pressed={!isPhotoLocked}
-                        aria-expanded={!isPhotoLocked}
-                        className={`px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm md:text-base font-bold rounded-lg border cursor-pointer transition shrink-0 whitespace-nowrap ${
-                          isPhotoLocked
-                            ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300'
-                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
-                        }`}
-                      >
-                        {isPhotoLocked ? '🔒 잠금됨' : '🔓 조절 중'}
-                      </button>
                       {!isPhotoLocked && (
                         <button
                           type="button"
@@ -1709,144 +1693,159 @@ export default function NameCardApp({ onNavigateBack }) {
                             setPhotoOffsetY(0);
                             setPhotoRotation(0);
                           }}
-                          className="px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm md:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0 whitespace-nowrap"
+                          className="px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0 whitespace-nowrap"
                         >
                           기본값 초기화
                         </button>
                       )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsPhotoLocked(v => !v);
+                          setIsDraggingPhoto(false);
+                        }}
+                        aria-pressed={!isPhotoLocked}
+                        aria-expanded={!isPhotoLocked}
+                        className={`px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold rounded-lg border cursor-pointer transition shrink-0 whitespace-nowrap ${isPhotoLocked
+                          ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300'
+                          : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
+                          }`}
+                      >
+                        {isPhotoLocked ? '🔒 잠금됨' : '🔓 조절 중'}
+                      </button>
                     </div>
                   </div>
 
                   {!isPhotoLocked && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                    {/* 크기 조절 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
-                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 크기</span>
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setPhotoScale(v => Math.max(0.6, +(v - 0.05).toFixed(2)))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="사진 축소"
-                        >
-                          -
-                        </button>
-                        <input
-                          type="range"
-                          min="0.6"
-                          max="2.2"
-                          step="0.05"
-                          value={photoScale}
-                          onChange={(e) => setPhotoScale(parseFloat(e.target.value))}
-                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPhotoScale(v => Math.min(2.2, +(v + 0.05).toFixed(2)))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="사진 확대"
-                        >
-                          +
-                        </button>
+                      {/* 크기 조절 */}
+                      <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                        <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 크기</span>
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setPhotoScale(v => Math.max(0.6, +(v - 0.05).toFixed(2)))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="사진 축소"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="range"
+                            min="0.6"
+                            max="2.2"
+                            step="0.05"
+                            value={photoScale}
+                            onChange={(e) => setPhotoScale(parseFloat(e.target.value))}
+                            className="w-full min-w-0 accent-[#13386E] cursor-pointer"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setPhotoScale(v => Math.min(2.2, +(v + 0.05).toFixed(2)))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="사진 확대"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* 좌우 위치 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
-                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">좌우 위치</span>
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setPhotoOffsetX(v => Math.max(-120, v - 4))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="왼쪽으로 이동"
-                        >
-                          ◀
-                        </button>
-                        <input
-                          type="range"
-                          min="-120"
-                          max="120"
-                          step="2"
-                          value={photoOffsetX}
-                          onChange={(e) => setPhotoOffsetX(parseInt(e.target.value, 10))}
-                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPhotoOffsetX(v => Math.min(120, v + 4))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="오른쪽으로 이동"
-                        >
-                          ▶
-                        </button>
+                      {/* 좌우 위치 */}
+                      <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                        <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">좌우 위치</span>
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setPhotoOffsetX(v => Math.max(-120, v - 4))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="왼쪽으로 이동"
+                          >
+                            ◀
+                          </button>
+                          <input
+                            type="range"
+                            min="-120"
+                            max="120"
+                            step="2"
+                            value={photoOffsetX}
+                            onChange={(e) => setPhotoOffsetX(parseInt(e.target.value, 10))}
+                            className="w-full min-w-0 accent-[#13386E] cursor-pointer"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setPhotoOffsetX(v => Math.min(120, v + 4))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="오른쪽으로 이동"
+                          >
+                            ▶
+                          </button>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* 상하 위치 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
-                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">상하 위치</span>
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setPhotoOffsetY(v => Math.max(-120, v - 4))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="위로 이동"
-                        >
-                          ▲
-                        </button>
-                        <input
-                          type="range"
-                          min="-120"
-                          max="120"
-                          step="2"
-                          value={photoOffsetY}
-                          onChange={(e) => setPhotoOffsetY(parseInt(e.target.value, 10))}
-                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPhotoOffsetY(v => Math.min(120, v + 4))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="아래로 이동"
-                        >
-                          ▼
-                        </button>
+                      {/* 상하 위치 */}
+                      <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                        <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">상하 위치</span>
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setPhotoOffsetY(v => Math.max(-120, v - 4))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="위로 이동"
+                          >
+                            ▲
+                          </button>
+                          <input
+                            type="range"
+                            min="-120"
+                            max="120"
+                            step="2"
+                            value={photoOffsetY}
+                            onChange={(e) => setPhotoOffsetY(parseInt(e.target.value, 10))}
+                            className="w-full min-w-0 accent-[#13386E] cursor-pointer"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setPhotoOffsetY(v => Math.min(120, v + 4))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-sm font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="아래로 이동"
+                          >
+                            ▼
+                          </button>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* 사진 기울기 */}
-                    <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
-                      <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 기울기</span>
-                      <div className="flex-1 min-w-0 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setPhotoRotation(v => Math.max(-45, v - 1))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="반시계 방향 기울기"
-                        >
-                          ↺
-                        </button>
-                        <input
-                          type="range"
-                          min="-45"
-                          max="45"
-                          step="1"
-                          value={photoRotation}
-                          onChange={(e) => setPhotoRotation(parseInt(e.target.value, 10))}
-                          className="w-full min-w-0 accent-[#13386E] cursor-pointer"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPhotoRotation(v => Math.min(45, v + 1))}
-                          className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
-                          aria-label="시계 방향 기울기"
-                        >
-                          ↻
-                        </button>
+                      {/* 사진 기울기 */}
+                      <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
+                        <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 기울기</span>
+                        <div className="flex-1 min-w-0 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setPhotoRotation(v => Math.max(-45, v - 1))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="반시계 방향 기울기"
+                          >
+                            ↺
+                          </button>
+                          <input
+                            type="range"
+                            min="-45"
+                            max="45"
+                            step="1"
+                            value={photoRotation}
+                            onChange={(e) => setPhotoRotation(parseInt(e.target.value, 10))}
+                            className="w-full min-w-0 accent-[#13386E] cursor-pointer"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setPhotoRotation(v => Math.min(45, v + 1))}
+                            className="w-8 h-8 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-base font-extrabold text-slate-700 cursor-pointer shrink-0"
+                            aria-label="시계 방향 기울기"
+                          >
+                            ↻
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
                   )}
                 </div>
               )}
@@ -2258,258 +2257,258 @@ export default function NameCardApp({ onNavigateBack }) {
 
           {/* 기존 명함 (프로필 사진이 선택되지 않은 경우에만 표시/생성) */}
           {!profilePhotoUrl && (
-          <div className="w-full flex flex-col items-center">
-            <div
-              id="card-fit"
-              style={{
-                width: `${900 * cardScale}px`,
-                height: `${500 * cardScale}px`,
-                position: 'relative'
-              }}
-            >
-            {previewDataUrl && (
-              <img
-                src={previewDataUrl}
-                alt={`${nameInput.trim() || '디지털교육서포터즈'}_명함.jpg`}
-                data-html2canvas-ignore="true"
-                className="absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 pointer-events-auto opacity-[0.01]"
-                style={{ WebkitTouchCallout: 'default' }}
-              />
-            )}
-            <div
-              id="card-scale"
-              style={{
-                width: '900px',
-                height: '500px',
-                transformOrigin: 'top left',
-                transform: `scale(${cardScale})`
-              }}
-            >
+            <div className="w-full flex flex-col items-center">
               <div
-                id="business-card"
-                ref={cardRef}
-                className="ds-namecard-font relative w-[900px] h-[500px] bg-[#faf9f6] overflow-hidden box-border rounded-[6px]"
+                id="card-fit"
                 style={{
-                  boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
+                  width: `${900 * cardScale}px`,
+                  height: `${500 * cardScale}px`,
+                  position: 'relative'
                 }}
               >
-                {/* 상단 포인트 라인 */}
+                {previewDataUrl && (
+                  <img
+                    src={previewDataUrl}
+                    alt={`${nameInput.trim() || '디지털교육서포터즈'}_명함.jpg`}
+                    data-html2canvas-ignore="true"
+                    className="absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 pointer-events-auto opacity-[0.01]"
+                    style={{ WebkitTouchCallout: 'default' }}
+                  />
+                )}
                 <div
-                  className="absolute top-0 left-0 w-[180px] h-[6px] z-10"
+                  id="card-scale"
                   style={{
-                    background: `linear-gradient(90deg, ${activeTheme.grad[0]} 0%, ${activeTheme.accent} 100%)`
+                    width: '900px',
+                    height: '500px',
+                    transformOrigin: 'top left',
+                    transform: `scale(${cardScale})`
                   }}
-                />
-
-                {/* 우측 테크/궤도 패널 */}
-                <svg
-                  id="deco-svg"
-                  data-html2canvas-ignore="true"
-                  className="absolute top-0 right-0 w-[250px] h-[500px] pointer-events-none"
-                  viewBox="0 0 250 500"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <defs>
-                    <linearGradient id="panelBaseGrad" x1="0" y1="0" x2="0.3" y2="1">
-                      <stop offset="0%" stopColor={activeTheme.grad[0]} />
-                      <stop offset="45%" stopColor={activeTheme.grad[1]} />
-                      <stop offset="100%" stopColor={activeTheme.grad[2]} />
-                    </linearGradient>
-                    <radialGradient id="topHighlight" cx="0.85" cy="0.08" r="0.75">
-                      <stop offset="0%" stopColor={activeTheme.glowHex} stopOpacity={activeTheme.glowOpacity} />
-                      <stop offset="60%" stopColor={activeTheme.grad[0]} stopOpacity="0" />
-                    </radialGradient>
-                  </defs>
-
-                  <rect width="250" height="500" fill="url(#panelBaseGrad)" />
-                  <rect width="250" height="500" fill="url(#topHighlight)" />
-
-                  <circle cx="254" cy="510" r="238" fill={activeTheme.crescents[0]} />
-                  <circle cx="254" cy="510" r="135" fill={activeTheme.crescents[1]} />
-                  <circle cx="254" cy="510" r="80" fill={activeTheme.crescents[2]} />
-
-                  {activeTheme.orbits.map((orb, idx) => (
-                    <circle
-                      key={idx}
-                      cx="254"
-                      cy="510"
-                      r={orb.r}
-                      fill="none"
-                      stroke={orb.color}
-                      strokeWidth={orb.w}
-                    />
-                  ))}
-
-                  <circle cx="110" cy="405" r="9.5" fill={activeTheme.accent} />
-                  <rect x="42" y="48" width="40" height="5" rx="2.5" fill={activeTheme.accent} />
-
-                  <text x="42" y="80" fill="#FFFFFF" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">DIGITAL</text>
-                  <text x="42" y="106" fill="#FFFFFF" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">EDUCATION</text>
-                  <text x="42" y="132" fill="#FFFFFF" opacity="0.88" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">SUPPORTERS</text>
-                </svg>
-
-                {/* 좌측 메인 콘텐츠 영역 */}
-                <div className="h-full flex flex-col justify-between pt-[40px] pb-[38px] pl-[60px] pr-[270px]">
-                  {/* 1. 헤더 (서울시 심볼 로고 & 기관명) */}
-                  <div className="flex items-center">
-                    <img
-                      id="card-logo"
-                      src={SEOUL_SYMBOL_BASE64}
-                      alt="서울시 로고"
-                      style={{ height: `${sizes.logo}px`, position: 'relative', top: '9px' }}
-                      className="w-auto mr-[18px] object-contain relative top-[9px]"
-                    />
-                    <div>
-                      <div
-                        style={{ fontSize: `${subOrgSize}px` }}
-                        className="font-medium text-[#1E2530] leading-none mb-1.5 tracking-[-0.01em]"
-                      >
-                        사회복지법인 서울가톨릭사회복지회
-                      </div>
-                      <div
-                        style={{ fontSize: `${sizes.org}px` }}
-                        className="font-extrabold text-[#101726] leading-none tracking-[-0.02em]"
-                      >
-                        시립성동노인종합복지관
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 2. 중앙 메인 텍스트 (성함, 직책, 부제) */}
-                  <div className="mt-1">
-                    <div className="flex items-baseline flex-wrap">
-                      <div
-                        id="card-name"
-                        style={{ fontSize: `${sizes.name}px`, color: nameColorHex }}
-                        className={`font-black leading-none whitespace-nowrap ${trackingClass}`}
-                      >
-                        {formattedName}
-                      </div>
-                      <div
-                        style={{ fontSize: `${sizes.title}px` }}
-                        className="font-extrabold text-[#13386E] ml-6 whitespace-nowrap tracking-[-0.01em] pb-0.5"
-                      >
-                        디지털교육서포터즈
-                      </div>
-                    </div>
+                  <div
+                    id="business-card"
+                    ref={cardRef}
+                    className="ds-namecard-font relative w-[900px] h-[500px] bg-[#faf9f6] overflow-hidden box-border rounded-[6px]"
+                    style={{
+                      boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04)'
+                    }}
+                  >
+                    {/* 상단 포인트 라인 */}
                     <div
-                      style={{ fontSize: `${sizes.slogan}px` }}
-                      className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px] leading-snug whitespace-pre-wrap break-keep break-words"
-                    >
-                      {sloganInput}
-                    </div>
-                  </div>
+                      className="absolute top-0 left-0 w-[180px] h-[6px] z-10"
+                      style={{
+                        background: `linear-gradient(90deg, ${activeTheme.grad[0]} 0%, ${activeTheme.accent} 100%)`
+                      }}
+                    />
 
-                  {/* 3. 구분선 및 하단 연락처 */}
-                  <div>
-                    <div className="w-[530px] border-t-[1.5px] border-[#CBD5E1] mb-5" />
+                    {/* 우측 테크/궤도 패널 */}
                     <svg
-                      width="530"
-                      height="74"
-                      viewBox="0 0 530 74"
-                      className="block w-full h-[74px] overflow-visible"
+                      id="deco-svg"
+                      data-html2canvas-ignore="true"
+                      className="absolute top-0 right-0 w-[250px] h-[500px] pointer-events-none"
+                      viewBox="0 0 250 500"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      {/* 1행: 휴대폰 */}
-                      <g transform="translate(0, 1.65)">
-                        <svg
-                          width={`${contactIconSize}`}
-                          height={`${contactIconSize}`}
-                          viewBox="0 0 24 24"
-                          fill="#13386E"
-                        >
-                          <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
-                          <path d="M15 7c1.3.7 2.3 1.7 3 3" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
-                          <path d="M15 3.5c2.9.9 5.3 3.3 6.2 6.2" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
-                        </svg>
-                      </g>
-                      <text
-                        x="39"
-                        y="15"
-                        dominantBaseline="central"
-                        fill="#13386E"
-                        fontSize={`${contactLabelSize}`}
-                        fontWeight="700"
-                        letterSpacing="-0.01em"
-                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
-                      >
-                        휴대폰
-                      </text>
-                      <text
-                        x="116"
-                        y="15"
-                        dominantBaseline="central"
-                        fill="#0A0F1D"
-                        fontSize={`${sizes.contact}`}
-                        fontWeight="800"
-                        letterSpacing="0.03em"
-                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
-                      >
-                        {displayPhone}
-                      </text>
+                      <defs>
+                        <linearGradient id="panelBaseGrad" x1="0" y1="0" x2="0.3" y2="1">
+                          <stop offset="0%" stopColor={activeTheme.grad[0]} />
+                          <stop offset="45%" stopColor={activeTheme.grad[1]} />
+                          <stop offset="100%" stopColor={activeTheme.grad[2]} />
+                        </linearGradient>
+                        <radialGradient id="topHighlight" cx="0.85" cy="0.08" r="0.75">
+                          <stop offset="0%" stopColor={activeTheme.glowHex} stopOpacity={activeTheme.glowOpacity} />
+                          <stop offset="60%" stopColor={activeTheme.grad[0]} stopOpacity="0" />
+                        </radialGradient>
+                      </defs>
 
-                      {/* 2행: 복지관 */}
-                      <g transform="translate(0, 41.65)">
-                        <svg
-                          width={`${contactIconSize}`}
-                          height={`${contactIconSize}`}
-                          viewBox="0 0 24 24"
-                          fill="#13386E"
-                        >
-                          <rect x="2" y="2.5" width="12" height="19" rx="0.6" />
-                          <rect x="6.5" y="15.5" width="3" height="6" fill="#faf9f6" />
-                          <rect x="4.2" y="5" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
-                          <rect x="9" y="5" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
-                          <rect x="4.2" y="8.8" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
-                          <rect x="9" y="8.8" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
-                          <rect x="4.2" y="12.6" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
-                          <rect x="9" y="12.6" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
-                          <rect x="15.2" y="8" width="6" height="13.5" rx="0.6" />
-                          <rect x="17" y="10" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
-                          <rect x="17" y="13.5" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
-                          <rect x="17" y="17" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
-                          <rect x="1" y="20.5" width="22" height="1.8" rx="0.4" />
-                        </svg>
-                      </g>
-                      <text
-                        x="39"
-                        y="55"
-                        dominantBaseline="central"
-                        fill="#13386E"
-                        fontSize={`${contactLabelSize}`}
-                        fontWeight="700"
-                        letterSpacing="-0.01em"
-                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
-                      >
-                        복지관
-                      </text>
-                      <text
-                        x="116"
-                        y="55"
-                        dominantBaseline="central"
-                        fill="#0A0F1D"
-                        fontSize={`${sizes.contact}`}
-                        fontWeight="800"
-                        letterSpacing="0.03em"
-                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
-                      >
-                        02-2298-5117
-                      </text>
+                      <rect width="250" height="500" fill="url(#panelBaseGrad)" />
+                      <rect width="250" height="500" fill="url(#topHighlight)" />
+
+                      <circle cx="254" cy="510" r="238" fill={activeTheme.crescents[0]} />
+                      <circle cx="254" cy="510" r="135" fill={activeTheme.crescents[1]} />
+                      <circle cx="254" cy="510" r="80" fill={activeTheme.crescents[2]} />
+
+                      {activeTheme.orbits.map((orb, idx) => (
+                        <circle
+                          key={idx}
+                          cx="254"
+                          cy="510"
+                          r={orb.r}
+                          fill="none"
+                          stroke={orb.color}
+                          strokeWidth={orb.w}
+                        />
+                      ))}
+
+                      <circle cx="110" cy="405" r="9.5" fill={activeTheme.accent} />
+                      <rect x="42" y="48" width="40" height="5" rx="2.5" fill={activeTheme.accent} />
+
+                      <text x="42" y="80" fill="#FFFFFF" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">DIGITAL</text>
+                      <text x="42" y="106" fill="#FFFFFF" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">EDUCATION</text>
+                      <text x="42" y="132" fill="#FFFFFF" opacity="0.88" fontFamily="'Outfit', sans-serif" fontWeight="800" fontSize="16" letterSpacing="3.2">SUPPORTERS</text>
                     </svg>
+
+                    {/* 좌측 메인 콘텐츠 영역 */}
+                    <div className="h-full flex flex-col justify-between pt-[40px] pb-[38px] pl-[60px] pr-[270px]">
+                      {/* 1. 헤더 (서울시 심볼 로고 & 기관명) */}
+                      <div className="flex items-center">
+                        <img
+                          id="card-logo"
+                          src={SEOUL_SYMBOL_BASE64}
+                          alt="서울시 로고"
+                          style={{ height: `${sizes.logo}px`, position: 'relative', top: '9px' }}
+                          className="w-auto mr-[18px] object-contain relative top-[9px]"
+                        />
+                        <div>
+                          <div
+                            style={{ fontSize: `${subOrgSize}px` }}
+                            className="font-medium text-[#1E2530] leading-none mb-1.5 tracking-[-0.01em]"
+                          >
+                            사회복지법인 서울가톨릭사회복지회
+                          </div>
+                          <div
+                            style={{ fontSize: `${sizes.org}px` }}
+                            className="font-extrabold text-[#101726] leading-none tracking-[-0.02em]"
+                          >
+                            시립성동노인종합복지관
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 2. 중앙 메인 텍스트 (성함, 직책, 부제) */}
+                      <div className="mt-1">
+                        <div className="flex items-baseline flex-wrap">
+                          <div
+                            id="card-name"
+                            style={{ fontSize: `${sizes.name}px`, color: nameColorHex }}
+                            className={`font-black leading-none whitespace-nowrap ${trackingClass}`}
+                          >
+                            {formattedName}
+                          </div>
+                          <div
+                            style={{ fontSize: `${sizes.title}px` }}
+                            className="font-extrabold text-[#13386E] ml-6 whitespace-nowrap tracking-[-0.01em] pb-0.5"
+                          >
+                            디지털교육서포터즈
+                          </div>
+                        </div>
+                        <div
+                          style={{ fontSize: `${sizes.slogan}px` }}
+                          className="font-medium text-[#1E2738] mt-3.5 tracking-[-0.01em] min-h-[26px] leading-snug whitespace-pre-wrap break-keep break-words"
+                        >
+                          {sloganInput}
+                        </div>
+                      </div>
+
+                      {/* 3. 구분선 및 하단 연락처 */}
+                      <div>
+                        <div className="w-[530px] border-t-[1.5px] border-[#CBD5E1] mb-5" />
+                        <svg
+                          width="530"
+                          height="74"
+                          viewBox="0 0 530 74"
+                          className="block w-full h-[74px] overflow-visible"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          {/* 1행: 휴대폰 */}
+                          <g transform="translate(0, 1.65)">
+                            <svg
+                              width={`${contactIconSize}`}
+                              height={`${contactIconSize}`}
+                              viewBox="0 0 24 24"
+                              fill="#13386E"
+                            >
+                              <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
+                              <path d="M15 7c1.3.7 2.3 1.7 3 3" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
+                              <path d="M15 3.5c2.9.9 5.3 3.3 6.2 6.2" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
+                            </svg>
+                          </g>
+                          <text
+                            x="39"
+                            y="15"
+                            dominantBaseline="central"
+                            fill="#13386E"
+                            fontSize={`${contactLabelSize}`}
+                            fontWeight="700"
+                            letterSpacing="-0.01em"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
+                          >
+                            휴대폰
+                          </text>
+                          <text
+                            x="116"
+                            y="15"
+                            dominantBaseline="central"
+                            fill="#0A0F1D"
+                            fontSize={`${sizes.contact}`}
+                            fontWeight="800"
+                            letterSpacing="0.03em"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
+                          >
+                            {displayPhone}
+                          </text>
+
+                          {/* 2행: 복지관 */}
+                          <g transform="translate(0, 41.65)">
+                            <svg
+                              width={`${contactIconSize}`}
+                              height={`${contactIconSize}`}
+                              viewBox="0 0 24 24"
+                              fill="#13386E"
+                            >
+                              <rect x="2" y="2.5" width="12" height="19" rx="0.6" />
+                              <rect x="6.5" y="15.5" width="3" height="6" fill="#faf9f6" />
+                              <rect x="4.2" y="5" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
+                              <rect x="9" y="5" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
+                              <rect x="4.2" y="8.8" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
+                              <rect x="9" y="8.8" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
+                              <rect x="4.2" y="12.6" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
+                              <rect x="9" y="12.6" width="2.8" height="2.8" rx="0.3" fill="#faf9f6" />
+                              <rect x="15.2" y="8" width="6" height="13.5" rx="0.6" />
+                              <rect x="17" y="10" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
+                              <rect x="17" y="13.5" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
+                              <rect x="17" y="17" width="2.4" height="2.4" rx="0.3" fill="#faf9f6" />
+                              <rect x="1" y="20.5" width="22" height="1.8" rx="0.4" />
+                            </svg>
+                          </g>
+                          <text
+                            x="39"
+                            y="55"
+                            dominantBaseline="central"
+                            fill="#13386E"
+                            fontSize={`${contactLabelSize}`}
+                            fontWeight="700"
+                            letterSpacing="-0.01em"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
+                          >
+                            복지관
+                          </text>
+                          <text
+                            x="116"
+                            y="55"
+                            dominantBaseline="central"
+                            fill="#0A0F1D"
+                            fontSize={`${sizes.contact}`}
+                            fontWeight="800"
+                            letterSpacing="0.03em"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
+                          >
+                            02-2298-5117
+                          </text>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            </div>
-            <div
-              style={{ width: `${900 * cardScale}px` }}
-              className="mt-2.5"
-            >
-              <div className="w-full text-center text-base sm:text-lg font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-full">
-                이미지를 길게 누르면 갤러리에 저장됨
+              <div
+                style={{ width: `${900 * cardScale}px` }}
+                className="mt-2.5"
+              >
+                <div className="w-full text-center text-base sm:text-lg font-extrabold text-slate-700 bg-slate-100 border border-slate-300 px-4 py-1.5 rounded-full">
+                  이미지를 길게 누르면 갤러리에 저장됨
+                </div>
               </div>
             </div>
-          </div>
           )}
         </div>
       </main>
