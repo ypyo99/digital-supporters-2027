@@ -11,6 +11,7 @@ const QUEUE_ID = 'namecard-print-queue';
 const EMAIL_TO = 'ypyo99@gmail.com';
 const CANONICAL_ORIGIN = 'https://digital-supporters-2027.netlify.app';
 const WORKER_PORT = 47831;
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbzFnS9OPKTwlQYb8wQe3IKlBmusJyh9plnXyoFXJJ8EuULpaT3VoT9mYIqFYlMJ8tmOoA/exec';
 
 const supabase = createClient(
   'https://oudrcfxkneopgtcfbwhd.supabase.co',
@@ -30,29 +31,29 @@ const saveFile = (fileName, dataUrl) => {
 };
 
 const sendEmail = async (item, { safeName, mimeType, buffer }) => {
-  const cleanTeacher = (String(item.teacherName || '').trim() || '디지털교육서포터즈').replace(/\s*선생님\s*$/, '').trim() || '디지털교육서포터즈';
-  const subject = `명함 인쇄 요청: ${cleanTeacher} 선생님`;
-  const fd = new FormData();
-  fd.append('_subject', subject);
-  fd.append('_template', 'table');
-  fd.append('_captcha', 'false');
-  fd.append('선생님_성함', `${cleanTeacher} 선생님`);
-  fd.append('휴대폰_번호', item.phone || '-');
-  fd.append('테마_문구', item.slogan || '-');
-  fd.append('이미지_색상', item.themeLabel || '-');
-  fd.append('attachment', new Blob([buffer], { type: mimeType }), safeName);
-
-  const res = await fetch(`https://formsubmit.co/${EMAIL_TO}`, {
-    method: 'POST',
-    headers: {
-      Origin: CANONICAL_ORIGIN,
-      Referer: `${CANONICAL_ORIGIN}/`,
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
-    },
-    body: fd
-  });
-  const text = await res.text();
-  return res.ok && /Thanks!/i.test(text);
+  try {
+    const dataUrl = `data:${mimeType};base64,${buffer.toString('base64')}`;
+    const res = await fetch(DEFAULT_GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'saveNamecard',
+        folderId: '13BWCd8p70u9GGBEDHQBaO3ZRJL3DtD1I',
+        fileName: safeName,
+        imageData: dataUrl,
+        teacherName: item.teacherName,
+        phone: item.phone,
+        slogan: item.slogan,
+        themeLabel: item.themeLabel,
+        emailTo: EMAIL_TO
+      })
+    });
+    const json = await res.json().catch(() => null);
+    return Boolean(json?.success && json?.emailSent !== false);
+  } catch (e) {
+    console.warn('Worker 이메일 발송 실패:', e);
+    return false;
+  }
 };
 
 let busy = false;

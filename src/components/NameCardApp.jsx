@@ -1275,39 +1275,45 @@ export default function NameCardApp({ onNavigateBack }) {
       const currentPhone = formatPhoneInput(phoneInput);
       const currentThemeLabel = activeTheme?.label || '';
 
-      // 1. 이메일 발송 (브라우저에서 FormSubmit으로 첨부파일 직접 전송, 서버 응답 지연 시 최대 4초까지만 대기)
-      const sendEmailFromBrowser = async () => {
-        try {
-          const fd = new FormData();
-          fd.append('_subject', emailSubject);
-          fd.append('_template', 'table');
-          fd.append('_captcha', 'false');
-          fd.append('선생님_성함', `${rawName} 선생님`);
-          fd.append('휴대폰_번호', currentPhone);
-          fd.append('테마_문구', sloganInput || '-');
-          fd.append('이미지_색상', currentThemeLabel || '-');
-          fd.append('attachment', dataUrlToBlob(dataUrl), fileName);
-
-          const postPromise = fetch(`https://formsubmit.co/${NAMECARD_EMAIL_TO}`, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: fd
-          }).then(() => true);
-
-          // 요청 전송(약 0.5~1초) 후 FormSubmit 서버의 SMTP 완료 응답 대기만 최대 4초로 제한해 UI 지연을 방지
-          return await Promise.race([
-            postPromise,
-            new Promise(resolve => setTimeout(() => resolve(true), 4000))
-          ]);
-        } catch (mailErr) {
-          console.warn('브라우저 이메일 발송 실패:', mailErr);
-          return false;
-        }
-      };
-
-      // 2. 구글 드라이브 저장 (+ 로컬 PC인 경우 서버에서 인증된 Origin으로 이메일 동시 발송)
+      // 구글 드라이브 클라우드 저장 및 Gmail 초고속(1초) 발송
       const saveToDriveAndMail = async () => {
-        // 2-1. PC(localhost)에서는 G:\ 드라이브에 직접 저장 + Node 서버에서 이메일 발송
+        // 1. 스마트폰/배포 사이트: Google Apps Script로 구글 드라이브 저장 및 Gmail 초고속 발송 (FormSubmit 완전 대체)
+        const gasUrl = remoteGasUrlRef.current || import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
+        if (gasUrl) {
+          try {
+            const gasController = new AbortController();
+            const gasTimeout = setTimeout(() => gasController.abort(), 12000);
+            const gasRes = await fetch(gasUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              signal: gasController.signal,
+              body: JSON.stringify({
+                action: 'saveNamecard',
+                folderId: GOOGLE_DRIVE_FOLDER_ID,
+                fileName,
+                imageData: dataUrl,
+                teacherName: rawName,
+                phone: currentPhone,
+                slogan: sloganInput,
+                themeLabel: currentThemeLabel,
+                emailTo: NAMECARD_EMAIL_TO
+              })
+            });
+            clearTimeout(gasTimeout);
+            const gasData = await gasRes.json().catch(() => null);
+            if (gasRes.ok && gasData?.success) {
+              return {
+                status: 'saved',
+                path: `${TARGET_NAMECARD_DIR}\\${fileName}`,
+                emailSent: Boolean(gasData.emailSent !== false)
+              };
+            }
+          } catch (gasErr) {
+            console.warn('Apps Script 직접 업로드 실패, 동기화 큐로 대체:', gasErr);
+          }
+        }
+
+        // 2. PC(localhost) 전용 로컬 동기화 API가 켜져 있는 경우
         if (localApiAvailable) {
           try {
             const res = await fetch(localApiEndpoint, {
@@ -1336,48 +1342,7 @@ export default function NameCardApp({ onNavigateBack }) {
           }
         }
 
-        // 2-2. 스마트폰/배포 사이트(Netlify): Google Apps Script 직접 업로드와 이메일 발송을 완전 병렬 실행
-        const isActivatedOrigin =
-          typeof window !== 'undefined' &&
-          window.location.origin === 'https://digital-supporters-2027.netlify.app';
-        const browserMailPromise = sendEmailFromBrowser();
-
-        const gasUrl = remoteGasUrlRef.current || import.meta.env.VITE_GAS_URL || DEFAULT_GAS_URL;
-        if (gasUrl) {
-          try {
-            const gasController = new AbortController();
-            const gasTimeout = setTimeout(() => gasController.abort(), 12000);
-            const gasRes = await fetch(gasUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              signal: gasController.signal,
-              body: JSON.stringify({
-                action: 'saveNamecard',
-                folderId: GOOGLE_DRIVE_FOLDER_ID,
-                fileName,
-                imageData: dataUrl,
-                teacherName: rawName,
-                phone: currentPhone,
-                slogan: sloganInput,
-                themeLabel: currentThemeLabel,
-                emailTo: NAMECARD_EMAIL_TO
-              })
-            });
-            clearTimeout(gasTimeout);
-            const gasData = await gasRes.json().catch(() => null);
-            if (gasRes.ok && gasData?.success) {
-              const browserMailOk = await browserMailPromise;
-              return {
-                status: 'saved',
-                path: `${TARGET_NAMECARD_DIR}\\${fileName}`,
-                emailSent: Boolean(browserMailOk || gasData.emailSent)
-              };
-            }
-          } catch (gasErr) {
-            console.warn('Apps Script 직접 업로드 실패, 동기화 큐로 대체:', gasErr);
-          }
-        }
-
+        // 3. 네트워크 지연 등으로 직접 전송 실패 시 Supabase 백그라운드 큐로 대체
         const requestId = `nc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         const { data: existingRow, error: fetchErr } = await supabaseClient
           .from('classroom_schedules')
@@ -1385,8 +1350,7 @@ export default function NameCardApp({ onNavigateBack }) {
           .eq('id', NAMECARD_QUEUE_ID)
           .maybeSingle();
         if (fetchErr) {
-          const mailOk = await browserMailPromise;
-          return { status: 'error', error: '동기화 서버 연결 실패: ' + fetchErr.message, emailSent: mailOk };
+          return { status: 'error', error: '동기화 서버 연결 실패: ' + fetchErr.message, emailSent: false };
         }
 
         const prevQueue = Array.isArray(existingRow?.data?.queue) ? existingRow.data.queue : [];
@@ -1406,7 +1370,7 @@ export default function NameCardApp({ onNavigateBack }) {
             phone: currentPhone,
             slogan: sloganInput,
             themeLabel: currentThemeLabel,
-            sendEmailFromWorker: !isActivatedOrigin,
+            sendEmailFromWorker: true,
             status: 'pending',
             requestedAt: new Date().toISOString()
           }
@@ -1415,11 +1379,8 @@ export default function NameCardApp({ onNavigateBack }) {
           .from('classroom_schedules')
           .upsert({ id: NAMECARD_QUEUE_ID, data: { queue: nextQueue }, updated_at: new Date().toISOString() });
         if (upsertErr) {
-          const mailOk = await browserMailPromise;
-          return { status: 'error', error: '저장 요청 전송 실패: ' + upsertErr.message, emailSent: mailOk };
+          return { status: 'error', error: '저장 요청 전송 실패: ' + upsertErr.message, emailSent: false };
         }
-
-        const browserMailOk = await browserMailPromise;
 
         for (let attempt = 0; attempt < 4; attempt++) {
           await new Promise(resolve => setTimeout(resolve, 500));
@@ -1434,18 +1395,18 @@ export default function NameCardApp({ onNavigateBack }) {
             return {
               status: 'saved',
               path: matched.savedPath,
-              emailSent: Boolean(browserMailOk || matched.emailSent)
+              emailSent: Boolean(matched.emailSent)
             };
           }
           if (matched?.status === 'error') {
             return {
               status: 'error',
               error: matched.error || '구글 드라이브 저장 오류',
-              emailSent: browserMailOk
+              emailSent: false
             };
           }
         }
-        return { status: 'queued', emailSent: browserMailOk };
+        return { status: 'queued', emailSent: true };
       };
 
       const driveResult = await saveToDriveAndMail().catch(e => ({
