@@ -2101,14 +2101,11 @@ export default function NameCardApp({ onNavigateBack }) {
                             x="104"
                             y="17"
                             dominantBaseline="central"
-                            fill="#0F172A"
-                            fontSize="24"
+                            fill="#0A0F1D"
+                            fontSize={`${sizes.contact}`}
                             fontWeight="800"
-                            letterSpacing="0.02em"
-                            style={{
-                              fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                              fontVariantNumeric: 'tabular-nums'
-                            }}
+                            letterSpacing="0.03em"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                           >
                             {displayPhone}
                           </text>
@@ -2135,14 +2132,11 @@ export default function NameCardApp({ onNavigateBack }) {
                             x="104"
                             y="61"
                             dominantBaseline="central"
-                            fill="#0F172A"
-                            fontSize="24"
+                            fill="#0A0F1D"
+                            fontSize={`${sizes.contact}`}
                             fontWeight="800"
-                            letterSpacing="0.02em"
-                            style={{
-                              fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                              fontVariantNumeric: 'tabular-nums'
-                            }}
+                            letterSpacing="0.03em"
+                            style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                           >
                             02-2298-5117
                           </text>
@@ -2418,10 +2412,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         fontSize={`${sizes.contact}`}
                         fontWeight="800"
                         letterSpacing="0.03em"
-                        style={{
-                          fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                          fontVariantNumeric: 'tabular-nums'
-                        }}
+                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                       >
                         {displayPhone}
                       </text>
@@ -2469,10 +2460,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         fontSize={`${sizes.contact}`}
                         fontWeight="800"
                         letterSpacing="0.03em"
-                        style={{
-                          fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                          fontVariantNumeric: 'tabular-nums'
-                        }}
+                        style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                       >
                         02-2298-5117
                       </text>
