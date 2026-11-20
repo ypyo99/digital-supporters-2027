@@ -1680,7 +1680,7 @@ export default function NameCardApp({ onNavigateBack }) {
               />
 
               {profilePhotoUrl && (
-                <div className="p-3.5 bg-slate-50/90 rounded-xl border border-slate-300 space-y-3">
+                <div className={`bg-slate-50/90 rounded-xl border border-slate-300 ${isPhotoLocked ? 'px-3.5 py-2.5' : 'p-3.5 space-y-3'}`}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm sm:text-base font-bold text-slate-700">사진 위치/크기 조정</span>
                     <div className="flex items-center gap-2 shrink-0">
@@ -1690,7 +1690,8 @@ export default function NameCardApp({ onNavigateBack }) {
                           setIsPhotoLocked(v => !v);
                           setIsDraggingPhoto(false);
                         }}
-                        aria-pressed={isPhotoLocked}
+                        aria-pressed={!isPhotoLocked}
+                        aria-expanded={!isPhotoLocked}
                         className={`px-3 py-1.5 text-sm sm:text-base font-bold rounded-lg border cursor-pointer transition shrink-0 ${
                           isPhotoLocked
                             ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-300'
@@ -1699,23 +1700,25 @@ export default function NameCardApp({ onNavigateBack }) {
                       >
                         {isPhotoLocked ? '🔒 잠금됨' : '🔓 조절 중'}
                       </button>
-                      <button
-                        type="button"
-                        disabled={isPhotoLocked}
-                        onClick={() => {
-                          setPhotoScale(1);
-                          setPhotoOffsetX(0);
-                          setPhotoOffsetY(0);
-                          setPhotoRotation(0);
-                        }}
-                        className="px-3 py-1.5 text-sm sm:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0 disabled:opacity-45 disabled:cursor-not-allowed"
-                      >
-                        기본값 초기화
-                      </button>
+                      {!isPhotoLocked && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPhotoScale(1);
+                            setPhotoOffsetX(0);
+                            setPhotoOffsetY(0);
+                            setPhotoRotation(0);
+                          }}
+                          className="px-3 py-1.5 text-sm sm:text-base font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg cursor-pointer transition shrink-0"
+                        >
+                          기본값 초기화
+                        </button>
+                      )}
                     </div>
                   </div>
 
-                  <div className={`grid grid-cols-1 md:grid-cols-2 gap-2.5 transition-opacity ${isPhotoLocked ? 'opacity-50 pointer-events-none select-none' : ''}`}>
+                  {!isPhotoLocked && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                     {/* 크기 조절 */}
                     <div className="bg-white rounded-xl border border-slate-200 px-3.5 py-2.5 flex items-center gap-2.5">
                       <span className="w-[74px] sm:w-[84px] shrink-0 text-sm sm:text-base font-bold text-slate-700 whitespace-nowrap">사진 크기</span>
@@ -1844,6 +1847,7 @@ export default function NameCardApp({ onNavigateBack }) {
                       </div>
                     </div>
                   </div>
+                  )}
                 </div>
               )}
             </div>
