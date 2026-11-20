@@ -11,7 +11,7 @@ const QUEUE_ID = 'namecard-print-queue';
 const EMAIL_TO = 'ypyo99@gmail.com';
 const CANONICAL_ORIGIN = 'https://digital-supporters-2027.netlify.app';
 const WORKER_PORT = 47831;
-const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbzFnS9OPKTwlQYb8wQe3IKlBmusJyh9plnXyoFXJJ8EuULpaT3VoT9mYIqFYlMJ8tmOoA/exec';
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbw9cnQu_Gmfxmz6z5M8ZFHUTFLekly_Mcuh79e5lQyVYVPTPAF4IEL0PaHfRZm5U9rMow/exec';
 
 const supabase = createClient(
   'https://oudrcfxkneopgtcfbwhd.supabase.co',
