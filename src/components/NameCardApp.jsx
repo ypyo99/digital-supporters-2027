@@ -1226,7 +1226,6 @@ export default function NameCardApp({ onNavigateBack }) {
   // 스마트폰에서 명함 이미지를 길게 눌러 갤러리에 바로 저장할 수 있도록 실제 <img> 데이터를 자동 동기화
   useEffect(() => {
     let cancelled = false;
-    setIsPreviewFresh(false);
     const timer = setTimeout(async () => {
       try {
         const { defaultUrl, profileUrl } = await captureCardsDataUrls();
@@ -1238,7 +1237,7 @@ export default function NameCardApp({ onNavigateBack }) {
       } catch (e) {
         console.warn('미리보기 이미지 생성 실패:', e);
       }
-    }, 500);
+    }, 400);
     return () => {
       cancelled = true;
       clearTimeout(timer);
@@ -1899,8 +1898,7 @@ export default function NameCardApp({ onNavigateBack }) {
                     src={profilePreviewDataUrl}
                     alt={`${nameInput.trim() || '디지털교육서포터즈'}_프로필명함.jpg`}
                     data-html2canvas-ignore="true"
-                    className={`absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 transition-opacity duration-150 ${isPreviewFresh ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                      }`}
+                    className="absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 pointer-events-auto opacity-[0.01]"
                     style={{ WebkitTouchCallout: 'default' }}
                   />
                 )}
@@ -2262,8 +2260,7 @@ export default function NameCardApp({ onNavigateBack }) {
                 src={previewDataUrl}
                 alt={`${nameInput.trim() || '디지털교육서포터즈'}_명함.jpg`}
                 data-html2canvas-ignore="true"
-                className={`absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 transition-opacity duration-150 ${isPreviewFresh ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                  }`}
+                className="absolute inset-0 w-full h-full object-contain rounded-[6px] z-20 pointer-events-auto opacity-[0.01]"
                 style={{ WebkitTouchCallout: 'default' }}
               />
             )}
