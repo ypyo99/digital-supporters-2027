@@ -2074,35 +2074,37 @@ export default function NameCardApp({ onNavigateBack }) {
                       <div className="pt-4 border-t border-slate-200">
                         <svg
                           width="464"
-                          height="78"
-                          viewBox="0 0 464 78"
-                          className="block w-full h-[78px] overflow-visible"
+                          height="74"
+                          viewBox="0 0 464 74"
+                          className="block w-full h-[74px] overflow-visible"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           {/* 1행: 휴대폰 */}
-                          <circle cx="16" cy="17" r="16" fill={activeTheme.swatch} fillOpacity="0.08" />
-                          <g transform="translate(7.5, 8.5)">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill={activeTheme.swatch}>
+                          <g transform="translate(0, 3.5)">
+                            <svg width="25" height="25" viewBox="0 0 24 24" fill="#13386E">
                               <path d="M4.5 7.2c.2-1.5 1.5-2.6 3-2.3l1.8.4c1.1.2 1.9 1.2 1.8 2.3l-.4 1.6c-.2.7-.6 1.2-1.2 1.4-.2.1-.5.3-.7.5 1.1 2.2 2.9 4 5.1 5.1.2-.2.4-.5.5-.7.2-.6.7-1 1.4-1.2l1.6-.4c1.1-.2 2.1.6 2.3 1.8l.4 1.8c.3 1.5-.8 2.8-2.3 3-1.3.2-2.7.1-4.2-.6-3.3-1.5-6.1-4.3-7.6-7.6-.7-1.5-.8-2.9-.6-4.2z" />
+                              <path d="M15 7c1.3.7 2.3 1.7 3 3" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
+                              <path d="M15 3.5c2.9.9 5.3 3.3 6.2 6.2" fill="none" stroke="#13386E" strokeWidth="2.6" strokeLinecap="round" />
                             </svg>
                           </g>
                           <text
-                            x="46"
-                            y="17"
+                            x="36"
+                            y="16"
                             dominantBaseline="central"
-                            fill={activeTheme.swatch}
-                            fontSize="16"
+                            fill="#13386E"
+                            fontSize="19.5"
                             fontWeight="700"
+                            letterSpacing="-0.01em"
                             style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                           >
                             휴대폰
                           </text>
                           <text
-                            x="104"
-                            y="17"
+                            x="106"
+                            y="16"
                             dominantBaseline="central"
                             fill="#0A0F1D"
-                            fontSize={`${sizes.contact}`}
+                            fontSize="28"
                             fontWeight="800"
                             letterSpacing="0.03em"
                             style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
@@ -2111,29 +2113,41 @@ export default function NameCardApp({ onNavigateBack }) {
                           </text>
 
                           {/* 2행: 복지관 */}
-                          <circle cx="16" cy="61" r="16" fill={activeTheme.swatch} fillOpacity="0.08" />
-                          <g transform="translate(7.5, 52.5)">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill={activeTheme.swatch}>
-                              <path d="M3 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16H3zm4-14v2h2V7H7zm0 4v2h2v-2H7zm4-4v2h2V7h-2zm0 4v2h2v-2h-2zm6 10V9h3a1 1 0 0 1 1 1v11h-4zm1-8v2h2v-2h-2zm0 4v2h2v-2h-2z" />
+                          <g transform="translate(0, 43.5)">
+                            <svg width="25" height="25" viewBox="0 0 24 24" fill="#13386E">
+                              <rect x="2" y="2.5" width="12" height="19" rx="0.6" />
+                              <rect x="6.5" y="15.5" width="3" height="6" fill="#FFFFFF" />
+                              <rect x="4.2" y="5" width="2.8" height="2.8" rx="0.3" fill="#FFFFFF" />
+                              <rect x="9" y="5" width="2.8" height="2.8" rx="0.3" fill="#FFFFFF" />
+                              <rect x="4.2" y="8.8" width="2.8" height="2.8" rx="0.3" fill="#FFFFFF" />
+                              <rect x="9" y="8.8" width="2.8" height="2.8" rx="0.3" fill="#FFFFFF" />
+                              <rect x="4.2" y="12.6" width="2.8" height="2.8" rx="0.3" fill="#FFFFFF" />
+                              <rect x="9" y="12.6" width="2.8" height="2.8" rx="0.3" fill="#FFFFFF" />
+                              <rect x="15.2" y="8" width="6" height="13.5" rx="0.6" />
+                              <rect x="17" y="10" width="2.4" height="2.4" rx="0.3" fill="#FFFFFF" />
+                              <rect x="17" y="13.5" width="2.4" height="2.4" rx="0.3" fill="#FFFFFF" />
+                              <rect x="17" y="17" width="2.4" height="2.4" rx="0.3" fill="#FFFFFF" />
+                              <rect x="1" y="20.5" width="22" height="1.8" rx="0.4" />
                             </svg>
                           </g>
                           <text
-                            x="46"
-                            y="61"
+                            x="36"
+                            y="56"
                             dominantBaseline="central"
-                            fill={activeTheme.swatch}
-                            fontSize="16"
+                            fill="#13386E"
+                            fontSize="19.5"
                             fontWeight="700"
+                            letterSpacing="-0.01em"
                             style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
                           >
                             복지관
                           </text>
                           <text
-                            x="104"
-                            y="61"
+                            x="106"
+                            y="56"
                             dominantBaseline="central"
                             fill="#0A0F1D"
-                            fontSize={`${sizes.contact}`}
+                            fontSize="28"
                             fontWeight="800"
                             letterSpacing="0.03em"
                             style={{ fontFamily: "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" }}
