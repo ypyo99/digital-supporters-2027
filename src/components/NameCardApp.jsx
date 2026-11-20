@@ -1570,16 +1570,14 @@ export default function NameCardApp({ onNavigateBack }) {
                   </div>
                 )}
 
-                {!profilePhotoUrl && (
-                  <button
-                    type="button"
-                    onClick={() => handleDownloadOrSave('default')}
-                    disabled={isSaving}
-                    className="flex-1 min-w-[160px] py-3.5 px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-lg sm:text-xl font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => handleDownloadOrSave('auto')}
+                  disabled={isSaving}
+                  className="flex-1 min-w-[160px] py-3.5 px-6 bg-[#13386E] hover:bg-[#1a4484] active:scale-[0.98] disabled:opacity-70 text-white text-lg sm:text-xl font-extrabold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>{isSaving ? '고해상도 저장 중...' : '인쇄 요청'}</span>
+                </button>
               </div>
 
               {profilePhotoUrl && (
@@ -1770,14 +1768,6 @@ export default function NameCardApp({ onNavigateBack }) {
                 <span className="text-base sm:text-lg font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-300 px-4 py-1.5 rounded-full">
                   이미지를 길게 누르면 갤러리에 저장됨
                 </span>
-                <button
-                  type="button"
-                  onClick={() => handleDownloadOrSave('profile')}
-                  disabled={isSaving}
-                  className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold rounded-xl shadow-xs cursor-pointer transition"
-                >
-                  인쇄 요청
-                </button>
               </div>
               <div
                 id="profile-card-fit"
