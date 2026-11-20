@@ -1139,7 +1139,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 <button
                   type="button"
                   onClick={() => setShowLegend(prev => !prev)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200/70 transition-all touch-manipulation cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95 transition-all touch-manipulation cursor-pointer shadow-2xs"
                 >
                   <span>회차 색상</span>
                   <span className="text-[12px] leading-none">{showLegend ? '▴' : '▾'}</span>
