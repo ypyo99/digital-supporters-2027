@@ -2023,7 +2023,7 @@ export default function NameCardApp({ onNavigateBack }) {
 
                         <div className="mt-6 flex items-stretch gap-3.5">
                           <div
-                            className="w-[4px] shrink-0 rounded-full mt-[8px] mb-[4px]"
+                            className="w-[4px] shrink-0 rounded-full mt-[13px] -mb-[1px]"
                             style={{ backgroundColor: activeTheme.accent }}
                           />
                           <div className="text-[18.5px] font-medium text-[#334155] leading-[1.55] whitespace-pre-wrap break-keep break-words">
