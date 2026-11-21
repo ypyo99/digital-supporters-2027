@@ -1210,14 +1210,17 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                           }`}
                         >
                           {/* 선생님 카드 헤더 */}
-                          <div className={`px-3.5 py-1.5 font-bold text-[15.5px] sm:text-[16.5px] tracking-tight flex items-center justify-between border-b ${
+                          <div className={`px-3.5 py-2 tracking-tight flex items-center justify-between border-b text-white ${
                             isMe
-                              ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-900 dark:text-blue-200 border-blue-200 dark:border-blue-800'
-                              : 'bg-slate-100 dark:bg-slate-700/60 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-600'
+                              ? 'bg-blue-700 dark:bg-blue-800 border-blue-800 dark:border-blue-900'
+                              : 'bg-slate-700 dark:bg-slate-900 border-slate-800 dark:border-slate-950'
                           }`}>
-                            <span>{teacher.teacherName} 선생님</span>
+                            <span className="flex items-baseline gap-1">
+                              <span className="font-black text-[17px] sm:text-[18px]">{teacher.teacherName}</span>
+                              <span className="font-semibold text-[14px] sm:text-[15px] text-white/85">선생님</span>
+                            </span>
                             {isMe && (
-                              <span className="text-[12px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
+                              <span className="text-[12px] font-extrabold bg-white text-blue-700 px-2 py-0.5 rounded-full shadow-2xs">
                                 내 일정
                               </span>
                             )}
