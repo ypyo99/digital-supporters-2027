@@ -110,23 +110,23 @@ const PANEL_THEMES = [
     accent: '#F59E0B'
   },
   {
-    id: 'purple',
-    label: '로열 퍼플',
-    swatch: '#5B21B6',
-    grad: ['#5B21B6', '#3B0764', '#1E1B4B'],
-    glowHex: '#A78BFA',
+    id: 'orange',
+    label: '오렌지',
+    swatch: '#EA580C',
+    grad: ['#EA580C', '#C2410C', '#7C2D12'],
+    glowHex: '#FDBA74',
     glowOpacity: 0.5,
-    glowRgba: 'rgba(167, 139, 250, 0.50)',
-    glowZeroRgba: 'rgba(91, 33, 182, 0)',
-    crescents: ['rgba(109, 40, 217, 0.48)', 'rgba(59, 7, 100, 0.72)', 'rgba(30, 27, 75, 0.88)'],
+    glowRgba: 'rgba(253, 186, 116, 0.50)',
+    glowZeroRgba: 'rgba(234, 88, 12, 0)',
+    crescents: ['rgba(249, 115, 22, 0.48)', 'rgba(154, 52, 18, 0.72)', 'rgba(124, 45, 18, 0.88)'],
     orbits: [
-      { r: 290.0, color: 'rgba(167, 139, 250, 0.35)', w: 1.2 },
-      { r: 238.0, color: 'rgba(196, 181, 253, 0.45)', w: 1.3 },
-      { r: 178.0, color: 'rgba(221, 214, 254, 0.75)', w: 1.6 },
-      { r: 116.0, color: 'rgba(167, 139, 250, 0.45)', w: 1.3 },
-      { r: 66.0, color: 'rgba(167, 139, 250, 0.30)', w: 1.2 }
+      { r: 290.0, color: 'rgba(253, 186, 116, 0.35)', w: 1.2 },
+      { r: 238.0, color: 'rgba(254, 215, 170, 0.45)', w: 1.3 },
+      { r: 178.0, color: 'rgba(255, 237, 213, 0.75)', w: 1.6 },
+      { r: 116.0, color: 'rgba(253, 186, 116, 0.45)', w: 1.3 },
+      { r: 66.0, color: 'rgba(253, 186, 116, 0.30)', w: 1.2 }
     ],
-    accent: '#F472B6'
+    accent: '#FDE047'
   },
   {
     id: 'burgundy',
