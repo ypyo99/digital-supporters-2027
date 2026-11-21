@@ -1227,7 +1227,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                           </div>
 
                           {/* 시간대별 수업 목록 */}
-                          <div className="divide-y divide-slate-200 dark:divide-slate-700">
+                          <div className="divide-y divide-slate-400 dark:divide-slate-500">
                             {teacher.shifts.map((row, idx) => {
                               const rawStartTime = typeof row.time === 'string'
                                 ? row.time.split('~')[0].trim()
