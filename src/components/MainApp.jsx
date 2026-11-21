@@ -4662,7 +4662,7 @@ export default function MainApp({
                                       const validStudents = studentNames.filter(s => s.trim() && !s.trim().includes("보조강사") && !s.trim().includes("도선복지관"));
                                       if (validStudents.length === 0) return null;
                                       return (
-                                        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                                        <div className="flex items-center gap-1.5 flex-wrap">
                                           {validStudents.map((sName, sIdx) => {
                                             const clean = sName.trim();
                                             const isAppSubmitted = checkFormSubmitted(submittedForms.apps, clean);
@@ -4748,7 +4748,7 @@ export default function MainApp({
                                     const isPostSubmitted = checkFormSubmitted(submittedForms.postSurveys, singleStudent);
 
                                     return (
-                                      <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                                      <div className="flex items-center gap-1.5 flex-wrap">
                                         <button
                                           type="button"
                                           onClick={() => {
