@@ -1208,11 +1208,6 @@ export default function NameCardApp({ onNavigateBack }) {
             logo.style.position = 'relative';
             logo.style.top = '9px';
           }
-          const sloganBar = doc.getElementById('card-slogan-bar');
-          if (sloganBar) {
-            sloganBar.style.marginTop = '7px';
-            sloganBar.style.marginBottom = '3px';
-          }
         }
       });
 
@@ -2522,11 +2517,14 @@ export default function NameCardApp({ onNavigateBack }) {
                             디지털교육서포터즈
                           </div>
                         </div>
-                        <div className="mt-3.5 flex items-stretch gap-3">
+                        <div className="mt-3.5 flex items-start gap-3">
                           <div
                             id="card-slogan-bar"
-                            className="w-[4px] shrink-0 rounded-full my-[5px]"
-                            style={{ backgroundColor: activeTheme.accent }}
+                            className="w-[4px] shrink-0 rounded-full"
+                            style={{
+                              backgroundColor: activeTheme.accent,
+                              height: `${Math.round(sizes.slogan * 1.375 * sloganInput.split('\n').length)}px`
+                            }}
                           />
                           <div
                             style={{ fontSize: `${sizes.slogan}px` }}
