@@ -195,6 +195,8 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
   // 수업 내용 메모 접기/펼치기 상태 관리
   const [expandedMemos, setExpandedMemos] = useState({});
 
+  const savedTeacher = useMemo(() => (getSavedItem('sungdong_teacher', '') || '').trim(), []);
+
   const [currentDisplayDate, setCurrentDisplayDate] = useState(() => {
     try {
       const savedDate = window.sessionStorage.getItem('sungdong_daily_schedule_date');
@@ -1146,13 +1148,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 <button
                   type="button"
                   onClick={() => setShowLegend(prev => !prev)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[14px] sm:text-[15px] font-extrabold rounded-xl transition-all touch-manipulation cursor-pointer border shadow-sm ${showLegend
-                      ? 'bg-blue-700 hover:bg-blue-800 text-white border-blue-800 ring-2 ring-blue-400/50'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 active:scale-95'
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] sm:text-[14.5px] font-bold rounded-lg transition-all touch-manipulation cursor-pointer border shadow-xs active:scale-95 ${showLegend
+                      ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-slate-800 dark:border-slate-200 shadow-sm'
+                      : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900'
                     }`}
                 >
                   <span>회차 색상</span>
-                  <span className="text-[12px] leading-none opacity-90">{showLegend ? '▴' : '▾'}</span>
+                  <span className="text-[12px] leading-none opacity-80">{showLegend ? '▴' : '▾'}</span>
                 </button>
 
                 {/* 우측 끝: 전체 수업 내용 보기 / 수업 내용 접기 토글버튼 */}
@@ -1160,16 +1162,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[14px] sm:text-[15px] font-extrabold rounded-xl transition-all touch-manipulation whitespace-nowrap border shadow-sm ${memoRowKeys.length === 0
+                  className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] sm:text-[14.5px] font-bold rounded-lg transition-all touch-manipulation whitespace-nowrap border shadow-xs active:scale-95 ${memoRowKeys.length === 0
                       ? 'text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60 shadow-none'
                       : isAllExpanded
-                        ? 'bg-indigo-700 hover:bg-indigo-800 text-white border-indigo-800 ring-2 ring-indigo-400/50 cursor-pointer active:scale-95'
-                        : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 cursor-pointer active:scale-95'
+                        ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-slate-800 dark:border-slate-200 shadow-sm'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900'
                     }`}
                   title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
                 >
                   <span>{isAllExpanded ? '수업 내용 접기' : '수업 내용 보기'}</span>
-                  <span className="text-[12px] leading-none opacity-90">{isAllExpanded ? '▴' : '▾'}</span>
+                  <span className="text-[12px] leading-none opacity-80">{isAllExpanded ? '▴' : '▾'}</span>
                 </button>
               </div>
 
@@ -1192,21 +1194,33 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   <div key={grp.groupName} className="space-y-2">
                     {/* 조 배지 */}
                     <div className="pt-1">
-                      <span className="bg-blue-600 text-white font-black text-[13px] px-2.5 py-0.5 rounded-full shadow-sm">
+                      <span className="bg-slate-700 dark:bg-slate-600 text-white font-extrabold text-[12.5px] px-2.5 py-0.5 rounded-full shadow-xs">
                         {grp.groupName}
                       </span>
                     </div>
 
                     {/* 조에 속한 선생님별 카드 */}
                     {grp.teachers.map(teacher => {
+                      const isMe = savedTeacher && (teacher.teacherName.trim() === savedTeacher);
                       return (
                         <div
                           key={teacher.teacherName}
-                          className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl border-2 border-slate-400 dark:border-slate-500 shadow-sm overflow-hidden"
+                          className={`bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl border shadow-sm overflow-hidden ${
+                            isMe ? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-400/30' : 'border-slate-300 dark:border-slate-600'
+                          }`}
                         >
                           {/* 선생님 카드 헤더 */}
-                          <div className="bg-blue-600 text-white px-3.5 py-1.5 font-bold text-[15.5px] sm:text-[16.5px] tracking-tight">
-                            {teacher.teacherName} 선생님
+                          <div className={`px-3.5 py-1.5 font-bold text-[15.5px] sm:text-[16.5px] tracking-tight flex items-center justify-between border-b ${
+                            isMe
+                              ? 'bg-blue-50/90 dark:bg-blue-950/50 text-blue-900 dark:text-blue-200 border-blue-200 dark:border-blue-800'
+                              : 'bg-slate-100 dark:bg-slate-700/60 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-600'
+                          }`}>
+                            <span>{teacher.teacherName} 선생님</span>
+                            {isMe && (
+                              <span className="text-[12px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full shadow-2xs">
+                                내 일정
+                              </span>
+                            )}
                           </div>
 
                           {/* 시간대별 수업 목록 */}
