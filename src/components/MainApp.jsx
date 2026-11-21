@@ -4445,20 +4445,11 @@ export default function MainApp({
                             // 오늘과 같은 요일인지 확인합니다
                             const isSameDayOfWeek = alert.dayOfWeek === new Date().getDay();
 
-                            let textClass = 'text-blue-700';
-                            let spanClass = '';
-
-                            if (isSameDayOfWeek) {
-                              textClass = ''; // wave-red-text 클래스가 폰트와 애니메이션 제어
-                              spanClass = 'wave-red-text';
-                            } else if (isClose) {
-                              textClass = '';
-                              spanClass = 'shine-text-top';
-                            }
+                            const textClass = (isSameDayOfWeek || isClose) ? 'text-rose-600' : 'text-blue-700';
 
                             return (
                               <p key={idx} className={`font-bold text-[13.5px] min-[360px]:text-[14.5px] min-[380px]:text-[15.5px] sm:text-[18px] leading-tight tracking-tighter whitespace-nowrap overflow-x-auto pb-0.5 scrollbar-hide w-full block ${textClass}`}>
-                                <span className={spanClass}>
+                                <span>
                                   • {alert.msg}
                                 </span>
                               </p>
