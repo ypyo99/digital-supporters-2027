@@ -1089,7 +1089,7 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                     if (onTeamChange) onTeamChange(team);
                   }}
                   className={`h-10 sm:h-11 flex items-center justify-center text-[15px] sm:text-[16px] font-bold rounded-xl border text-center transition-all touch-manipulation cursor-pointer ${selectedTeam === team
-                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                      ? 'bg-slate-800 dark:bg-slate-200 border-slate-800 dark:border-slate-200 text-white dark:text-slate-900 shadow-sm'
                       : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                     }`}
                 >
