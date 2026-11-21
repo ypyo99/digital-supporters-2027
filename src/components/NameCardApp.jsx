@@ -1208,6 +1208,18 @@ export default function NameCardApp({ onNavigateBack }) {
             logo.style.position = 'relative';
             logo.style.top = '9px';
           }
+          // html2canvas는 슬로건 글자를 화면보다 아래쪽에 그리므로,
+          // 다운로드 이미지에서는 막대를 실제 글자 영역(첫 줄 윗선 ~ 마지막 줄 아랫선)에 맞춘다.
+          const sloganBar = doc.getElementById('card-slogan-bar');
+          const sloganText = sloganBar?.nextElementSibling;
+          if (sloganBar && sloganText) {
+            const cstyle = doc.defaultView.getComputedStyle(sloganText);
+            const fs = parseFloat(cstyle.fontSize) || 21;
+            const lh = parseFloat(cstyle.lineHeight) || fs * 1.375;
+            const textH = sloganText.offsetHeight || lh;
+            sloganBar.style.marginTop = `${Math.round(fs * 0.67)}px`;
+            sloganBar.style.height = `${Math.round(textH - lh + fs * 0.96)}px`;
+          }
         }
       });
 
