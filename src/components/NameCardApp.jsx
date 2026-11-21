@@ -1210,8 +1210,8 @@ export default function NameCardApp({ onNavigateBack }) {
           }
           const sloganBar = doc.getElementById('card-slogan-bar');
           if (sloganBar) {
-            sloganBar.style.marginTop = '4px';
-            sloganBar.style.marginBottom = '4px';
+            sloganBar.style.marginTop = '7px';
+            sloganBar.style.marginBottom = '3px';
           }
         }
       });
@@ -2525,7 +2525,7 @@ export default function NameCardApp({ onNavigateBack }) {
                         <div className="mt-3.5 flex items-stretch gap-3">
                           <div
                             id="card-slogan-bar"
-                            className="w-[4px] shrink-0 rounded-full my-[3px]"
+                            className="w-[4px] shrink-0 rounded-full my-[5px]"
                             style={{ backgroundColor: activeTheme.accent }}
                           />
                           <div
