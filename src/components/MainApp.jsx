@@ -4625,7 +4625,7 @@ export default function MainApp({
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(c)}
                                                 title={`${c.student ? `${c.student} 님의 ` : ''}수업 진행 날짜 목록 열기`}
-                                                className={`${sessionColorClass} px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-sm shrink-0`}
+                                                className={`${sessionColorClass} h-[32px] sm:h-[36px] px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-sm shrink-0`}
                                               >
                                                 <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${sessionIconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -4639,7 +4639,7 @@ export default function MainApp({
                                                 type="button"
                                                 onClick={() => setSelectedStudentHistory(c)}
                                                 title={`${c.student ? `${c.student} 님의 ` : ''}이전 교육 기록 보기`}
-                                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm shrink-0"
+                                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200 h-[32px] sm:h-[36px] px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm shrink-0"
                                               >
                                                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                   <circle cx="12" cy="12" r="10" />
@@ -4658,7 +4658,7 @@ export default function MainApp({
                                     <button
                                       type="button"
                                       onClick={() => handleRepeatScheduleForShift(index)}
-                                      className="ml-auto bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 px-2 py-1 sm:px-2.5 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold shadow-sm"
+                                      className="ml-auto bg-orange-50 hover:bg-orange-100 text-orange-700 ring-1 ring-inset ring-orange-200 h-[32px] sm:h-[36px] px-2.5 py-1 sm:px-3 sm:py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap shrink-0 transition-colors cursor-pointer active:scale-95 font-bold shadow-sm flex items-center justify-center"
                                     >
                                       복제
                                     </button>
@@ -4671,7 +4671,7 @@ export default function MainApp({
                                       const validStudents = studentNames.filter(s => s.trim() && !s.trim().includes("보조강사") && !s.trim().includes("도선복지관"));
                                       if (validStudents.length === 0) return null;
                                       return (
-                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
                                           {validStudents.map((sName, sIdx) => {
                                             const clean = sName.trim();
                                             const isAppSubmitted = checkFormSubmitted(submittedForms.apps, clean);
@@ -4690,7 +4690,7 @@ export default function MainApp({
                                                   className={`${isAppSubmitted
                                                     ? 'bg-blue-600 hover:bg-blue-700 text-white ring-1 ring-inset ring-blue-700'
                                                     : 'bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200'
-                                                    } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                                    } h-[32px] sm:h-[36px] px-2.5 sm:px-3 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1.5 shadow-sm`}
                                                 >
                                                   <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isAppSubmitted ? 'text-white' : 'text-blue-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -4711,7 +4711,7 @@ export default function MainApp({
                                                   className={`${isPreSubmitted
                                                     ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-1 ring-inset ring-indigo-700'
                                                     : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200'
-                                                    } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                                    } h-[32px] sm:h-[36px] px-2.5 sm:px-3 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1.5 shadow-sm`}
                                                 >
                                                   <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPreSubmitted ? 'text-white' : 'text-indigo-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -4731,7 +4731,7 @@ export default function MainApp({
                                                   className={`${isPostSubmitted
                                                     ? 'bg-purple-700 hover:bg-purple-800 text-white ring-1 ring-inset ring-purple-800'
                                                     : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
-                                                    } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                                    } h-[32px] sm:h-[36px] px-2.5 sm:px-3 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1.5 shadow-sm`}
                                                 >
                                                   <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPostSubmitted ? 'text-white' : 'text-purple-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -4757,7 +4757,7 @@ export default function MainApp({
                                     const isPostSubmitted = checkFormSubmitted(submittedForms.postSurveys, singleStudent);
 
                                     return (
-                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                      <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
                                         <button
                                           type="button"
                                           onClick={() => {
@@ -4768,7 +4768,7 @@ export default function MainApp({
                                           className={`${isAppSubmitted
                                             ? 'bg-blue-600 hover:bg-blue-700 text-white ring-1 ring-inset ring-blue-700'
                                             : 'bg-blue-50 hover:bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200'
-                                            } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                            } h-[32px] sm:h-[36px] px-2.5 sm:px-3 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1.5 shadow-sm`}
                                         >
                                           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isAppSubmitted ? 'text-white' : 'text-blue-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -4789,7 +4789,7 @@ export default function MainApp({
                                           className={`${isPreSubmitted
                                             ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-1 ring-inset ring-indigo-700'
                                             : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 ring-1 ring-inset ring-indigo-200'
-                                            } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                            } h-[32px] sm:h-[36px] px-2.5 sm:px-3 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1.5 shadow-sm`}
                                         >
                                           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPreSubmitted ? 'text-white' : 'text-indigo-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
@@ -4809,7 +4809,7 @@ export default function MainApp({
                                           className={`${isPostSubmitted
                                             ? 'bg-purple-700 hover:bg-purple-800 text-white ring-1 ring-inset ring-purple-800'
                                             : 'bg-purple-50 hover:bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200'
-                                            } px-2.5 py-1 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1 shadow-sm`}
+                                            } h-[32px] sm:h-[36px] px-2.5 sm:px-3 rounded-lg text-[12px] sm:text-[13px] md:text-[14px] tracking-tight whitespace-nowrap transition-all cursor-pointer active:scale-95 font-bold flex items-center gap-1.5 shadow-sm`}
                                         >
                                           <svg className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPostSubmitted ? 'text-white' : 'text-purple-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2h2" />
