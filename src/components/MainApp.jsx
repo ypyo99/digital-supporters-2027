@@ -4586,11 +4586,12 @@ export default function MainApp({
                                       {(() => {
                                         const d = new Date(date);
                                         const day = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
+                                        let displayShift = shift;
                                         if (selectedTeam === '취업팀' && day === '금') {
                                           const mapping = { "13:00~14:00": "9:30~10:30", "14:00~15:00": "10:30~11:30", "15:00~16:00": "11:30~12:30" };
-                                          return mapping[shift] || shift;
+                                          displayShift = mapping[shift] || shift;
                                         }
-                                        return shift;
+                                        return displayShift ? displayShift.split('~')[0].trim() : displayShift;
                                       })()}
                                     </span>
 
@@ -5117,14 +5118,14 @@ export default function MainApp({
             <div className="p-6">
               <p className="text-gray-800 font-bold text-[18px] sm:text-[20px] mb-3 text-center leading-relaxed">
                 아래 <span className="text-indigo-600 text-[18px] sm:text-[20px]">{repeatTargetDates.length}</span>일 동안의 스케줄에<br />
-                {repeatMode === 'shift' && <span className="text-blue-600">해당 시간대({shifts[repeatShiftIndex]})의<br /></span>}
+                {repeatMode === 'shift' && <span className="text-blue-600">해당 시간대({shifts[repeatShiftIndex] ? shifts[repeatShiftIndex].split('~')[0].trim() : ''})의<br /></span>}
                 [학생이름]과 [장소]를<br />정말 복제할까요?
               </p>
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 max-h-[25vh] overflow-y-auto">
                 {repeatTargetDates.map(obj => (
                   <div key={obj.date} className="text-[16px] sm:text-[18px] font-bold text-blue-600 text-center py-2 border-b last:border-0 border-gray-200">
                     <div className="text-indigo-800">- {obj.date} ({getDayName(obj.date)})</div>
-                    <div className="text-sm text-gray-500 font-normal mt-1">{obj.times.join(', ')}</div>
+                    <div className="text-sm text-gray-500 font-normal mt-1">{obj.times.map(t => t.split('~')[0].trim()).join(', ')}</div>
                   </div>
                 ))}
               </div>
@@ -5286,7 +5287,7 @@ export default function MainApp({
                       return (
                         <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 shadow-sm">
                           <div className="text-sm font-bold text-gray-500 mb-1">
-                            {h.date} ({h.dayOfWeek}) <span className="text-gray-400 ml-1">{h.shift}</span>
+                            {h.date} ({h.dayOfWeek}) <span className="text-gray-400 ml-1">{h.shift ? h.shift.split('~')[0].trim() : ''}</span>
                             {h.teacher && <span className="text-indigo-600 ml-2 font-extrabold tracking-tight">[{h.teacher}]</span>}
                           </div>
                           <div className={`text-base sm:text-lg font-bold ${textColorClass} break-words whitespace-pre-wrap`}>{cleanMemo}</div>
