@@ -4612,7 +4612,7 @@ export default function MainApp({
                                           }
 
                                           return (
-                                            <div key={cIdx} className="flex items-center gap-1 shrink-0 flex-nowrap">
+                                            <div key={cIdx} className="flex items-center gap-1.5 shrink-0 flex-nowrap">
                                               <button
                                                 type="button"
                                                 onClick={() => setSelectedStudentDates(c)}
