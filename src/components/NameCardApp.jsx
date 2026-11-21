@@ -1245,6 +1245,12 @@ export default function NameCardApp({ onNavigateBack }) {
               bar.style.marginTop = '15px';
               bar.style.marginBottom = '-3px';
             }
+            const logo = doc.getElementById('profile-card-logo');
+            if (logo) {
+              logo.style.height = '58px';
+              logo.style.position = 'relative';
+              logo.style.top = '8px';
+            }
           }
         })
       ]);
@@ -2138,6 +2144,7 @@ export default function NameCardApp({ onNavigateBack }) {
                       {/* 1. 기관 헤더 */}
                       <div className="flex items-center">
                         <img
+                          id="profile-card-logo"
                           src={SEOUL_SYMBOL_BASE64}
                           alt="서울시 로고"
                           className="h-[52px] w-auto mr-[16px] object-contain"
