@@ -2046,32 +2046,34 @@ export default function NameCardApp({ onNavigateBack }) {
                     }}
                   />
                 )}
-                {/* 명함 내 프로필 사진 우측 삭제(X) 버튼 (저장 이미지에는 포함되지 않음) */}
-                <button
-                  type="button"
-                  data-html2canvas-ignore="true"
-                  title="프로필 사진 삭제"
-                  aria-label="프로필 사진 삭제"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  onClick={() => {
-                    setProfilePhotoUrl('');
-                    setProfilePreviewDataUrl('');
-                  }}
-                  style={{
-                    position: 'absolute',
-                    left: `${(236 + 104) * cardScale}px`,
-                    top: `${(274 - 78) * cardScale}px`,
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 40
-                  }}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white border-2 border-white shadow-md flex items-center justify-center cursor-pointer transition"
-                >
-                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
-                </button>
+                {/* 명함 내 프로필 사진 우측 삭제(X) 버튼 (조절 중일 때만 표시, 잠금 시 숨김, 저장 이미지에는 포함되지 않음) */}
+                {!isPhotoLocked && (
+                  <button
+                    type="button"
+                    data-html2canvas-ignore="true"
+                    title="프로필 사진 삭제"
+                    aria-label="프로필 사진 삭제"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onClick={() => {
+                      setProfilePhotoUrl('');
+                      setProfilePreviewDataUrl('');
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: `${(236 + 104) * cardScale}px`,
+                      top: `${(274 - 78) * cardScale}px`,
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 40
+                    }}
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white border-2 border-white shadow-md flex items-center justify-center cursor-pointer transition"
+                  >
+                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                )}
                 <div
                   id="profile-card-scale"
                   style={{
