@@ -1146,10 +1146,13 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                 <button
                   type="button"
                   onClick={() => setShowLegend(prev => !prev)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95 transition-all touch-manipulation cursor-pointer shadow-2xs"
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[14px] sm:text-[15px] font-extrabold rounded-xl transition-all touch-manipulation cursor-pointer border shadow-sm ${showLegend
+                      ? 'bg-blue-700 hover:bg-blue-800 text-white border-blue-800 ring-2 ring-blue-400/50'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 active:scale-95'
+                    }`}
                 >
                   <span>회차 색상</span>
-                  <span className="text-[12px] leading-none">{showLegend ? '▴' : '▾'}</span>
+                  <span className="text-[12px] leading-none opacity-90">{showLegend ? '▴' : '▾'}</span>
                 </button>
 
                 {/* 우측 끝: 전체 수업 내용 보기 / 수업 내용 접기 토글버튼 */}
@@ -1157,14 +1160,16 @@ export default function DailyScheduleApp({ initialTeam, onNavigateBack, onTeamCh
                   type="button"
                   onClick={handleToggleAllMemos}
                   disabled={memoRowKeys.length === 0}
-                  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[14px] sm:text-[15px] font-bold rounded-lg shadow-2xs transition-all touch-manipulation whitespace-nowrap ${memoRowKeys.length === 0
-                      ? 'text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60'
-                      : 'text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 hover:bg-blue-200 dark:hover:bg-slate-700 active:scale-95 cursor-pointer'
+                  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[14px] sm:text-[15px] font-extrabold rounded-xl transition-all touch-manipulation whitespace-nowrap border shadow-sm ${memoRowKeys.length === 0
+                      ? 'text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 cursor-not-allowed opacity-60 shadow-none'
+                      : isAllExpanded
+                        ? 'bg-indigo-700 hover:bg-indigo-800 text-white border-indigo-800 ring-2 ring-indigo-400/50 cursor-pointer active:scale-95'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-700 cursor-pointer active:scale-95'
                     }`}
                   title={isAllExpanded ? "모든 수업 내용 접기" : "모든 수업 내용 보기"}
                 >
                   <span>{isAllExpanded ? '수업 내용 접기' : '수업 내용 보기'}</span>
-                  <span className="text-[12px] leading-none">{isAllExpanded ? '▴' : '▾'}</span>
+                  <span className="text-[12px] leading-none opacity-90">{isAllExpanded ? '▴' : '▾'}</span>
                 </button>
               </div>
 
