@@ -4591,7 +4591,9 @@ export default function MainApp({
                                           const mapping = { "13:00~14:00": "9:30~10:30", "14:00~15:00": "10:30~11:30", "15:00~16:00": "11:30~12:30" };
                                           displayShift = mapping[shift] || shift;
                                         }
-                                        return displayShift ? displayShift.split('~')[0].trim() : displayShift;
+                                        if (!displayShift) return displayShift;
+                                        const startTime = displayShift.split('~')[0].trim();
+                                        return /^\d:\d{2}$/.test(startTime) ? `0${startTime}` : startTime;
                                       })()}
                                     </span>
 
