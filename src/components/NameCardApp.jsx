@@ -112,13 +112,13 @@ const PANEL_THEMES = [
   {
     id: 'orange',
     label: '오렌지',
-    swatch: '#EA580C',
-    grad: ['#EA580C', '#C2410C', '#7C2D12'],
+    swatch: '#C2410C',
+    grad: ['#C2410C', '#9A3412', '#5C1D0B'],
     glowHex: '#FDBA74',
     glowOpacity: 0.5,
     glowRgba: 'rgba(253, 186, 116, 0.50)',
-    glowZeroRgba: 'rgba(234, 88, 12, 0)',
-    crescents: ['rgba(249, 115, 22, 0.48)', 'rgba(154, 52, 18, 0.72)', 'rgba(124, 45, 18, 0.88)'],
+    glowZeroRgba: 'rgba(194, 65, 12, 0)',
+    crescents: ['rgba(234, 88, 12, 0.45)', 'rgba(124, 45, 18, 0.72)', 'rgba(92, 29, 11, 0.88)'],
     orbits: [
       { r: 290.0, color: 'rgba(253, 186, 116, 0.35)', w: 1.2 },
       { r: 238.0, color: 'rgba(254, 215, 170, 0.45)', w: 1.3 },
