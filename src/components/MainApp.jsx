@@ -3687,9 +3687,7 @@ export default function MainApp({
                       const isToday = startStr === todayStr;
                       const diffDays = startStr ? Math.floor((new Date(todayStr) - new Date(startStr)) / (1000 * 60 * 60 * 24)) : 999;
                       const isNewNotice = diffDays >= 0 && diffDays <= 2;
-                      const textClass = isToday
-                        ? (notice.is_top ? 'shine-text-top' : 'shine-text-normal')
-                        : (notice.is_top ? 'text-rose-800' : 'text-slate-800');
+                      const textClass = notice.is_top ? 'text-rose-800' : 'text-slate-800';
                       const rawTitle = notice.title || '';
                       const datePrefixMatch = rawTitle.match(/^(\d{1,2}\/\d{1,2}(?:\([^)]+\))?(?:\s*~\s*\d{1,2}\/\d{1,2}(?:\([^)]+\))?)?)(.*)$/);
                       return (
@@ -3704,7 +3702,7 @@ export default function MainApp({
                         >
                           <span className={textClass}>
                             {notice.is_top ? '📌 ' : '· '}
-                            {datePrefixMatch && !isToday ? (
+                            {datePrefixMatch ? (
                               <>
                                 <strong className="font-extrabold text-slate-950">{datePrefixMatch[1]}</strong>
                                 {datePrefixMatch[2]}
