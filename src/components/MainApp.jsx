@@ -462,6 +462,14 @@ export default function MainApp({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geminiApiKey]);
 
+  // '항시 표시' 모드: 안내 팝업이 뜰 때마다 오늘의 유머도 함께 표시 (오늘 유머는 캐시되어 API 재호출 없음)
+  useEffect(() => {
+    if (!roomStatusPopup || roomPopupMode !== 'always' || !geminiApiKey) return;
+    setHumorVisible(true);
+    if (!humorContent && !humorLoading) loadHumor();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomStatusPopup, roomPopupMode, geminiApiKey]);
+
   // 당일이 지난 오래된 팝업 숨김 키 정리 (오늘 저장된 키는 보존)
   useEffect(() => {
     try {
@@ -4243,7 +4251,7 @@ export default function MainApp({
                       2. 오늘의 안내 팝업 표시
                     </span>
                     <span className="block text-[12.5px] text-slate-500 font-medium mt-0.5">
-                      평생교육실2 · 낭만스튜디오 사용현황 (오늘의 유머는 하루 1회만 함께 표시)
+                      오늘의 유머 + 평생교육실2 · 낭만스튜디오 사용현황
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -4264,7 +4272,7 @@ export default function MainApp({
                           앱 처음 실행 시 한 번만 표시
                         </div>
                         <div className="text-[12.5px] text-slate-600 font-medium mt-0.5">
-                          앱 실행 후 처음 메인 화면에서 1회만 팝업을 띄웁니다.
+                          앱 실행 후 처음 메인 화면에서 1회만 팝업을 띄웁니다. (유머는 하루 1회)
                         </div>
                       </div>
                     </button>
@@ -4286,7 +4294,7 @@ export default function MainApp({
                           항시 표시
                         </div>
                         <div className="text-[12.5px] text-slate-600 font-medium mt-0.5">
-                          메인 화면으로 돌아올 때마다 조건에 맞으면 다시 팝업을 띄웁니다.
+                          메인 화면으로 돌아올 때마다 조건에 맞으면 유머와 함께 다시 팝업을 띄웁니다.
                         </div>
                       </div>
                     </button>
