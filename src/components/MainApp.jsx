@@ -105,16 +105,6 @@ import {
   clearSavedAdminPassword
 } from '../utils/appSettings';
 import {
-  getGeminiApiKey,
-  saveGeminiApiKey,
-  clearGeminiApiKey,
-  fetchDailyHumor
-} from '../utils/dailyHumor';
-import DailyHumorCard from './DailyHumorCard';
-
-// 같은 실행(페이지 로드) 안에서 오늘의 유머 미리 불러오기를 한 번만 하기 위한 플래그
-let humorAutoRequestedThisSession = false;
-import {
   User,
   MainCalendarIcon,
   CalendarIcon,
@@ -335,58 +325,8 @@ export default function MainApp({
   const [adminPwdInput, setAdminPwdInput] = useState('');
   const [adminPwdError, setAdminPwdError] = useState('');
   const [adminPwdNotice, setAdminPwdNotice] = useState('');
-  const [geminiApiKey, setGeminiApiKey] = useState(() => getGeminiApiKey());
-  const [geminiKeyInput, setGeminiKeyInput] = useState('');
-  const [geminiKeyNotice, setGeminiKeyNotice] = useState('');
-  // 오늘의 유머 (교육실 사용현황 팝업에 합쳐서 표시, 하루 1회)
-  const [humorContent, setHumorContent] = useState(null);
-  const [humorLoading, setHumorLoading] = useState(false);
-  const [humorError, setHumorError] = useState('');
-  const [humorVisible, setHumorVisible] = useState(false);
-  const [humorForceOpen, setHumorForceOpen] = useState(false);
-
-  const loadHumor = async ({ forceNew = false } = {}) => {
-    const key = getGeminiApiKey();
-    if (!key) return;
-    setHumorLoading(true);
-    setHumorError('');
-    try {
-      const result = await fetchDailyHumor(key, { forceNew });
-      setHumorContent(result);
-    } catch (err) {
-      console.warn('오늘의 유머 불러오기 실패:', err);
-      setHumorError(err?.message || '유머를 불러오지 못했습니다.');
-    } finally {
-      setHumorLoading(false);
-    }
-  };
-
-  const handlePreviewHumor = () => {
-    setHumorVisible(true);
-    setHumorForceOpen(true);
-    if (!humorContent) loadHumor();
-  };
-
-  const handleSaveGeminiKey = () => {
-    if (!geminiKeyInput.trim()) {
-      setGeminiKeyNotice('API 키를 입력해주세요.');
-      return;
-    }
-    setGeminiApiKey(saveGeminiApiKey(geminiKeyInput));
-    setGeminiKeyInput('');
-    setGeminiKeyNotice('Gemini API 키가 저장되었습니다.');
-  };
-
-  const handleClearGeminiKey = () => {
-    clearGeminiApiKey();
-    setGeminiApiKey('');
-    setGeminiKeyInput('');
-    setGeminiKeyNotice('저장된 Gemini API 키가 삭제되었습니다.');
-  };
 
   const openSettingsModal = () => {
-    setGeminiKeyInput('');
-    setGeminiKeyNotice('');
     setAdminPwdInput('');
     setAdminPwdError('');
     setAdminPwdNotice('');
@@ -451,22 +391,6 @@ export default function MainApp({
     }
   };
 
-  // 앱 실행 시 오늘의 유머를 미리 불러둠 (하루 동안은 캐시되어 API 재호출 없음)
-  useEffect(() => {
-    if (!geminiApiKey || humorAutoRequestedThisSession) return;
-    humorAutoRequestedThisSession = true;
-    loadHumor();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geminiApiKey]);
-
-  // 교육실 사용현황 팝업이 뜰 때마다 오늘의 유머도 항상 함께 표시
-  useEffect(() => {
-    if (!roomStatusPopup || !geminiApiKey) return;
-    setHumorVisible(true);
-    if (!humorContent && !humorLoading) loadHumor();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomStatusPopup, geminiApiKey]);
-
   // 당일이 지난 오래된 팝업 숨김 키 정리 (오늘 저장된 키는 보존)
   useEffect(() => {
     try {
@@ -494,22 +418,6 @@ export default function MainApp({
     roomPopupDismissedRef.current = `${selectedTeam}_${currentUser || ''}`;
     setRoomStatusPopup(null);
   };
-
-  // 오늘의 안내 팝업(유머 + 교육실 사용현황) 닫기
-  const closeTodayPopup = (hideToday = false) => {
-    setHumorVisible(false);
-    setHumorForceOpen(false);
-    if (roomStatusPopup) closeRoomStatusPopup(hideToday);
-  };
-
-  // 유머는 교육실 사용현황과 항상 함께 표시 (설정창 미리보기만 단독 표시)
-  // 자동 표시 중 오류가 나면 안내 팝업 안에 원인을 보여줌 (조용히 사라지지 않도록)
-  const showHumorInPopup = humorVisible && (humorContent || humorLoading || humorError);
-  const isTodayPopupOpen = !isLoggedIn && (
-    !!roomStatusPopup ||
-    (humorVisible && humorForceOpen)
-  );
-
 
   useEffect(() => {
     if (!selectedStudentHistory || !selectedStudentHistory.name) {
@@ -3991,11 +3899,11 @@ export default function MainApp({
           </div>
         </div>
 
-        {/* 오늘의 안내 팝업: 오늘의 유머(하루 1회) + 시간·팀 조건별 교육실 사용현황 */}
-        {isTodayPopupOpen && (
+        {/* 시간·팀 조건별 교육실 사용현황 자동 안내 팝업 */}
+        {roomStatusPopup && (
           <div
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-[3px] flex items-center justify-center z-[85] p-3 sm:p-4"
-            onClick={() => closeTodayPopup(false)}
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-[3px] flex items-center justify-center z-[70] p-3 sm:p-4"
+            onClick={() => closeRoomStatusPopup(false)}
           >
             <div
               className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[86vh] animate-fadeIn border border-slate-200"
@@ -4004,22 +3912,14 @@ export default function MainApp({
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3.5 flex items-center justify-between shrink-0">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-extrabold text-[17px] sm:text-[19px] tracking-tight">
-                      {roomStatusPopup ? '오늘의 안내' : '오늘의 유머'}
-                    </h3>
-                    {roomStatusPopup && (
-                      <span className="px-2 py-0.5 rounded-full bg-white/20 text-[12px] font-bold whitespace-nowrap">{roomStatusPopup.teamLabel}</span>
-                    )}
+                    <h3 className="font-extrabold text-[17px] sm:text-[19px] tracking-tight">오늘의 교육실 사용현황</h3>
+                    <span className="px-2 py-0.5 rounded-full bg-white/20 text-[12px] font-bold whitespace-nowrap">{roomStatusPopup.teamLabel}</span>
                   </div>
-                  <p className="text-blue-100 text-[13px] sm:text-[14px] font-semibold mt-0.5">
-                    {roomStatusPopup
-                      ? roomStatusPopup.dateLabel
-                      : new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' })}
-                  </p>
+                  <p className="text-blue-100 text-[13px] sm:text-[14px] font-semibold mt-0.5">{roomStatusPopup.dateLabel}</p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => closeTodayPopup(false)}
+                  onClick={() => closeRoomStatusPopup(false)}
                   className="p-1 rounded-lg text-white/90 hover:bg-white/20 active:scale-90 transition"
                   aria-label="닫기"
                 >
@@ -4028,38 +3928,13 @@ export default function MainApp({
               </div>
 
               <div className="p-4 overflow-y-auto space-y-4">
-                {showHumorInPopup && (
-                  <DailyHumorCard
-                    content={humorContent}
-                    loading={humorLoading}
-                    error={humorError}
-                    teacherName={currentUser || ''}
-                    onRefresh={() => loadHumor({ forceNew: true })}
-                  />
-                )}
-
-                {!geminiApiKey && roomStatusPopup && (
-                  <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/70 px-3.5 py-3 flex items-center justify-between gap-2">
-                    <p className="text-[13px] font-bold text-amber-800 leading-snug">
-                      😄 Gemini API 키를 저장하면 이곳에 오늘의 유머가 표시됩니다.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => { closeTodayPopup(false); openSettingsModal(); }}
-                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-100 text-amber-800 border border-amber-300 text-[12.5px] font-extrabold whitespace-nowrap active:scale-95 transition cursor-pointer"
-                    >
-                      키 입력하기
-                    </button>
-                  </div>
-                )}
-
-                {roomStatusPopup?.holidayName && (
+                {roomStatusPopup.holidayName && (
                   <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-3.5 py-2.5 text-[14px] font-bold text-center">
                     오늘은 <span className="font-extrabold">{roomStatusPopup.holidayName}</span>입니다.
                   </div>
                 )}
 
-                {roomStatusPopup?.showClassroom && (
+                {roomStatusPopup.showClassroom && (
                   <div className="border border-slate-200 rounded-xl p-3 bg-slate-50/70 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -4075,7 +3950,7 @@ export default function MainApp({
                       </div>
                       <button
                         type="button"
-                        onClick={() => { closeTodayPopup(); handleLogout(); onNavigateToClassroom(); }}
+                        onClick={() => { closeRoomStatusPopup(); handleLogout(); onNavigateToClassroom(); }}
                         className="text-[12.5px] font-bold text-blue-600 hover:underline whitespace-nowrap"
                       >
                         주간 보기 &rarr;
@@ -4102,7 +3977,7 @@ export default function MainApp({
                   </div>
                 )}
 
-                {roomStatusPopup?.showNangman && (
+                {roomStatusPopup.showNangman && (
                   <div className="border border-slate-200 rounded-xl p-3 bg-slate-50/70 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -4115,7 +3990,7 @@ export default function MainApp({
                       </div>
                       <button
                         type="button"
-                        onClick={() => { closeTodayPopup(); handleLogout(); onNavigateToNangmanStudio(); }}
+                        onClick={() => { closeRoomStatusPopup(); handleLogout(); onNavigateToNangmanStudio(); }}
                         className="text-[12.5px] font-bold text-blue-600 hover:underline whitespace-nowrap"
                       >
                         주간 보기 &rarr;
@@ -4151,18 +4026,16 @@ export default function MainApp({
               </div>
 
               <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0">
-                {roomStatusPopup ? (
-                  <button
-                    type="button"
-                    onClick={() => closeTodayPopup(true)}
-                    className="px-3.5 py-2 rounded-xl text-[13px] sm:text-[14px] font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/70 transition cursor-pointer whitespace-nowrap active:scale-95"
-                  >
-                    오늘 다시 보지 않기
-                  </button>
-                ) : <span />}
                 <button
                   type="button"
-                  onClick={() => closeTodayPopup(false)}
+                  onClick={() => closeRoomStatusPopup(true)}
+                  className="px-3.5 py-2 rounded-xl text-[13px] sm:text-[14px] font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/70 transition cursor-pointer whitespace-nowrap active:scale-95"
+                >
+                  오늘 다시 보지 않기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => closeRoomStatusPopup(false)}
                   className="px-6 py-2.5 rounded-xl text-[14px] sm:text-[15px] font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm active:scale-95 transition cursor-pointer text-center"
                 >
                   확인
@@ -4254,10 +4127,10 @@ export default function MainApp({
                 <div className="pt-4 border-t border-slate-200">
                   <div className="mb-2">
                     <span className="block text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900">
-                      2. 오늘의 안내 팝업 표시
+                      2. 교육실 현황 팝업 표시
                     </span>
                     <span className="block text-[12.5px] text-slate-500 font-medium mt-0.5">
-                      오늘의 유머 + 평생교육실2 · 낭만스튜디오 사용현황
+                      평생교육실2 · 낭만스튜디오 사용현황 자동 팝업
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -4370,79 +4243,6 @@ export default function MainApp({
                   )}
                   {adminPwdNotice && !adminPwdError && (
                     <p className="mt-2 text-[12.5px] font-bold text-emerald-600">{adminPwdNotice}</p>
-                  )}
-                </div>
-
-                {/* 4. 오늘의 유머 (Gemini API 키) */}
-                <div className="pt-4 border-t border-slate-200">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900">
-                      4. 오늘의 유머 (Gemini API 키)
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${geminiApiKey
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                      : 'bg-slate-100 text-slate-600 border border-slate-200'
-                      }`}>
-                      {geminiApiKey ? '저장됨' : '미저장'}
-                    </span>
-                  </div>
-                  <p className="text-[12.5px] text-slate-500 font-medium mb-2.5 leading-snug">
-                    키를 저장하면 교육실 사용현황 팝업이 뜰 때마다 맨 위에 오늘의 유머와 응원 글귀가 함께 표시됩니다. (유머는 하루에 한 번 새로 만들어집니다) 키는 이 기기에만 저장됩니다.
-                  </p>
-                  {!geminiApiKey ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="password"
-                        value={geminiKeyInput}
-                        onChange={(e) => {
-                          setGeminiKeyInput(e.target.value);
-                          if (geminiKeyNotice) setGeminiKeyNotice('');
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleSaveGeminiKey();
-                          }
-                        }}
-                        placeholder="Gemini API 키 입력"
-                        autoComplete="off"
-                        className="flex-1 min-w-0 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-[14px] font-bold text-slate-900 outline-none focus:border-blue-500 bg-white"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleSaveGeminiKey}
-                        className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13.5px] sm:text-[14px] font-extrabold shadow-sm active:scale-95 transition shrink-0 cursor-pointer"
-                      >
-                        저장
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[13px] font-bold text-emerald-800 truncate">
-                          {`${geminiApiKey.slice(0, 4)}••••${geminiApiKey.slice(-4)}`}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          type="button"
-                          onClick={handlePreviewHumor}
-                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 text-[12.5px] font-extrabold active:scale-95 transition cursor-pointer whitespace-nowrap"
-                        >
-                          미리보기
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleClearGeminiKey}
-                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[12.5px] font-extrabold active:scale-95 transition cursor-pointer whitespace-nowrap"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  {geminiKeyNotice && (
-                    <p className={`mt-2 text-[12.5px] font-bold ${geminiApiKey ? 'text-emerald-600' : 'text-slate-600'}`}>{geminiKeyNotice}</p>
                   )}
                 </div>
               </div>
