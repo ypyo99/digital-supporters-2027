@@ -880,8 +880,8 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6 w-full">
-            <div className="flex justify-end items-center border-b pb-3 mb-4 gap-2">
-              <div className="flex flex-wrap justify-end gap-2">
+            <div className="flex justify-start items-center border-b pb-3 mb-4 gap-2">
+              <div className="flex flex-wrap justify-start gap-2">
                 <button
                   onClick={handleOpenAssistantSchedule}
                   disabled={analyzing || saving}
