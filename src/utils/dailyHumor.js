@@ -6,10 +6,72 @@ const HUMOR_SHOWN_DATE_KEY = 'sungdong_daily_humor_shown_date';
 const HUMOR_CACHE_KEY = 'sungdong_daily_humor_cache_v2';
 const HUMOR_HISTORY_KEY = 'sungdong_daily_humor_history';
 
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+const MODEL_LIST_CACHE_KEY = 'sungdong_gemini_model_list';
+// 모델 목록 조회가 실패할 때만 쓰는 예비 모델 (항상 최신 별칭을 먼저 시도)
+const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'];
 const REQUEST_TIMEOUT_MS = 20000;
+const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * 모델 이름을 점수화: 버전이 높을수록, 정식(비 preview)일수록, flash가 flash-lite보다 우선.
+ * 텍스트 생성용 flash 계열이 아니면 null.
+ */
+const scoreModel = (name) => {
+  const id = name.replace(/^models\//, '');
+  if (/image|tts|audio|live|embed|vision|thinking|robotics|computer/i.test(id)) return null;
+  const m = id.match(/^gemini-(\d+(?:\.\d+)?)-flash(-lite)?(?:-(\d{3}|preview[\w.-]*|exp[\w.-]*|latest))?$/);
+  if (!m) return null;
+  const version = parseFloat(m[1]);
+  const isLite = Boolean(m[2]);
+  const suffix = m[3] || '';
+  const isPreview = /preview|exp/.test(suffix);
+  return version * 100 + (isPreview ? 0 : 20) + (isLite ? 0 : 10);
+};
+
+/**
+ * API 키로 사용 가능한 모델 목록을 조회해 유머 생성에 쓸 모델 순서를 정합니다.
+ * 결과는 하루 동안 저장해 두고, 실패하면 예비 모델을 사용합니다.
+ */
+const getCandidateModels = async (apiKey, { refresh = false } = {}) => {
+  if (!refresh) {
+    const cached = readJson(MODEL_LIST_CACHE_KEY, null);
+    if (cached && cached.date === todayStr() && Array.isArray(cached.models) && cached.models.length) {
+      return cached.models;
+    }
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/models?pageSize=1000`, {
+      headers: { 'x-goog-api-key': apiKey }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const ranked = (data.models || [])
+      .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+      .map(m => ({ id: m.name.replace(/^models\//, ''), score: scoreModel(m.name) }))
+      .filter(m => m.score !== null)
+      .sort((a, b) => b.score - a.score)
+      .map(m => m.id);
+    const models = [...new Set([...ranked.slice(0, 4), 'gemini-flash-latest'])];
+    if (ranked.length) {
+      setSavedItem(MODEL_LIST_CACHE_KEY, JSON.stringify({ date: todayStr(), models }));
+      return models;
+    }
+  } catch (err) {
+    console.warn('Gemini 모델 목록 조회 실패, 예비 모델 사용:', err);
+  }
+  return FALLBACK_MODELS;
+};
+
+const isKeyError = (err) =>
+  err.status === 401 || err.status === 403 ||
+  (err.status === 400 && /api[ _-]?key/i.test(err.message || ''));
+
+const isModelUnavailable = (err) =>
+  err.status === 404 ||
+  /no longer available|not found|not supported|deprecated/i.test(err.message || '');
 
 const todayStr = () => getLocalDateString(new Date());
 
@@ -111,7 +173,8 @@ const callGemini = async (apiKey, model, prompt) => {
     responseMimeType: 'application/json',
     responseSchema
   };
-  if (model.startsWith('gemini-2.5')) {
+  // 2.5 계열만 thinkingBudget 0(빠른 응답) 지원. 다른 버전은 기본값 사용.
+  if (/^gemini-2\.5-flash/.test(model)) {
     generationConfig.thinkingConfig = { thinkingBudget: 0 };
   }
 
@@ -120,7 +183,7 @@ const callGemini = async (apiKey, model, prompt) => {
   let res;
   try {
     res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    `${API_BASE}/models/${model}:generateContent`,
     {
       method: 'POST',
       signal: controller ? controller.signal : undefined,
@@ -178,30 +241,35 @@ export const fetchDailyHumor = async (apiKey, { forceNew = false } = {}) => {
   const current = getTodayCache()?.humor || '';
   const avoidList = current && !recent.includes(current) ? [...recent, current] : recent;
 
-  // 모델이 바쁘거나(429/5xx) 응답 형식이 깨진 경우, 같은 유머가 다시 온 경우 자동으로 재시도
+  // 모델이 바쁘거나(429/5xx) 응답 형식이 깨진 경우, 같은 유머가 다시 온 경우 자동으로 재시도.
+  // 모델이 없어진 경우는 다음 모델로 넘어가고, 모두 없으면 모델 목록을 새로 조회해 한 번 더 시도.
+  let meaningfulError = null;
   let lastError = null;
-  for (const model of GEMINI_MODELS) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const result = await callGemini(apiKey, model, buildPrompt(avoidList));
-        if (forceNew && current && result.humor === current) {
-          lastError = new Error('같은 유머가 생성되어 다시 시도합니다.');
-          continue;
+  const tried = new Set();
+
+  for (let round = 0; round < 2; round++) {
+    const models = (await getCandidateModels(apiKey, { refresh: round > 0 })).filter(m => !tried.has(m));
+    for (const model of models) {
+      tried.add(model);
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const result = await callGemini(apiKey, model, buildPrompt(avoidList));
+          if (forceNew && current && result.humor === current) {
+            lastError = new Error('같은 유머가 생성되어 다시 시도합니다.');
+            continue;
+          }
+          setSavedItem(HUMOR_CACHE_KEY, JSON.stringify({ date: todayStr(), ...result }));
+          setSavedItem(HUMOR_HISTORY_KEY, JSON.stringify([...avoidList, result.humor].slice(-10)));
+          return result;
+        } catch (err) {
+          lastError = err;
+          if (isKeyError(err)) throw err; // 키 오류는 재시도해도 소용없음
+          if (isModelUnavailable(err)) break; // 다음 모델로
+          meaningfulError = err;
+          await sleep(600);
         }
-        setSavedItem(HUMOR_CACHE_KEY, JSON.stringify({ date: todayStr(), ...result }));
-        setSavedItem(HUMOR_HISTORY_KEY, JSON.stringify([...avoidList, result.humor].slice(-10)));
-        return result;
-      } catch (err) {
-        lastError = err;
-        // 키 오류(400/401/403)는 재시도해도 소용없음
-        if (err.status === 400 || err.status === 401 || err.status === 403) {
-          throw err;
-        }
-        // 모델이 없는 경우(404)는 바로 다음 모델로
-        if (err.status === 404) break;
-        await sleep(600);
       }
     }
   }
-  throw lastError || new Error('유머를 가져오지 못했습니다.');
+  throw meaningfulError || lastError || new Error('유머를 가져오지 못했습니다.');
 };
