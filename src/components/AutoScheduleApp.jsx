@@ -827,6 +827,14 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
     }
   };
 
+  // 팀/기간이 바뀌면 이전 기간으로 만든 미리보기를 지워, ③ 저장 시 기간 불일치로 일정이 지워지는 것을 방지
+  const resetDraft = () => {
+    setDraftRecords([]);
+    setScheduleTemplates({});
+    setPreviewFilter("ALL");
+    setIsAssistantApplied(false);
+  };
+
   const handleOpenAssistantSchedule = () => {
     if (draftRecords.length > 0 && !window.confirm("보조강사 시간표 화면으로 이동하면 지금 작성 중인 시간표 미리보기가 초기화됩니다.\n이동할까요?")) return;
     if (onNavigateToAssistantSchedule) onNavigateToAssistantSchedule();
@@ -920,9 +928,7 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
                   value={team}
                   onChange={(e) => {
                     setTeam(e.target.value);
-                    setDraftRecords([]);
-                    setScheduleTemplates({});
-                    setPreviewFilter("ALL");
+                    resetDraft();
                   }}
                   className="w-full p-1.5 sm:p-2.5 text-[16px] sm:text-[21px] border border-sky-300 rounded-xl font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-sky-100 shadow-sm"
                 >
@@ -938,7 +944,7 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
                   <input
                     type="date"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={(e) => { setStartDate(e.target.value); resetDraft(); }}
                     className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                   />
                   <div className="w-full p-1.5 sm:p-2.5 text-[16px] sm:text-[21px] border border-sky-300 rounded-xl font-bold bg-sky-100 flex items-center justify-between text-gray-800 shadow-sm min-h-[31px] sm:min-h-[46px]">
@@ -953,7 +959,7 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
                   <input
                     type="date"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    onChange={(e) => { setEndDate(e.target.value); resetDraft(); }}
                     className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                   />
                   <div className="w-full p-1.5 sm:p-2.5 text-[16px] sm:text-[21px] border border-sky-300 rounded-xl font-bold bg-sky-100 flex items-center justify-between text-gray-800 shadow-sm min-h-[31px] sm:min-h-[46px]">
