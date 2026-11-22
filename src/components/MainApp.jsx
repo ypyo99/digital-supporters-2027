@@ -4038,6 +4038,21 @@ export default function MainApp({
                   />
                 )}
 
+                {!geminiApiKey && roomStatusPopup && (
+                  <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/70 px-3.5 py-3 flex items-center justify-between gap-2">
+                    <p className="text-[13px] font-bold text-amber-800 leading-snug">
+                      😄 Gemini API 키를 저장하면 이곳에 오늘의 유머가 표시됩니다.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => { closeTodayPopup(false); openSettingsModal(); }}
+                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-100 text-amber-800 border border-amber-300 text-[12.5px] font-extrabold whitespace-nowrap active:scale-95 transition cursor-pointer"
+                    >
+                      키 입력하기
+                    </button>
+                  </div>
+                )}
+
                 {roomStatusPopup?.holidayName && (
                   <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-3.5 py-2.5 text-[14px] font-bold text-center">
                     오늘은 <span className="font-extrabold">{roomStatusPopup.holidayName}</span>입니다.
