@@ -1,8 +1,9 @@
 // 보조강사 시간표 관리 (입력/수정/삭제/저장)
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Home, LucideCalendar } from './Icons';
 import { hasValidSavedAdminPassword } from '../utils/appSettings';
+import { fetchAllTeachersFromDb, getTeacherSortWeight } from '../utils/helpers';
 import {
   ASSISTANT_DAYS,
   ASSISTANT_TEAMS,
@@ -50,9 +51,23 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
   const [saving, setSaving] = useState(false);
   const [tableMissing, setTableMissing] = useState(false);
   const [message, setMessage] = useState(null); // { type: 'ok' | 'error', text }
+  const teachersRef = useRef([]);
+
+  // teachers 테이블에서 해당 팀·조의 재직 중인 선생님 이름을 '/'로 연결
+  const instructorsFor = (team, group, fallback = '') => {
+    const list = teachersRef.current || [];
+    if (list.length === 0) return fallback;
+    return list
+      .filter(t => t.team === team && (t.group || t.group_name) === group && t.is_active !== false)
+      .sort((a, b) => getTeacherSortWeight(team, a.name, list) - getTeacherSortWeight(team, b.name, list))
+      .map(t => (t.name || '').trim())
+      .join('/');
+  };
+
+  const withInstructors = (row) => ({ ...row, instructors: instructorsFor(row.team, row.group_name, row.instructors || '') });
 
   const applyLoaded = (data) => {
-    const list = data.map(withKey);
+    const list = data.map(r => withKey(withInstructors(r)));
     const start = data.find(r => r.course_start)?.course_start || '';
     const end = data.find(r => r.course_end)?.course_end || '';
     setRows(list);
@@ -65,6 +80,11 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
   const load = async () => {
     setLoading(true);
     setMessage(null);
+    try {
+      teachersRef.current = await fetchAllTeachersFromDb();
+    } catch (e) {
+      console.error('선생님 목록 로딩 실패:', e);
+    }
     try {
       const data = await fetchAssistantSchedules();
       setTableMissing(false);
@@ -108,12 +128,15 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
         const opts = getGroupOptions(value);
         if (!opts.includes(next.group_name)) next.group_name = opts[0];
       }
+      if (field === 'team' || field === 'group_name') {
+        next.instructors = instructorsFor(next.team, next.group_name);
+      }
       return next;
     }));
   };
 
   const addRow = () => {
-    setRows(prev => [...prev, withKey({ ...EMPTY_ROW })]);
+    setRows(prev => [...prev, withKey(withInstructors({ ...EMPTY_ROW }))]);
     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
   };
 
@@ -142,7 +165,7 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
   const handleLoadDefaults = () => {
     if (rows.length > 0 && !window.confirm('현재 목록을 기본 데이터(2026년 4분기 배정표)로 바꿀까요?\n[저장]을 눌러야 실제로 반영됩니다.')) return;
     // 기존 DB 행은 originalIds에 남아 있으므로 저장 시 삭제되고 기본 데이터가 새로 추가됨
-    setRows(DEFAULT_ASSISTANT_ROWS.map(r => withKey({ ...r })));
+    setRows(DEFAULT_ASSISTANT_ROWS.map(r => withKey(withInstructors({ ...r }))));
     setCourseStart(DEFAULT_ASSISTANT_ROWS[0].course_start);
     setCourseEnd(DEFAULT_ASSISTANT_ROWS[0].course_end);
   };
@@ -351,7 +374,12 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
                           </select>
                         </td>
                         <td className="px-1 py-1.5">
-                          <input className={inputCls} value={r.instructors} onChange={e => updateRow(r._key, 'instructors', e.target.value)} placeholder="예: 홍길동/김철수" />
+                          <div
+                            title="배정팀·조를 선택하면 선생님 목록에서 자동으로 표시됩니다"
+                            className={`w-full h-9 px-2 flex items-center rounded-md border border-slate-200 bg-slate-50 text-[14.5px] whitespace-nowrap overflow-hidden ${r.instructors ? 'text-slate-900 font-semibold' : 'text-slate-400'}`}
+                          >
+                            {r.instructors || '해당 조 선생님 없음'}
+                          </div>
                         </td>
                         <td className="px-1 py-1.5">
                           <div className="flex items-center justify-center gap-1">
@@ -370,6 +398,7 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
             <p className="mt-4 text-[13.5px] sm:text-sm text-slate-600 leading-relaxed">
               * 시간표 작성 화면의 [② 보조강사 적용]을 누르면 여기 저장된 내용이 시간표에 반영됩니다.<br />
               * 수강기간 이전 날짜는 기존 일정 유지, 종료일 이후 날짜는 빈칸으로 처리됩니다.<br />
+              * 강사명은 배정팀·조에 맞춰 선생님 목록에서 자동으로 표시됩니다.<br />
               * 파란 배경 행은 새로 추가한 행입니다. 변경 후에는 반드시 [저장]을 눌러 주세요.
             </p>
           </div>
