@@ -104,6 +104,8 @@ import {
   saveAdminPassword,
   clearSavedAdminPassword
 } from '../utils/appSettings';
+import { getGeminiApiKey, saveGeminiApiKey, clearGeminiApiKey } from '../utils/dailyHumor';
+import DailyHumorPopup from './DailyHumorPopup';
 import {
   User,
   MainCalendarIcon,
@@ -325,8 +327,31 @@ export default function MainApp({
   const [adminPwdInput, setAdminPwdInput] = useState('');
   const [adminPwdError, setAdminPwdError] = useState('');
   const [adminPwdNotice, setAdminPwdNotice] = useState('');
+  const [geminiApiKey, setGeminiApiKey] = useState(() => getGeminiApiKey());
+  const [geminiKeyInput, setGeminiKeyInput] = useState('');
+  const [geminiKeyNotice, setGeminiKeyNotice] = useState('');
+  const [humorPreviewRequest, setHumorPreviewRequest] = useState(0);
+
+  const handleSaveGeminiKey = () => {
+    if (!geminiKeyInput.trim()) {
+      setGeminiKeyNotice('API 키를 입력해주세요.');
+      return;
+    }
+    setGeminiApiKey(saveGeminiApiKey(geminiKeyInput));
+    setGeminiKeyInput('');
+    setGeminiKeyNotice('Gemini API 키가 저장되었습니다.');
+  };
+
+  const handleClearGeminiKey = () => {
+    clearGeminiApiKey();
+    setGeminiApiKey('');
+    setGeminiKeyInput('');
+    setGeminiKeyNotice('저장된 Gemini API 키가 삭제되었습니다.');
+  };
 
   const openSettingsModal = () => {
+    setGeminiKeyInput('');
+    setGeminiKeyNotice('');
     setAdminPwdInput('');
     setAdminPwdError('');
     setAdminPwdNotice('');
@@ -4045,6 +4070,14 @@ export default function MainApp({
           </div>
         )}
 
+        {/* 오늘의 유머 팝업 (하루 1회) */}
+        <DailyHumorPopup
+          apiKey={geminiApiKey}
+          paused={showSettingsModal}
+          teacherName={currentUser || ''}
+          previewRequest={humorPreviewRequest}
+        />
+
         {/* 앱 설정 모달 */}
         {showSettingsModal && (
           <div
@@ -4243,6 +4276,79 @@ export default function MainApp({
                   )}
                   {adminPwdNotice && !adminPwdError && (
                     <p className="mt-2 text-[12.5px] font-bold text-emerald-600">{adminPwdNotice}</p>
+                  )}
+                </div>
+
+                {/* 4. 오늘의 유머 (Gemini API 키) */}
+                <div className="pt-4 border-t border-slate-200">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[14.5px] sm:text-[15.5px] font-extrabold text-slate-900">
+                      4. 오늘의 유머 (Gemini API 키)
+                    </span>
+                    <span className={`px-2 py-0.5 rounded-full text-[11.5px] font-extrabold whitespace-nowrap ${geminiApiKey
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : 'bg-slate-100 text-slate-600 border border-slate-200'
+                      }`}>
+                      {geminiApiKey ? '저장됨' : '미저장'}
+                    </span>
+                  </div>
+                  <p className="text-[12.5px] text-slate-500 font-medium mb-2.5 leading-snug">
+                    키를 저장하면 하루에 한 번, 앱을 처음 실행할 때 유머와 응원 글귀가 팝업으로 표시됩니다. 키는 이 기기에만 저장됩니다.
+                  </p>
+                  {!geminiApiKey ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="password"
+                        value={geminiKeyInput}
+                        onChange={(e) => {
+                          setGeminiKeyInput(e.target.value);
+                          if (geminiKeyNotice) setGeminiKeyNotice('');
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleSaveGeminiKey();
+                          }
+                        }}
+                        placeholder="Gemini API 키 입력"
+                        autoComplete="off"
+                        className="flex-1 min-w-0 px-3 py-2.5 border-2 border-slate-200 rounded-xl text-[14px] font-bold text-slate-900 outline-none focus:border-blue-500 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveGeminiKey}
+                        className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13.5px] sm:text-[14px] font-extrabold shadow-sm active:scale-95 transition shrink-0 cursor-pointer"
+                      >
+                        저장
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[13px] font-bold text-emerald-800 truncate">
+                          {`${geminiApiKey.slice(0, 4)}••••${geminiApiKey.slice(-4)}`}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setHumorPreviewRequest(n => n + 1)}
+                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 text-[12.5px] font-extrabold active:scale-95 transition cursor-pointer whitespace-nowrap"
+                        >
+                          미리보기
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleClearGeminiKey}
+                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-[12.5px] font-extrabold active:scale-95 transition cursor-pointer whitespace-nowrap"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {geminiKeyNotice && (
+                    <p className={`mt-2 text-[12.5px] font-bold ${geminiApiKey ? 'text-emerald-600' : 'text-slate-600'}`}>{geminiKeyNotice}</p>
                   )}
                 </div>
               </div>
