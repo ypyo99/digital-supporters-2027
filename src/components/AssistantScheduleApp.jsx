@@ -323,20 +323,34 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
               </div>
             ) : (
               <div className="overflow-x-auto -mx-1 px-1">
-                <table className="w-full min-w-[1240px] border-collapse text-left">
+                <table className="w-full min-w-[1470px] table-fixed border-collapse text-left">
+                  {/* 고정 폭: 창이 좁아도 요일·조 등 선택 칸이 잘리지 않고 가로 스크롤됨 (프로그램명이 남는 폭을 가져감) */}
+                  <colgroup>
+                    <col style={{ width: 44 }} />
+                    <col />
+                    <col style={{ width: 180 }} />
+                    <col style={{ width: 80 }} />
+                    <col style={{ width: 132 }} />
+                    <col style={{ width: 132 }} />
+                    <col style={{ width: 170 }} />
+                    <col style={{ width: 110 }} />
+                    <col style={{ width: 90 }} />
+                    <col style={{ width: 150 }} />
+                    <col style={{ width: 140 }} />
+                  </colgroup>
                   <thead>
                     <tr className="bg-slate-100 text-slate-800 text-[14px] font-extrabold">
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[40px] text-center">#</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[230px]">프로그램명</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[170px]">시간표 과목명</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[84px]">요일</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[112px]">시작</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[112px]">종료</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[150px]">장소</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[104px]">배정팀</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[88px]">조</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[130px]">강사명</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[130px] text-center whitespace-nowrap">순서 / 삭제</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300 text-center">#</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">프로그램명</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">시간표 과목명</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">요일</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">시작</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">종료</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">장소</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">배정팀</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">조</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300">강사명</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300 text-center whitespace-nowrap">순서 / 삭제</th>
                     </tr>
                   </thead>
                   <tbody>
