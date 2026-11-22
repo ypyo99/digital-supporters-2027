@@ -9,7 +9,9 @@ const HUMOR_HISTORY_KEY = 'sungdong_daily_humor_history';
 const MODEL_LIST_CACHE_KEY = 'sungdong_gemini_model_list';
 // 모델 목록 조회가 실패할 때만 쓰는 예비 모델 (항상 최신 별칭을 먼저 시도)
 const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'];
-const REQUEST_TIMEOUT_MS = 20000;
+const REQUEST_TIMEOUT_MS = 20000; // 요청 1회 최대 대기
+const TOTAL_DEADLINE_MS = 40000; // 유머 1개를 가져오는 전체 최대 대기
+const MODEL_LIST_TIMEOUT_MS = 8000;
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -43,9 +45,17 @@ const getCandidateModels = async (apiKey, { refresh = false } = {}) => {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/models?pageSize=1000`, {
-      headers: { 'x-goog-api-key': apiKey }
-    });
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), MODEL_LIST_TIMEOUT_MS) : null;
+    let res;
+    try {
+      res = await fetch(`${API_BASE}/models?pageSize=1000`, {
+        headers: { 'x-goog-api-key': apiKey },
+        signal: controller ? controller.signal : undefined
+      });
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const ranked = (data.models || [])
@@ -167,19 +177,31 @@ const responseSchema = {
   required: ['humor', 'encouragement']
 };
 
-const callGemini = async (apiKey, model, prompt) => {
+// 생각(thinking) 설정을 거부한 모델은 기억해 두고 다음부터 설정 없이 호출
+const modelsWithoutThinkingConfig = new Set();
+
+const getThinkingConfig = (model) => {
+  if (modelsWithoutThinkingConfig.has(model)) return null;
+  // 2.5 계열: thinkingBudget 0 = 생각 없이 바로 답변
+  if (/^gemini-2\.5-flash/.test(model)) return { thinkingBudget: 0 };
+  // 3.x 이후·latest 별칭: 최소 생각 수준으로 빠르게 답변
+  return { thinkingLevel: 'minimal' };
+};
+
+const isThinkingConfigError = (err) =>
+  err.status === 400 && /thinking/i.test(err.message || '');
+
+const callGemini = async (apiKey, model, prompt, timeoutMs = REQUEST_TIMEOUT_MS) => {
   const generationConfig = {
-    temperature: 1.1,
+    temperature: 1.0,
     responseMimeType: 'application/json',
     responseSchema
   };
-  // 2.5 계열만 thinkingBudget 0(빠른 응답) 지원. 다른 버전은 기본값 사용.
-  if (/^gemini-2\.5-flash/.test(model)) {
-    generationConfig.thinkingConfig = { thinkingBudget: 0 };
-  }
+  const thinkingConfig = getThinkingConfig(model);
+  if (thinkingConfig) generationConfig.thinkingConfig = thinkingConfig;
 
   const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  const timer = controller ? setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS) : null;
+  const timer = controller ? setTimeout(() => controller.abort(), Math.max(1000, timeoutMs)) : null;
   let res;
   try {
     res = await fetch(
@@ -198,7 +220,11 @@ const callGemini = async (apiKey, model, prompt) => {
     }
   );
   } catch (err) {
-    if (err?.name === 'AbortError') throw new Error('응답 시간이 초과되었습니다.');
+    if (err?.name === 'AbortError') {
+      const timeoutErr = new Error('Gemini 응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
+      timeoutErr.isTimeout = true;
+      throw timeoutErr;
+    }
     throw err;
   } finally {
     if (timer) clearTimeout(timer);
@@ -243,17 +269,25 @@ export const fetchDailyHumor = async (apiKey, { forceNew = false } = {}) => {
 
   // 모델이 바쁘거나(429/5xx) 응답 형식이 깨진 경우, 같은 유머가 다시 온 경우 자동으로 재시도.
   // 모델이 없어진 경우는 다음 모델로 넘어가고, 모두 없으면 모델 목록을 새로 조회해 한 번 더 시도.
+  // 전체 소요 시간 상한: 이 시간이 지나면 더 시도하지 않고 오류를 표시
+  const deadline = Date.now() + TOTAL_DEADLINE_MS;
+  const timeLeft = () => deadline - Date.now();
+
   let meaningfulError = null;
   let lastError = null;
   const tried = new Set();
 
-  for (let round = 0; round < 2; round++) {
+  for (let round = 0; round < 2 && timeLeft() > 2000; round++) {
     const models = (await getCandidateModels(apiKey, { refresh: round > 0 })).filter(m => !tried.has(m));
     for (const model of models) {
+      if (timeLeft() <= 2000) break;
       tried.add(model);
-      for (let attempt = 0; attempt < 2; attempt++) {
+      for (let attempt = 0; attempt < 3 && timeLeft() > 2000; attempt++) {
         try {
-          const result = await callGemini(apiKey, model, buildPrompt(avoidList));
+          const result = await callGemini(
+            apiKey, model, buildPrompt(avoidList),
+            Math.min(REQUEST_TIMEOUT_MS, timeLeft())
+          );
           if (forceNew && current && result.humor === current) {
             lastError = new Error('같은 유머가 생성되어 다시 시도합니다.');
             continue;
@@ -264,8 +298,13 @@ export const fetchDailyHumor = async (apiKey, { forceNew = false } = {}) => {
         } catch (err) {
           lastError = err;
           if (isKeyError(err)) throw err; // 키 오류는 재시도해도 소용없음
+          if (isThinkingConfigError(err) && !modelsWithoutThinkingConfig.has(model)) {
+            modelsWithoutThinkingConfig.add(model); // 생각 설정 없이 같은 모델로 즉시 재시도
+            continue;
+          }
           if (isModelUnavailable(err)) break; // 다음 모델로
           meaningfulError = err;
+          if (err.isTimeout) break; // 느린 모델은 같은 모델로 다시 기다리지 않고 다음 모델로
           await sleep(600);
         }
       }
