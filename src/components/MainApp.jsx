@@ -506,19 +506,20 @@ export default function MainApp({
   };
 
   // 팝업에 교육실 현황이 없어도 유머가 준비되면 유머만이라도 표시 (설정창이 열려 있으면 대기)
-  const showHumorInPopup = humorVisible && (humorContent || humorLoading || (humorForceOpen && humorError));
+  // 자동 표시 중 오류가 나면 안내 팝업 안에 원인을 보여줌 (조용히 사라지지 않도록)
+  const showHumorInPopup = humorVisible && (humorContent || humorLoading || humorError);
   const isTodayPopupOpen = !isLoggedIn && (
     !!roomStatusPopup ||
     (humorVisible && humorForceOpen) ||
     (humorVisible && !!humorContent && !showSettingsModal)
   );
 
-  // 유머가 실제로 화면에 표시되면 오늘은 표시한 것으로 기록
+  // 유머가 앱 실행 시 자동으로 표시되면 오늘은 표시한 것으로 기록 (설정창 미리보기는 기록하지 않음)
   useEffect(() => {
-    if (isTodayPopupOpen && humorVisible && humorContent) {
+    if (isTodayPopupOpen && humorVisible && humorContent && !humorForceOpen) {
       markHumorShownToday();
     }
-  }, [isTodayPopupOpen, humorVisible, humorContent]);
+  }, [isTodayPopupOpen, humorVisible, humorContent, humorForceOpen]);
 
   useEffect(() => {
     if (!selectedStudentHistory || !selectedStudentHistory.name) {
