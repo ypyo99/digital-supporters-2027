@@ -880,8 +880,7 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6 w-full">
-            <div className="flex justify-between items-center border-b pb-3 mb-4 gap-2">
-              <h2 className="text-base sm:text-lg font-bold text-gray-800">기간 및 팀 선택</h2>
+            <div className="flex justify-end items-center border-b pb-3 mb-4 gap-2">
               <div className="flex flex-wrap justify-end gap-2">
                 <button
                   onClick={handleOpenAssistantSchedule}
