@@ -1,6 +1,6 @@
 // 시간표 작성
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabaseClient } from '../utils/supabase';
 import {
   getSavedItem,
@@ -9,7 +9,7 @@ import {
   getTeacherGroup,
   getTeacherSortWeight
 } from '../utils/helpers';
-import ExcelJS from 'exceljs';
+import { fetchAssistantSchedules, toApplyEntries, isMissingTableError } from '../utils/assistantSchedule';
 import { Home, LucideCalendar } from './Icons';
 import { hasValidSavedAdminPassword } from '../utils/appSettings';
 
@@ -20,7 +20,7 @@ const parseDateLocal = (dateStr) => {
   return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
 };
 
-export default function AutoScheduleApp({ onNavigateBack }) {
+export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantSchedule }) {
   const [isAdmin] = useState(() => hasValidSavedAdminPassword());
 
   const [startDate, setStartDate] = useState(() => {
@@ -654,74 +654,30 @@ export default function AutoScheduleApp({ onNavigateBack }) {
     ? sortedTeacherNames
     : sortedTeacherNames.filter(name => name === previewFilter);
 
-  const fileInputRef = useRef(null);
-
-  const handleApplyAssistantClick = () => {
+  // [② 보조강사 적용] 보조강사 시간표 화면에서 저장한 데이터(DB)를 불러와 시간표 초안에 반영
+  const handleApplyAssistantClick = async () => {
     if (draftRecords.length === 0) {
       alert("먼저 '주간 시간표 보기'를 통해 시간표 초안을 작성해 주세요.");
       return;
     }
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
 
     try {
-      setProgressMsg("보조강사 엑셀 데이터를 가져오는 중...");
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(arrayBuffer);
-      const worksheet = workbook.worksheets[0];
-
-      let courseStartDateStr = "";
-      let courseEndDateStr = "";
-      const dateRow = worksheet.getRow(2);
-      if (dateRow) {
-        const parseExcelDate = (cellVal) => {
-          if (!cellVal) return "";
-          if (cellVal instanceof Date) {
-            const yyyy = cellVal.getFullYear();
-            const mm = String(cellVal.getMonth() + 1).padStart(2, '0');
-            const dd = String(cellVal.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
-          }
-          const match = String(cellVal).trim().match(/^(\d{4})[^\d](\d{1,2})[^\d](\d{1,2})/);
-          if (match) {
-            return `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}`;
-          }
-          return String(cellVal).trim();
-        };
-        // 엑셀의 C2, D2 셀 (1-indexed 기준 3번, 4번 컬럼)에서 수강기간 시작일, 종료일 추출
-        courseStartDateStr = parseExcelDate(dateRow.getCell(3).value);
-        courseEndDateStr = parseExcelDate(dateRow.getCell(4).value);
-      }
-
-      const assistantData = [];
-      worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
-        if (rowNumber < 4) return; // 1~3행은 헤더이므로 건너뜀
-        const vals = row.values;
-        // [실제 엑셀 컬럼 구조]
-        // vals[1]: 순번
-        // vals[2]: 대분류 (예: "스마트폰/키오스크 기초 1반")
-        // vals[3]: 과목명 (예: "보조강사스마트폰1") ← 학생이름 칸에 들어갈 값
-        // vals[4]: 일정   (예: "화(10:00~10:50)")
-        // vals[5]: 장소   (예: "3층 평생교육실1")
-        // vals[6]: 배정팀 (예: "2—4" → 2팀 4조)
-        // vals[7]: 강사명 (예: "권용의/김향숙")
-        // 아이폰/맥 환경에서 한글 자음/모음이 분리되는 현상(NFD)을 방지하기 위해 normalize('NFC') 적용
-        const subject = vals[3] ? String(vals[3]).normalize('NFC').trim() : '';
-        const scheduleStr = vals[4] ? String(vals[4]).normalize('NFC').trim() : '';
-        const locationStr = vals[5] ? String(vals[5]).normalize('NFC').trim() : ''; // 장소 추출
-        const assignTeam = vals[6] ? String(vals[6]).normalize('NFC').trim() : '';
-
-        if (subject && scheduleStr && assignTeam) {
-          assistantData.push({ subject, scheduleStr, assignTeam, locationStr });
+      setProgressMsg("보조강사 시간표 데이터를 가져오는 중...");
+      let rows;
+      try {
+        rows = await fetchAssistantSchedules();
+      } catch (fetchErr) {
+        if (isMissingTableError(fetchErr)) {
+          alert("보조강사 시간표 데이터베이스가 아직 준비되지 않았습니다.\n[보조강사 시간표] 화면의 안내를 확인해 주세요.");
+          return;
         }
-      });
+        throw fetchErr;
+      }
+      if (rows.length === 0) {
+        alert("등록된 보조강사 시간표가 없습니다.\n[보조강사 시간표] 화면에서 먼저 입력해 주세요.");
+        return;
+      }
+      const assistantData = toApplyEntries(rows);
 
       let updateCount = 0;
       const matchedUpdates = [];
@@ -763,66 +719,40 @@ export default function AutoScheduleApp({ onNavigateBack }) {
         let isAfterEnd = false;    // 수강기간 종료 후 → 빈칸 처리
 
         assistantData.forEach(d => {
-          let excelTeamNum = "";
-          let excelGroupNum = "";
+          if (d.teamKey && d.groupKey && myTeamNum === d.teamKey && myGroupNum === d.groupKey && d.day === myDayStr) {
+            const parseTime = (tStr) => {
+              const m = String(tStr || '').match(/(\d+):(\d+)/);
+              if (!m) return -1;
+              return parseInt(m[1]) * 60 + parseInt(m[2]);
+            };
 
-          if (d.assignTeam.includes("취업팀")) {
-            excelTeamNum = "취업팀";
-            if (d.assignTeam.includes("오전")) excelGroupNum = "오전";
-            else if (d.assignTeam.includes("오후")) excelGroupNum = "오후";
-          } else {
-            const tMatch = d.assignTeam.match(/(\d+)[^\d]+(\d+)/);
-            if (tMatch) {
-              excelTeamNum = tMatch[1];
-              excelGroupNum = tMatch[2];
-            }
-          }
+            const eStart = parseTime(d.startTime);
+            const eEnd = d.endTime ? parseTime(d.endTime) : eStart + 60;
 
-          if (excelTeamNum && excelGroupNum && myTeamNum === excelTeamNum && myGroupNum === excelGroupNum) {
-            // 정규식을 유연하게 수정하여 '월요일(09:30~10:30)', '월 (09:30~10:30)' 등 공백을 허용
-            const sMatch = d.scheduleStr.match(/([가-힣]+)\s*\(\s*([^)]+)\s*\)/);
-            if (sMatch) {
-              // '요일' 글자를 제거하여 '월요일'과 '월'이 같아지도록 통일
-              const excelDay = sMatch[1].replace('요일', '').trim();
-              const excelTime = sMatch[2];
+            const sParts = r.shift.split('~');
+            const sStart = parseTime(sParts[0]);
+            const sEnd = sParts.length > 1 ? parseTime(sParts[1]) : sStart + 60;
 
-              if (excelDay === myDayStr) {
-                function parseTime(tStr) {
-                  const m = tStr.match(/(\d+):(\d+)/);
-                  if (!m) return -1;
-                  return parseInt(m[1]) * 60 + parseInt(m[2]);
+            if (Math.max(eStart, sStart) < Math.min(eEnd, sEnd)) {
+              matched = true;
+
+              // ── 수강기간 판별 (시작 전 / 기간 내 / 종료 후 3가지로 분리) ──
+              if (d.courseStart && d.courseEnd) {
+                if (r.log_date < d.courseStart) {
+                  // 수강기간 시작 전: 기존 기준 주간 스케줄을 그대로 유지
+                  isBeforeStart = true;
+                } else if (r.log_date > d.courseEnd) {
+                  // 수강기간 종료 후: 빈칸으로 처리
+                  isAfterEnd = true;
+                } else {
+                  // 수강기간 내: 보조강사 과목명으로 교체
+                  newStudent = d.subject;
+                  newLocation = '복지관'; // 장소는 무조건 '복지관'으로 고정
                 }
-
-                const eParts = excelTime.split('~');
-                const eStart = parseTime(eParts[0]);
-                const eEnd = eParts.length > 1 ? parseTime(eParts[1]) : eStart + 60;
-
-                const sParts = r.shift.split('~');
-                const sStart = parseTime(sParts[0]);
-                const sEnd = sParts.length > 1 ? parseTime(sParts[1]) : sStart + 60;
-
-                if (Math.max(eStart, sStart) < Math.min(eEnd, sEnd)) {
-                  matched = true;
-
-                  // ── 수강기간 판별 (시작 전 / 기간 내 / 종료 후 3가지로 분리) ──
-                  if (courseStartDateStr && courseEndDateStr) {
-                    if (r.log_date < courseStartDateStr) {
-                      // 수강기간 시작 전: 기존 기준 주간 스케줄을 그대로 유지
-                      isBeforeStart = true;
-                    } else if (r.log_date > courseEndDateStr) {
-                      // 수강기간 종료 후: 빈칸으로 처리
-                      isAfterEnd = true;
-                    } else {
-                      // 수강기간 내: 보조강사 과목명으로 교체
-                      newStudent = d.subject;
-                      newLocation = '복지관'; // 엑셀 데이터와 무관하게 장소를 무조건 '복지관'으로 고정
-                    }
-                  } else {
-                    // 수강기간 정보 없으면 무조건 보조강사 과목명 적용
-                    newStudent = d.subject;
-                    newLocation = '복지관'; // 엑셀 데이터와 무관하게 장소를 무조건 '복지관'으로 고정
-                  }
-                }
+              } else {
+                // 수강기간 정보 없으면 무조건 보조강사 과목명 적용
+                newStudent = d.subject;
+                newLocation = '복지관';
               }
             }
           }
@@ -883,7 +813,7 @@ export default function AutoScheduleApp({ onNavigateBack }) {
         }, 100);
       } else {
         setTimeout(() => {
-          alert("해당 기간의 주간시간표와 엑셀 데이터 중 일치하는 항목이 없습니다.");
+          alert("해당 기간의 주간시간표와 보조강사 시간표 중 일치하는 항목이 없습니다.");
         }, 100);
       }
 
@@ -894,8 +824,12 @@ export default function AutoScheduleApp({ onNavigateBack }) {
       alert("보조강사 데이터를 적용하는 중 오류가 발생했습니다: " + err.message);
     } finally {
       setProgressMsg("");
-      event.target.value = ''; // 같은 파일을 다시 선택할 수 있도록 초기화
     }
+  };
+
+  const handleOpenAssistantSchedule = () => {
+    if (draftRecords.length > 0 && !window.confirm("보조강사 시간표 화면으로 이동하면 지금 작성 중인 시간표 미리보기가 초기화됩니다.\n이동할까요?")) return;
+    if (onNavigateToAssistantSchedule) onNavigateToAssistantSchedule();
   };
 
   return (
@@ -948,7 +882,14 @@ export default function AutoScheduleApp({ onNavigateBack }) {
           <div className="bg-white rounded-2xl shadow-md ring-1 ring-gray-900/5 p-5 mb-6 w-full">
             <div className="flex justify-between items-center border-b pb-3 mb-4 gap-2">
               <h2 className="text-base sm:text-lg font-bold text-gray-800">기간 및 팀 선택</h2>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap justify-end gap-2">
+                <button
+                  onClick={handleOpenAssistantSchedule}
+                  disabled={analyzing || saving}
+                  className="px-3 py-1.5 sm:px-5 sm:py-2.5 bg-white text-slate-800 border border-slate-300 font-extrabold rounded-md shadow-sm hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-2 active:scale-95 text-sm sm:text-lg shrink-0"
+                >
+                  보조강사 시간표
+                </button>
                 <button
                   onClick={handleAnalyze}
                   disabled={analyzing || saving}
@@ -963,13 +904,6 @@ export default function AutoScheduleApp({ onNavigateBack }) {
                 >
                   ② 보조강사 적용
                 </button>
-                <input
-                  type="file"
-                  accept=".xlsx"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleFileUpload}
-                />
               </div>
             </div>
 

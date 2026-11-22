@@ -42,6 +42,7 @@ const MyWeeklyScheduleApp = lazyWithRetry(() => import('./components/MyWeeklySch
 const StudentSearchApp = lazyWithRetry(() => import('./components/StudentSearchApp'));
 const TeacherManagementApp = lazyWithRetry(() => import('./components/TeacherManagementApp'));
 const AutoScheduleApp = lazyWithRetry(() => import('./components/AutoScheduleApp'));
+const AssistantScheduleApp = lazyWithRetry(() => import('./components/AssistantScheduleApp'));
 const HolidayManagementApp = lazyWithRetry(() => import('./components/HolidayManagementApp'));
 const NangmanStudioApp = lazyWithRetry(() => import('./components/NangmanStudioApp'));
 const NoticeManagementApp = lazyWithRetry(() => import('./components/NoticeManagementApp'));
@@ -246,7 +247,16 @@ export default function App() {
     }
 
     if (currentView === 'autoSchedule') {
-      return <AutoScheduleApp onNavigateBack={handleNavigateBack} />;
+      return (
+        <AutoScheduleApp
+          onNavigateBack={handleNavigateBack}
+          onNavigateToAssistantSchedule={() => navigateTo('assistantSchedule')}
+        />
+      );
+    }
+
+    if (currentView === 'assistantSchedule') {
+      return <AssistantScheduleApp onNavigateBack={handleNavigateBack} />;
     }
 
     if (currentView === 'holidayManagement') {
