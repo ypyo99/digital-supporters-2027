@@ -17,7 +17,7 @@ const DailyHumorCard = ({ content, loading, error, teacherName = '', onRefresh }
           disabled={loading}
           className="text-[12.5px] font-bold text-amber-700 hover:underline disabled:opacity-50 whitespace-nowrap"
         >
-          {loading && content ? '불러오는 중...' : '다른 유머 보기'}
+          {loading && content ? '새 유머 가져오는 중...' : '다른 유머 보기'}
         </button>
       )}
     </div>
@@ -26,14 +26,15 @@ const DailyHumorCard = ({ content, loading, error, teacherName = '', onRefresh }
       <div className="py-3 text-center text-[13.5px] font-bold text-amber-700/80">유머를 준비하는 중...</div>
     )}
 
-    {error && !content && !loading && (
+    {error && !loading && (
       <div className="text-[13px] font-bold text-rose-700 break-words">
-        유머를 불러오지 못했습니다. <span className="font-medium text-rose-600">{error}</span>
+        {content ? '새 유머를 가져오지 못했습니다.' : '유머를 불러오지 못했습니다.'}{' '}
+        <span className="font-medium text-rose-600">{error}</span>
       </div>
     )}
 
     {content && (
-      <>
+      <div className={`space-y-3 transition-opacity ${loading ? 'opacity-40 animate-pulse' : 'opacity-100'}`}>
         <p className="text-[15px] sm:text-[16px] leading-relaxed font-bold text-slate-800 whitespace-pre-line">
           {content.humor}
         </p>
@@ -45,7 +46,7 @@ const DailyHumorCard = ({ content, loading, error, teacherName = '', onRefresh }
             </p>
           </div>
         )}
-      </>
+      </div>
     )}
   </div>
 );

@@ -6,7 +6,10 @@ const HUMOR_SHOWN_DATE_KEY = 'sungdong_daily_humor_shown_date';
 const HUMOR_CACHE_KEY = 'sungdong_daily_humor_cache_v2';
 const HUMOR_HISTORY_KEY = 'sungdong_daily_humor_history';
 
-const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash'];
+const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+const REQUEST_TIMEOUT_MS = 20000;
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const todayStr = () => getLocalDateString(new Date());
 
@@ -112,10 +115,15 @@ const callGemini = async (apiKey, model, prompt) => {
     generationConfig.thinkingConfig = { thinkingBudget: 0 };
   }
 
-  const res = await fetch(
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS) : null;
+  let res;
+  try {
+    res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
       method: 'POST',
+      signal: controller ? controller.signal : undefined,
       headers: {
         'Content-Type': 'application/json',
         'x-goog-api-key': apiKey
@@ -126,6 +134,12 @@ const callGemini = async (apiKey, model, prompt) => {
       })
     }
   );
+  } catch (err) {
+    if (err?.name === 'AbortError') throw new Error('응답 시간이 초과되었습니다.');
+    throw err;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 
   if (!res.ok) {
     let message = `HTTP ${res.status}`;
@@ -161,19 +175,32 @@ export const fetchDailyHumor = async (apiKey, { forceNew = false } = {}) => {
 
   const history = readJson(HUMOR_HISTORY_KEY, []);
   const recent = Array.isArray(history) ? history.slice(-10) : [];
-  const prompt = buildPrompt(recent);
+  const current = getTodayCache()?.humor || '';
+  const avoidList = current && !recent.includes(current) ? [...recent, current] : recent;
 
+  // 모델이 바쁘거나(429/5xx) 응답 형식이 깨진 경우, 같은 유머가 다시 온 경우 자동으로 재시도
   let lastError = null;
   for (const model of GEMINI_MODELS) {
-    try {
-      const result = await callGemini(apiKey, model, prompt);
-      setSavedItem(HUMOR_CACHE_KEY, JSON.stringify({ date: todayStr(), ...result }));
-      setSavedItem(HUMOR_HISTORY_KEY, JSON.stringify([...recent, result.humor].slice(-10)));
-      return result;
-    } catch (err) {
-      lastError = err;
-      // 키 오류(400/401/403)는 다른 모델로 재시도해도 소용없음
-      if (err.status === 400 || err.status === 401 || err.status === 403) break;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const result = await callGemini(apiKey, model, buildPrompt(avoidList));
+        if (forceNew && current && result.humor === current) {
+          lastError = new Error('같은 유머가 생성되어 다시 시도합니다.');
+          continue;
+        }
+        setSavedItem(HUMOR_CACHE_KEY, JSON.stringify({ date: todayStr(), ...result }));
+        setSavedItem(HUMOR_HISTORY_KEY, JSON.stringify([...avoidList, result.humor].slice(-10)));
+        return result;
+      } catch (err) {
+        lastError = err;
+        // 키 오류(400/401/403)는 재시도해도 소용없음
+        if (err.status === 400 || err.status === 401 || err.status === 403) {
+          throw err;
+        }
+        // 모델이 없는 경우(404)는 바로 다음 모델로
+        if (err.status === 404) break;
+        await sleep(600);
+      }
     }
   }
   throw lastError || new Error('유머를 가져오지 못했습니다.');
