@@ -194,7 +194,7 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
   return (
     <div className="min-h-screen app-surface flex flex-col font-sans pb-6 overflow-y-auto">
       <header className="app-header text-white z-40 relative shrink-0">
-        <div className="max-w-5xl lg:max-w-[1536px] mx-auto px-2.5 sm:px-5 pt-safe-4 pb-4 flex justify-between items-start relative">
+        <div className="max-w-[1331px] lg:max-w-[1997px] mx-auto px-2.5 sm:px-5 pt-safe-4 pb-4 flex justify-between items-start relative">
           <div className="flex flex-col">
             <div className="flex items-center mb-1">
               <img src="/Logo_of_Seoul.jpg" alt="서울시 로고" className="h-7 hdr-logo object-contain mr-2 shrink-0" onError={(e) => e.target.style.display = 'none'} />
@@ -211,7 +211,7 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
         </div>
       </header>
 
-      <main className="flex-1 px-2.5 sm:px-5 pt-3 pb-12 w-full max-w-5xl lg:max-w-[1536px] mx-auto">
+      <main className="flex-1 px-2.5 sm:px-5 pt-3 pb-12 w-full max-w-[1331px] lg:max-w-[1997px] mx-auto">
         <div className="px-1 mb-2 flex items-center justify-between gap-2">
           <h2 className="text-[19px] sm:text-xl font-bold text-gray-800 flex items-center tracking-tight">
             <LucideCalendar className="w-5 h-5 mr-2 text-blue-600" /> 보조강사 시간표
@@ -310,8 +310,8 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[112px]">시작</th>
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[112px]">종료</th>
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[150px]">장소</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[86px]">배정팀</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[72px]">조</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[104px]">배정팀</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[88px]">조</th>
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[130px]">강사명</th>
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[110px] text-center">순서 / 삭제</th>
                     </tr>
