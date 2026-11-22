@@ -9,8 +9,8 @@ const HUMOR_HISTORY_KEY = 'sungdong_daily_humor_history';
 const MODEL_LIST_CACHE_KEY = 'sungdong_gemini_model_list';
 // 모델 목록 조회가 실패할 때만 쓰는 예비 모델 (항상 최신 별칭을 먼저 시도)
 const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'];
-const REQUEST_TIMEOUT_MS = 20000; // 요청 1회 최대 대기
-const TOTAL_DEADLINE_MS = 40000; // 유머 1개를 가져오는 전체 최대 대기
+const REQUEST_TIMEOUT_MS = 35000; // 요청 1회 최대 대기
+const TOTAL_DEADLINE_MS = 45000; // 유머 1개를 가져오는 전체 최대 대기
 const MODEL_LIST_TIMEOUT_MS = 8000;
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
@@ -160,21 +160,30 @@ const buildPrompt = (recent) => {
 오늘의 업무 장면: ${topic}
 
 조건:
-- humor: 반드시 위 "디지털서포터즈 선생님이 하는 일"의 한 장면을 배경으로 한 유머 1개. 선생님(서포터즈)이 직접 등장하거나 선생님의 업무와 분명히 연결되어야 함.
+- 유머: 반드시 위 "디지털서포터즈 선생님이 하는 일"의 한 장면을 배경으로 한 유머 1개. 선생님(서포터즈)이 직접 등장하거나 선생님의 업무와 분명히 연결되어야 함.
 - 디지털 기기에 대한 단순 말장난만 있는 유머, 업무와 무관한 일반 유머는 금지.
 - 형식: 교육 현장의 재치 있는 짧은 에피소드, 업무 관련 넌센스 퀴즈, 업무 용어 말장난(아재개그) 중 하나. 2~5문장 이내. 퀴즈 형식이면 질문과 정답을 줄바꿈으로 구분.
 - 서포터즈 선생님이 공감하며 웃을 수 있는 내용으로. 어르신 수강생을 놀리거나 무시하는 내용 금지.
 - 특정 인물·집단을 비하하거나 정치·종교적인 내용은 절대 금지.
-- encouragement: 디지털서포터즈 선생님의 수고를 알아주고 응원하는 따뜻한 한두 문장(60자 이내). "선생님" 같은 호칭으로 시작하지 말고 바로 본문으로 시작.${avoid}`;
+- 응원: 디지털서포터즈 선생님의 수고를 알아주고 응원하는 따뜻한 한두 문장(60자 이내). "선생님" 같은 호칭으로 시작하지 말고 바로 본문으로 시작.${avoid}
+
+출력 형식(이 형식 외의 설명은 쓰지 말 것):
+[유머]
+(유머 내용)
+[응원]
+(격려 글귀)`;
 };
 
-const responseSchema = {
-  type: 'OBJECT',
-  properties: {
-    humor: { type: 'STRING' },
-    encouragement: { type: 'STRING' }
-  },
-  required: ['humor', 'encouragement']
+// 출력 형식: [유머] ... [응원] ... 을 파싱
+const parseHumorText = (text) => {
+  const cleaned = String(text || '').replace(/```[a-z]*\n?|```/gi, '').trim();
+  const m = cleaned.match(/\[유머\]\s*([\s\S]*?)\s*\[응원\]\s*([\s\S]*)$/);
+  let humor = m ? m[1] : cleaned.replace(/^\[유머\]\s*/, '');
+  let encouragement = m ? m[2] : '';
+  humor = humor.trim();
+  encouragement = encouragement.replace(/\n+/g, ' ').trim();
+  if (!humor) throw new Error('유머 내용이 비어 있습니다.');
+  return { humor, encouragement };
 };
 
 // 생각(thinking) 설정을 거부한 모델은 기억해 두고 다음부터 설정 없이 호출
@@ -191,63 +200,97 @@ const getThinkingConfig = (model) => {
 const isThinkingConfigError = (err) =>
   err.status === 400 && /thinking/i.test(err.message || '');
 
-const callGemini = async (apiKey, model, prompt, timeoutMs = REQUEST_TIMEOUT_MS) => {
+const callGemini = async (apiKey, model, prompt, timeoutMs, externalSignal) => {
   const generationConfig = {
     temperature: 1.0,
-    responseMimeType: 'application/json',
-    responseSchema
+    maxOutputTokens: 1024
   };
   const thinkingConfig = getThinkingConfig(model);
   if (thinkingConfig) generationConfig.thinkingConfig = thinkingConfig;
 
-  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  const timer = controller ? setTimeout(() => controller.abort(), Math.max(1000, timeoutMs)) : null;
-  let res;
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, Math.max(1000, timeoutMs));
+  const onExternalAbort = () => controller.abort();
+  if (externalSignal) {
+    if (externalSignal.aborted) controller.abort();
+    else externalSignal.addEventListener('abort', onExternalAbort);
+  }
+
   try {
-    res = await fetch(
-    `${API_BASE}/models/${model}:generateContent`,
-    {
-      method: 'POST',
-      signal: controller ? controller.signal : undefined,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey
-      },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig
-      })
-    }
-  );
-  } catch (err) {
-    if (err?.name === 'AbortError') {
-      const timeoutErr = new Error('Gemini 응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.');
-      timeoutErr.isTimeout = true;
-      throw timeoutErr;
-    }
-    throw err;
-  } finally {
-    if (timer) clearTimeout(timer);
-  }
-
-  if (!res.ok) {
-    let message = `HTTP ${res.status}`;
+    let res;
     try {
-      const err = await res.json();
-      if (err?.error?.message) message = err.error.message;
-    } catch (_) {}
-    const error = new Error(message);
-    error.status = res.status;
-    throw error;
-  }
+      res = await fetch(`${API_BASE}/models/${model}:generateContent`, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig
+        })
+      });
+    } catch (err) {
+      if (err?.name === 'AbortError') {
+        const abortErr = new Error(timedOut
+          ? 'Gemini 응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.'
+          : '요청이 취소되었습니다.');
+        abortErr.isTimeout = timedOut;
+        abortErr.isCancelled = !timedOut;
+        throw abortErr;
+      }
+      throw err;
+    }
 
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-  const parsed = JSON.parse(text);
-  const humor = String(parsed.humor || '').trim();
-  const encouragement = String(parsed.encouragement || '').trim();
-  if (!humor) throw new Error('유머 내용이 비어 있습니다.');
-  return { humor, encouragement };
+    if (!res.ok) {
+      let message = `HTTP ${res.status}`;
+      try {
+        const err = await res.json();
+        if (err?.error?.message) message = err.error.message;
+      } catch (_) {}
+      const error = new Error(message);
+      error.status = res.status;
+      throw error;
+    }
+
+    const data = await res.json();
+    const parts = data?.candidates?.[0]?.content?.parts || [];
+    const text = parts.filter(p => !p.thought).map(p => p.text || '').join('');
+    return parseHumorText(text);
+  } finally {
+    clearTimeout(timer);
+    if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
+  }
+};
+
+/**
+ * 한 모델로 유머 생성을 시도 (생각 설정 거부·같은 유머·일시 오류 시 같은 모델로 재시도).
+ */
+const tryModel = async ({ apiKey, model, prompt, current, forceNew, timeLeft, signal }) => {
+  let lastError = null;
+  for (let attempt = 0; attempt < 3 && timeLeft() > 2000; attempt++) {
+    try {
+      const result = await callGemini(apiKey, model, prompt, Math.min(REQUEST_TIMEOUT_MS, timeLeft()), signal);
+      if (forceNew && current && result.humor === current) {
+        lastError = new Error('같은 유머가 생성되었습니다.');
+        continue;
+      }
+      return result;
+    } catch (err) {
+      err.model = model;
+      lastError = err;
+      if (err.isCancelled || err.isTimeout || isKeyError(err)) throw err;
+      if (isThinkingConfigError(err) && !modelsWithoutThinkingConfig.has(model)) {
+        modelsWithoutThinkingConfig.add(model); // 생각 설정 없이 즉시 재시도
+        continue;
+      }
+      if (isModelUnavailable(err)) throw err;
+      await sleep(600);
+    }
+  }
+  throw lastError || new Error('응답 시간이 부족합니다.');
 };
 
 /**
@@ -266,49 +309,43 @@ export const fetchDailyHumor = async (apiKey, { forceNew = false } = {}) => {
   const recent = Array.isArray(history) ? history.slice(-10) : [];
   const current = getTodayCache()?.humor || '';
   const avoidList = current && !recent.includes(current) ? [...recent, current] : recent;
+  const prompt = buildPrompt(avoidList);
 
-  // 모델이 바쁘거나(429/5xx) 응답 형식이 깨진 경우, 같은 유머가 다시 온 경우 자동으로 재시도.
-  // 모델이 없어진 경우는 다음 모델로 넘어가고, 모두 없으면 모델 목록을 새로 조회해 한 번 더 시도.
   // 전체 소요 시간 상한: 이 시간이 지나면 더 시도하지 않고 오류를 표시
   const deadline = Date.now() + TOTAL_DEADLINE_MS;
   const timeLeft = () => deadline - Date.now();
 
-  let meaningfulError = null;
-  let lastError = null;
+  const errors = [];
   const tried = new Set();
 
+  // 후보 모델을 2개씩 동시에 호출해 먼저 도착한 답을 사용 (느린 모델 때문에 기다리지 않도록).
+  // 모델이 모두 없어진 경우엔 모델 목록을 새로 조회해 한 번 더 시도.
   for (let round = 0; round < 2 && timeLeft() > 2000; round++) {
     const models = (await getCandidateModels(apiKey, { refresh: round > 0 })).filter(m => !tried.has(m));
-    for (const model of models) {
-      if (timeLeft() <= 2000) break;
-      tried.add(model);
-      for (let attempt = 0; attempt < 3 && timeLeft() > 2000; attempt++) {
-        try {
-          const result = await callGemini(
-            apiKey, model, buildPrompt(avoidList),
-            Math.min(REQUEST_TIMEOUT_MS, timeLeft())
-          );
-          if (forceNew && current && result.humor === current) {
-            lastError = new Error('같은 유머가 생성되어 다시 시도합니다.');
-            continue;
-          }
-          setSavedItem(HUMOR_CACHE_KEY, JSON.stringify({ date: todayStr(), ...result }));
-          setSavedItem(HUMOR_HISTORY_KEY, JSON.stringify([...avoidList, result.humor].slice(-10)));
-          return result;
-        } catch (err) {
-          lastError = err;
-          if (isKeyError(err)) throw err; // 키 오류는 재시도해도 소용없음
-          if (isThinkingConfigError(err) && !modelsWithoutThinkingConfig.has(model)) {
-            modelsWithoutThinkingConfig.add(model); // 생각 설정 없이 같은 모델로 즉시 재시도
-            continue;
-          }
-          if (isModelUnavailable(err)) break; // 다음 모델로
-          meaningfulError = err;
-          if (err.isTimeout) break; // 느린 모델은 같은 모델로 다시 기다리지 않고 다음 모델로
-          await sleep(600);
-        }
+    for (let i = 0; i < models.length && timeLeft() > 2000; i += 2) {
+      const group = models.slice(i, i + 2);
+      group.forEach(m => tried.add(m));
+      const raceController = new AbortController();
+      try {
+        const result = await Promise.any(group.map(model =>
+          tryModel({ apiKey, model, prompt, current, forceNew, timeLeft, signal: raceController.signal })
+        ));
+        raceController.abort(); // 나머지 요청 취소
+        setSavedItem(HUMOR_CACHE_KEY, JSON.stringify({ date: todayStr(), ...result }));
+        setSavedItem(HUMOR_HISTORY_KEY, JSON.stringify([...avoidList, result.humor].slice(-10)));
+        return result;
+      } catch (agg) {
+        const groupErrors = (agg && agg.errors) || [agg];
+        const keyErr = groupErrors.find(e => e && isKeyError(e));
+        if (keyErr) throw keyErr;
+        errors.push(...groupErrors.filter(Boolean));
       }
     }
+    // 사용할 수 없는 모델 때문이 아니라면 목록을 다시 조회할 필요 없음
+    if (errors.some(e => !isModelUnavailable(e))) break;
   }
-  throw meaningfulError || lastError || new Error('유머를 가져오지 못했습니다.');
+
+  const meaningful = errors.find(e => !isModelUnavailable(e)) || errors[errors.length - 1];
+  const triedText = tried.size ? ` (시도한 모델: ${[...tried].join(', ')})` : '';
+  throw new Error(`${meaningful ? meaningful.message : '유머를 가져오지 못했습니다.'}${triedText}`);
 };
