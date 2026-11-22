@@ -904,6 +904,13 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
                 >
                   ② 보조강사 적용
                 </button>
+                <button
+                  onClick={() => setShowConfirmModal(true)}
+                  disabled={analyzing || saving || restoring || draftRecords.length === 0 || !isAssistantApplied}
+                  className="px-3 py-1.5 sm:px-6 sm:py-2.5 bg-indigo-600 text-white font-extrabold rounded-md shadow-md hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center gap-2 active:scale-95 text-sm sm:text-lg shrink-0"
+                >
+                  {saving ? '시간표 저장 중...' : '③ 이 스케줄로 시간표 작성'}
+                </button>
               </div>
             </div>
 
@@ -1150,13 +1157,6 @@ export default function AutoScheduleApp({ onNavigateBack, onNavigateToAssistantS
                   {restoring ? '복원 중...' : '↩️ 최근 작업 취소하기'}
                 </button>
               )}
-              <button
-                onClick={() => setShowConfirmModal(true)}
-                disabled={saving || restoring || !isAssistantApplied}
-                className="px-6 py-3 bg-indigo-600 text-white font-extrabold rounded-xl shadow-md hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center gap-2 active:scale-95 w-full sm:w-auto justify-center"
-              >
-                {saving ? '시간표 저장 중...' : '③ 이 스케줄로 시간표 작성'}
-              </button>
             </div>
 
             {!isAssistantApplied && draftRecords.length > 0 && (
