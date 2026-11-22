@@ -336,7 +336,7 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[104px]">배정팀</th>
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[88px]">조</th>
                       <th className="px-2 py-2 border-b-2 border-slate-300 w-[130px]">강사명</th>
-                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[110px] text-center">순서 / 삭제</th>
+                      <th className="px-2 py-2 border-b-2 border-slate-300 w-[130px] text-center whitespace-nowrap">순서 / 삭제</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -385,7 +385,7 @@ export default function AssistantScheduleApp({ onNavigateBack }) {
                           <div className="flex items-center justify-center gap-1">
                             <button onClick={() => moveRow(i, -1)} disabled={i === 0} title="위로" className="w-8 h-8 rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-30">▲</button>
                             <button onClick={() => moveRow(i, 1)} disabled={i === rows.length - 1} title="아래로" className="w-8 h-8 rounded-md border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-30">▼</button>
-                            <button onClick={() => deleteRow(r)} title="삭제" className="h-8 px-2 rounded-md border border-red-300 bg-red-50 text-red-700 font-bold text-[13px] hover:bg-red-100">삭제</button>
+                            <button onClick={() => deleteRow(r)} title="삭제" className="h-8 px-2 shrink-0 whitespace-nowrap rounded-md border border-red-300 bg-red-50 text-red-700 font-bold text-[13px] hover:bg-red-100">삭제</button>
                           </div>
                         </td>
                       </tr>
