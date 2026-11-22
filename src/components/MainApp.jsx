@@ -108,13 +108,11 @@ import {
   getGeminiApiKey,
   saveGeminiApiKey,
   clearGeminiApiKey,
-  fetchDailyHumor,
-  wasHumorShownToday,
-  markHumorShownToday
+  fetchDailyHumor
 } from '../utils/dailyHumor';
 import DailyHumorCard from './DailyHumorCard';
 
-// 같은 실행(페이지 로드) 안에서 오늘의 유머 자동 요청을 한 번만 하기 위한 플래그
+// 같은 실행(페이지 로드) 안에서 오늘의 유머 미리 불러오기를 한 번만 하기 위한 플래그
 let humorAutoRequestedThisSession = false;
 import {
   User,
@@ -453,22 +451,21 @@ export default function MainApp({
     }
   };
 
-  // 앱 실행 시 오늘의 유머를 하루 한 번 불러와 안내 팝업에 함께 표시
+  // 앱 실행 시 오늘의 유머를 미리 불러둠 (하루 동안은 캐시되어 API 재호출 없음)
   useEffect(() => {
-    if (!geminiApiKey || humorAutoRequestedThisSession || wasHumorShownToday()) return;
+    if (!geminiApiKey || humorAutoRequestedThisSession) return;
     humorAutoRequestedThisSession = true;
-    setHumorVisible(true);
     loadHumor();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geminiApiKey]);
 
-  // '항시 표시' 모드: 안내 팝업이 뜰 때마다 오늘의 유머도 함께 표시 (오늘 유머는 캐시되어 API 재호출 없음)
+  // 교육실 사용현황 팝업이 뜰 때마다 오늘의 유머도 항상 함께 표시
   useEffect(() => {
-    if (!roomStatusPopup || roomPopupMode !== 'always' || !geminiApiKey) return;
+    if (!roomStatusPopup || !geminiApiKey) return;
     setHumorVisible(true);
     if (!humorContent && !humorLoading) loadHumor();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomStatusPopup, roomPopupMode, geminiApiKey]);
+  }, [roomStatusPopup, geminiApiKey]);
 
   // 당일이 지난 오래된 팝업 숨김 키 정리 (오늘 저장된 키는 보존)
   useEffect(() => {
@@ -505,21 +502,14 @@ export default function MainApp({
     if (roomStatusPopup) closeRoomStatusPopup(hideToday);
   };
 
-  // 팝업에 교육실 현황이 없어도 유머가 준비되면 유머만이라도 표시 (설정창이 열려 있으면 대기)
+  // 유머는 교육실 사용현황과 항상 함께 표시 (설정창 미리보기만 단독 표시)
   // 자동 표시 중 오류가 나면 안내 팝업 안에 원인을 보여줌 (조용히 사라지지 않도록)
   const showHumorInPopup = humorVisible && (humorContent || humorLoading || humorError);
   const isTodayPopupOpen = !isLoggedIn && (
     !!roomStatusPopup ||
-    (humorVisible && humorForceOpen) ||
-    (humorVisible && !!humorContent && !showSettingsModal)
+    (humorVisible && humorForceOpen)
   );
 
-  // 유머가 앱 실행 시 자동으로 표시되면 오늘은 표시한 것으로 기록 (설정창 미리보기는 기록하지 않음)
-  useEffect(() => {
-    if (isTodayPopupOpen && humorVisible && humorContent && !humorForceOpen) {
-      markHumorShownToday();
-    }
-  }, [isTodayPopupOpen, humorVisible, humorContent, humorForceOpen]);
 
   useEffect(() => {
     if (!selectedStudentHistory || !selectedStudentHistory.name) {
@@ -4273,7 +4263,7 @@ export default function MainApp({
                           앱 처음 실행 시 한 번만 표시
                         </div>
                         <div className="text-[12.5px] text-slate-600 font-medium mt-0.5">
-                          앱 실행 후 처음 메인 화면에서 1회만 팝업을 띄웁니다. (유머는 하루 1회)
+                          앱 실행 후 처음 메인 화면에서 1회만 팝업을 띄웁니다.
                         </div>
                       </div>
                     </button>
@@ -4295,7 +4285,7 @@ export default function MainApp({
                           항시 표시
                         </div>
                         <div className="text-[12.5px] text-slate-600 font-medium mt-0.5">
-                          메인 화면으로 돌아올 때마다 조건에 맞으면 유머와 함께 다시 팝업을 띄웁니다.
+                          메인 화면으로 돌아올 때마다 조건에 맞으면 다시 팝업을 띄웁니다.
                         </div>
                       </div>
                     </button>
@@ -4382,7 +4372,7 @@ export default function MainApp({
                     </span>
                   </div>
                   <p className="text-[12.5px] text-slate-500 font-medium mb-2.5 leading-snug">
-                    키를 저장하면 하루에 한 번, 앱을 처음 실행할 때 오늘의 안내 팝업(교육실 사용현황) 맨 위에 유머와 응원 글귀가 함께 표시됩니다. 키는 이 기기에만 저장됩니다.
+                    키를 저장하면 교육실 사용현황 팝업이 뜰 때마다 맨 위에 오늘의 유머와 응원 글귀가 함께 표시됩니다. (유머는 하루에 한 번 새로 만들어집니다) 키는 이 기기에만 저장됩니다.
                   </p>
                   {!geminiApiKey ? (
                     <div className="flex items-center gap-2">
