@@ -1556,7 +1556,7 @@ export default function NameCardApp({ onNavigateBack }) {
         : '✉️ 메일 발송 실패';
       let driveText;
       if (driveResult.status === 'saved') {
-        driveText = `📁 구글 드라이브 저장 완료 (${driveResult.path || `${TARGET_NAMECARD_DIR}\\${fileName}`})`;
+        driveText = `📁 구글 드라이브 저장 완료 (${fileName})`;
       } else if (driveResult.status === 'queued') {
         driveText = '📁 구글 드라이브 저장 대기 중 (사무실 PC 동기화가 켜지면 자동 저장됩니다)';
       } else {
